@@ -4,11 +4,11 @@
  * control of the next step and announces each result in the table's `aria-live` region.
  * Every table on the page is mounted independently.
  */
-import { METER_POSITION } from '../../lib/table/expectation';
-import type { Fraction } from '../../lib/table/fraction';
+import { outOf100, toNumber, type Fraction } from '../../lib/table/fraction';
 import type { Choice, Face, Rng } from '../../lib/table/game';
 import { moment1, MOMENT1_START, type Moment1Event, type Moment1State, type Outcome } from '../../lib/table/moment1';
 import { moment2, MOMENT2_START, type Moment2Event, type Moment2State } from '../../lib/table/moment2';
+import { cellFor, HEADLINE, rollShare, type CellKey } from '../../lib/table/results';
 import type { ClientStrings } from '../../lib/table/strings';
 import { fill } from '../../lib/template';
 
@@ -178,7 +178,7 @@ function mount(root: HTMLElement, rng: Rng): void {
       showStep('draw', drawn !== null);
       if (drawn) {
         const { partner, recipient } = drawn;
-        const level = s(recipient.expectation === 'higher' ? 'table.meter.higher' : 'table.meter.lower');
+        const level = s('table.meter.value', { n: outOf100(recipient.expectation) });
         setText('partner', s(partner === 'switched' ? 'table.switch.switched' : 'table.switch.same'));
         const illustrative = slot('illustrative');
         if (illustrative) illustrative.hidden = partner !== 'switched';
@@ -188,7 +188,7 @@ function mount(root: HTMLElement, rng: Rng): void {
         );
         setText('level', level);
         meter?.setAttribute('aria-label', `${s('table.meter.label')}: ${level}`);
-        if (marker) marker.style.transform = `translateX(${METER_POSITION[recipient.expectation] * METER_WIDTH}px)`;
+        if (marker) marker.style.transform = `translateX(${toNumber(recipient.expectation) * METER_WIDTH}px)`;
       }
       toggle(marker, drawn !== null);
 
@@ -201,6 +201,24 @@ function mount(root: HTMLElement, rng: Rng): void {
       renderOutcome(outcome, rolled);
 
       showStep('reveal', state.phase === 'reveal');
+      const yours = state.phase === 'reveal' ? cellFor(state.promised, state.partner) : null;
+      for (const cell of root.querySelectorAll<HTMLElement>('[data-cell]')) {
+        const mine = cell.dataset.cell === yours;
+        cell.toggleAttribute('data-yours', mine);
+        const label = cell.querySelector<HTMLElement>('.gt-yours');
+        if (label) label.hidden = !mine;
+      }
+    }
+
+    const rate = (cell: CellKey) => s('table.rate', { p: outOf100(rollShare(cell)) });
+
+    function revealAnnouncement(): string[] {
+      if (state.phase !== 'reveal') return [];
+      const [same, switched] = HEADLINE;
+      return [
+        `${s('table.reveal.title')}.`,
+        s('table.announce.reveal', { same: rate(same), switched: rate(switched), yours: rate(cellFor(state.promised, state.partner)) }),
+      ];
     }
 
     function drawAnnouncement(): string[] {
@@ -212,7 +230,7 @@ function mount(root: HTMLElement, rng: Rng): void {
         partner === 'switched'
           ? s('table.switch.illustrative')
           : s(recipient.promiser === 'you' ? 'table.promiser.you' : 'table.promiser.none'),
-        `${s('table.meter.label')}: ${s(recipient.expectation === 'higher' ? 'table.meter.higher' : 'table.meter.lower')}.`,
+        `${s('table.meter.label')}: ${s('table.meter.value', { n: outOf100(recipient.expectation) })}.`,
       ];
     }
 
@@ -240,7 +258,7 @@ function mount(root: HTMLElement, rng: Rng): void {
         case 'reveal':
           send({ type: 'reveal' });
           render();
-          announce([s('table.reveal.title')]);
+          announce(revealAnnouncement());
           focusStep('reveal');
           break;
         case 'reset':

@@ -41,8 +41,8 @@
   "table.promiser.you": "Recibió tu promesa.",
   "table.promiser.none": "No recibió ninguna promesa.",
   "table.meter.label": "Expectativa del otro",
-  "table.meter.lower": "Más baja",
-  "table.meter.higher": "Más alta",
+  "table.meter.value": "{n} / 100",
+  "table.meter.note": "Promedio de su apuesta, en una escala de 0 a 100.",
   "table.payoffs": "Pagos",
   "table.choice.header": "Decisión",
   "table.expected": "Esperado",
@@ -56,5 +56,14 @@
   "table.reveal.show": "Ver qué hicieron los participantes reales",
   "table.reveal.title": "Lo que hicieron los participantes reales",
   "table.again": "Jugar de nuevo",
-  "table.noscript": "La mesa interactiva necesita JavaScript. Estos son sus pagos."
+  "table.noscript": "La mesa interactiva necesita JavaScript. Estos son sus pagos.",
+  "table.rate": "{p} %",
+  "table.reveal.headline": "Tiraron el dado tras prometer",
+  "table.reveal.caption": "Proporción de dictadores que tiraron el dado",
+  "table.reveal.row.promised": "Prometieron",
+  "table.reveal.row.not-promised": "No prometieron",
+  "table.reveal.col.switched": "Nueva pareja, con promesa de otro dictador",
+  "table.reveal.yours": "Tu camino",
+  "table.source": "Fuente: Vanberg (2008), datos suplementarios.",
+  "table.announce.reveal": "Tiraron tras prometer: {same} con la misma pareja, {switched} con una nueva. Tu camino: {yours}."
 }

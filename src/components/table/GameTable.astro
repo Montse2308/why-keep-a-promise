@@ -8,7 +8,9 @@
 import RoleMark from './RoleMark.astro';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import { branches, CHOICES, type Branch, type Choice } from '../../lib/table/game';
-import { METER_POSITION } from '../../lib/table/expectation';
+import { expectationFor } from '../../lib/table/expectation';
+import { outOf100, toNumber } from '../../lib/table/fraction';
+import { HEADLINE, rollShare, type CellKey } from '../../lib/table/results';
 import { clientStrings } from '../../lib/table/strings';
 import { fill } from '../../lib/template';
 
@@ -33,6 +35,12 @@ function terms(options: readonly Branch[]): string {
 }
 
 const options = CHOICES.map((choice) => ({ choice, label: choiceLabel[choice], you: terms(branches(choice).you), other: terms(branches(choice).other) }));
+const meterTicks = [expectationFor(false), expectationFor(true)].map(toNumber);
+const rate = (cell: CellKey) => fill(tr('table.rate'), { p: outOf100(rollShare(cell)) });
+const rows = [
+  { key: 'promised', label: tr('table.reveal.row.promised') },
+  { key: 'not-promised', label: tr('table.reveal.row.not-promised') },
+] as const;
 const pips = ['tl', 'tr', 'ml', 'c', 'mr', 'bl', 'br'] as const;
 const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 30], bl: [17, 43], br: [43, 43] } as const;
 ---
@@ -71,20 +79,18 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
             <p class="gt-note" data-slot="promiser" hidden></p>
             <div class="gt-meter">
               <p class="gt-meter__value">
-                {tr('table.meter.label')}: <strong data-slot="level"></strong>
+                {tr('table.meter.label')}: <strong class="gt-num" data-slot="level"></strong>
               </p>
               <div class="gt-meter__scale">
                 <svg class="gt-meter__svg" viewBox="0 0 240 24" role="img" data-slot="meter" aria-label={tr('table.meter.label')}>
                   <rect class="gt-meter__track" x="0" y="10" width="240" height="4" rx="2" />
-                  {Object.values(METER_POSITION).map((at) => <line class="gt-meter__tick" x1={at * 240} x2={at * 240} y1="4" y2="20" />)}
+                  {meterTicks.map((at) => <line class="gt-meter__tick" x1={at * 240} x2={at * 240} y1="4" y2="20" />)}
                   <rect class="gt-meter__marker" data-slot="marker" x="-7" y="5" width="14" height="14" rx="2" />
                 </svg>
-                {(['lower', 'higher'] as const).map((level) => (
-                  <span class="gt-meter__tick-label" style={`left: ${METER_POSITION[level] * 100}%`} aria-hidden="true">
-                    {tr(level === 'lower' ? 'table.meter.lower' : 'table.meter.higher')}
-                  </span>
-                ))}
+                <span class="gt-meter__end gt-meter__end--start" aria-hidden="true">0</span>
+                <span class="gt-meter__end gt-meter__end--end" aria-hidden="true">100</span>
               </div>
+              <p class="gt-note">{tr('table.meter.note')} {tr('table.source')}</p>
             </div>
           </section>
         </>
@@ -155,7 +161,42 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
       mode === 'moment2' && (
         <section class="gt-step" data-step="reveal" aria-labelledby={`${id}-reveal`} hidden>
           <p class="gt-step__label" id={`${id}-reveal`}>{tr('table.reveal.title')}</p>
-          <p class="todo">TODO(vanberg-rates): published roll rates by condition, with citation</p>
+          <p class="gt-summary">{tr('table.reveal.headline')}</p>
+          <dl class="gt-headline">
+            {HEADLINE.map((cell) => (
+              <div class="gt-headline__item">
+                <dt>{tr(cell === 'promised-same' ? 'table.switch.same' : 'table.switch.switched')}</dt>
+                <dd class="gt-num">{rate(cell)}</dd>
+              </div>
+            ))}
+          </dl>
+          <table class="gt-grid gt-cells">
+            <caption class="gt-step__label">{tr('table.reveal.caption')}</caption>
+            <thead>
+              <tr>
+                <td></td>
+                <th scope="col">{tr('table.switch.same')}</th>
+                <th scope="col">{tr('table.reveal.col.switched')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr>
+                  <th scope="row">{row.label}</th>
+                  {(['same', 'switched'] as const).map((partner) => {
+                    const cell: CellKey = `${row.key}-${partner}`;
+                    return (
+                      <td class="gt-cell" data-cell={cell}>
+                        <span class="gt-num">{rate(cell)}</span>
+                        <span class="gt-yours" hidden>{tr('table.reveal.yours')}</span>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="gt-note">{tr('table.source')}</p>
           <div class="gt-actions" data-controls>
             <button type="button" class="gt-button" data-action="reset">{tr('table.again')}</button>
           </div>
@@ -402,13 +443,66 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
     opacity: 1;
   }
 
-  .gt-meter__tick-label {
+  .gt-meter__end {
     position: absolute;
     bottom: 0;
-    transform: translateX(-50%);
     font-size: var(--step-n2);
+    font-variant-numeric: tabular-nums;
     color: var(--color-muted);
-    white-space: nowrap;
+  }
+
+  .gt-meter__end--start {
+    left: 0;
+  }
+
+  .gt-meter__end--end {
+    right: 0;
+  }
+
+  .gt-headline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-8);
+    margin: var(--space-2) 0 var(--space-4);
+  }
+
+  .gt-headline dt {
+    color: var(--color-muted);
+  }
+
+  .gt-headline dd {
+    margin: 0;
+    font-size: var(--step-3);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+  }
+
+  .gt-cells {
+    width: 100%;
+  }
+
+  .gt-cells thead th {
+    white-space: normal;
+    vertical-align: bottom;
+  }
+
+  /* The visitor's cell: a border and a text label, not colour alone. */
+  .gt-grid .gt-cell {
+    padding-inline-start: var(--space-2);
+  }
+
+  .gt-cell[data-yours] {
+    outline: var(--focus-width) solid var(--color-fg);
+    outline-offset: -2px;
+    background: var(--color-surface-hover);
+  }
+
+  .gt-yours {
+    display: block;
+    font-size: var(--step-n2);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .gt-result {

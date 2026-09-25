@@ -14,13 +14,14 @@ export const CLIENT_STRING_KEYS = [
   'table.promiser.you',
   'table.promiser.none',
   'table.meter.label',
-  'table.meter.lower',
-  'table.meter.higher',
+  'table.meter.value',
   'table.die.label',
   'table.announce.die',
   'table.announce.outcome',
   'table.announce.reset',
   'table.reveal.title',
+  'table.announce.reveal',
+  'table.rate',
   'table.switch.illustrative',
 ] as const satisfies readonly UiKey[];
 

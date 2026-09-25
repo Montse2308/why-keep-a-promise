@@ -41,8 +41,8 @@
   "table.promiser.you": "They received your promise.",
   "table.promiser.none": "They received no promise.",
   "table.meter.label": "The other's expectation",
-  "table.meter.lower": "Lower",
-  "table.meter.higher": "Higher",
+  "table.meter.value": "{n} / 100",
+  "table.meter.note": "Average of their bet, on a 0 to 100 scale.",
   "table.payoffs": "Payoffs",
   "table.choice.header": "Decision",
   "table.expected": "Expected",
@@ -56,5 +56,14 @@
   "table.reveal.show": "See what real participants did",
   "table.reveal.title": "What real participants did",
   "table.again": "Play again",
-  "table.noscript": "The interactive table needs JavaScript. These are its payoffs."
+  "table.noscript": "The interactive table needs JavaScript. These are its payoffs.",
+  "table.rate": "{p}%",
+  "table.reveal.headline": "Rolled the die after promising",
+  "table.reveal.caption": "Share of dictators who rolled the die",
+  "table.reveal.row.promised": "Promised",
+  "table.reveal.row.not-promised": "Didn't promise",
+  "table.reveal.col.switched": "New partner, promised by another dictator",
+  "table.reveal.yours": "Your path",
+  "table.source": "Source: Vanberg (2008), supplementary data.",
+  "table.announce.reveal": "Rolled after promising: {same} with the same partner, {switched} with a new partner. Your path: {yours}."
 }

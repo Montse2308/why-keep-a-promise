@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { add, complement, equals, fraction, multiply, toNumber } from './fraction';
+import { add, complement, equals, fraction, multiply, outOf100, toNumber } from './fraction';
 
 describe('fraction', () => {
   it('reduces and keeps the denominator positive', () => {
@@ -22,5 +22,13 @@ describe('fraction', () => {
     expect(complement(fraction(5, 6))).toEqual(fraction(1, 6));
     expect(equals(fraction(2, 4), fraction(1, 2))).toBe(true);
     expect(toNumber(fraction(1, 2))).toBe(0.5);
+  });
+
+  it('rounds half up on a 0–100 scale in integer arithmetic', () => {
+    expect(outOf100(fraction(1, 2))).toBe(50);
+    expect(outOf100(fraction(1, 200))).toBe(1); // 0.5 → 1
+    expect(outOf100(fraction(1, 201))).toBe(0);
+    expect(outOf100(fraction(1))).toBe(100);
+    expect(() => outOf100(fraction(-1, 2))).toThrow(RangeError);
   });
 });

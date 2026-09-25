@@ -40,6 +40,12 @@ export function equals(a: Fraction, b: Fraction): boolean {
   return a.num === b.num && a.den === b.den;
 }
 
+/** A non-negative fraction on a 0–100 scale, rounded half up to an integer, in integer arithmetic. */
+export function outOf100(f: Fraction): number {
+  if (f.num < 0) throw new RangeError('outOf100 takes a non-negative fraction');
+  return Math.floor((200 * f.num + f.den) / (2 * f.den));
+}
+
 /** Only for display and for comparing against a random draw; never for arithmetic. */
 export function toNumber(f: Fraction): number {
   return f.num / f.den;

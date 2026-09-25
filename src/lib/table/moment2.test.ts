@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { expectationFor, recipientAfterDraw, SWITCHED_PARTNER_RECEIVED_PROMISE, type Partner } from './expectation';
-import { fraction } from './fraction';
+import { expectationFor, recipientAfterDraw, RECIPIENT_BELIEFS, SWITCHED_PARTNER_RECEIVED_PROMISE, type Partner } from './expectation';
+import { fraction, multiply, outOf100 } from './fraction';
 import { outcomeOf } from './moment1';
 import { moment2, MOMENT2_START, SWITCH_PROBABILITY, type Moment2Event, type Moment2State } from './moment2';
 import { noRng, sequence } from './testing';
@@ -27,7 +27,8 @@ describe('moment 2: partner draw', () => {
     const switched = drawn(true, SWITCHED);
     if (same.phase !== 'switchDrawn' || switched.phase !== 'switchDrawn') throw new Error('expected switchDrawn');
 
-    expect(switched.recipient.expectation).toBe(same.recipient.expectation);
+    expect(switched.recipient.expectation).toEqual(same.recipient.expectation);
+    expect(outOf100(switched.recipient.expectation)).toBe(outOf100(same.recipient.expectation));
     expect(switched.recipient.receivedPromise).toBe(same.recipient.receivedPromise);
     expect(same.recipient.promiser).toBe('you');
     expect(switched.recipient.promiser).toBe('another-dictator');
@@ -38,22 +39,36 @@ describe('moment 2: partner draw', () => {
     expect(recipientAfterDraw(false, 'switched')).toEqual({
       receivedPromise: true,
       promiser: 'another-dictator',
-      expectation: 'higher',
+      expectation: expectationFor(true),
     });
   });
 
   it('without a promise and without a switch, the recipient holds no promise', () => {
-    expect(recipientAfterDraw(false, 'same')).toEqual({ receivedPromise: false, promiser: null, expectation: 'lower' });
+    expect(recipientAfterDraw(false, 'same')).toEqual({
+      receivedPromise: false,
+      promiser: null,
+      expectation: expectationFor(false),
+    });
   });
 
   it("depends only on whether that person received a promise", () => {
     for (const promised of [true, false]) {
       for (const partner of ['same', 'switched'] as Partner[]) {
         const recipient = recipientAfterDraw(promised, partner);
-        expect(recipient.expectation).toBe(expectationFor(recipient.receivedPromise));
+        expect(recipient.expectation).toEqual(expectationFor(recipient.receivedPromise));
       }
     }
-    expect(expectationFor(true)).not.toBe(expectationFor(false));
+  });
+});
+
+describe('moment 2: the meter', () => {
+  it('derives 69 and 48 out of 100 from the exact belief fractions', () => {
+    expect(RECIPIENT_BELIEFS.promise).toEqual({ sum: fraction(831, 2), n: 603 });
+    expect(RECIPIENT_BELIEFS.none).toEqual({ sum: fraction(319, 4), n: 165 });
+    expect(expectationFor(true)).toEqual(multiply(fraction(831, 2), fraction(1, 603)));
+    expect(expectationFor(false)).toEqual(multiply(fraction(319, 4), fraction(1, 165)));
+    expect(outOf100(expectationFor(true))).toBe(69);
+    expect(outOf100(expectationFor(false))).toBe(48);
   });
 });
 
