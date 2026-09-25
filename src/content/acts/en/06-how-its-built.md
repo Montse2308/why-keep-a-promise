@@ -11,10 +11,10 @@ SVG, a format for describing shapes in code, with no frameworks, the large libra
 load to build their interface.
 
 Every figure is computed with exact arithmetic, as fractions of whole numbers, so nothing is
-rounded until it is shown. The figures from Vanberg (2008) were recalculated from his public
-supplementary data, with the method of his own code. Tests, small programs that check the code,
-fail if any figure changes.
+rounded until it is shown. The payoffs come from the published instructions of Vanberg (2008); the
+rates and guesses were recalculated from his public supplementary data, with the method of his own
+code. Tests, small programs that check the code, fail if any figure changes.
 
 Behind the page there is a simulation engine, a program that works out what follows from a set of
-rules, written in TypeScript. This page gives no details about it. Its code is at
+rules, written in TypeScript. Its code is at
 <span class="todo">TODO(launch): enlace al repo del motor</span>.

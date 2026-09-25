@@ -11,10 +11,11 @@ mesa. La mesa está dibujada en SVG, un formato para describir figuras con códi
 las bibliotecas grandes que muchos sitios cargan para armar su interfaz.
 
 Cada cifra se calcula con aritmética exacta, como fracciones de números enteros, así que nada se
-redondea hasta que se muestra. Las cifras de Vanberg (2008) se recalcularon desde sus datos
-suplementarios públicos, con el método de su propio código. Los tests, pequeños programas que
-revisan el código, fallan si alguna cifra cambia.
+redondea hasta que se muestra. Los pagos vienen de las instrucciones publicadas de Vanberg (2008);
+las tasas y las apuestas se recalcularon desde sus datos suplementarios públicos, con el método de
+su propio código. Los tests, pequeños programas que revisan el código, fallan si alguna cifra
+cambia.
 
 Detrás de la página hay un motor de simulación, un programa que calcula lo que se sigue de un
-conjunto de reglas, escrito en TypeScript. Esta página no da detalles de él. Su código está en
+conjunto de reglas, escrito en TypeScript. Su código está en
 <span class="todo">TODO(launch): enlace al repo del motor</span>.

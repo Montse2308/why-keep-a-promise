@@ -17,8 +17,8 @@ tentación de traicionar a quien coopera (5), R la recompensa cuando los dos coo
 castigo cuando los dos traicionan (1) y S el pago del ingenuo que coopera con quien lo traiciona
 (0).
 
-Haga lo que haga el otro, traicionar te deja más. Por eso los dos traicionan, y los dos terminan
-peor que si hubieran cooperado.
+Si el juego se juega una sola vez, traicionar te deja más haga lo que haga el otro. Por eso los dos
+traicionan, y los dos terminan peor que si hubieran cooperado.
 
 La mesa de arriba no es esta matriz. Es otro juego, de Vanberg (2008), con la misma tensión: ser
 generoso, que ahí es tirar el dado, te cuesta 4 y al otro le da, en promedio, 10.

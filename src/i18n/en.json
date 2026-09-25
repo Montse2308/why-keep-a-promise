@@ -42,7 +42,7 @@
   "table.promiser.none": "They received no promise.",
   "table.meter.label": "The other's expectation",
   "table.meter.value": "{n} / 100",
-  "table.meter.note": "Average of their bet, on a 0 to 100 scale.",
+  "table.meter.note": "Average guess, on a five-point scale read from 0 to 100.",
   "table.payoffs": "Payoffs",
   "table.choice.header": "Decision",
   "table.expected": "Expected",

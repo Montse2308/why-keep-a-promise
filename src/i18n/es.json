@@ -42,7 +42,7 @@
   "table.promiser.none": "No recibió ninguna promesa.",
   "table.meter.label": "Expectativa del otro",
   "table.meter.value": "{n} / 100",
-  "table.meter.note": "Promedio de su apuesta, en una escala de 0 a 100.",
+  "table.meter.note": "Promedio de su apuesta, en una escala de cinco puntos leída de 0 a 100.",
   "table.payoffs": "Pagos",
   "table.choice.header": "Decisión",
   "table.expected": "Esperado",

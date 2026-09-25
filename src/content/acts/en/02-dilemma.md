@@ -17,12 +17,12 @@ T is the temptation of defecting on someone who cooperates (5), R the reward whe
 (3), P the punishment when both defect (1), and S the sucker's payoff for cooperating with someone
 who defects (0).
 
-Whatever the other does, defecting pays you more. So both defect, and both end up worse off than
-if both had cooperated.
+If the game is played once, defecting pays you more whatever the other does. So both defect, and
+both end up worse off than if both had cooperated.
 
-The table you played at the top of the page is not this matrix. It is a different game, from Vanberg (2008), with the same
-tension: being generous, which there means rolling the die, costs you 4 and gives the other 10 on
-average.
+The table you played at the top of the page is not this matrix. It is a different game, from
+Vanberg (2008), with the same tension: being generous, which there means rolling the die, costs you
+4 and gives the other 10 on average.
 
 The promises in that game are cheap talk, the economists' term for messages that cost nothing and
 bind no one. Even so, people keep them.
