@@ -12,20 +12,27 @@ interface Props {
   hero?: boolean;
   /** No prose yet: show the act's TODO marker. */
   pending?: boolean;
+  /** A sentence closing the act, set apart from its prose (act 5's manuscript status). */
+  status?: string | undefined;
+  /** The act renders content behind act 5's lock (ADR 0015); `verify:dist` looks for this mark. */
+  lockedContent?: boolean;
+  /** Show the act's "Go deeper →" link. */
+  deeper?: boolean;
 }
 
-const { act, locale, title, hero = false, pending = false } = Astro.props;
+const { act, locale, title, hero = false, pending = false, status, lockedContent = false, deeper = true } = Astro.props;
 const tr = useTranslations(locale);
 const titleId = `${act.id}-title`;
 const heading = title ?? tr(hero ? 'site.title' : act.titleKey);
 ---
 
-<section id={act.id} class="act container column" aria-labelledby={titleId}>
+<section id={act.id} class="act container column" aria-labelledby={titleId} data-locked-content={lockedContent ? '' : undefined}>
   {hero ? <h1 id={titleId}>{heading}</h1> : <h2 id={titleId}>{heading}</h2>}
   <slot />
   {pending && <p class="todo">TODO({act.contentPhase}): act content</p>}
+  {status && <p class="act__status">{status}</p>}
   {
-    act.deeper && (
+    deeper && act.deeper && (
       <p class="act__deeper">
         <a href={href(locale, act.deeper)}>{tr('deeper.link')}</a>
       </p>
@@ -44,6 +51,11 @@ const heading = title ?? tr(hero ? 'site.title' : act.titleKey);
 
   .act :global(h1) {
     margin-block: var(--space-8) var(--space-6);
+  }
+
+  .act__status {
+    font-style: italic;
+    color: var(--color-muted);
   }
 
   .act__deeper {

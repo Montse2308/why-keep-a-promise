@@ -1,10 +1,13 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Act from '../components/Act.astro';
+import Curve from '../components/curve/Curve.astro';
 import GameTable from '../components/table/GameTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { MANUSCRIPT_STATUS } from '../config';
 import { ACTS } from '../lib/acts';
 import { t, type Locale } from '../lib/i18n';
+import { findingUnlocked, statusKey } from '../lib/lock';
 
 interface Props {
   locale: Locale;
@@ -13,24 +16,37 @@ interface Props {
 const { locale } = Astro.props;
 const title = t(locale, 'site.title');
 
-// Act prose from src/content/acts/<locale>/; an act without a file (act 5 until F3) shows its TODO.
+// Act 5's prose, chart and moment 3 render only behind its lock (ADR 0015); its title and status
+// sentence render in both states.
+const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
+const status = t(locale, statusKey(MANUSCRIPT_STATUS));
+
+// Act prose from src/content/acts/<locale>/; an act without a file shows its TODO.
 const entries = await getCollection('acts', (entry) => entry.id.startsWith(`${locale}/`));
 const acts = await Promise.all(
   ACTS.map(async (act, index) => {
-    const entry = entries.find((candidate) => candidate.data.act === index + 1);
-    return { act, entry, Content: entry ? (await render(entry)).Content : null };
+    const locked = act.id === 'finding' && !unlocked;
+    const entry = locked ? undefined : entries.find((candidate) => candidate.data.act === index + 1);
+    return { act, locked, entry, Content: entry ? (await render(entry)).Content : null };
   }),
 );
 ---
 
 <BaseLayout locale={locale} route="home" title={title}>
   {
-    acts.map(({ act, entry, Content }) => (
-      <Act act={act} locale={locale} title={entry?.data.title} hero={act.id === 'question'} pending={!Content}>
-        {act.id === 'vanberg' && <GameTable mode="moment2" locale={locale} id="table-vanberg" />}
-        {Content && <Content />}
-        {act.id === 'question' && <GameTable mode="moment1" locale={locale} id="table-question" />}
-      </Act>
-    ))
+    acts.map(({ act, locked, entry, Content }) =>
+      act.id === 'finding' ? (
+        <Act act={act} locale={locale} title={entry?.data.title} pending={!locked && !Content} status={status} lockedContent={!locked} deeper={!locked}>
+          {Content && <Content />}
+          {!locked && <Curve locale={locale} id="finding-curve" />}
+        </Act>
+      ) : (
+        <Act act={act} locale={locale} title={entry?.data.title} hero={act.id === 'question'} pending={!Content}>
+          {act.id === 'vanberg' && <GameTable mode="moment2" locale={locale} id="table-vanberg" />}
+          {Content && <Content />}
+          {act.id === 'question' && <GameTable mode="moment1" locale={locale} id="table-question" />}
+        </Act>
+      ),
+    )
   }
 </BaseLayout>

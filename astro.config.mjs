@@ -1,5 +1,7 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config';
+import { MANUSCRIPT_STATUS } from './src/config.ts';
+import { findingUnlocked } from './src/lib/lock.ts';
 
 // Unicode ranges copied from each @fontsource-variable package's standard.css (src/assets/fonts/README.md).
 const LATIN =
@@ -27,11 +29,37 @@ function variants(file, weight, styles) {
   );
 }
 
+/**
+ * Act 5's lock at build time (ADR 0015). While it is locked, the curve component resolves to an
+ * empty stub, so its markup, script and data are not in the build at all; rendering it
+ * conditionally is not enough, because Astro bundles the script of every imported component. The
+ * dev server is always unlocked, so the plugin only applies to builds.
+ * @returns {import('vite').Plugin}
+ */
+function lockFinding() {
+  const curve = '/src/components/curve/Curve.astro';
+  return {
+    name: 'lock-finding',
+    apply: 'build',
+    enforce: 'pre',
+    async resolveId(source, importer, options) {
+      if (findingUnlocked(MANUSCRIPT_STATUS, false) || !source.endsWith('/Curve.astro')) return null;
+      const resolved = await this.resolve(source, importer, { ...options, skipSelf: true });
+      if (!resolved?.id.replace(/\\/g, '/').endsWith(curve)) return null;
+      // The stub sits next to the component, so it resolves the same way.
+      return this.resolve(source.replace(/Curve\.astro$/, 'Locked.astro'), importer, { ...options, skipSelf: true });
+    },
+  };
+}
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://montse2308.github.io',
   base: '/why-keep-a-promise',
   output: 'static',
+  vite: {
+    plugins: [lockFinding()],
+  },
   // Every internal URL ends in "/" so it matches what GitHub Pages serves.
   trailingSlash: 'always',
   build: {

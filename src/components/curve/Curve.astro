@@ -1,0 +1,333 @@
+---
+/**
+ * Act 5's curve and moment 3 of the table. A step chart built at build time from
+ * src/data/curve.json (ADR 0010), readable without JavaScript, plus a visually hidden table of every
+ * row. With JavaScript, a slider moves a cursor over the grid rows (./controller.ts).
+ *
+ * Render this only inside act 5's lock (src/lib/lock.ts, ADR 0015). While the lock is closed, a build
+ * resolves this file to ./Locked.astro (astro.config.mjs), so its markup, style, script and data
+ * never reach dist/; `npm run verify:dist` checks that.
+ */
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { stepLine, xPercent, yPixel, type Frame, type Segment } from '../../lib/curve/chart';
+import { payoffLevels, pullWindow, REASONS, type Reason } from '../../lib/curve/curve';
+import { CURVE } from '../../lib/curve/data';
+import { indexOf, pullsText, valueText } from '../../lib/curve/moment3';
+import { curveStrings } from '../../lib/curve/strings';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+  /** Unique on the page; prefixes every id inside the figure. */
+  id: string;
+}
+
+const { locale, id } = Astro.props;
+const tr = useTranslations(locale);
+const strings = curveStrings(tr);
+const { rows, axis, peak } = CURVE;
+const window = pullWindow(CURVE);
+const levels = payoffLevels(CURVE);
+const low = levels[0] ?? 0;
+const high = levels.at(-1) ?? 0;
+
+// Vertical layout in CSS px; x is a percentage of the plot width, so text never scales.
+const frame: Frame = { zero: 200, top: 72, high };
+const Y_ZERO = frame.zero;
+const Y_TOP = frame.top;
+const y = (payoff: number) => yPixel(payoff, frame);
+const x = (trust: number) => `${xPercent(trust, axis)}%`;
+
+const name: Record<Reason, string> = {
+  personal: tr('curve.series.personal'),
+  partner: tr('curve.series.partner'),
+  general: tr('curve.series.general'),
+};
+// Drawing order: the emphasised line underneath, the control's dots on top of the solid line.
+const lines = REASONS.map((reason) => ({ reason, segments: stepLine(rows, reason) }));
+const yTicks = [0, ...levels];
+const xTicks = [axis.min, peak, axis.max];
+const start = indexOf(rows, peak);
+const startRow = rows[start];
+const summary = fill(tr('curve.summary'), { min: axis.min, max: axis.max, high, low, from: window.from, to: window.to, peak });
+const clientRows = JSON.stringify(rows);
+const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y(segment.y1), y2: y(segment.y2) });
+---
+
+<figure class="curve wide" id={id} data-locked-content data-curve data-rows={clientRows} data-axis={JSON.stringify(axis)} data-frame={JSON.stringify(frame)} data-start={start} data-strings={JSON.stringify(strings)} aria-labelledby={`${id}-caption`}>
+  <p class="cv-axis-title" aria-hidden="true">{tr('curve.axis.y')}</p>
+  <div class="cv-plot">
+    <svg class="cv-svg" width="100%" height="248" role="img" aria-label={summary}>
+      {yTicks.map((tick) => <line class="cv-grid" x1="0" x2="100%" y1={y(tick)} y2={y(tick)} />)}
+      {yTicks.map((tick) => <text class="cv-tick" x="-8" y={y(tick) + 4} text-anchor="end">{tick}</text>)}
+      {rows.map((row) => <line class="cv-minor" x1={x(row.trust)} x2={x(row.trust)} y1={Y_ZERO} y2={Y_ZERO + 4} />)}
+      {
+        xTicks.map((tick) => (
+          <>
+            <line class="cv-major" x1={x(tick)} x2={x(tick)} y1={Y_ZERO} y2={Y_ZERO + 7} />
+            <text class="cv-tick" x={x(tick)} y={Y_ZERO + 22} text-anchor={tick === axis.min ? 'start' : tick === axis.max ? 'end' : 'middle'}>{tick}</text>
+          </>
+        ))
+      }
+
+      <line class="cv-peak" x1={x(peak)} x2={x(peak)} y1={y(high) + 6} y2={Y_ZERO} />
+      <text class="cv-tick" x={x(peak)} y={Y_ZERO + 40} text-anchor="middle">{tr('curve.peak')}</text>
+
+      {lines.map(({ reason, segments }) => segments.map((segment) => <line class={`cv-line cv-line--${reason}`} {...key(segment)} />))}
+
+      <line class="cv-key cv-line--partner" x1="0" x2="20" y1="24" y2="24" />
+      <text class="cv-label" x="28" y="28">{name.partner}</text>
+      <line class="cv-key cv-line--general" x1="2" x2="20" y1="46" y2="46" />
+      <text class="cv-label" x="28" y="50">{tr('curve.label.general')}</text>
+      <line class="cv-key cv-line--personal" x1="0" x2="20" y1={y(low) + 20} y2={y(low) + 20} />
+      <text class="cv-label" x="28" y={y(low) + 24}>{name.personal}</text>
+
+      <g class="cv-cursor" data-slot="cursor">
+        <line data-slot="cursor-line" x1={x(peak)} x2={x(peak)} y1={Y_TOP - 12} y2={Y_ZERO} />
+        <circle data-slot="cursor-dot" cx={x(peak)} cy={y(startRow?.payoff.personal ?? high)} r="5" />
+      </g>
+    </svg>
+    <p class="cv-axis-title cv-axis-title--x" aria-hidden="true">{tr('curve.axis.x')}</p>
+  </div>
+
+  <div class="cv-live" data-live hidden>
+    <div class="cv-control">
+      <label class="cv-control__label" for={`${id}-slider`}>{tr('curve.slider.label')}</label>
+      <span class="cv-control__value" data-slot="trust">{startRow && fill(strings['curve.trust.value'], { n: startRow.trust })}</span>
+      <input class="cv-slider" id={`${id}-slider`} type="range" min="0" max={rows.length - 1} step="1" value={start} aria-valuetext={startRow && valueText(strings, startRow)} />
+    </div>
+    <dl class="cv-readout">
+      {
+        REASONS.map((reason) => (
+          <div class="cv-readout__item">
+            <dt>
+              <svg class="cv-swatch" viewBox="0 0 20 8" aria-hidden="true" focusable="false">
+                <line class={`cv-key cv-line--${reason}`} x1={reason === 'general' ? 2 : 0} x2="20" y1="4" y2="4" />
+              </svg>
+              {name[reason]}
+            </dt>
+            <dd data-slot={reason}>{startRow?.payoff[reason]}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <p class="cv-pulls" data-slot="pulls">{startRow && pullsText(strings, startRow)}</p>
+    <p class="visually-hidden" role="status" aria-live="polite" data-slot="status"></p>
+  </div>
+
+  <table class="visually-hidden">
+    <caption>{tr('curve.table.caption')}</caption>
+    <thead>
+      <tr>
+        <th scope="col">{tr('curve.table.trust')}</th>
+        {REASONS.map((reason) => <th scope="col">{name[reason]}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr>
+            <th scope="row">{fill(strings['curve.trust.value'], { n: row.trust })}</th>
+            {REASONS.map((reason) => <td>{row.payoff[reason]}</td>)}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <figcaption class="cv-caption" id={`${id}-caption`}>{tr('curve.caption')}</figcaption>
+</figure>
+
+<script>
+  import { mountAll } from './controller';
+
+  mountAll();
+</script>
+
+<style>
+  .curve {
+    margin: var(--space-8) auto;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  @media (min-width: 40rem) {
+    .curve {
+      padding: var(--space-6);
+    }
+  }
+
+  .cv-axis-title {
+    margin: 0 0 var(--space-2);
+    font-size: var(--step-n2);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .cv-axis-title--x {
+    margin: var(--space-2) 0 0;
+    text-align: center;
+  }
+
+  /* Room on the left for the payoff ticks, which sit outside the plot. */
+  .cv-plot {
+    padding-inline: 1.5rem 0.25rem;
+  }
+
+  .cv-svg {
+    display: block;
+    overflow: visible;
+    font-size: var(--step-n2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cv-grid {
+    stroke: var(--color-border);
+    stroke-width: 1;
+  }
+
+  .cv-minor,
+  .cv-major {
+    stroke: var(--color-control);
+    stroke-width: 1;
+  }
+
+  .cv-tick {
+    fill: var(--color-muted);
+  }
+
+  /* Text wears text colours; the mark beside a label carries the series colour. */
+  .cv-label {
+    fill: var(--color-fg);
+  }
+
+  .cv-peak {
+    stroke: var(--color-control);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  .cv-line,
+  .cv-key {
+    fill: none;
+    stroke-linecap: square;
+  }
+
+  .cv-line--personal {
+    stroke: var(--color-series-1);
+    stroke-width: 6;
+  }
+
+  .cv-line--partner {
+    stroke: var(--color-series-2);
+    stroke-width: 2;
+  }
+
+  /* The control is told apart by its pattern, not by colour alone. */
+  .cv-line--general {
+    stroke: var(--color-series-3);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 0 6;
+  }
+
+  /* The cursor appears only once the script runs (data-on). */
+  .cv-cursor:not([data-on]) {
+    display: none;
+  }
+
+  .cv-cursor line {
+    stroke: var(--color-fg);
+    stroke-width: 1.5;
+  }
+
+  .cv-cursor circle {
+    fill: var(--color-series-1);
+    stroke: var(--color-surface);
+    stroke-width: 2;
+  }
+
+  .cv-live {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: var(--border-width) solid var(--color-border);
+  }
+
+  .cv-control {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-4);
+  }
+
+  .cv-control__label {
+    font-weight: 600;
+  }
+
+  .cv-control__value {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  .cv-slider {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: var(--target-min);
+    margin: 0;
+    accent-color: var(--color-fg);
+    cursor: pointer;
+  }
+
+  /* Two aligned columns, reason and payoff, at every width. */
+  .cv-readout {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-6);
+    margin: 0;
+  }
+
+  .cv-readout__item {
+    display: contents;
+  }
+
+  .cv-readout dt {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-muted);
+  }
+
+  .cv-readout dd {
+    margin: 0;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cv-swatch {
+    width: 1.25rem;
+    height: 0.5rem;
+    overflow: visible;
+  }
+
+  .cv-pulls {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .cv-caption {
+    margin: var(--space-4) 0 0;
+    color: var(--color-muted);
+  }
+
+</style>
