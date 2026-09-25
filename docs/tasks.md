@@ -3,7 +3,7 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** F2, en revisión de Montse. F0, F0.1, F1 y F1.1 cerradas.
+**Fase activa:** F2.1 cerrada; F2 en revisión de Montse. F0, F0.1, F1 y F1.1 cerradas.
 
 ## F0 · Esqueleto
 
@@ -97,11 +97,22 @@ en verde.
 - [x] Revisión explícita contra cada regla de `content-rules.md` (criterio de salida de F2), en el
       reporte de la sesión F2.
 
+## F2.1 · Correcciones de precisión
+
+- [x] Acto 4: escala de cinco puntos de las apuestas, leída de 0 a 100; nota del medidor
+      (`table.meter.note`) con la misma descripción.
+- [x] Acto 4: las tasas de Roll cuentan rondas, no personas.
+- [x] Acto 4: 192 participantes solo en el tratamiento con cambio de pareja.
+- [x] Acto 3: atribución a Vanberg ("en su planteamiento") y tabla en términos de tirar el dado.
+- [x] Acto 2: traicionar conviene si el juego se juega una sola vez.
+- [x] Acto 6: sin "no da detalles"; pagos de las instrucciones, tasas y apuestas de los datos.
+- [x] `docs/sources.md`: Charness y Dufwenberg (2006), Battigalli y Dufwenberg (2007), la ficha de
+      Vanberg (2008) y Case (2017), verificadas.
+
 ## Preguntas abiertas
 
-- Verificar antes del lanzamiento las referencias que la prosa ya usa y siguen "por verificar" en
-  `docs/sources.md`: Axelrod (1984) con la página de los pagos del dilema, Charness y Dufwenberg
-  (2006), Battigalli y Dufwenberg (2007), la ficha de Vanberg (2008) y la de Case (2017).
+- Verificar antes del lanzamiento Axelrod (1984), con la página de los pagos del dilema: la prosa
+  ya lo usa y sigue "por verificar" en `docs/sources.md`.
 
 ## Preguntas cerradas
 

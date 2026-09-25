@@ -18,8 +18,8 @@ Montse la verifique (`docs/tasks.md`, preguntas abiertas).
 
 ### Vanberg (2008)
 
-- **Referencia (por verificar):** Vanberg, C. (2008). Why do people keep their promises? An
-  experimental test of two explanations. *Econometrica*, 76(6), 1467–1480.
+- **Referencia (verificada, ficha en EconPapers):** Vanberg, C. (2008). Why do people keep their
+  promises? An experimental test of two explanations. *Econometrica*, 76(6), 1467–1480.
 - **Material suplementario** (verificado por Montse):
   - **Suppl. A:** Vanberg (2008), *Supplement: Appendix C, Translation of Instructions*,
     DOI 10.3982/ECTA7673SUPPA.
@@ -35,9 +35,9 @@ Montse la verifique (`docs/tasks.md`, preguntas abiertas).
   Usada en: acto 4 (`src/content/acts/{en,es}/04-vanberg.md`).
 - **Uso:** diseño del juego de cambio de pareja (la mesa, momentos 1 y 2), pagos, creencias de los
   receptores y tasas de Roll (actos 2 y 4, `/vanberg`).
-- **Verificada:** las cifras de la mesa, sí (suplementos). La referencia del artículo, todavía no.
+- **Verificada:** sí. Las cifras, con los suplementos; la ficha del artículo, en EconPapers.
 - PENDIENTE(pdf): cotejar contra las Tablas I–III impresas y agregar su página cuando esté el PDF
-  del artículo.
+  del artículo. Es lo único pendiente de esta referencia.
 - **Cifras:**
 
 - Cifra: Roll: el dictador (A) recibe 10; se tira un dado de 6 caras: con la cara 1 el receptor
@@ -65,31 +65,39 @@ Montse la verifique (`docs/tasks.md`, preguntas abiertas).
   Clave: `vanberg-chat`.
   Fuente: Suppl. B, p. 1, Screen 1. **Verificada (suplementos).**
   Usada en: acto 4.
-- Cifra: 192 participantes, en 8 rondas.
+- Cifra: 192 participantes, en 8 rondas, en el tratamiento con cambio de pareja.
   Clave: `vanberg-design`.
-  Fuente: 192 en `switch.dat` (sujetos 1–192); 8 rondas en Suppl. A, p. 1.
+  Fuente: 192 en `switch.dat` (sujetos 1–192), que corresponde solo al tratamiento con cambio de
+  pareja; los participantes de los tratamientos base (`baseline.dat`) no se cuentan. 8 rondas en
+  Suppl. A, p. 1.
   **Verificada (suplementos).**
   Usada en: acto 4.
 - Cifra: lo que espera el otro, "69 / 100" si recibió una promesa y "48 / 100" si no. Es la
   creencia de primer orden de B (`pfob`): su apuesta a que A tira el dado, en una escala de 5
   puntos codificada de 0 a 1, promediada. Con promesa: 0.689 (415.5 / 603). Sin promesa: 0.483
-  (79.75 / 165). La página la muestra sobre 100, nunca como porcentaje, con la nota "promedio de su
-  apuesta, en una escala de 0 a 100".
+  (79.75 / 165). La página la muestra sobre 100, nunca como porcentaje, con la nota "Average guess,
+  on a five-point scale read from 0 to 100." / "Promedio de su apuesta, en una escala de cinco
+  puntos leída de 0 a 100." (clave `table.meter.note`).
   Fuente: escala en Suppl. B, pp. 2–3, Screen 5B; valores de `switch.dat` con el método de
   `promises.do`. **Verificada (suplementos).**
   Clave: `vanberg-beliefs`.
   Usada en: el medidor del momento 2 (`src/lib/table/expectation.ts`, `RECIPIENT_BELIEFS`;
   claves `table.meter.*`).
-- Cifra: lo que esperaban los receptores que recibieron una promesa, "70" de 100 sin cambio y "68"
-  con cambio (acto 4). Es la misma creencia de primer orden de B, separada por celda: 0.696 sin
-  cambio (n = 309) y 0.682 con cambio (n = 294), redondeadas sobre 100. El 100 del acto 4 es el
-  tope de esa escala, igual que en el medidor.
+- Cifra: lo que esperaban los receptores que recibieron una promesa, "70" sin cambio y "68" con
+  cambio, leídas de 0 a 100 (acto 4). Es la misma creencia de primer orden de B, separada por celda:
+  0.696 sin cambio (n = 309) y 0.682 con cambio (n = 294), redondeadas sobre 100. El 100 del acto 4
+  es el tope de esa lectura, igual que en el medidor.
+  La escala: cinco puntos, de "certainly rolls" («seguro tira») a "certainly doesn't roll" («seguro
+  no tira»), codificados de 0 a 1 y leídos de 0 a 100. El acto 4 la describe así, con "five" /
+  "cinco" escrito con letra.
   Clave: `vanberg-beliefs`.
   Fuente: `switch.dat` con el método de `promises.do`; escala en Suppl. B, pp. 2–3, Screen 5B.
   **Verificada (suplementos).**
   Usada en: acto 4.
 - Cifra: lo que hicieron los dictadores reales, tasa de Roll por celda (la página redondea a
-  entero; el código guarda las cuentas exactas):
+  entero; el código guarda las cuentas exactas). Se cuentan rondas, no personas: cada decisión de un
+  dictador en una ronda es una observación. El acto 4 lo dice así ("in the rounds where…" / "en las
+  rondas en que…").
 
   | Celda                                                      | Roll            |
   | ---------------------------------------------------------- | --------------- |
@@ -130,35 +138,37 @@ arriba. Por eso el camino con cambio del visitante siempre resalta una de esas d
 - Cifra: pagos del dilema del prisionero, (3, 3), (0, 5), (5, 0) y (1, 1), con T = 5, R = 3, P = 1
   y S = 0 (T > R > P > S).
   Clave: `axelrod-1984`.
-  Fuente: Axelrod (1984), página por verificar. **Por verificar.**
+  Fuente: Axelrod (1984), página por verificar. **Por verificar; bloquea el lanzamiento.**
   Usada en: acto 2 (`src/content/acts/{en,es}/02-dilemma.md`).
 
 ### Charness y Dufwenberg (2006)
 
-- **Referencia (por verificar):** Charness, G. y Dufwenberg, M. (2006). Promises and partnership.
-  *Econometrica*, 74(6), 1579–1601.
+- **Referencia (verificada):** Charness, G. y Dufwenberg, M. (2006). Promises and Partnership.
+  *Econometrica*, 74(6), 1579–1601. RePEc:
+  <https://ideas.repec.org/a/ecm/emetrp/v74y2006i6p1579-1601.html>
 - **Clave:** `charness-dufwenberg-2006`.
 - **Uso:** aversión a la culpa (acto 3).
-- **Verificada:** no.
+- **Verificada:** sí (Montse, F2.1).
 - **Cifras:** —
 
 ### Battigalli y Dufwenberg (2007)
 
-- **Referencia (por verificar):** Battigalli, P. y Dufwenberg, M. (2007). Guilt in games.
-  *American Economic Review*, 97(2), 170–176.
+- **Referencia (verificada):** Battigalli, P. y Dufwenberg, M. (2007). Guilt in Games. *American
+  Economic Review*, 97(2), 170–176. RePEc:
+  <https://ideas.repec.org/a/aea/aecrev/v97y2007i2p170-176.html>
 - **Clave:** `battigalli-dufwenberg-2007`.
 - **Uso:** aversión a la culpa (acto 3).
-- **Verificada:** no.
+- **Verificada:** sí (Montse, F2.1).
 - **Cifras:** —
 
 ### Nicky Case (2017)
 
-- **Referencia (por verificar):** Case, N. (2017). *The Evolution of Trust*.
+- **Referencia (verificada):** Case, N. (2017). *The Evolution of Trust*.
   <https://ncase.me/trust/>
 - **Clave:** `case-2017`.
 - **Uso:** enlace para el dilema iterado (regla (f) de `content-rules.md`), acto 2.
-- **Verificada:** el enlace responde (HTTP 200, título "The Evolution of Trust", comprobado en F2).
-  La referencia bibliográfica, todavía no.
+- **Verificada:** sí. El enlace responde (HTTP 200, título "The Evolution of Trust", comprobado en
+  F2); confirmada por Montse en F2.1.
 - **Cifras:** —
 
 ## Formato de una cifra
