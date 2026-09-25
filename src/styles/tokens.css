@@ -18,6 +18,9 @@
   --color-you: #23508f;
   --color-other: #a4432a;
   --color-promise: #56636b;
+  --color-series-1: #8e2f6e;
+  --color-series-2: #7d6400;
+  --color-series-3: #008a7e;
 
   /* Typography: the serif is what you read, the sans is what you touch. */
   --font-prose: var(--font-serif, Georgia, serif);
@@ -94,6 +97,9 @@
     --color-you: #8db4ea;
     --color-other: #e8906d;
     --color-promise: #aab4bb;
+    --color-series-1: #c472a6;
+    --color-series-2: #a88619;
+    --color-series-3: #16a39b;
   }
 }
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import faviconSvg from '../../../public/favicon.svg?raw';
 import tokensCss from '../../styles/tokens.css?raw';
 import { contrastRatio, deltaE, parseHex, relativeLuminance, simulate, type Deficiency } from './color';
-import { COLOR_TOKENS, CONTRAST_PAIRS, MIN_CONTRAST, MIN_DISTANCE, PALETTE, THEMES, type Theme } from './palette';
+import { COLOR_TOKENS, CONTRAST_PAIRS, MIN_CONTRAST, MIN_DISTANCE, PALETTE, SERIES_TOKENS, THEMES, type Theme } from './palette';
 
 /** `--color-*` declarations of the light `:root` block and of the dark-scheme block. */
 function colorDeclarations(css: string): Record<Theme, Record<string, string>> {
@@ -10,7 +10,7 @@ function colorDeclarations(css: string): Record<Theme, Record<string, string>> {
   if (darkStart < 0) throw new Error('tokens.css has no dark-scheme block');
   const darkEnd = css.indexOf('@media', darkStart + 1);
   const read = (block: string) =>
-    Object.fromEntries([...block.matchAll(/--color-([a-z-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2]?.trim()]));
+    Object.fromEntries([...block.matchAll(/--color-([a-z0-9-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2]?.trim()]));
   return {
     light: read(css.slice(0, darkStart)),
     dark: read(css.slice(darkStart, darkEnd < 0 ? undefined : darkEnd)),
@@ -58,6 +58,27 @@ describe.each(THEMES)('palette, %s theme', (theme) => {
   it.each(visions)('keeps the promise accent apart from both roles under %s vision', (vision) => {
     for (const role of [colors.you, colors.other]) {
       expect(deltaE(seen(colors.promise, vision), seen(role, vision))).toBeGreaterThanOrEqual(MIN_DISTANCE.promise);
+    }
+  });
+
+  it.each(visions)('keeps personal guilt apart from partner-specific commitment under %s vision', (vision) => {
+    expect(deltaE(seen(colors['series-1'], vision), seen(colors['series-2'], vision))).toBeGreaterThanOrEqual(MIN_DISTANCE.series);
+  });
+
+  it('gives the curve colours of their own, apart from the roles and the promise accent', () => {
+    for (const series of SERIES_TOKENS) {
+      for (const table of ['you', 'other', 'promise'] as const) {
+        expect(deltaE(parseHex(colors[series]), parseHex(colors[table])), `${series} vs ${table}`).toBeGreaterThanOrEqual(
+          MIN_DISTANCE.seriesFromRoles,
+        );
+      }
+    }
+  });
+
+  it('checks every curve colour against the page and the figure surface', () => {
+    for (const series of SERIES_TOKENS) {
+      const backgrounds = CONTRAST_PAIRS.filter((pair) => pair.fg === series).map((pair) => pair.bg);
+      expect(backgrounds.sort()).toEqual(['bg', 'surface']);
     }
   });
 });

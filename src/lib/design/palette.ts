@@ -1,7 +1,7 @@
 /**
  * Single source of the site's colour values (ADR 0014). `src/styles/tokens.css` must carry exactly
  * these values; `palette.test.ts` checks that, the WCAG contrast of every pair below, and that the
- * two roles stay apart under protanopia and deuteranopia.
+ * two roles, and the two main lines of the curve, stay apart under protanopia and deuteranopia.
  */
 
 export const THEMES = ['light', 'dark'] as const;
@@ -20,6 +20,9 @@ export const COLOR_TOKENS = [
   'you',
   'other',
   'promise',
+  'series-1',
+  'series-2',
+  'series-3',
 ] as const;
 export type ColorToken = (typeof COLOR_TOKENS)[number];
 
@@ -36,6 +39,10 @@ export const PALETTE: Record<Theme, Record<ColorToken, string>> = {
     you: '#23508f', // ink blue
     other: '#a4432a', // terracotta
     promise: '#56636b', // slate: neutral, apart from both roles
+    // Act 5's curve (F3). Neutral names, so the always-shipped tokens.css says nothing about the chart.
+    'series-1': '#8e2f6e', // berry: personal guilt, the emphasised line
+    'series-2': '#7d6400', // ochre: partner-specific commitment
+    'series-3': '#008a7e', // teal: general guilt, the control, dotted
   },
   dark: {
     bg: '#1c1915', // warm ink, not pure black
@@ -49,6 +56,9 @@ export const PALETTE: Record<Theme, Record<ColorToken, string>> = {
     you: '#8db4ea',
     other: '#e8906d',
     promise: '#aab4bb',
+    'series-1': '#c472a6',
+    'series-2': '#a88619',
+    'series-3': '#16a39b',
   },
 };
 
@@ -83,6 +93,12 @@ export const CONTRAST_PAIRS: readonly ContrastPair[] = [
   { fg: 'focus', bg: 'bg', kind: 'graphic', use: 'focus ring' },
   { fg: 'focus', bg: 'surface', kind: 'graphic', use: 'focus ring on the table' },
   { fg: 'focus', bg: 'surface-hover', kind: 'graphic', use: 'focus ring on a hovered button' },
+  { fg: 'series-1', bg: 'bg', kind: 'graphic', use: 'curve: personal guilt line and label mark' },
+  { fg: 'series-1', bg: 'surface', kind: 'graphic', use: 'curve: personal guilt line on the figure' },
+  { fg: 'series-2', bg: 'bg', kind: 'graphic', use: 'curve: partner-specific commitment line' },
+  { fg: 'series-2', bg: 'surface', kind: 'graphic', use: 'curve: partner-specific commitment line on the figure' },
+  { fg: 'series-3', bg: 'bg', kind: 'graphic', use: 'curve: general guilt dotted line' },
+  { fg: 'series-3', bg: 'surface', kind: 'graphic', use: 'curve: general guilt dotted line on the figure' },
 ];
 
 /** Minimum CIE76 ΔE between two colours after simulating each colour-vision deficiency. */
@@ -91,4 +107,11 @@ export const MIN_DISTANCE = {
   roles: 40,
   /** The promise accent must stay apart from both roles. */
   promise: 20,
+  /** Personal guilt and partner-specific commitment, the two lines the curve compares. */
+  series: 40,
+  /** Every curve colour against every role colour and the promise accent, in typical vision. */
+  seriesFromRoles: 20,
 } as const;
+
+/** The curve's colours. General guilt (series-3) is also told apart by its dotted pattern. */
+export const SERIES_TOKENS = ['series-1', 'series-2', 'series-3'] as const satisfies readonly ColorToken[];
