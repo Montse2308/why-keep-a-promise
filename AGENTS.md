@@ -104,9 +104,10 @@ scratch/                 local notes, git-ignored, never committed
   enable GitHub Pages, do not run `deploy.yml` (manual-only, F6).
 - **Copying the manuscript or the paper's context.** Do not read or copy the manuscript or its working
   files, wherever they live (local folders, Drive). If something is missing, ask.
-- **Importing the engine.** The engine repository (`dilema-prisionero`) is never opened, added as a
-  dependency, submodule or alias, and no file is copied from it. Its output reaches this repo only as
-  `src/data/curve.json`, copied with provenance in F3 (ADR 0010).
+- **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,
+  local folder `dilema-prisionero`) is never opened, added as a dependency, submodule or alias, and
+  no file is copied from it. Its output reaches this repo only as `src/data/curve.json`, copied with
+  provenance in F3 (ADR 0010).
 - **Choosing another visual.** The only piece is the table, with three moments. No PixiJS, WebGPU,
   agent canvases, grids or population animations, no four panels, no extra charts, no playable
   dilemma in the main scroll.

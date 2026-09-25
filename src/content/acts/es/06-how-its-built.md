@@ -6,9 +6,9 @@ deeper: how-its-built
 
 Esta página es estática: es un conjunto de archivos simples, hecho con Astro, una herramienta que
 convierte código en páginas web, y TypeScript, un lenguaje de programación que atrapa errores
-antes de armar la página. Tu navegador corre un solo script, un programa pequeño, y es el de la
-mesa. La mesa está dibujada en SVG, un formato para describir figuras con código, sin frameworks,
-las bibliotecas grandes que muchos sitios cargan para armar su interfaz.
+antes de armar la página. Tu navegador solo corre el código de la mesa, en sus tres momentos; lo
+demás es texto y dibujo. La mesa está dibujada en SVG, un formato para describir figuras con
+código, sin frameworks, las bibliotecas grandes que muchos sitios cargan para armar su interfaz.
 
 Cada cifra se calcula con aritmética exacta, como fracciones de números enteros, así que nada se
 redondea hasta que se muestra. Los pagos vienen de las instrucciones publicadas de Vanberg (2008);
