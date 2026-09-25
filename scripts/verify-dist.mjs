@@ -1,15 +1,16 @@
-// Checks the built site against act 5's lock (ADR 0015). Run after `npm run build`.
+// Checks the built site against act 5's lock (ADR 0015, ADR 0017). Run after `npm run build`.
 //
-// While MANUSCRIPT_STATUS in src/config.ts is 'in-preparation', it fails if any file in dist/
-// carries a mark of act 5's locked content: its data attribute, the chart's id, moment 3's hook or
-// a key phrase of its prose and chart. Once the status is 'under-review', it fails if act 5's full
-// content is missing from either home page instead, so a broken unlock is caught too.
+// The lock covers act 5 (prose, chart, moment 3), all of /finding and the engine part of
+// /how-its-built. While MANUSCRIPT_STATUS in src/config.ts is 'in-preparation', it fails if any file
+// in dist/ carries a mark of that content: its data attribute, the charts' ids, moment 3's hook or a
+// key phrase of its prose and charts. Once the status is 'under-review', it fails if the locked
+// content is missing from any page that carries it, so a broken unlock is caught too.
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-/** Marks of act 5's locked content, matched without regard to case or line breaks. */
+/** Marks of the locked content, matched without regard to case or line breaks. */
 export const MARKERS = [
   'data-locked-content',
   'finding-curve',
@@ -21,10 +22,30 @@ export const MARKERS = [
   'compromiso específico a la pareja',
   'background trust',
   'confianza de fondo',
+  // /finding: its chart and its prose.
+  'finding-guilt',
+  'θ',
+  'identification result',
+  'resultado de identificación',
+  // /how-its-built: the engine.
+  'seeded generator',
+  'generador con semilla',
+  'by imitation',
+  'por imitación',
 ];
 
-/** What the unlocked home pages must carry. */
-export const UNLOCKED_MARKERS = ['data-locked-content', 'finding-curve'];
+/** What each unlocked page must carry, by its path in dist/. */
+export const UNLOCKED_PAGES = {
+  'index.html': ['data-locked-content', 'finding-curve'],
+  'es/index.html': ['data-locked-content', 'finding-curve'],
+  'finding/index.html': ['data-locked-content', 'finding-guilt', 'identification result'],
+  'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'resultado de identificación'],
+  'how-its-built/index.html': ['data-locked-content', 'by imitation'],
+  'es/how-its-built/index.html': ['data-locked-content', 'por imitación'],
+};
+
+/** Every mark some unlocked page must carry. */
+export const UNLOCKED_MARKERS = [...new Set(Object.values(UNLOCKED_PAGES).flat())];
 
 const TEXT_FILES = new Set(['.html', '.js', '.mjs', '.css', '.svg', '.xml', '.txt', '.json', '.webmanifest']);
 
@@ -86,23 +107,23 @@ function main() {
   if (status === 'in-preparation') {
     const leaks = files.flatMap((file) => findMarks(readFileSync(file, 'utf8')).map((mark) => `${relative(root, file)}: ${mark}`));
     if (leaks.length > 0) {
-      console.error(`verify:dist: act 5 is locked ('in-preparation'), but dist/ carries its content:\n  ${leaks.join('\n  ')}`);
+      console.error(`verify:dist: the lock is closed ('in-preparation'), but dist/ carries locked content:\n  ${leaks.join('\n  ')}`);
       process.exit(1);
     }
-    console.log(`verify:dist: act 5 locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks.`);
+    console.log(`verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks.`);
     return;
   }
 
-  const homes = [join(dist, 'index.html'), join(dist, 'es', 'index.html')];
-  const missing = homes.flatMap((file) => {
-    const found = findMarks(readFileSync(file, 'utf8'), UNLOCKED_MARKERS);
-    return UNLOCKED_MARKERS.filter((mark) => !found.includes(mark)).map((mark) => `${relative(root, file)}: ${mark}`);
+  const missing = Object.entries(UNLOCKED_PAGES).flatMap(([page, marks]) => {
+    const file = join(dist, ...page.split('/'));
+    const found = findMarks(readFileSync(file, 'utf8'), marks);
+    return marks.filter((mark) => !found.includes(mark)).map((mark) => `${relative(root, file)}: ${mark}`);
   });
   if (missing.length > 0) {
-    console.error(`verify:dist: the manuscript is under review, but act 5 did not unlock:\n  ${missing.join('\n  ')}`);
+    console.error(`verify:dist: the manuscript is under review, but the locked content did not unlock:\n  ${missing.join('\n  ')}`);
     process.exit(1);
   }
-  console.log("verify:dist: act 5 unlocked ('under-review') on both home pages.");
+  console.log(`verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content.`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
