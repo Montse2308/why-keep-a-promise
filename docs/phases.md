@@ -87,7 +87,7 @@ Revisión integral antes del lanzamiento.
 - `hreflang`, canonical y `x-default` correctos en las veinte combinaciones ruta/idioma.
 - Sin enlaces rotos (internos con `base` y externos).
 - Metadatos Open Graph y descripción por página e idioma.
-- `grep -r "TODO(" dist/` vacío.
+- `grep -r "TODO(" dist/` vacío, salvo `TODO(launch)` (paso 8 de `docs/launch-checklist.md`).
 
 ## F6 · Lanzamiento
 
@@ -95,5 +95,5 @@ Un solo lanzamiento, sin deploy parcial. Se sigue `docs/launch-checklist.md` en 
 
 **Criterio de salida**
 
-- Los nueve pasos del checklist marcados.
+- Los diez pasos del checklist marcados.
 - `/` y `/es/` en línea en `https://montse2308.github.io/why-keep-a-promise/`.

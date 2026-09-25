@@ -3,7 +3,7 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** F1.1 cerrada; F2 pendiente de autorización. F0, F0.1 y F1 cerradas.
+**Fase activa:** F2, en revisión de Montse. F0, F0.1, F1 y F1.1 cerradas.
 
 ## F0 · Esqueleto
 
@@ -78,9 +78,30 @@ en verde.
 - [ ] PENDIENTE(pdf), no bloquea: cotejar contra las Tablas I–III impresas y agregar su página
       cuando esté el PDF del artículo.
 
+## F2 · Prosa de los actos 1–4 y 6
+
+- [x] Colección de contenido `acts` (`src/content.config.ts`): `src/content/acts/{en,es}/<nn>-<slug>.md`,
+      frontmatter `act`, `title`, `deeper` validado con schema. `HomeView` renderiza cada acto desde
+      su archivo; la mesa sigue en los actos 1 y 4.
+- [x] Prosa EN/ES de los actos 1, 2, 3, 4 y 6, dentro del presupuesto de palabras (test).
+- [x] Acto 2: matriz del dilema del prisionero como tabla estática; la mesa es otro juego con la
+      misma tensión (regla (g)); una frase con enlace a *The Evolution of Trust* (regla (f)).
+- [x] Acto 3: las dos razones y la tabla de predicciones.
+- [x] Acto 4: diseño en el orden del momento 2, resultados y conclusión atribuida a Vanberg (2008).
+      Cierre: `TODO(F3): transición al acto 5`.
+- [x] Acto 6: cómo está hecho. Enlace al motor: `TODO(launch)`, paso 8 del checklist.
+- [x] Registro de cifras y citas (`src/content/figures.ts`) con test de números, citas, paridad
+      EN/ES y claves de `docs/sources.md`.
+- [x] Lint de frases prohibidas (regla (i) de `content-rules.md`).
+- [ ] Revisión de la prosa por Montse.
+- [x] Revisión explícita contra cada regla de `content-rules.md` (criterio de salida de F2), en el
+      reporte de la sesión F2.
+
 ## Preguntas abiertas
 
-- Ninguna.
+- Verificar antes del lanzamiento las referencias que la prosa ya usa y siguen "por verificar" en
+  `docs/sources.md`: Axelrod (1984) con la página de los pagos del dilema, Charness y Dufwenberg
+  (2006), Battigalli y Dufwenberg (2007), la ficha de Vanberg (2008) y la de Case (2017).
 
 ## Preguntas cerradas
 

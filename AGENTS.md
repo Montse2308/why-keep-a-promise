@@ -50,6 +50,9 @@ install → check → test → build on every push and PR.
 ```
 src/
   config.ts              author links, manuscript status
+  content.config.ts      the acts content collection (frontmatter schema)
+  content/acts/{en,es}/  act prose in Markdown, one file per act (F2)
+  content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md
   i18n/en.json, es.json  UI strings, flat keys, full parity
   lib/                   pure, tested modules
     i18n.ts              typed t(); fails check and build on key mismatch
@@ -66,7 +69,7 @@ src/
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers: / and /es/, plus four subpages each
-tests/                   repo-level tests (page parity)
+tests/                   repo-level tests (page parity, prose figures and budgets, forbidden phrases)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy)
 scratch/                 local notes, git-ignored, never committed
 ```
