@@ -22,9 +22,16 @@ const target = otherLocale(locale);
 <style>
   .lang {
     display: flex;
+    flex: none;
     align-items: center;
     gap: var(--space-3);
     white-space: nowrap;
+  }
+
+  .lang__other {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
   }
 
   .lang__current {

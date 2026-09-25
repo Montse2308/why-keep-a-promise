@@ -1,4 +1,5 @@
 ---
+import { Font, fontData } from 'astro:assets';
 import '../styles/base.css';
 import AuthorStrip from '../components/AuthorStrip.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -13,6 +14,9 @@ interface Props {
 
 const { locale, route, title } = Astro.props;
 const site = Astro.site ?? new URL('https://montse2308.github.io');
+// Preload only the text face: Newsreader, normal, latin. The local provider keeps the variant order
+// of astro.config.mjs, where latin comes first; the provider does not tag subsets.
+const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal')?.src[0];
 // TODO(F5): description and Open Graph tags.
 ---
 
@@ -26,7 +30,9 @@ const site = Astro.site ?? new URL('https://montse2308.github.io');
     {LOCALES.map((alt) => <link rel="alternate" hreflang={alt} href={absoluteHref(site, alt, route)} />)}
     <link rel="alternate" hreflang="x-default" href={absoluteHref(site, DEFAULT_LOCALE, route)} />
     <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
-    <link rel="icon" href={assetHref('favicon.ico')} />
+    {textFont && <link rel="preload" href={textFont.url} as="font" type="font/woff2" crossorigin />}
+    <Font cssVariable="--font-serif" />
+    <Font cssVariable="--font-sans" />
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>

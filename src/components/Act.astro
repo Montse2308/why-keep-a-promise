@@ -15,15 +15,17 @@ const tr = useTranslations(locale);
 const titleId = `${act.id}-title`;
 ---
 
-<section id={act.id} class="act container" aria-labelledby={titleId}>
+<section id={act.id} class="act container column" aria-labelledby={titleId}>
   {heading ? <h1 id={titleId}>{heading}</h1> : <h2 id={titleId}>{tr(act.titleKey)}</h2>}
   <slot />
   <p class="todo">TODO({act.contentPhase}): act content</p>
-  {act.deeper && (
-    <p class="act__deeper">
-      <a href={href(locale, act.deeper)}>{tr('deeper.link')}</a>
-    </p>
-  )}
+  {
+    act.deeper && (
+      <p class="act__deeper">
+        <a href={href(locale, act.deeper)}>{tr('deeper.link')}</a>
+      </p>
+    )
+  }
 </section>
 
 <style>
@@ -31,8 +33,23 @@ const titleId = `${act.id}-title`;
     padding-block: var(--space-12);
   }
 
+  .act + .act {
+    border-top: var(--border-width) solid var(--color-border);
+  }
+
   .act :global(h1) {
-    font-size: var(--text-2xl);
-    max-width: 20ch;
+    margin-block: var(--space-8) var(--space-6);
+  }
+
+  .act__deeper {
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    font-weight: 600;
+  }
+
+  .act__deeper a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
   }
 </style>

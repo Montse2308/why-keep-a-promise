@@ -37,7 +37,15 @@ const links: { route: Route; label: string }[] = [
     margin-top: var(--space-16);
     padding-block: var(--space-8);
     border-top: var(--border-width) solid var(--color-border);
-    font-size: var(--text-sm);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+  }
+
+  .footer__links a {
+    display: inline-flex;
+    align-items: center;
+    min-width: var(--target-min);
+    min-height: var(--target-min);
   }
 
   .footer__links {

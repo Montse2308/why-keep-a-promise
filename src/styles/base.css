@@ -9,6 +9,7 @@
 html {
   scroll-padding-top: calc(var(--strip-height) + var(--space-4));
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -17,29 +18,79 @@ html {
   }
 }
 
+/* Reduced motion: every change is instant. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+  }
+}
+
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   background: var(--color-bg);
   color: var(--color-fg);
-  font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-family: var(--font-prose);
+  font-optical-sizing: auto;
+  font-size: var(--step-0);
   line-height: var(--leading-body);
 }
 
 h1,
 h2,
 h3 {
-  font-family: var(--font-display);
+  font-family: var(--font-prose);
+  font-weight: 500;
   line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--step-5);
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: var(--step-3);
+}
+
+h3 {
+  font-size: var(--step-1);
+}
+
+p {
+  text-wrap: pretty;
 }
 
 a {
-  color: var(--color-accent);
+  color: inherit;
+  text-decoration-color: var(--color-control);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-decoration-color: currentColor;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-focus);
+  outline: var(--focus-width) solid var(--color-focus);
   outline-offset: 2px;
+}
+
+/* What you touch is set in the sans. */
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-ui);
 }
 
 .visually-hidden:not(:focus):not(:active) {
@@ -58,9 +109,30 @@ a {
   padding-inline: var(--gutter);
 }
 
+/*
+ * The prose column; `.wide` children step out of it up to the table's width. The measure is set on
+ * the grid, so `ch` resolves against the body text and not against each child's own size.
+ */
+.column {
+  display: grid;
+  grid-template-columns: [wide-start] 1fr [content-start] min(100%, var(--measure)) [content-end] 1fr [wide-end];
+}
+
+.column > * {
+  grid-column: content;
+  min-width: 0;
+}
+
+.column > .wide {
+  grid-column: wide;
+  justify-self: center;
+  width: 100%;
+  max-width: var(--table-max);
+}
+
 /* Development marker for unwritten content; must not survive to F6 (see docs/launch-checklist.md). */
 .todo {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--step-n1);
   color: var(--color-muted);
 }

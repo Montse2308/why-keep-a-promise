@@ -1,32 +1,42 @@
 /*
- * Base design tokens. Placeholder values only: the visual system is decided in F1.
- * TODO(F1): self-hosted font files (public/fonts/) and final palette.
+ * Design tokens (ADR 0014). Colour values mirror src/lib/design/palette.ts exactly; a test fails
+ * if they drift apart. Change a colour there first, then here.
  */
 
 :root {
   color-scheme: light dark;
 
-  /* Colour: light */
-  --color-bg: #fbfaf7;
-  --color-surface: #ffffff;
-  --color-fg: #1c1b19;
-  --color-muted: #5f5b53;
-  --color-border: #dcd8cf;
-  --color-accent: #1f5fa8;
-  --color-focus: #1f5fa8;
+  /* Colour: light (warm paper) */
+  --color-bg: #f6f1e7;
+  --color-surface: #fbf8f2;
+  --color-surface-hover: #efe8da;
+  --color-fg: #221d17;
+  --color-muted: #5e564a;
+  --color-border: #ddd4c4;
+  --color-control: #857b6c;
+  --color-focus: #221d17;
+  --color-you: #23508f;
+  --color-other: #a4432a;
+  --color-promise: #56636b;
 
-  /* Typography */
-  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: var(--font-body);
+  /* Typography: the serif is what you read, the sans is what you touch. */
+  --font-prose: var(--font-serif, Georgia, serif);
+  --font-ui: var(--font-sans, system-ui, sans-serif);
   --font-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
-  --text-sm: 0.875rem;
-  --text-base: 1.0625rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.75rem;
-  --text-2xl: clamp(2rem, 1.4rem + 3vw, 3.25rem);
-  --leading-tight: 1.2;
+
+  /* Fluid scale, 360 px → 1280 px: base 1.125 → 1.25 rem, ratio 1.2 → 1.25. */
+  --step-n2: clamp(0.7813rem, 0.7739rem + 0.0326vw, 0.8rem);
+  --step-n1: clamp(0.9375rem, 0.913rem + 0.1087vw, 1rem);
+  --step-0: clamp(1.125rem, 1.0761rem + 0.2174vw, 1.25rem);
+  --step-1: clamp(1.35rem, 1.2668rem + 0.3696vw, 1.5625rem);
+  --step-2: clamp(1.62rem, 1.4896rem + 0.5793vw, 1.9531rem);
+  --step-3: clamp(1.944rem, 1.7494rem + 0.8651vw, 2.4414rem);
+  --step-4: clamp(2.3328rem, 2.0515rem + 1.2504vw, 3.0518rem);
+  --step-5: clamp(2.7994rem, 2.4021rem + 1.7658vw, 3.8147rem);
+  --leading-tight: 1.15;
+  --leading-ui: 1.4;
   --leading-body: 1.6;
-  --measure: 68ch;
+  --measure: 66ch;
 
   /* Space */
   --space-1: 0.25rem;
@@ -39,30 +49,51 @@
   --space-16: 4rem;
   --gutter: 1rem;
 
-  /* Shape */
-  --radius-sm: 4px;
-  --radius-md: 8px;
+  /* Shape: hairlines, small radii, almost no shadow. */
+  --radius-sm: 3px;
+  --radius-md: 6px;
   --border-width: 1px;
+  --focus-width: 2px;
 
   /* Layout */
-  --strip-height: 2.75rem;
+  --strip-height: 4.5rem; /* two rows below 40rem, one above */
   --content-max: 72rem;
+  --table-max: 56rem;
+  --target-min: 2.75rem; /* 44 px touch target */
 
-  /* Motion */
+  /* Motion: transform and opacity only, never longer than 250 ms. */
   --duration-fast: 120ms;
-  --duration-base: 240ms;
+  --duration-base: 200ms;
+  --duration-max: 250ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --strip-height: 2.75rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: 1.5rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #151412;
-    --color-surface: #1e1d1a;
-    --color-fg: #ecebe6;
-    --color-muted: #a8a399;
-    --color-border: #3a3833;
-    --color-accent: #8cb8ec;
-    --color-focus: #8cb8ec;
+    /* Colour: dark (warm ink) */
+    --color-bg: #1c1915;
+    --color-surface: #25211c;
+    --color-surface-hover: #2f2a23;
+    --color-fg: #ede5d6;
+    --color-muted: #b1a794;
+    --color-border: #3e382f;
+    --color-control: #8a806f;
+    --color-focus: #ede5d6;
+    --color-you: #8db4ea;
+    --color-other: #e8906d;
+    --color-promise: #aab4bb;
   }
 }
 
@@ -70,5 +101,6 @@
   :root {
     --duration-fast: 0ms;
     --duration-base: 0ms;
+    --duration-max: 0ms;
   }
 }
