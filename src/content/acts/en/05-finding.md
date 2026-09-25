@@ -22,7 +22,7 @@ person weighs the same in any world.
 
 In a simulation, background trust was fixed at each value from 0 to 76 out of 100. The expectation
 after a promise was held at 76: what Vanberg's dictators believed their partner expected, without a
-switch. In the simulation, the other person sees your type, meaning which reason moves you, before
+switch. There, the other person sees your type, meaning which reason moves you, before
 playing, and only joins if you will roll; if they don't join, each keeps 5. That is why rolling
 pays 10 and not rolling pays 5. The simulation then measured how much each reason earns. Personal
 guilt earns 10 from 15 to 65 (measured in steps of 5), and 5 outside that window.

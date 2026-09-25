@@ -9,9 +9,9 @@ medio: te duele defraudar una expectativa, pero solo si tú la creaste. Es la cu
 Kawagoe y Narita (2014).
 
 En el laboratorio no se distingue. Con cambio de pareja, la expectativa de tu nueva pareja no la
-creaste tú, así que la culpa personal también tira menos. Y en cualquier experimento de una sola
-ronda, la culpa personal y el compromiso específico a la pareja, tu palabra dada a esa persona,
-predicen lo mismo. Por eso el resultado de Vanberg es compatible con las dos.
+creaste tú, así que quien siente culpa personal también tira menos. Y en cualquier experimento de
+una sola ronda, la culpa personal y el compromiso específico a la pareja, tu palabra dada a esa
+persona, predicen lo mismo. Por eso el resultado de Vanberg es compatible con las dos.
 
 Lo que las separa es la confianza de fondo: lo que la gente espera de alguien antes de que prometa
 nada. En la especificación de Kawagoe y Narita (2014), la culpa personal es el producto de dos
@@ -22,7 +22,7 @@ cualquier mundo.
 
 En una simulación, se fijó la confianza de fondo en cada valor de 0 a 76 de 100. La expectativa
 después de una promesa quedó fija en 76, lo que los dictadores de Vanberg creían que su pareja
-esperaba sin cambio. En la simulación, la otra persona ve tu tipo, es decir, cuál de las razones te
+esperaba sin cambio. Ahí, la otra persona ve tu tipo, es decir, cuál de las razones te
 mueve, antes de jugar, y solo entra si vas a tirar; si no entra, cada quien se queda con 5. Por eso
 tirar paga 10 y no tirar, 5. Y se midió cuánto gana cada razón. La culpa personal gana 10 de 15 a
 65 (medido en pasos de 5), y 5 fuera de esa ventana. El compromiso específico a la pareja gana 10
