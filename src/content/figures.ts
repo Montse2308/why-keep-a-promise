@@ -16,6 +16,9 @@ export const SOURCE_KEYS = [
   'vanberg-rates',
   'vanberg-beliefs',
   'case-2017',
+  'kawagoe-narita-2014',
+  'vanberg-second-order',
+  'curve',
 ] as const;
 export type SourceKey = (typeof SOURCE_KEYS)[number];
 
@@ -53,7 +56,26 @@ export const FIGURES: readonly Figure[] = [
   { value: '70', source: 'vanberg-beliefs', what: 'mean bet of promised recipients, no switch, out of 100' },
   { value: '68', source: 'vanberg-beliefs', what: 'mean bet of promised recipients, switch, out of 100' },
   { value: '100', source: 'vanberg-beliefs', what: 'top of the 0–100 belief scale' },
+  // Act 5: the curve (src/data/curve.json). tests/curve.test.ts checks CURVE_FIGURES against the file.
+  { value: '76', source: 'vanberg-second-order', what: 'belief after a promise, held fixed; top of the background-trust axis' },
+  { value: '0', source: 'curve', what: 'bottom of the background-trust axis' },
+  { value: '100', source: 'curve', what: 'background trust is read out of 100' },
+  { value: '15', source: 'curve', what: 'first background trust at which personal guilt rolls' },
+  { value: '65', source: 'curve', what: 'last background trust at which personal guilt rolls' },
+  { value: '10', source: 'curve', what: 'higher payoff on the curve' },
+  { value: '5', source: 'curve', what: 'lower payoff on the curve' },
+  { value: '38', source: 'curve', what: 'background trust at which personal guilt weighs most' },
 ];
+
+/** The curve's figures as act 5 and its chart state them, each checked against src/data/curve.json. */
+export const CURVE_FIGURES = {
+  axis: { min: 0, max: 76 },
+  window: { from: 15, to: 65 },
+  payoffs: { low: 5, high: 10 },
+  peak: 38,
+  /** The belief after a promise, out of 100 (docs/sources.md, `vanberg-second-order`). */
+  beliefAfterPromise: 76,
+} as const;
 
 export interface Citation {
   /** Surnames in the order they are written, joined by "and" / "y" in the prose. */
@@ -68,4 +90,5 @@ export const CITATIONS: readonly Citation[] = [
   { authors: ['Battigalli', 'Dufwenberg'], year: 2007, source: 'battigalli-dufwenberg-2007' },
   { authors: ['Vanberg'], year: 2008, source: 'vanberg-2008' },
   { authors: ['Case'], year: 2017, source: 'case-2017' },
+  { authors: ['Kawagoe', 'Narita'], year: 2014, source: 'kawagoe-narita-2014' },
 ];

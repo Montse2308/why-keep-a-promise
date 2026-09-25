@@ -117,6 +117,17 @@ El caso ilustrativo del cambio de pareja ("tu nueva pareja recibió una promesa 
 corresponde exactamente a las filas "cambio a una pareja a la que otro le prometió" de la tabla de
 arriba. Por eso el camino con cambio del visitante siempre resalta una de esas dos celdas.
 
+- Cifra: la creencia después de una promesa, "76" de 100, que la curva del acto 5 deja fija (acto 5
+  y pie de la gráfica, clave `curve.caption`). Es la creencia de segundo orden de los dictadores sin
+  cambio de pareja: lo que creían que su pareja esperaba. Media 0.7585 (n = 384), que redondea a 76.
+  También es el extremo del eje de confianza de fondo (de 0 a 76).
+  Clave: `vanberg-second-order`.
+  Fuente: `switch.dat`, bloque TABLE I de `promises.do`, creencia de segundo orden de los dictadores
+  sin cambio. **Verificada por Montse (F3).**
+  Usada en: acto 5 (`src/content/acts/{en,es}/05-finding.md`); pie de la gráfica
+  (`src/components/curve/Curve.astro`). El valor fijo de la curva se comprueba contra
+  `src/data/curve.json` en `tests/curve.test.ts`.
+
 ### Machado, Oliveira y Fernandes (2009)
 
 - **Referencia (por verificar):** Machado, G. M., Oliveira, M. M. y Fernandes, L. A. F. (2009). A
@@ -170,6 +181,55 @@ arriba. Por eso el camino con cambio del visitante siempre resalta una de esas d
 - **Verificada:** sí. El enlace responde (HTTP 200, título "The Evolution of Trust", comprobado en
   F2); confirmada por Montse en F2.1.
 - **Cifras:** —
+
+### Kawagoe y Narita (2014)
+
+- **Referencia (verificada):** Kawagoe, T. y Narita, Y. (2014). Guilt aversion revisited: An
+  experimental test of a new model. *Journal of Economic Behavior & Organization*, 102, 1–9. RePEc:
+  <https://ideas.repec.org/a/eee/jeborg/v102y2014icp1-9.html>
+- **Clave:** `kawagoe-narita-2014`.
+- **Uso:** la culpa personal: te duele defraudar una expectativa solo si tú la creaste (acto 5).
+- **Verificada:** sí (Montse, F3).
+- **Cifras:** —
+
+### Curva del motor (`src/data/curve.json`)
+
+- **Archivo:** `src/data/curve.json`, generado por el motor de simulación y copiado sin cambios por
+  Montse en F3 (ADR 0010). La página no recalcula el modelo ni interpola entre filas: solo lee el
+  archivo (`src/lib/curve/`).
+- **Procedencia** (bloque `provenance` del archivo):
+  - Repo del motor: `Montse2308/Dilema-del-Prisionero`.
+  - Commit del motor: `68bc4bac4502257aeffb195a8890f6901a980f7d`.
+  - Semilla: `grilla`.
+  - Comando: `npm run export:curve`.
+  - Generado: 2026-09-25T21:42:48.667Z, con Node v24.11.0.
+- **Clave:** `curve`.
+- **Contenido que usa la página:** 18 filas de la grilla, una por valor de confianza de fondo (de 0 a
+  76, fracciones de denominador 100); en cada una, el pago material de las tres razones y si la
+  culpa personal tira. Es una comparación entre mundos, cada uno con su confianza de fondo fija
+  (regla (e)). Los parámetros del modelo y los valores intermedios del archivo no se leen ni se
+  muestran.
+- **Verificada:** `tests/curve.test.ts` y `src/lib/curve/curve.test.ts` validan la procedencia
+  (ADR 0010) y comprueban cada cifra de abajo contra el archivo. Ninguna se escribe a mano sin test.
+- **Cifras:**
+
+- Cifra: eje de confianza de fondo de "0" a "76", leída "de 100".
+  Clave: `curve`.
+  Fuente: `axis` de `curve.json`; el 76 es la creencia después de una promesa (`vanberg-second-order`).
+  Usada en: acto 5; ejes y `aria-label` de la gráfica.
+- Cifra: la culpa personal tira de "15" a "65": primera y última fila donde tira.
+  Clave: `curve`.
+  Fuente: `grid[].rolls.PGA` de `curve.json`.
+  Usada en: acto 5; `aria-label` de la gráfica.
+- Cifra: pagos "10" y "5": la culpa personal gana 10 dentro de esa ventana y 5 fuera; el compromiso
+  específico a la pareja y la culpa general (control) ganan 10 en todo el recorrido.
+  Clave: `curve`.
+  Fuente: `grid[].payoff` de `curve.json`.
+  Usada en: acto 5; gráfica, tabla oculta y momento 3.
+- Cifra: pico en "38", donde más pesa la culpa personal.
+  Clave: `curve`.
+  Fuente: `peak` de `curve.json`.
+  Usada en: acto 5; marca del pico y valor inicial del control deslizante.
 
 ## Formato de una cifra
 

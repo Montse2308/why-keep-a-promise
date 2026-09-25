@@ -60,20 +60,21 @@ function wordCount(text: string): number {
   return text.split(/\s+/).filter((word) => /[\p{L}\p{N}]/u.test(word)).length;
 }
 
-const WRITTEN_ACTS = [1, 2, 3, 4, 6] as const;
+const WRITTEN_ACTS = [1, 2, 3, 4, 5, 6] as const;
 const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: boolean }> = {
   1: { max: 60, tables: true },
   2: { max: 250, tables: true },
   3: { max: 250, tables: false }, // the predictions table comes on top of the budget
   4: { max: 350, tables: true },
+  5: { max: 350, tables: true },
   6: { max: 200, tables: true },
 };
 
 describe('act files', () => {
-  it('exist for acts 1, 2, 3, 4 and 6 in every locale, with the same file names; act 5 waits for F3', () => {
+  it('exist for every act in every locale, with the same file names', () => {
     for (const locale of LOCALES) {
       const names = actFiles.filter((f) => f.locale === locale).map((f) => f.name).sort();
-      expect(names).toEqual(['01-question', '02-dilemma', '03-two-reasons', '04-vanberg', '06-how-its-built']);
+      expect(names).toEqual(['01-question', '02-dilemma', '03-two-reasons', '04-vanberg', '05-finding', '06-how-its-built']);
     }
   });
 
@@ -135,9 +136,25 @@ describe('voice', () => {
     for (const locale of LOCALES) expect(byAct(locale, 2)?.body).toContain('(https://ncase.me/trust/)');
   });
 
-  it('leaves the transition to act 5 unwritten', () => {
+  it("ends act 4 at Vanberg's conclusion and opens act 5 with the transition", () => {
+    const conclusion = { en: "a preference for keeping one's word in itself.", es: 'una preferencia por cumplir la palabra en sí.' };
+    const transition = { en: "Vanberg's design separates", es: 'El diseño de Vanberg separa' };
     for (const locale of LOCALES) {
-      expect(byAct(locale, 4)?.body.trim().endsWith('<p class="todo">TODO(F3): transición al acto 5</p>')).toBe(true);
+      expect(byAct(locale, 4)?.body).not.toContain('TODO(');
+      expect(byAct(locale, 4)?.body.trim().replace(/\s+/g, ' ').endsWith(conclusion[locale])).toBe(true);
+      expect(byAct(locale, 5)?.body.trim().startsWith(transition[locale])).toBe(true);
+    }
+  });
+
+  it("names act 5's three reasons in words, never by the curve's series ids", () => {
+    const names = {
+      en: ['personal guilt', 'partner-specific commitment', 'general guilt'],
+      es: ['culpa personal', 'compromiso específico a la pareja', 'culpa general'],
+    };
+    for (const locale of LOCALES) {
+      const body = readable(byAct(locale, 5)?.body ?? '').replace(/\s+/g, ' ').toLowerCase();
+      for (const name of names[locale]) expect(body).toContain(name);
+      expect(body).not.toMatch(/\b(pga|mc-b|ga)\b/);
     }
   });
 });

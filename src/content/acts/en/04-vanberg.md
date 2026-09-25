@@ -30,5 +30,3 @@ without a switch and 68 with one.
 
 Vanberg (2008) concludes that the effect of promises is not explained by changes in what the other
 person expects, and that it suggests a preference for keeping one's word in itself.
-
-<p class="todo">TODO(F3): transición al acto 5</p>

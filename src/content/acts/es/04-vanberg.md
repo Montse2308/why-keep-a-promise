@@ -30,5 +30,3 @@ cambio y 68 con cambio.
 
 Vanberg (2008) concluye que el efecto de las promesas no se explica por cambios en lo que el otro
 espera, y que sugiere una preferencia por cumplir la palabra en sí.
-
-<p class="todo">TODO(F3): transición al acto 5</p>
