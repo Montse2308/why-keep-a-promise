@@ -35,11 +35,14 @@ toman del diseño publicado de Vanberg (2008), cada cifra citada en `docs/source
 
 ## F2 · Prosa de los actos 1–4 y 6
 
-Prosa en Markdown por idioma para los actos 1, 2, 3, 4 y 6, en EN y ES.
+Prosa en Markdown por idioma para los actos 1, 2, 3, 4 y 6, en EN y ES. El acto 2 distingue la
+matriz del dilema del prisionero del juego de Vanberg (regla (g)).
 
 **Criterio de salida**
 
 - Paridad EN/ES completa de la prosa.
+- El acto 2 muestra la matriz 2×2 del dilema del prisionero como tabla estática y dice que la mesa
+  es otro juego con la misma tensión; nunca los presenta como el mismo juego.
 - Cada cifra citada en el texto tiene su entrada en `docs/sources.md`.
 - Cumple `docs/content-rules.md` (revisión explícita contra cada regla).
 - Donde el texto toque el dilema iterado, enlaza a *The Evolution of Trust* (regla (f)).
@@ -53,17 +56,22 @@ fecha. El motor nunca se importa (ADR 0010).
 **Criterio de salida**
 
 - `src/data/curve.json` incluye su bloque de procedencia completo, y un test lo valida.
+- Dos de las tres series coinciden en todo el recorrido: se muestran encimadas, con una etiqueta
+  que lo diga, sin separarlas.
 - El texto del acto 5 cumple las reglas (b), (d) y (e) de `docs/content-rules.md`.
 - El slider se opera con teclado y anuncia su valor.
 
 ## F4 · Subpáginas
 
 `/dilemma`, `/vanberg`, `/finding` y `/how-its-built` en EN y ES. Reutilizan la mesa o la curva;
-no hay un segundo estilo visual.
+no hay un segundo estilo visual. Cada subpágina solo agrega a su acto (regla (h)).
+
+Si las horas no alcanzan, aquí se decide qué subpágina se pospone.
 
 **Criterio de salida**
 
-- Las cuatro subpáginas con contenido y paridad EN/ES.
+- Las cuatro subpáginas con contenido y paridad EN/ES, o la decisión explícita de cuál se pospone.
+- Ninguna subpágina repite la prosa de su acto.
 - Cada una enlazada desde "Go deeper →" de su acto y desde el footer.
 - `/finding` cumple las reglas (b)–(e).
 
