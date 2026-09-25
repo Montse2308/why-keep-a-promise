@@ -34,7 +34,8 @@ El acto 5 y `/finding` tienen exactamente dos estados de texto:
 ## (d) Lo que no se dice ni se muestra
 
 - Sin bi-estabilidad, saltos ni volteos de población.
-- Sin reproducir tasas de experimentos.
+- No se presenta el modelo como si reprodujera tasas de experimentos. Las cifras publicadas de
+  Vanberg (2008), con cita, sí se muestran (regla (a)).
 - Sin cuatro paneles.
 - Sin "universalism/particularism".
 
@@ -48,6 +49,16 @@ población.
 
 Para el dilema iterado se enlaza a *The Evolution of Trust* (Nicky Case), sin competir con ella:
 la página no construye su propia versión jugable.
+
+## (g) La mesa no es el dilema del prisionero
+
+Roll/Don't es el juego de Vanberg, no la matriz del dilema del prisionero. La página nunca los
+presenta como el mismo juego. El acto 2 muestra la matriz 2×2 como tabla estática y dice que la
+mesa es otro juego con la misma tensión.
+
+## (h) Las subpáginas solo agregan
+
+Una subpágina no repite la prosa de su acto: solo agrega.
 
 ## Además (de `AGENTS.md`)
 
