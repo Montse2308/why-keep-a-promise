@@ -28,7 +28,9 @@ El acto 5 y `/finding` tienen exactamente dos estados de texto:
 
 ## (c) Sin revista, sin PDF
 
-- No se nombra la revista a la que va el manuscrito, en ningún archivo.
+- Ningún archivo dice a qué revista se sometió el manuscrito.
+- Las referencias bibliográficas de terceros llevan su revista, como cualquier bibliografía
+  (ADR 0016).
 - No se publica PDF del manuscrito salvo decisión explícita de Montse en F6.
 
 ## (d) Lo que no se dice ni se muestra
@@ -71,5 +73,6 @@ que las lista. La lista no incluye nombres de revistas (regla (c)).
 ## Además (de `AGENTS.md`)
 
 - No se publica el resultado: ni datos de la curva, ni parámetros del modelo, ni qué motivo paga
-  dónde, hasta la fase que lo autorice y dentro de estas reglas.
+  dónde, hasta la fase que lo autorice y dentro de estas reglas. Desde F3, el acto 5 los muestra
+  solo detrás de su candado (ADR 0015); los parámetros del modelo no se muestran nunca.
 - Sin fechas de sumisión ni correspondencia con autores en ningún archivo (ADR 0011).

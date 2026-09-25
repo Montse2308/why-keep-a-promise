@@ -1,6 +1,6 @@
 # 0011 · Reglas de contenido y fechas
 
-**Estado:** aceptada (F0)
+**Estado:** aceptada (F0). El punto sobre la revista está precisado por el ADR 0016.
 
 ## Contexto
 

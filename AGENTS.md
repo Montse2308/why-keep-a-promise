@@ -32,9 +32,10 @@ Work only on what the current session authorises. If two instructions conflict, 
 | `npm test`        | Vitest, once                                      |
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
+| `npm run verify:dist` | After `build`: fails if act 5's locked content reached `dist/` (ADR 0015) |
 
-`check`, `test` and `build` must be green before every commit. CI (`.github/workflows/ci.yml`) runs
-install → check → test → build on every push and PR.
+`check`, `test`, `build` and `verify:dist` must be green before every commit. CI
+(`.github/workflows/ci.yml`) runs install → check → test → build → verify:dist on every push and PR.
 
 ## Stack
 
@@ -49,10 +50,11 @@ install → check → test → build on every push and PR.
 
 ```
 src/
-  config.ts              author links, manuscript status
+  config.ts              author links, manuscript status (it also opens act 5's lock)
   content.config.ts      the acts content collection (frontmatter schema)
   content/acts/{en,es}/  act prose in Markdown, one file per act (F2)
   content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md
+  data/curve.json        the engine's precomputed curve, copied with provenance; never edited (ADR 0010)
   i18n/en.json, es.json  UI strings, flat keys, full parity
   lib/                   pure, tested modules
     i18n.ts              typed t(); fails check and build on key mismatch
@@ -60,16 +62,22 @@ src/
     routes.ts            buildHref/href/assetHref: every internal link goes through here
     acts.ts              the six acts, their ids and subpage links
     template.ts          fill({name}) placeholders in UI strings
+    lock.ts              act 5's lock: full content only under review or in dev (ADR 0015)
     design/              palette.ts (single source of colour values), colour maths
     table/               game logic for the table: exact payoffs, moments 1–2 state machines
+    curve/               reads curve.json (build time only), step-chart geometry, moment 3 logic
   assets/fonts/          self-hosted woff2 (Newsreader, Inter), OFL licences, provenance
   styles/                tokens.css (mirrors palette.ts, test-checked), base.css
   components/            AuthorStrip, LanguageSwitch, SiteFooter, Act,
-                         table/GameTable + controller.ts (the site's only client script)
+                         table/GameTable + controller.ts (client script, moments 1–2),
+                         curve/Curve + controller.ts (act 5's chart and moment 3, behind the lock),
+                         curve/Locked (the empty stub a locked build uses instead)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers: / and /es/, plus four subpages each
-tests/                   repo-level tests (page parity, prose figures and budgets, forbidden phrases)
+scripts/verify-dist.mjs  checks dist/ against act 5's lock
+tests/                   repo-level tests (page parity, prose figures and budgets, forbidden phrases,
+                         curve figures against curve.json, verify:dist markers)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy)
 scratch/                 local notes, git-ignored, never committed
 ```
@@ -90,8 +98,9 @@ scratch/                 local notes, git-ignored, never committed
 
 ## Prohibited
 
-- **Publishing the result.** No curve data, model parameters, which motive pays where, or content for
-  act 5 or `/finding` beyond the status sentence. Do not change the repository's visibility, do not
+- **Publishing the result.** No curve data, which motive pays where, or content for act 5 or
+  `/finding` beyond the status sentence, except behind act 5's lock (ADR 0015). Model parameters
+  never appear on the page. Do not change the repository's visibility, do not
   enable GitHub Pages, do not run `deploy.yml` (manual-only, F6).
 - **Copying the manuscript or the paper's context.** Do not read or copy the manuscript or its working
   files, wherever they live (local folders, Drive). If something is missing, ask.
@@ -101,7 +110,8 @@ scratch/                 local notes, git-ignored, never committed
 - **Choosing another visual.** The only piece is the table, with three moments. No PixiJS, WebGPU,
   agent canvases, grids or population animations, no four panels, no extra charts, no playable
   dilemma in the main scroll.
-- Naming the journal, submission dates or correspondence with authors in any file.
+- Naming the journal the manuscript was submitted to, submission dates or correspondence with
+  authors in any file. Third-party references carry their journal, as any bibliography (ADR 0016).
 - Inventing personal data (display name, profile URLs, email, photo). Anything not provided goes as
   `TODO(...)`.
 - Writing act prose outside the phase that owns it.

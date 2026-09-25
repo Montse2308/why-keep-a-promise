@@ -3,7 +3,8 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** F2.1 cerrada; F2 en revisión de Montse. F0, F0.1, F1 y F1.1 cerradas.
+**Fase activa:** F3, en revisión de Montse. F2 y F2.1 en revisión de Montse. F0, F0.1, F1 y F1.1
+cerradas.
 
 ## F0 · Esqueleto
 
@@ -88,7 +89,7 @@ en verde.
       misma tensión (regla (g)); una frase con enlace a *The Evolution of Trust* (regla (f)).
 - [x] Acto 3: las dos razones y la tabla de predicciones.
 - [x] Acto 4: diseño en el orden del momento 2, resultados y conclusión atribuida a Vanberg (2008).
-      Cierre: `TODO(F3): transición al acto 5`.
+      Cierre: el marcador de la transición al acto 5, que F3 resolvió.
 - [x] Acto 6: cómo está hecho. Enlace al motor: `TODO(launch)`, paso 8 del checklist.
 - [x] Registro de cifras y citas (`src/content/figures.ts`) con test de números, citas, paridad
       EN/ES y claves de `docs/sources.md`.
@@ -108,6 +109,32 @@ en verde.
 - [x] Acto 6: sin "no da detalles"; pagos de las instrucciones, tasas y apuestas de los datos.
 - [x] `docs/sources.md`: Charness y Dufwenberg (2006), Battigalli y Dufwenberg (2007), la ficha de
       Vanberg (2008) y Case (2017), verificadas.
+
+## F3 · Acto 5 + momento 3
+
+- [x] `src/data/curve.json` copiado del motor por Montse (commit `68bc4ba…`), sin cambios. Test de
+      procedencia (ADR 0010): `schemaVersion` 1, commit de 40 hex, 18 filas ordenadas por confianza
+      de fondo con denominador 100, pagos enteros, series `PGA`, `MC-b` y `GA`.
+- [x] Lectura pura de la curva en `src/lib/curve/` (`curve.ts`, `chart.ts`, `moment3.ts`), con
+      tests. La página no recalcula el modelo ni interpola; el cliente no importa el JSON.
+- [x] Cifras de la curva en la prosa (ventana 15–65, pagos 5 y 10, eje de 0 a 76, pico en 38)
+      comprobadas contra el JSON en `tests/curve.test.ts`.
+- [x] Candado del acto 5 (ADR 0015): contenido completo solo con `'under-review'` o en `dev`; si no,
+      título y frase de estado. Plugin `lockFinding` en `astro.config.mjs`.
+- [x] `npm run verify:dist` en `ci.yml` y `deploy.yml`, después de `build`.
+- [x] Acto 4 termina en la conclusión de Vanberg; la transición es la primera frase del acto 5.
+- [x] Prosa EN/ES del acto 5 (312 y 332 palabras, tope 350), con las seis afirmaciones en orden.
+- [x] Gráfica escalonada en SVG estático, sin JS: tres series, etiquetas directas, pico en 38,
+      `role="img"` con `aria-label` y tabla oculta con las 18 filas.
+- [x] Tres colores nuevos (`series-1` … `series-3`) en `palette.ts` y `tokens.css`, con tests de
+      contraste y de daltonismo.
+- [x] Momento 3: control deslizante sobre las 18 filas, `aria-valuetext`, cursor, pago de cada
+      razón, si la culpa personal tira, anuncio en `aria-live`.
+- [x] ADR 0015 (candado y `verify:dist`), ADR 0016 (regla (c)); `content-rules.md`,
+      `launch-checklist.md` (paso 4), `sources.md` y `AGENTS.md`.
+- [ ] Revisión de la prosa del acto 5 por Montse.
+- [ ] Decidir la frase del acto 6 "Your browser runs a single script… and it is the table's": con
+      el candado abierto hay dos scripts, los dos de la mesa (momentos 1–2 y momento 3).
 
 ## Preguntas abiertas
 
