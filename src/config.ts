@@ -1,7 +1,6 @@
 export const AUTHOR = {
   github: 'https://github.com/Montse2308',
-  // TODO(F1): LinkedIn profile URL, pending from Montse. The link stays hidden while empty.
-  linkedin: '',
+  linkedin: 'https://www.linkedin.com/in/montserrat-ximena-hernández-gallegos-536195276',
 } as const;
 
 /**

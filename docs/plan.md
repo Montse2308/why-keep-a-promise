@@ -22,8 +22,8 @@ Un solo hilo en scroll, en seis actos (ADR 0002):
 | 6 | `how-its-built` | Cómo está hecho | `/how-its-built` |
 
 - **Hero:** la pregunta "Why keep a promise that no longer pays?" y la pieza visual.
-- **Franja fija arriba:** la autora (Montse Hernández) y enlaces a GitHub y LinkedIn, más el
-  switch EN/ES.
+- **Franja fija arriba:** el nombre de la autora (clave `author.name`) y enlaces a GitHub y
+  LinkedIn (`AUTHOR` en `src/config.ts`), más el switch EN/ES.
 - **Footer:** enlaces a las subpáginas.
 
 ## La pieza visual: la mesa
