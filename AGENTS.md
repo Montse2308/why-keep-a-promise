@@ -95,5 +95,7 @@ scratch/                 local notes, git-ignored, never committed
   agent canvases, grids or population animations, no four panels, no extra charts, no playable
   dilemma in the main scroll.
 - Naming the journal, submission dates or correspondence with authors in any file.
+- Inventing personal data (display name, profile URLs, email, photo). Anything not provided goes as
+  `TODO(...)`.
 - Writing act prose outside the phase that owns it.
 - Adding dependencies outside the stack without asking.
