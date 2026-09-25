@@ -1,6 +1,6 @@
 export const AUTHOR = {
   github: 'https://github.com/Montse2308',
-  linkedin: 'https://www.linkedin.com/in/montserrat-ximena-hernández-gallegos-536195276',
+  linkedin: 'https://www.linkedin.com/in/montserrat-ximena-hern%C3%A1ndez-gallegos-536195276',
 } as const;
 
 /**
