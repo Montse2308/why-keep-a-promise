@@ -3,7 +3,7 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** F1, en curso. F0 y F0.1 cerradas.
+**Fase activa:** F1.1 cerrada; F2 pendiente de autorización. F0, F0.1 y F1 cerradas.
 
 ## F0 · Esqueleto
 
@@ -47,19 +47,18 @@ en verde.
       fuentes de Astro (proveedor `local`), `font-display: swap`, fallbacks métricos y precarga
       del texto. JetBrains Mono, diferida a F4.
 - [x] Favicon propio: cara de dado con los dos colores de rol (el de Astro, fuera).
-- [ ] Verificar en Vanberg (2008) los pagos y el diseño del juego, con página; quitar
-      `TODO(verify-vanberg)` de `docs/sources.md` y `src/lib/table/game.ts`. **Pendiente de
-      Montse.**
+- [x] Verificar en Vanberg (2008) los pagos y el diseño del juego, con página (F1.1: Suppl. A,
+      p. 2; Suppl. B, p. 1).
 - [x] Lógica pura de la mesa en `src/lib/table/` (pagos con aritmética exacta, RNG inyectable,
       máquinas de estado de los momentos 1 y 2, expectativa del receptor) con tests.
 - [x] Momento 1 en el acto 1: Roll / Don't Roll sin promesa, pago propio contra el del otro,
       esperado y realizado.
 - [x] Momento 2 en el acto 4: promesa → sorteo → Roll / Don't; lo que espera el otro no cambia con
       el sorteo (test del invariante).
-- [ ] Momento 2: lo que hicieron los participantes reales (con cita). Hoy es un placeholder
-      `TODO(vanberg-rates)`. **Pendiente de las cifras de Montse.**
-- [ ] Medidor con niveles numéricos de expectativa. Hoy muestra niveles cualitativos
-      (`TODO(vanberg-beliefs)`). **Pendiente de las cifras de Montse.**
+- [x] Momento 2: lo que hicieron los participantes reales, con cita (F1.1: titular 73 % contra
+      54 % y las cuatro celdas, con la del visitante resaltada).
+- [x] Medidor con niveles numéricos de expectativa (F1.1: 69 / 100 y 48 / 100, creencia de primer
+      orden del receptor).
 - [x] Teclado completo y foco visible en la mesa; el foco pasa al primer control del paso
       siguiente.
 - [x] Resultados anunciados en una región `aria-live`.
@@ -68,13 +67,25 @@ en verde.
 - [x] `<noscript>`: tabla estática de pagos.
 - [x] ADR 0014: dirección visual, roles de color y movimiento.
 
+## F1.1 · Cifras de Vanberg desde el material suplementario
+
+- [x] Pagos y dado (Suppl. A, p. 2): coinciden con `PAYOFFS`; cerrado `verify-vanberg`.
+- [x] Sorteo de cambio de pareja con probabilidad ½ (Suppl. A, p. 2, Step 3; Suppl. B, p. 1).
+- [x] Medidor con la creencia de primer orden del receptor, en fracciones exactas; cerrado
+      `vanberg-beliefs`.
+- [x] Reveal con las tasas de Roll de los dictadores, en cuentas exactas; cerrado `vanberg-rates`.
+- [x] `docs/sources.md`: cada cifra con su fuente, marcada verificada (suplementos).
+- [ ] PENDIENTE(pdf), no bloquea: cotejar contra las Tablas I–III impresas y agregar su página
+      cuando esté el PDF del artículo.
+
 ## Preguntas abiertas
 
-- Pagos, sorteo, creencias y tasas de Vanberg (2008) con página: `TODO(verify-vanberg)`,
-  `TODO(vanberg-beliefs)`, `TODO(vanberg-rates)` en `docs/sources.md`.
+- Ninguna.
 
 ## Preguntas cerradas
 
+- ~~Pagos, sorteo, creencias y tasas de Vanberg (2008) con página.~~ Resuelta en F1.1 con el
+  material suplementario (`docs/sources.md`).
 - ~~Tipografía para autoalojar en F1.~~ Resuelta en F1: Newsreader + Inter variables, JetBrains
   Mono diferida a F4 (ADR 0014).
 - ~~URL del perfil de LinkedIn.~~ Resuelta en F0.1: está en `AUTHOR.linkedin`.
