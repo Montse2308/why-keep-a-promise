@@ -1,8 +1,22 @@
 ---
+/**
+ * A subpage: the prose of src/content/subpages/<locale>/<slug>.md, with the components its slots
+ * name, and a link back to the act it deepens. What follows the prose's lock marker renders only
+ * behind act 5's lock (ADR 0015, ADR 0017); /finding is locked whole, so a locked build shows its
+ * title and the status sentence and nothing else.
+ */
+import { getCollection } from 'astro:content';
+import BestResponse from '../components/pd/BestResponse.astro';
+import Curve from '../components/curve/Curve.astro';
+import SwitchTable from '../components/vanberg/SwitchTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { MANUSCRIPT_STATUS } from '../config';
 import { actForSubpage } from '../lib/acts';
 import { t, type Locale } from '../lib/i18n';
-import type { Subpage } from '../lib/routes';
+import { findingUnlocked, statusKey } from '../lib/lock';
+import { href, type Subpage } from '../lib/routes';
+import { focusableCode, splitSubpage, type Segment } from '../lib/subpages';
+import { fill } from '../lib/template';
 
 interface Props {
   locale: Locale;
@@ -10,18 +24,81 @@ interface Props {
 }
 
 const { locale, subpage } = Astro.props;
-const heading = t(locale, actForSubpage(subpage).titleKey);
+const act = actForSubpage(subpage);
+const entry = (await getCollection('subpages', (candidate) => candidate.id === `${locale}/${subpage}`))[0];
+if (!entry?.rendered) throw new Error(`No prose for subpage ${locale}/${subpage}`);
+
+const heading = entry.data.title;
+const parts = splitSubpage(focusableCode(entry.rendered.html));
+const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
+const segments: readonly Segment[] = unlocked ? [...parts.open, ...parts.locked] : parts.open;
+const hasLocked = parts.locked.length > 0;
+/** A subpage with nothing open (/finding) shows only its title and the status sentence while locked. */
+const lockedWhole = !unlocked && parts.open.length === 0;
+const showStatus = subpage === 'finding';
+const status = t(locale, statusKey(MANUSCRIPT_STATUS));
+const back = fill(t(locale, 'subpage.back'), { title: t(locale, act.titleKey) });
 ---
 
-<BaseLayout locale={locale} route={subpage} title={`${heading} · ${t(locale, 'site.title')}`}>
-  <article class="container column subpage">
-    <h1>{heading}</h1>
-    <p class="todo">TODO(F4): subpage content</p>
+<BaseLayout locale={locale} route={subpage} title={`${heading} · ${t(locale, 'site.title')}`} codeFont={subpage === 'how-its-built'}>
+  <article class="container column subpage" aria-labelledby="subpage-title" data-locked-content={unlocked && hasLocked ? '' : undefined}>
+    <h1 id="subpage-title">{heading}</h1>
+    {
+      segments.map((segment) =>
+        segment.kind === 'html' ? (
+          <Fragment set:html={segment.html} />
+        ) : segment.name === 'best-response' ? (
+          <BestResponse locale={locale} id="dilemma-best-reply" />
+        ) : segment.name === 'switch-table' ? (
+          <SwitchTable locale={locale} />
+        ) : (
+          <Curve locale={locale} id="finding-guilt" variant="guilt" />
+        ),
+      )
+    }
+    {showStatus && <p class="subpage__status">{status}</p>}
+    {
+      !lockedWhole && (
+        <p class="subpage__back">
+          <a href={href(locale, 'home', act.id)}>{back}</a>
+        </p>
+      )
+    }
   </article>
 </BaseLayout>
 
 <style>
   .subpage {
     padding-block: var(--space-12);
+  }
+
+  .subpage :global(h2) {
+    margin-block: var(--space-12) var(--space-4);
+  }
+
+  /* Like act 5's status sentence and "Go deeper →" link (src/components/Act.astro). */
+  .subpage__status {
+    font-style: italic;
+    color: var(--color-muted);
+  }
+
+  .subpage__back {
+    margin-top: var(--space-8);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    font-weight: 600;
+  }
+
+  .subpage__back a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+  }
+
+  .subpage :global(.table-source) {
+    margin-top: calc(-1 * var(--space-4));
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    color: var(--color-muted);
   }
 </style>

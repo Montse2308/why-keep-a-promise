@@ -1,0 +1,48 @@
+---
+/**
+ * Every cell of Vanberg's (2008) partner-switch treatment, on /vanberg: how often dictators rolled
+ * and what they believed their partner expected. Exact counts live in src/lib/vanberg/cells.ts;
+ * this table shows them rounded. A static prose table, styled like the ones in the acts.
+ */
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { beliefOutOf100, rollPercent, SWITCH_CELLS, type Partner } from '../../lib/vanberg/cells';
+import { fill } from '../../lib/template';
+import type { UiKey } from '../../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const partner: Record<Partner, UiKey> = {
+  same: 'table.switch.same',
+  'new-promised': 'table.reveal.col.switched',
+  'new-unpromised': 'vanberg.partner.new-unpromised',
+};
+---
+
+<table>
+  <caption>{tr('vanberg.table.caption')}</caption>
+  <thead>
+    <tr>
+      <th scope="col">{tr('vanberg.table.cell')}</th>
+      <th scope="col">{tr('vanberg.table.rolled')}</th>
+      <th scope="col">{tr('vanberg.table.belief')}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      SWITCH_CELLS.map((cell) => (
+        <tr>
+          <th scope="row">
+            {tr(cell.promised ? 'table.reveal.row.promised' : 'table.reveal.row.not-promised')} · {tr(partner[cell.partner])}
+          </th>
+          <td>{fill(tr('table.rate'), { p: rollPercent(cell) })}</td>
+          <td>{beliefOutOf100(cell)}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+<p class="table-source">{tr('table.source')}</p>

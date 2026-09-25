@@ -14,4 +14,19 @@ const acts = defineCollection({
   }),
 });
 
-export const collections = { acts };
+/**
+ * Subpage prose, one Markdown file per subpage and locale: src/content/subpages/{en,es}/<slug>.md.
+ * Each deepens one act and only adds to it (docs/content-rules.md, rule (h)). HTML comments mark
+ * where a component goes (`<!-- slot:<name> -->`) and where act 5's lock begins (`<!-- lock -->`),
+ * see src/lib/subpages.ts.
+ */
+const subpages = defineCollection({
+  loader: glob({ pattern: '{en,es}/*.md', base: './src/content/subpages' }),
+  schema: z.object({
+    /** The act this subpage deepens; its "Go deeper →" link leads here. */
+    act: z.number().int().min(1).max(6),
+    title: z.string().min(1),
+  }),
+});
+
+export const collections = { acts, subpages };

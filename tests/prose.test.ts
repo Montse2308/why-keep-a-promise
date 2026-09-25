@@ -5,38 +5,49 @@ import es from '../src/i18n/es.json';
 import { CITATIONS, FIGURES, SOURCE_KEYS } from '../src/content/figures';
 import { ACTS } from '../src/lib/acts';
 import { LOCALES, type Locale } from '../src/lib/locales';
+import { SUBPAGES, type Subpage } from '../src/lib/routes';
 
-const files = import.meta.glob('../src/content/acts/*/*.md', { query: '?raw', import: 'default', eager: true }) as Record<
-  string,
-  string
->;
+type Raw = Record<string, string>;
+const actSources = import.meta.glob('../src/content/acts/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
+const subpageSources = import.meta.glob('../src/content/subpages/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
 
-interface ActFile {
+interface ProseFile {
   locale: Locale;
   name: string;
   data: Record<string, string>;
   body: string;
 }
 
-const actFiles: ActFile[] = Object.entries(files).map(([path, raw]) => {
-  const match = /\/acts\/(\w+)\/([^/]+)\.md$/.exec(path);
-  const parts = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(raw.replace(/\r\n/g, '\n'));
-  if (!match || !parts) throw new Error(`Unreadable act file ${path}`);
-  const data = Object.fromEntries(
-    (parts[1] ?? '').split('\n').map((line) => {
-      const [key, ...rest] = line.split(':');
-      return [key?.trim() ?? '', rest.join(':').trim()];
-    }),
-  );
-  return { locale: match[1] as Locale, name: match[2] ?? '', data, body: parts[2] ?? '' };
-});
+function parse(files: Raw, collection: 'acts' | 'subpages'): ProseFile[] {
+  return Object.entries(files).map(([path, raw]) => {
+    const match = new RegExp(`/${collection}/(\\w+)/([^/]+)\\.md$`).exec(path);
+    const parts = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(raw.replace(/\r\n/g, '\n'));
+    if (!match || !parts) throw new Error(`Unreadable prose file ${path}`);
+    const data = Object.fromEntries(
+      (parts[1] ?? '').split('\n').map((line) => {
+        const [key, ...rest] = line.split(':');
+        return [key?.trim() ?? '', rest.join(':').trim()];
+      }),
+    );
+    return { locale: match[1] as Locale, name: match[2] ?? '', data, body: parts[2] ?? '' };
+  });
+}
+
+const actFiles = parse(actSources, 'acts');
+const subpageFiles = parse(subpageSources, 'subpages');
 
 const byAct = (locale: Locale, act: number) => actFiles.find((f) => f.locale === locale && Number(f.data.act) === act);
+const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
 
-/** The prose a reader sees: no TODO markers, no link targets, no list numbers, no table rules. */
+/**
+ * The prose a reader sees: no TODO markers, no HTML comments (a subpage's slot and lock markers),
+ * no code blocks, no link targets, no list numbers, no table rules.
+ */
 function readable(body: string, { tables = true } = {}): string {
   return body
     .replace(/<(span|p) class="todo">[\s\S]*?<\/\1>/g, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/^```[\s\S]*?^```/gm, ' ')
     .replace(/\]\([^)]*\)/g, ']')
     .replace(/^\s*\d+\.\s/gm, ' ')
     .split('\n')
@@ -45,7 +56,8 @@ function readable(body: string, { tables = true } = {}): string {
     .join('\n');
 }
 
-const CITATION = /(\p{Lu}[\p{L}'-]+(?:\s+(?:and|y)\s+\p{Lu}[\p{L}'-]+)*)\s+\((\d{4})\)/gu;
+/** "Author (year)", or "Author (year, §3.2(ii))" with a section. */
+const CITATION = /(\p{Lu}[\p{L}'-]+(?:\s+(?:and|y)\s+\p{Lu}[\p{L}'-]+)*)\s+\((\d{4})(?:,\s*§\d+(?:\.\d+)*(?:\([ivx]+\))?)?\)/gu;
 const NUMBER = /\d+(?:[/.,]\d+)*/g;
 
 function citationsIn(text: string): string[] {
@@ -60,6 +72,17 @@ function wordCount(text: string): number {
   return text.split(/\s+/).filter((word) => /[\p{L}\p{N}]/u.test(word)).length;
 }
 
+/** Whole sentences as a reader meets them: no Markdown marks, quotes or case, one space between words. */
+function sentences(body: string): string[] {
+  return readable(body, { tables: false })
+    .replace(/^#+\s*(.*)$/gm, '$1.')
+    .replace(/^\s*[-*]\s+/gm, ' ')
+    .replace(/[*_`"«»“”]/g, '')
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.replace(/\s+/g, ' ').trim().toLocaleLowerCase('und'))
+    .filter((sentence) => /\p{L}/u.test(sentence));
+}
+
 const WRITTEN_ACTS = [1, 2, 3, 4, 5, 6] as const;
 const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: boolean }> = {
   1: { max: 60, tables: true },
@@ -69,6 +92,9 @@ const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: 
   5: { max: 420, tables: true },
   6: { max: 200, tables: true },
 };
+
+/** Words per subpage and language, tables not counted (the F4 session's budget). */
+const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 700, 'how-its-built': 600 };
 
 describe('act files', () => {
   it('exist for every act in every locale, with the same file names', () => {
@@ -89,14 +115,30 @@ describe('act files', () => {
   });
 });
 
+describe('subpage files', () => {
+  it('exist for every subpage in every locale, named by its slug', () => {
+    for (const locale of LOCALES) {
+      expect(subpageFiles.filter((f) => f.locale === locale).map((f) => f.name).sort()).toEqual([...SUBPAGES].sort());
+    }
+  });
+
+  it.each(subpageFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s deepens the act that links to it, with its title', (_name, file) => {
+    const act = ACTS[Number(file.data.act) - 1];
+    expect(act?.deeper).toBe(file.name);
+    const dictionary = file.locale === 'en' ? en : es;
+    expect(file.data.title).toBe(act && dictionary[act.titleKey]);
+  });
+});
+
 describe('figures in the prose', () => {
   const allowed = new Set(FIGURES.map((f) => f.value));
+  const proseFiles = [...actFiles, ...subpageFiles.map((f) => ({ ...f, name: `subpage ${f.name}` }))];
 
-  it.each(actFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s uses only registered figures', (_name, file) => {
+  it.each(proseFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s uses only registered figures', (_name, file) => {
     expect(numbersIn(readable(file.body)).filter((n) => !allowed.has(n))).toEqual([]);
   });
 
-  it.each(actFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))(
+  it.each(proseFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))(
     '%s cites only registered works, as "Author (year)"',
     (_name, file) => {
       const registered = new Set(CITATIONS.map((c) => `${c.authors.join('+')} ${c.year}`));
@@ -110,11 +152,26 @@ describe('figures in the prose', () => {
     expect(citationsIn(b ?? '').sort()).toEqual(citationsIn(a ?? '').sort());
   });
 
+  it.each(SUBPAGES)('subpage %s says the same figures and citations in both languages', (subpage) => {
+    const [a, b] = LOCALES.map((locale) => readable(bySubpage(locale, subpage)?.body ?? ''));
+    expect(numbersIn(b ?? '').sort()).toEqual(numbersIn(a ?? '').sort());
+    expect(citationsIn(b ?? '').sort()).toEqual(citationsIn(a ?? '').sort());
+  });
+
   it('rejects an unregistered number and a bare year', () => {
     const allowedNumbers = (text: string) => numbersIn(text).filter((n) => !allowed.has(n));
     expect(allowedNumbers('About 75% rolled.')).toEqual(['75']);
     expect(allowedNumbers('In 2008 the study ran.')).toEqual(['2008']);
     expect(allowedNumbers('As Vanberg (2008) shows, 73% rolled.')).toEqual([]);
+  });
+
+  it('reads a citation with a section as a citation, not as figures', () => {
+    expect(citationsIn('as Kawagoe and Narita (2014, §3.2(ii)) derive')).toEqual(['Kawagoe+Narita 2014']);
+    expect(numbersIn('as Kawagoe and Narita (2014, §3.2(ii)) derive')).toEqual([]);
+  });
+
+  it('does not check code blocks or markers as prose', () => {
+    expect(numbersIn(readable('Text.\n\n```ts\nconst x = 200;\n```\n\n<!-- slot:guilt-chart -->\n'))).toEqual([]);
   });
 
   it('points every figure and citation at an entry in docs/sources.md', () => {
@@ -132,8 +189,29 @@ describe('voice', () => {
     },
   );
 
+  it.each(LOCALES.flatMap((locale) => SUBPAGES.map((subpage) => [locale, subpage] as const)))(
+    '%s subpage %s stays within its word budget, tables not counted',
+    (locale, subpage) => {
+      expect(wordCount(readable(bySubpage(locale, subpage)?.body ?? '', { tables: false }))).toBeLessThanOrEqual(SUBPAGE_BUDGET[subpage]);
+    },
+  );
+
   it('links the iterated dilemma to The Evolution of Trust in act 2, in both languages', () => {
     for (const locale of LOCALES) expect(byAct(locale, 2)?.body).toContain('(https://ncase.me/trust/)');
+  });
+
+  it("ends /dilemma's paragraph on the repeated dilemma with the link to The Evolution of Trust", () => {
+    for (const locale of LOCALES) {
+      const paragraph = (bySubpage(locale, 'dilemma')?.body ?? '').split(/\n\s*\n/).find((p) => p.includes('Tit-for-Tat')) ?? '';
+      expect(paragraph).toContain('(https://ncase.me/trust/)');
+      expect(paragraph.trim()).toMatch(/Case \(2017\)\.$/);
+    }
+  });
+
+  it("quotes Vanberg's abstract on /dilemma, and marks the Spanish as a translation of our own", () => {
+    const quote = 'Numerous psychological and economic experiments have shown that the exchange of promises greatly enhances cooperative behavior in experimental games.';
+    expect(bySubpage('en', 'dilemma')?.body.replace(/\s+/g, ' ')).toContain(`"${quote}"`);
+    expect(bySubpage('es', 'dilemma')?.body.replace(/\s+/g, ' ')).toMatch(/«[^»]+» \(traducción propia\)/);
   });
 
   it("ends act 4 at Vanberg's conclusion and opens act 5 with the transition", () => {
@@ -146,15 +224,41 @@ describe('voice', () => {
     }
   });
 
-  it("names act 5's three reasons in words, never by the curve's series ids", () => {
+  it("names act 5's and /finding's reasons in words, never by the curve's series ids", () => {
     const names = {
       en: ['personal guilt', 'partner-specific commitment', 'general guilt'],
       es: ['culpa personal', 'compromiso específico a la pareja', 'culpa general'],
     };
     for (const locale of LOCALES) {
-      const body = readable(byAct(locale, 5)?.body ?? '').replace(/\s+/g, ' ').toLowerCase();
-      for (const name of names[locale]) expect(body).toContain(name);
-      expect(body).not.toMatch(/\b(pga|mc-b|ga)\b/);
+      for (const file of [byAct(locale, 5), bySubpage(locale, 'finding')]) {
+        const body = readable(file?.body ?? '').replace(/\s+/g, ' ').toLowerCase();
+        for (const name of names[locale]) expect(body).toContain(name);
+        expect(body).not.toMatch(/\b(pga|mc-b|ga)\b/);
+      }
     }
+  });
+
+  it('marks unwritten content only with TODO(launch), the engine link of step 8', () => {
+    for (const file of subpageFiles) {
+      expect([...file.body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1]).every((phase) => phase === 'launch'), `${file.locale}/${file.name}`).toBe(true);
+    }
+  });
+});
+
+describe('subpages only add to their act (rule (h))', () => {
+  it('splits prose into whole sentences', () => {
+    expect(sentences('## A title\n\nOne *sentence*. Another "one"!\n\n- A list item.')).toEqual(['a title.', 'one sentence.', 'another one!', 'a list item.']);
+  });
+
+  it.each(subpageFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s shares no whole sentence with its act', (_name, file) => {
+    const act = new Set(sentences(byAct(file.locale, Number(file.data.act))?.body ?? ''));
+    expect(sentences(file.body).filter((sentence) => act.has(sentence))).toEqual([]);
+  });
+
+  it('would catch a sentence copied from the act', () => {
+    const act = byAct('en', 2)?.body ?? '';
+    const copied = sentences(act)[2] ?? '';
+    expect(copied.length).toBeGreaterThan(0);
+    expect(new Set(sentences(act)).has(sentences(`Intro. ${copied}`)[1] ?? '')).toBe(true);
   });
 });

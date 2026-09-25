@@ -4,6 +4,10 @@
  * src/data/curve.json (ADR 0010), readable without JavaScript, plus a visually hidden table of every
  * row. With JavaScript, a slider moves a cursor over the grid rows (./controller.ts).
  *
+ * `variant="guilt"` is /finding's second chart (ADR 0017): the guilt available at each grid row,
+ * with the threshold above which personal guilt rolls and its peak. Same frame and style, static,
+ * no slider, from src/lib/curve/finding.ts.
+ *
  * Render this only inside act 5's lock (src/lib/lock.ts, ADR 0015). While the lock is closed, a build
  * resolves this file to ./Locked.astro (astro.config.mjs), so its markup, style, script and data
  * never reach dist/; `npm run verify:dist` checks that.
@@ -11,7 +15,8 @@
 import { useTranslations, type Locale } from '../../lib/i18n';
 import { stepLine, xPercent, yPixel, type Frame, type Segment } from '../../lib/curve/chart';
 import { payoffLevels, pullWindow, REASONS, type Reason } from '../../lib/curve/curve';
-import { CURVE } from '../../lib/curve/data';
+import { CURVE, FINDING } from '../../lib/curve/data';
+import { guiltPeak, hundredths } from '../../lib/curve/finding';
 import { indexOf, pullsText, valueText } from '../../lib/curve/moment3';
 import { curveStrings } from '../../lib/curve/strings';
 import { fill } from '../../lib/template';
@@ -20,9 +25,11 @@ interface Props {
   locale: Locale;
   /** Unique on the page; prefixes every id inside the figure. */
   id: string;
+  /** `payoff`: act 5's chart and moment 3. `guilt`: /finding's chart of the guilt available. */
+  variant?: 'payoff' | 'guilt';
 }
 
-const { locale, id } = Astro.props;
+const { locale, id, variant = 'payoff' } = Astro.props;
 const tr = useTranslations(locale);
 const strings = curveStrings(tr);
 const { rows, axis, peak } = CURVE;
@@ -52,8 +59,34 @@ const startRow = rows[start];
 const summary = fill(tr('curve.summary'), { min: axis.min, max: axis.max, high, low, from: window.from, to: window.to, peak });
 const clientRows = JSON.stringify(rows);
 const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y(segment.y1), y2: y(segment.y2) });
+
+// The guilt chart, in hundredths of guilt; the threshold is cost / θ.
+const guiltRows = FINDING.rows;
+const top = guiltPeak(guiltRows);
+const guiltFrame: Frame = { zero: 200, top: 40, high: top.guilt };
+const gy = (hundredthsOfGuilt: number) => yPixel(hundredthsOfGuilt, guiltFrame);
+const threshold = (100 * FINDING.threshold.num) / FINDING.threshold.den;
+const thresholdText = `${FINDING.threshold.num}/${FINDING.threshold.den}`;
+const ends = [guiltRows[0], guiltRows.at(-1)];
+if (ends.some((row) => row?.guilt !== 0)) throw new Error('The guilt chart summary says the guilt is zero at both ends');
+const guiltSummary = fill(tr('curve.guilt.summary'), {
+  min: axis.min,
+  max: axis.max,
+  zero: hundredths(0),
+  peak: top.trust,
+  top: hundredths(top.guilt),
+  threshold: thresholdText,
+  from: window.from,
+  to: window.to,
+});
+const guiltTicks = [
+  { at: 0, label: hundredths(0) },
+  { at: threshold, label: thresholdText },
+  { at: top.guilt, label: hundredths(top.guilt) },
+];
 ---
 
+{variant === 'payoff' ? (
 <figure class="curve wide" id={id} data-locked-content data-curve data-rows={clientRows} data-axis={JSON.stringify(axis)} data-frame={JSON.stringify(frame)} data-start={start} data-strings={JSON.stringify(strings)} aria-labelledby={`${id}-caption`}>
   <p class="cv-axis-title" aria-hidden="true">{tr('curve.axis.y')}</p>
   <div class="cv-plot">
@@ -137,6 +170,73 @@ const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y
 
   <figcaption class="cv-caption" id={`${id}-caption`}>{tr('curve.caption')}</figcaption>
 </figure>
+) : (
+<figure class="curve wide" id={id} data-locked-content aria-labelledby={`${id}-caption`}>
+  <ul class="cv-legend" role="list">
+    <li>
+      <svg class="cv-swatch cv-swatch--dot" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><circle class="cv-dot cv-dot--pulls" cx="6" cy="6" r="4" /></svg>
+      {tr('curve.guilt.legend.pulls')}
+    </li>
+    <li>
+      <svg class="cv-swatch cv-swatch--dot" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><circle class="cv-dot cv-dot--not" cx="6" cy="6" r="4" /></svg>
+      {tr('curve.guilt.legend.not')}
+    </li>
+    <li>
+      <svg class="cv-swatch" viewBox="0 0 20 8" aria-hidden="true" focusable="false"><line class="cv-threshold" x1="0" x2="20" y1="4" y2="4" /></svg>
+      {fill(tr('curve.guilt.threshold'), { value: thresholdText })}
+    </li>
+  </ul>
+  <p class="cv-axis-title" aria-hidden="true">{tr('curve.guilt.axis.y')}</p>
+  <div class="cv-plot">
+    <svg class="cv-svg" width="100%" height="248" role="img" aria-label={guiltSummary}>
+      <line class="cv-grid" x1="0" x2="100%" y1={gy(0)} y2={gy(0)} />
+      <line class="cv-grid" x1="0" x2="100%" y1={gy(top.guilt)} y2={gy(top.guilt)} />
+      {guiltTicks.map((tick) => <text class="cv-tick" x="-8" y={gy(tick.at) + 4} text-anchor="end">{tick.label}</text>)}
+      {guiltRows.map((row) => <line class="cv-minor" x1={x(row.trust)} x2={x(row.trust)} y1={Y_ZERO} y2={Y_ZERO + 4} />)}
+      {
+        xTicks.map((tick) => (
+          <>
+            <line class="cv-major" x1={x(tick)} x2={x(tick)} y1={Y_ZERO} y2={Y_ZERO + 7} />
+            <text class="cv-tick" x={x(tick)} y={Y_ZERO + 22} text-anchor={tick === axis.min ? 'start' : tick === axis.max ? 'end' : 'middle'}>{tick}</text>
+          </>
+        ))
+      }
+      <line class="cv-peak" x1={x(top.trust)} x2={x(top.trust)} y1={gy(top.guilt) + 8} y2={Y_ZERO} />
+      <text class="cv-tick" x={x(top.trust)} y={gy(top.guilt) - 12} text-anchor="middle">{fill(tr('curve.guilt.peak'), { value: hundredths(top.guilt) })}</text>
+      <line class="cv-threshold" x1="0" x2="100%" y1={gy(threshold)} y2={gy(threshold)} />
+      {guiltRows.map((row) => <circle class={`cv-dot ${row.pulls ? 'cv-dot--pulls' : 'cv-dot--not'}`} cx={x(row.trust)} cy={gy(row.guilt)} r="5" />)}
+    </svg>
+    <p class="cv-axis-title cv-axis-title--x" aria-hidden="true">{tr('curve.axis.x')}</p>
+  </div>
+
+  {/* A table ignores width and overflow, so the div does the hiding and keeps the page from scrolling sideways. */}
+  <div class="visually-hidden">
+  <table>
+    <caption>{tr('curve.guilt.table.caption')}</caption>
+    <thead>
+      <tr>
+        <th scope="col">{tr('curve.table.trust')}</th>
+        <th scope="col">{tr('curve.guilt.table.guilt')}</th>
+        <th scope="col">{tr('curve.guilt.table.pulls')}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        guiltRows.map((row) => (
+          <tr>
+            <th scope="row">{fill(strings['curve.trust.value'], { n: row.trust })}</th>
+            <td>{hundredths(row.guilt)}</td>
+            <td>{tr(row.pulls ? 'curve.guilt.yes' : 'curve.guilt.no')}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  </div>
+
+  <figcaption class="cv-caption" id={`${id}-caption`}>{tr('curve.guilt.caption')}</figcaption>
+</figure>
+)}
 
 <script>
   import { mountAll } from './controller';
@@ -328,6 +428,46 @@ const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y
   .cv-caption {
     margin: var(--space-4) 0 0;
     color: var(--color-muted);
+  }
+
+  /* The guilt chart (/finding): filled or hollow dots, so rolling is told by shape, not colour alone. */
+  .cv-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin: 0 0 var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .cv-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .cv-swatch--dot {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .cv-dot {
+    stroke: var(--color-series-1);
+    stroke-width: 2;
+  }
+
+  .cv-dot--pulls {
+    fill: var(--color-series-1);
+  }
+
+  .cv-dot--not {
+    fill: var(--color-surface);
+  }
+
+  .cv-threshold {
+    stroke: var(--color-fg);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 4;
   }
 
 </style>
