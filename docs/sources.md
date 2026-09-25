@@ -133,7 +133,8 @@ arriba. Por eso el camino con cambio del visitante siempre resalta una de esas d
 
 Verificadas en F4 contra los PDF públicos de Suppl. A y Suppl. B y contra `switch.dat` y
 `baseline.dat` del suplemento de datos, leídos fuera del repo con el método de `promises.do`. Los
-archivos siguen fuera del repo. Pendiente de la confirmación de Montse al revisar F4.
+archivos siguen fuera del repo. Montse confirmó en F4.1 los datos de diseño (las cuatro primeras
+cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl. B.
 
 - Cifra: el diseño completo. "8" rondas; en cada una, otra persona elegida al azar, nunca la misma
   dos veces; al final se sortea una de las 8 rondas y solo esa se paga; los roles se sortean de nuevo
@@ -141,16 +142,17 @@ archivos siguen fuera del repo. Pendiente de la confirmación de Montse al revis
   quién escribe primero.
   Clave: `vanberg-procedure`.
   Fuente: Suppl. A, p. 1 (rondas, parejas, pago, Step 1 y Step 2); Suppl. B, p. 1, Screen 1 (los
-  mensajes se alternan).
+  mensajes se alternan). **Verificada por Montse (F4.1).**
   Usada en: `/vanberg` (`src/content/subpages/{en,es}/vanberg.md`).
 - Cifra: el dictador con cambio de pareja puede leer los dos chats: el suyo y el de su nueva pareja
   con otra persona.
   Clave: `vanberg-procedure`.
-  Fuente: Suppl. B, p. 2, Screen 3A–switch.
+  Fuente: Suppl. B, p. 2, Screen 3A–switch. **Verificada por Montse (F4.1).**
   Usada en: `/vanberg`.
 - Cifra: al final de cada ronda, el receptor solo ve su propio pago.
   Clave: `vanberg-procedure`.
   Fuente: Suppl. A, p. 2, "Information at the end of a round"; Suppl. B, p. 3, Screen 7B.
+  **Verificada por Montse (F4.1).**
   Usada en: `/vanberg`.
 - Cifra: apuestas con incentivo. El receptor gana "65", "60", "50", "35" o "15" centavos según lo que
   apostó y lo que hizo el dictador: 65 / 60 / 50 / 35 / 15 si el dictador tira, y 15 / 35 / 50 / 60 / 65
@@ -158,7 +160,7 @@ archivos siguen fuera del repo. Pendiente de la confirmación de Montse al revis
   apuesta del receptor. Las apuestas se pagan en las rondas no sorteadas para la decisión.
   Clave: `vanberg-guessing`.
   Fuente: Suppl. B, pp. 2–3, Screen 5B (receptor); Suppl. B, p. 3, Screen 6A (dictador); Suppl. A,
-  p. 2, "Bonus: Guessing" (en qué rondas se pagan).
+  p. 2, "Bonus: Guessing" (en qué rondas se pagan). **Verificada por Montse (F4.1).**
   Usada en: `/vanberg`.
 - Cifra: las seis celdas del tratamiento con cambio de pareja. Decisiones de dictadores
   (`type == 1`), por promesa (`promise`), cambio (`switch`) y si la pareja nueva recibió una promesa
@@ -268,9 +270,11 @@ archivos siguen fuera del repo. Pendiente de la confirmación de Montse al revis
 - **Uso:** la culpa personal: te duele defraudar una expectativa solo si tú la creaste (acto 5). En
   su especificación, la culpa personal es el producto de dos cantidades: la expectativa que ya había
   y lo que tu promesa le agregó (tercer párrafo del acto 5, sin cifras). En `/finding`: que la culpa
-  personal es cero con cambio de pareja lo derivan ellos mismos, en su §3.2(ii), citado como
-  "Kawagoe and Narita (2014, §3.2(ii))".
-- **Verificada:** sí (Montse, F3). La sección §3.2(ii) la indicó Montse en F4.
+  personal es cero con cambio de pareja lo derivan ellos mismos, citado como "Kawagoe and Narita
+  (2014)", sin número de sección.
+- **Verificada:** sí (Montse, F3). La derivación de culpa personal cero con cambio de pareja,
+  **verificada** contra la lectura de Montse del working paper (SSRN 1704884), en F4.1. La numeración
+  de secciones del working paper no se cita: no aplica a la versión publicada.
 - **Cifras:** —
 
 ### Curva del motor (`src/data/curve.json`)

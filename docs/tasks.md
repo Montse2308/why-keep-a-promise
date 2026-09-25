@@ -3,8 +3,8 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** F4, en revisión de Montse. F2, F2.1, F3 y F3.1 en revisión de Montse. F0, F0.1,
-F1 y F1.1 cerradas.
+**Fase activa:** F4.1, en revisión de Montse. F2, F2.1, F3, F3.1 y F4 en revisión de Montse. F0,
+F0.1, F1 y F1.1 cerradas.
 
 ## F0 · Esqueleto
 
@@ -190,10 +190,32 @@ F1 y F1.1 cerradas.
       sigue por verificar), ADR 0017, `AGENTS.md`, `content-rules.md` y `launch-checklist.md`
       (pasos 4 y 8).
 - [ ] Revisión de la prosa de las cuatro subpáginas por Montse.
-- [ ] Confirmar las cifras nuevas de `/vanberg` (`sources.md`, "Cifras de `/vanberg` (F4)").
-- [ ] F5: con el candado abierto, la tabla oculta de la gráfica del acto 5 ensancha la página de
-      inicio a 360 px (653 px). La de `/finding` se corrigió envolviéndola en un `div` oculto; la
-      del acto 5 es del momento 3 y queda para F5.
+- [x] Confirmar los datos de diseño de `/vanberg` (`sources.md`, "Cifras de `/vanberg` (F4)"):
+      confirmados por Montse en F4.1.
+
+## F4.1 · Correcciones de `/finding` y fuentes verificadas
+
+- [x] `/finding`: la cita de Kawagoe y Narita (2014) va sin número de sección (la numeración es la
+      del working paper y no aplica a la versión publicada).
+- [x] `/finding`: nueva frase que introduce la tabla de cuatro razones (versión general y una más
+      estrecha de cada razón).
+- [x] `/finding`: θ definida la primera vez que aparece: cuánto pesa una unidad de culpa frente a una
+      unidad de dinero.
+- [x] `sources.md`: datos de diseño de `/vanberg` verificados por Montse contra Suppl. A y Suppl. B;
+      la derivación de Kawagoe y Narita (2014), verificada contra su lectura del working paper
+      (SSRN 1704884), sin citar su numeración de secciones.
+
+## F5 · QA
+
+Pendientes que dejó F4 (se trabajan en F5, no antes):
+
+- [ ] Con el candado abierto, la tabla oculta de la gráfica del acto 5 ensancha la página de inicio
+      a 653 px en un viewport de 360 px: una `<table>` ignora `width` y `overflow`. La de `/finding`
+      se corrigió en F4 envolviéndola en un `div` oculto; la del acto 5 es del momento 3.
+- [ ] Con el candado abierto, `/finding` carga el script del momento 3 (el de `Curve.astro`), que no
+      encuentra un control deslizante y no hace nada.
+- [ ] El comentario de `src/components/table/controller.ts` dice "the site's only JavaScript"; ya no
+      es cierto desde F3 (momento 3) ni desde F4 (mejor respuesta de `/dilemma`, ADR 0017).
 
 ## Preguntas abiertas
 
