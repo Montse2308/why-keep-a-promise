@@ -56,7 +56,6 @@ src/
     locales.ts           locale list, no dictionary imports (safe for client scripts)
     routes.ts            buildHref/href/assetHref: every internal link goes through here
     acts.ts              the six acts, their ids and subpage links
-    lang-pref.ts         remembered EN/ES choice
     table/               game logic for the table (F1)
   components/            AuthorStrip, LanguageSwitch, SiteFooter, Act, table/GameTable
   layouts/BaseLayout.astro
@@ -72,8 +71,8 @@ scratch/                 local notes, git-ignored, never committed
 - **Languages.** Code, comments, commits, file names and `README.md` in English; `README.es.md` is its
   copy. Everything in `docs/` is in Spanish, one copy only. The site has full EN/ES parity.
 - **i18n.** UI text lives in keys in `src/i18n/*.json`; a key in one locale and not the other breaks
-  the build. Act prose goes in Markdown per locale (from F2). The EN/ES switch maps to the same route
-  in the other locale and remembers the choice.
+  the build. Act prose goes in Markdown per locale (from F2). The EN/ES switch is a plain link to the
+  same route in the other locale: no stored preference, no redirect, no JavaScript (ADR 0013).
 - **Links.** Every internal link uses `href()` / `buildHref()` / `assetHref()` from `src/lib/routes.ts`,
   so `base` (`/why-keep-a-promise`) is always respected. Never hard-code `/…` paths.
 - **Placeholders.** Unwritten content is marked `TODO(Fx)` with the phase that writes it.

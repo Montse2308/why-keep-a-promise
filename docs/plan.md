@@ -60,7 +60,8 @@ Cada ruta existe también en `/es/` con paridad completa.
 - Texto de interfaz en claves: `src/i18n/en.json` y `src/i18n/es.json`. Una clave que existe en un
   idioma y no en el otro rompe `npm run check` y `npm run build`.
 - La prosa de los actos va en Markdown por idioma, desde F2.
-- El botón EN/ES lleva a la misma ruta en el otro idioma y recuerda la elección.
+- El botón EN/ES es un enlace a la misma ruta en el otro idioma; no guarda preferencia ni
+  redirige, así que un enlace compartido abre siempre el idioma de su URL (ADR 0013).
 - Idioma de los artefactos: ADR 0006.
 
 ## Hosting
