@@ -1,4 +1,5 @@
 ---
+import { getCollection, render } from 'astro:content';
 import Act from '../components/Act.astro';
 import GameTable from '../components/table/GameTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -11,14 +12,24 @@ interface Props {
 
 const { locale } = Astro.props;
 const title = t(locale, 'site.title');
+
+// Act prose from src/content/acts/<locale>/; an act without a file (act 5 until F3) shows its TODO.
+const entries = await getCollection('acts', (entry) => entry.id.startsWith(`${locale}/`));
+const acts = await Promise.all(
+  ACTS.map(async (act, index) => {
+    const entry = entries.find((candidate) => candidate.data.act === index + 1);
+    return { act, entry, Content: entry ? (await render(entry)).Content : null };
+  }),
+);
 ---
 
 <BaseLayout locale={locale} route="home" title={title}>
   {
-    ACTS.map((act) => (
-      <Act act={act} locale={locale} heading={act.id === 'question' ? title : undefined}>
-        {act.id === 'question' && <GameTable mode="moment1" locale={locale} id="table-question" />}
+    acts.map(({ act, entry, Content }) => (
+      <Act act={act} locale={locale} title={entry?.data.title} hero={act.id === 'question'} pending={!Content}>
         {act.id === 'vanberg' && <GameTable mode="moment2" locale={locale} id="table-vanberg" />}
+        {Content && <Content />}
+        {act.id === 'question' && <GameTable mode="moment1" locale={locale} id="table-question" />}
       </Act>
     ))
   }
