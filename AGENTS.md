@@ -56,8 +56,13 @@ src/
     locales.ts           locale list, no dictionary imports (safe for client scripts)
     routes.ts            buildHref/href/assetHref: every internal link goes through here
     acts.ts              the six acts, their ids and subpage links
-    table/               game logic for the table (F1)
-  components/            AuthorStrip, LanguageSwitch, SiteFooter, Act, table/GameTable
+    template.ts          fill({name}) placeholders in UI strings
+    design/              palette.ts (single source of colour values), colour maths
+    table/               game logic for the table: exact payoffs, moments 1–2 state machines
+  assets/fonts/          self-hosted woff2 (Newsreader, Inter), OFL licences, provenance
+  styles/                tokens.css (mirrors palette.ts, test-checked), base.css
+  components/            AuthorStrip, LanguageSwitch, SiteFooter, Act,
+                         table/GameTable + controller.ts (the site's only client script)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers: / and /es/, plus four subpages each
