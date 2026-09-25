@@ -1,0 +1,22 @@
+---
+/**
+ * "The table": the one visual piece of the site, Vanberg's (2008) partner-switching game.
+ * Moment 1 (acts 1–2) and moment 2 (act 4) are built in F1; moment 3 (act 5) arrives in F3.
+ * Game logic goes in pure, tested modules under src/lib/table/.
+ */
+interface Props {
+  moment: 1 | 2;
+}
+
+const { moment } = Astro.props;
+---
+
+<figure class="game-table" data-moment={moment}>
+  <p class="todo">TODO(F1): the table, moment {moment}</p>
+</figure>
+
+<style>
+  .game-table {
+    margin: var(--space-8) 0;
+  }
+</style>

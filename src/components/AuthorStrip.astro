@@ -1,0 +1,57 @@
+---
+import LanguageSwitch from './LanguageSwitch.astro';
+import { AUTHOR } from '../config';
+import { useTranslations, type Locale } from '../lib/i18n';
+import type { Route } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+  route: Route;
+}
+
+const { locale, route } = Astro.props;
+const tr = useTranslations(locale);
+---
+
+<header class="strip">
+  <div class="strip__inner container">
+    <nav class="strip__author" aria-label={tr('strip.label')}>
+      <span class="strip__name">{tr('author.name')}</span>
+      <a href={AUTHOR.github} rel="me noopener">{tr('author.github')}</a>
+      {AUTHOR.linkedin && <a href={AUTHOR.linkedin} rel="me noopener">{tr('author.linkedin')}</a>}
+    </nav>
+    <LanguageSwitch locale={locale} route={route} />
+  </div>
+</header>
+
+<style>
+  .strip {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 10;
+    height: var(--strip-height);
+    background: var(--color-bg);
+    border-bottom: var(--border-width) solid var(--color-border);
+    font-size: var(--text-sm);
+  }
+
+  .strip__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    height: 100%;
+  }
+
+  .strip__author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  .strip__name {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+</style>

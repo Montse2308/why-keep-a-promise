@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, type Locale } from './i18n';
+import { DEFAULT_LOCALE, type Locale } from './locales';
 
 export const SUBPAGES = ['dilemma', 'vanberg', 'finding', 'how-its-built'] as const;
 export type Subpage = (typeof SUBPAGES)[number];

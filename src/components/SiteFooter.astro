@@ -1,0 +1,56 @@
+---
+import { actForSubpage } from '../lib/acts';
+import { useTranslations, type Locale } from '../lib/i18n';
+import { href, SUBPAGES, type Route } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+  route: Route;
+}
+
+const { locale, route } = Astro.props;
+const tr = useTranslations(locale);
+const links: { route: Route; label: string }[] = [
+  { route: 'home', label: tr('footer.home') },
+  ...SUBPAGES.map((subpage) => ({ route: subpage, label: tr(actForSubpage(subpage).titleKey) })),
+];
+---
+
+<footer class="footer">
+  <nav class="container" aria-label={tr('footer.label')}>
+    <ul class="footer__links">
+      {
+        links.map((link) => (
+          <li>
+            <a href={href(locale, link.route)} aria-current={link.route === route ? 'page' : undefined}>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</footer>
+
+<style>
+  .footer {
+    margin-top: var(--space-16);
+    padding-block: var(--space-8);
+    border-top: var(--border-width) solid var(--color-border);
+    font-size: var(--text-sm);
+  }
+
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  [aria-current='page'] {
+    color: var(--color-fg);
+    text-decoration: none;
+  }
+</style>

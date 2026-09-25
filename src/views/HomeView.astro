@@ -1,0 +1,25 @@
+---
+import Act from '../components/Act.astro';
+import GameTable from '../components/table/GameTable.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ACTS } from '../lib/acts';
+import { t, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const title = t(locale, 'site.title');
+---
+
+<BaseLayout locale={locale} route="home" title={title}>
+  {
+    ACTS.map((act) => (
+      <Act act={act} locale={locale} heading={act.id === 'question' ? title : undefined}>
+        {act.id === 'question' && <GameTable moment={1} />}
+        {act.id === 'vanberg' && <GameTable moment={2} />}
+      </Act>
+    ))
+  }
+</BaseLayout>

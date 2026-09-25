@@ -1,9 +1,9 @@
 import en from '../i18n/en.json';
 import es from '../i18n/es.json';
 
-export const LOCALES = ['en', 'es'] as const;
-export type Locale = (typeof LOCALES)[number];
-export const DEFAULT_LOCALE: Locale = 'en';
+import type { Locale } from './locales';
+
+export { DEFAULT_LOCALE, LOCALES, isLocale, otherLocale, type Locale } from './locales';
 
 export type UiKey = keyof typeof en;
 type Dictionary = Readonly<Record<string, unknown>>;
@@ -49,18 +49,10 @@ export function assertParity(dictionaries: Readonly<Record<string, Dictionary>>)
 // Runtime parity: every page imports this module, so a mismatch fails `astro build`.
 assertParity(DICTIONARIES);
 
-export function isLocale(value: unknown): value is Locale {
-  return typeof value === 'string' && (LOCALES as readonly string[]).includes(value);
-}
-
 export function t(locale: Locale, key: UiKey): string {
   return DICTIONARIES[locale][key];
 }
 
 export function useTranslations(locale: Locale): (key: UiKey) => string {
   return (key) => t(locale, key);
-}
-
-export function otherLocale(locale: Locale): Locale {
-  return locale === 'en' ? 'es' : 'en';
 }

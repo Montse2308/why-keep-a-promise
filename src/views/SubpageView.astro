@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { actForSubpage } from '../lib/acts';
+import { t, type Locale } from '../lib/i18n';
+import type { Subpage } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+  subpage: Subpage;
+}
+
+const { locale, subpage } = Astro.props;
+const heading = t(locale, actForSubpage(subpage).titleKey);
+---
+
+<BaseLayout locale={locale} route={subpage} title={`${heading} · ${t(locale, 'site.title')}`}>
+  <article class="container subpage">
+    <h1>{heading}</h1>
+    <p class="todo">TODO(F4): subpage content</p>
+  </article>
+</BaseLayout>
+
+<style>
+  .subpage {
+    padding-block: var(--space-12);
+  }
+</style>

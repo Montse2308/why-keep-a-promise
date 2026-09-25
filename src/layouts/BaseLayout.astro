@@ -1,0 +1,59 @@
+---
+import '../styles/base.css';
+import AuthorStrip from '../components/AuthorStrip.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { DEFAULT_LOCALE, LOCALES, t, type Locale } from '../lib/i18n';
+import { absoluteHref, assetHref, href, type Route } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+  route: Route;
+  title: string;
+}
+
+const { locale, route, title } = Astro.props;
+const site = Astro.site ?? new URL('https://montse2308.github.io');
+// TODO(F5): description and Open Graph tags.
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <link rel="canonical" href={absoluteHref(site, locale, route)} />
+    {LOCALES.map((alt) => <link rel="alternate" hreflang={alt} href={absoluteHref(site, alt, route)} />)}
+    <link rel="alternate" hreflang="x-default" href={absoluteHref(site, DEFAULT_LOCALE, route)} />
+    <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
+    <link rel="icon" href={assetHref('favicon.ico')} />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <a class="skip-link visually-hidden" href={href(locale, route, 'main')}>{t(locale, 'skip.link')}</a>
+    <AuthorStrip locale={locale} route={route} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <SiteFooter locale={locale} route={route} />
+  </body>
+</html>
+
+<style>
+  .skip-link:focus {
+    position: fixed;
+    inset: var(--space-2) auto auto var(--space-2);
+    z-index: 20;
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-sm);
+  }
+
+  main {
+    padding-top: var(--strip-height);
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

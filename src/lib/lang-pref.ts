@@ -1,4 +1,4 @@
-import { isLocale, type Locale } from './i18n';
+import { isLocale, type Locale } from './locales';
 
 export const LANG_PREF_KEY = 'wkap:locale';
 
