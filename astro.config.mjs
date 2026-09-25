@@ -14,14 +14,15 @@ const LATIN_EXT =
  * @param {string} file file prefix in src/assets/fonts/
  * @param {string} weight variable weight range
  * @param {Array<'normal' | 'italic'>} styles
+ * @param {'standard' | 'wght'} [axes] the package's file infix: every axis, or weight only
  */
-function variants(file, weight, styles) {
+function variants(file, weight, styles, axes = 'standard') {
   return styles.flatMap((style) =>
     /** @type {const} */ ([
       ['latin', LATIN],
       ['latin-ext', LATIN_EXT],
     ]).map(([subset, unicodeRange]) => ({
-      src: [`./src/assets/fonts/${file}-${subset}-standard-${style}.woff2`],
+      src: [`./src/assets/fonts/${file}-${subset}-${axes}-${style}.woff2`],
       weight,
       style,
       unicodeRange,
@@ -72,7 +73,11 @@ export default defineConfig({
       prefixDefaultLocale: false,
     },
   },
-  // Serif is what you read (prose, headings); sans is what you touch (the table, UI). ADR 0014.
+  // Code blocks keep Markdown's plain <pre><code>: no syntax colours outside the palette.
+  markdown: {
+    syntaxHighlight: false,
+  },
+  // Serif is what you read (prose, headings); sans is what you touch (the table, UI); mono is code. ADR 0014.
   fonts: [
     {
       provider: fontProviders.local(),
@@ -92,6 +97,17 @@ export default defineConfig({
       display: 'swap',
       options: {
         variants: /** @type {any} */ (variants('inter', '100 900', ['normal'])),
+      },
+    },
+    // Code blocks only, on /how-its-built; never preloaded (ADR 0017).
+    {
+      provider: fontProviders.local(),
+      name: 'JetBrains Mono',
+      cssVariable: '--font-jetbrains-mono',
+      fallbacks: ['ui-monospace', 'monospace'],
+      display: 'swap',
+      options: {
+        variants: /** @type {any} */ (variants('jetbrains-mono', '100 800', ['normal'], 'wght')),
       },
     },
   ],

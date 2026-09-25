@@ -10,9 +10,11 @@ interface Props {
   locale: Locale;
   route: Route;
   title: string;
+  /** Declare JetBrains Mono for the page's code blocks (/how-its-built only; never preloaded). */
+  codeFont?: boolean;
 }
 
-const { locale, route, title } = Astro.props;
+const { locale, route, title, codeFont = false } = Astro.props;
 const site = Astro.site ?? new URL('https://montse2308.github.io');
 // Preload only the text face: Newsreader, normal, latin. The local provider keeps the variant order
 // of astro.config.mjs, where latin comes first; the provider does not tag subsets.
@@ -33,6 +35,7 @@ const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal
     {textFont && <link rel="preload" href={textFont.url} as="font" type="font/woff2" crossorigin />}
     <Font cssVariable="--font-serif" />
     <Font cssVariable="--font-sans" />
+    {codeFont && <Font cssVariable="--font-jetbrains-mono" />}
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>

@@ -170,6 +170,23 @@ textarea {
   margin-top: var(--space-2);
 }
 
+/* Code blocks (/how-its-built): JetBrains Mono, only here (ADR 0014, ADR 0017). */
+.column > pre {
+  margin-block: var(--space-6);
+  padding: var(--space-4);
+  overflow-x: auto;
+  font-family: var(--font-code);
+  font-size: var(--step-n1);
+  line-height: var(--leading-ui);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.column > pre code {
+  font-family: inherit;
+}
+
 /* Development marker for unwritten content; must not survive to F6 (see docs/launch-checklist.md). */
 .todo {
   font-family: var(--font-mono);
