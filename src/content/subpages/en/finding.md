@@ -7,8 +7,9 @@ title: The finding
 
 ## Four reasons, two pairs
 
-Split each reason of the main thread into a general version and one tied to the person in front of
-you, and there are four. With a partner switch, each one predicts:
+Each reason of the main thread has a general version and a narrower one. Guilt can answer to
+anyone's expectation, or only to one you created. Your word can bind you to anyone you promised, or
+only to this person. That makes four. With a partner switch, each one predicts:
 
 | Reason                      | What it asks of you                                | With a partner switch |
 | --------------------------- | -------------------------------------------------- | --------------------- |
@@ -18,15 +19,15 @@ you, and there are four. With a partner switch, each one predicts:
 | Partner-specific commitment | to keep your word to this person                   | you roll less         |
 
 Vanberg's design separates the two pairs, but not what is inside each pair. That personal guilt is
-zero after a switch is not an assumption of this page: Kawagoe and Narita (2014, §3.2(ii)) derive
-it themselves.
+zero after a switch is not an assumption of this page: Kawagoe and Narita (2014) derive it
+themselves.
 
 ## The formula
 
 Call background trust *a*, and write every belief in hundredths, so that 76 is the expectation
 after a promise. The guilt available to you is then *a* · (76 − *a*) / 100. Personal guilt rolls
-the die if θ · guilt > 4, the cost of rolling (14 − 10), with θ = 0.6: that is, if the guilt is
-above 20/3, about 6.67.
+the die if θ · guilt > 4, the cost of rolling (14 − 10), with θ = 0.6, how much a unit of guilt
+weighs against a unit of money: that is, if the guilt is above 20/3, about 6.67.
 
 Setting *a* · (76 − *a*) / 100 = 20/3 gives the analytic cut: personal guilt rolls between about
 10.1 and about 65.9. The grid the curve measures only has rows at some values, so there it rolls

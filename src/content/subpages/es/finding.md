@@ -7,8 +7,10 @@ title: El hallazgo
 
 ## Cuatro razones, dos pares
 
-Si cada razón del hilo principal se parte en una versión general y otra atada a la persona que
-tienes enfrente, salen cuatro. Con cambio de pareja, cada una predice:
+Cada razón del hilo principal tiene una versión general y una más estrecha. La culpa puede
+responder a la expectativa de cualquiera, o solo a una que tú creaste. Tu palabra puede atarte a
+cualquiera a quien le prometiste, o solo a esta persona. Salen cuatro. Con cambio de pareja, cada
+una predice:
 
 | Razón                             | Qué te pide                                             | Con cambio de pareja |
 | --------------------------------- | ------------------------------------------------------- | -------------------- |
@@ -19,14 +21,15 @@ tienes enfrente, salen cuatro. Con cambio de pareja, cada una predice:
 
 El diseño de Vanberg separa los dos pares, pero no lo que hay dentro de cada par. Que la culpa
 personal sea cero con cambio de pareja no es un supuesto de esta página: lo derivan los propios
-Kawagoe y Narita (2014, §3.2(ii)).
+Kawagoe y Narita (2014).
 
 ## La fórmula
 
 Llama *a* a la confianza de fondo y escribe cada creencia en centésimas, de modo que 76 es la
 expectativa después de una promesa. La culpa disponible es entonces *a* · (76 − *a*) / 100. La
-culpa personal tira el dado si θ · culpa > 4, el costo de tirar (14 − 10), con θ = 0.6; es decir,
-si la culpa pasa de 20/3, cerca de 6.67.
+culpa personal tira el dado si θ · culpa > 4, el costo de tirar (14 − 10), con θ = 0.6, cuánto pesa
+una unidad de culpa frente a una unidad de dinero: es decir, si la culpa pasa de 20/3, cerca de
+6.67.
 
 Igualar *a* · (76 − *a*) / 100 = 20/3 da el corte analítico: la culpa personal tira entre cerca de
 10.1 y cerca de 65.9. La grilla que mide la curva solo tiene filas en algunos valores, así que ahí
