@@ -40,6 +40,9 @@ población (ADR 0003).
 
 El acto 3 es estático. El momento 3 no existe hasta F3.
 
+El acto 2 incluye la matriz 2×2 del dilema del prisionero como tabla estática de texto (regla (g)).
+No es una pieza visual ni interactiva; la única pieza sigue siendo la mesa.
+
 ## Subpáginas (v1)
 
 Cada una profundiza un acto. Se llega desde "Go deeper →" al final de ese acto y desde el footer.

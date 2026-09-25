@@ -19,6 +19,9 @@ momentos interactivos:
 
 El acto 3 es estático.
 
+El acto 2 incluye la matriz 2×2 del dilema del prisionero como tabla estática de texto (regla (g)).
+No es una pieza visual ni interactiva; la única pieza sigue siendo la mesa.
+
 ## Consecuencias
 
 - Quedan fuera: PixiJS, WebGPU, canvas de agentes, rejillas o animaciones de población, cuatro
