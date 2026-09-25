@@ -14,35 +14,10 @@ const target = otherLocale(locale);
 
 <nav class="lang" aria-label={tr('lang.label')}>
   <span class="lang__current" aria-current="true" lang={locale}>{tr(`lang.${locale}`)}</span>
-  <a class="lang__other" href={href(target, route)} hreflang={target} lang={target} data-lang-switch={target}>
+  <a class="lang__other" href={href(target, route)} hreflang={target} lang={target}>
     {tr(`lang.${target}`)}
   </a>
 </nav>
-
-<script>
-  import { isLocale } from '../lib/locales';
-  import { readLangPref, shouldRedirect, writeLangPref } from '../lib/lang-pref';
-
-  const link = document.querySelector<HTMLAnchorElement>('[data-lang-switch]');
-  const current = document.documentElement.lang;
-  const target = link?.dataset.langSwitch;
-
-  if (link && isLocale(current) && isLocale(target)) {
-    let storage: Storage | undefined;
-    try {
-      storage = window.localStorage;
-    } catch {
-      storage = undefined;
-    }
-
-    const preferred = readLangPref(storage);
-    if (preferred === target && shouldRedirect(preferred, current, document.referrer, location.origin)) {
-      location.replace(link.href + location.hash);
-    }
-
-    link.addEventListener('click', () => writeLangPref(storage, target));
-  }
-</script>
 
 <style>
   .lang {
