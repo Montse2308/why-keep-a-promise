@@ -9,7 +9,10 @@ import { drawWith, throwDie, type Choice, type Face, type Rng } from './game';
 import { recipientAfterDraw, type Partner, type Recipient } from './expectation';
 import { outcomeOf, type Outcome } from './moment1';
 
-/** Probability that the visitor is switched to a new partner. */
+/**
+ * Probability that the visitor is switched to a new partner: Vanberg (2008), Suppl. A, p. 2, Step 3.
+ * The switch happens after roles are assigned, and only the dictator learns whether it happened.
+ */
 export const SWITCH_PROBABILITY: Fraction = fraction(1, 2);
 
 interface Drawn {

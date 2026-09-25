@@ -2,8 +2,8 @@
  * The game at the table: Vanberg's (2008) Roll / Don't Roll. The dictator (the visitor) chooses;
  * the recipient (the other) only receives.
  *
- * TODO(verify-vanberg): payoffs and the die rule are pending confirmation against the paper, with
- * page number, in docs/sources.md.
+ * Payoffs and the die rule: Vanberg (2008), Suppl. A, p. 2, "Payoffs From the Decision"
+ * (docs/sources.md).
  */
 import { add, complement, fraction, multiply, type Fraction } from './fraction';
 
