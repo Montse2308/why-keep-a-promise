@@ -1,0 +1,74 @@
+/*
+ * Base design tokens. Placeholder values only: the visual system is decided in F1.
+ * TODO(F1): self-hosted font files (public/fonts/) and final palette.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* Colour: light */
+  --color-bg: #fbfaf7;
+  --color-surface: #ffffff;
+  --color-fg: #1c1b19;
+  --color-muted: #5f5b53;
+  --color-border: #dcd8cf;
+  --color-accent: #1f5fa8;
+  --color-focus: #1f5fa8;
+
+  /* Typography */
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-body);
+  --font-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --text-sm: 0.875rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: clamp(2rem, 1.4rem + 3vw, 3.25rem);
+  --leading-tight: 1.2;
+  --leading-body: 1.6;
+  --measure: 68ch;
+
+  /* Space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --gutter: 1rem;
+
+  /* Shape */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --border-width: 1px;
+
+  /* Layout */
+  --strip-height: 2.75rem;
+  --content-max: 72rem;
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-base: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #151412;
+    --color-surface: #1e1d1a;
+    --color-fg: #ecebe6;
+    --color-muted: #a8a399;
+    --color-border: #3a3833;
+    --color-accent: #8cb8ec;
+    --color-focus: #8cb8ec;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+  }
+}
