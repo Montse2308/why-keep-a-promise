@@ -1,6 +1,7 @@
 # 0014 · Dirección visual: ensayo de investigación
 
-**Estado:** aceptada (F1)
+**Estado:** aceptada (F1). La consecuencia sobre el JavaScript del sitio está precisada por el
+ADR 0015.
 
 ## Contexto
 

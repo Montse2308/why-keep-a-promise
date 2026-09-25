@@ -12,6 +12,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check && tsc --noEmit",
+    "verify:dist": "node scripts/verify-dist.mjs",
     "test": "vitest run",
     "astro": "astro"
   },

@@ -18,6 +18,7 @@ npm run dev      # http://localhost:4321/why-keep-a-promise/
 npm run check    # astro check + tsc
 npm test         # vitest
 npm run build    # sitio estático en dist/
+npm run verify:dist  # nada bloqueado llegó a dist/
 ```
 
 Hecho con Astro, TypeScript y SVG. Inglés en `/`, español en `/es/`.

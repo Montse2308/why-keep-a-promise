@@ -18,6 +18,7 @@ npm run dev      # http://localhost:4321/why-keep-a-promise/
 npm run check    # astro check + tsc
 npm test         # vitest
 npm run build    # static site in dist/
+npm run verify:dist  # nothing locked reached dist/
 ```
 
 Built with Astro, TypeScript and SVG. English at `/`, Spanish at `/es/`.

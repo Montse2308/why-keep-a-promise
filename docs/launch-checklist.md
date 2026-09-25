@@ -11,6 +11,9 @@ el paso 6.
       `TODO(launch)`, que se resuelve en el paso 8).
 - [ ] **4. Estado del manuscrito.** Pasar `MANUSCRIPT_STATUS` en `src/config.ts` a
       `'under-review'` ("The manuscript is under review." / "El manuscrito está en revisión.").
+      Cambiar el estado también desbloquea el acto 5: su prosa, su gráfica y el momento 3 (ADR 0015).
+      Luego se corren `npm run build` y `npm run verify:dist`, y se revisa el acto 5 completo en
+      `npm run preview`, en EN y ES, antes del paso 6.
 - [ ] **5. PDF.** Decisión explícita de Montse sobre publicar o no el PDF. Sin decisión, no hay PDF.
 - [ ] **6. Visibilidad.** Hacer público el repo.
 - [ ] **7. Pages.** Activar GitHub Pages con *Source = GitHub Actions*.
