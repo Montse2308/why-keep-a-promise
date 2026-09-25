@@ -130,6 +130,46 @@ textarea {
   max-width: var(--table-max);
 }
 
+/* Static tables in the prose (act 2's matrix, act 3's predictions, the subpages): hairlines, sans, tabular. */
+.column > table {
+  width: 100%;
+  margin-block: var(--space-6);
+  border-collapse: collapse;
+  font-family: var(--font-ui);
+  font-size: var(--step-n1);
+  line-height: var(--leading-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.column > table caption {
+  margin-bottom: var(--space-2);
+  text-align: start;
+  font-weight: 600;
+}
+
+.column > table th,
+.column > table td {
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  text-align: start;
+  vertical-align: top;
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.column > table thead th {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.column > ol,
+.column > ul {
+  padding-inline-start: 1.5em;
+}
+
+.column > ol li + li,
+.column > ul li + li {
+  margin-top: var(--space-2);
+}
+
 /* Development marker for unwritten content; must not survive to F6 (see docs/launch-checklist.md). */
 .todo {
   font-family: var(--font-mono);

@@ -69,36 +69,4 @@ const heading = title ?? tr(hero ? 'site.title' : act.titleKey);
     align-items: center;
     min-height: var(--target-min);
   }
-
-  /* Static tables in the prose (act 2's matrix, act 3's predictions): hairlines, sans, tabular. */
-  .act > :global(table) {
-    width: 100%;
-    margin-block: var(--space-6);
-    border-collapse: collapse;
-    font-family: var(--font-ui);
-    font-size: var(--step-n1);
-    line-height: var(--leading-ui);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .act > :global(table) :global(th),
-  .act > :global(table) :global(td) {
-    padding: var(--space-2) var(--space-3) var(--space-2) 0;
-    text-align: start;
-    vertical-align: top;
-    border-bottom: var(--border-width) solid var(--color-border);
-  }
-
-  .act > :global(table) :global(thead th) {
-    color: var(--color-muted);
-    font-weight: 600;
-  }
-
-  .act > :global(ol) {
-    padding-inline-start: 1.5em;
-  }
-
-  .act > :global(ol li + li) {
-    margin-top: var(--space-2);
-  }
 </style>
