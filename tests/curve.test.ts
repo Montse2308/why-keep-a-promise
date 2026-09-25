@@ -14,6 +14,16 @@ const numbers = (text: string) => new Set(text.replace(/\(\d{4}\)/g, ' ').match(
 /** A figure is stated in prose as a whole word: "15" must not be found inside "150". */
 const states = (text: string, value: number) => new RegExp(`(^|[^\\d])${value}([^\\d]|$)`).test(text);
 
+describe('src/data/curve.json itself (ADR 0010)', () => {
+  // The file is copied from the engine and never edited; regenerating it is a manual step with its
+  // own commit, which updates this fingerprint. Parsed JSON, so line endings do not matter.
+  it('is the file copied in F3, unchanged', async () => {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(raw)));
+    const hex = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    expect(hex).toBe('a3d83e513eff6ca22ec6cddeb8255270d7b27752487a4fb1b6bc93bc313c21d3');
+  });
+});
+
 describe("the curve's figures, checked against src/data/curve.json", () => {
   it('has the axis from 0 to 76', () => {
     expect(curve.axis).toEqual(CURVE_FIGURES.axis);
