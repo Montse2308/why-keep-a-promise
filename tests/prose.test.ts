@@ -66,7 +66,7 @@ const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: 
   2: { max: 250, tables: true },
   3: { max: 250, tables: false }, // the predictions table comes on top of the budget
   4: { max: 350, tables: true },
-  5: { max: 350, tables: true },
+  5: { max: 420, tables: true },
   6: { max: 200, tables: true },
 };
 

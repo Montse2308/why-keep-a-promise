@@ -3,8 +3,8 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** F3, en revisión de Montse. F2 y F2.1 en revisión de Montse. F0, F0.1, F1 y F1.1
-cerradas.
+**Fase activa:** F3.1, en revisión de Montse. F2, F2.1 y F3 en revisión de Montse. F0, F0.1, F1
+y F1.1 cerradas.
 
 ## F0 · Esqueleto
 
@@ -133,8 +133,26 @@ cerradas.
 - [x] ADR 0015 (candado y `verify:dist`), ADR 0016 (regla (c)); `content-rules.md`,
       `launch-checklist.md` (paso 4), `sources.md` y `AGENTS.md`.
 - [ ] Revisión de la prosa del acto 5 por Montse.
-- [ ] Decidir la frase del acto 6 "Your browser runs a single script… and it is the table's": con
+- [x] Decidir la frase del acto 6 "Your browser runs a single script… and it is the table's": con
       el candado abierto hay dos scripts, los dos de la mesa (momentos 1–2 y momento 3).
+      Resuelta en F3.1.
+
+## F3.1 · Correcciones de fondo del acto 5 y del acto 6
+
+- [x] Acto 5, tercer párrafo: la culpa personal como producto de dos cantidades, según la
+      especificación de Kawagoe y Narita (2014).
+- [x] Acto 5, cuarto párrafo: regla de entrada (el otro ve tu tipo y solo entra si vas a tirar;
+      fuera, 5 y 5), "medido en pasos de 5" y la culpa general como la razón de «lo que el otro
+      espera». Cierre en EN: "Tracing it".
+- [x] Presupuesto del acto 5: ≤ 420 palabras por idioma (decisión de Montse; queda en EN 385 y
+      ES 415).
+- [x] `sources.md`: regla de entrada con su fuente (`params.game`, `params.p`, `TRUST.outside` a
+      través del JSON) y el paso de 5; test contra el JSON de que tirar paga 10 y no tirar, 5.
+- [x] Acto 6: "Your browser only runs the table's code, in its three moments; the rest is text and
+      drawing." / "Tu navegador solo corre el código de la mesa, en sus tres momentos; lo demás es
+      texto y dibujo."
+- [x] `AGENTS.md`: nombre del repo del motor en GitHub y su carpeta local.
+- [ ] Revisión de la prosa del acto 5 por Montse.
 
 ## Preguntas abiertas
 

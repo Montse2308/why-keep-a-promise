@@ -14,20 +14,25 @@ guilt and partner-specific commitment, your word given to that person, predict t
 is why Vanberg's result fits both.
 
 What separates them is background trust: what people expect of someone before any promise is made.
-Personal guilt weighs the expectation that was already there by what your promise added to it. If
-no one expected anything, there is no expectation to let down. If everyone already expected it,
-your promise added nothing. So it weighs most in the middle, at 38. Your word to that person weighs
-the same in any world.
+In the specification of Kawagoe and Narita (2014), personal guilt is the product of two amounts:
+the expectation that was already there, and what your promise added to it. If no one expected
+anything beforehand, the product is zero. If everyone already expected it, your promise added
+nothing, and the product is zero too. So it weighs most in the middle, at 38. Your word to that
+person weighs the same in any world.
 
 In a simulation, background trust was fixed at each value from 0 to 76 out of 100. The expectation
 after a promise was held at 76: what Vanberg's dictators believed their partner expected, without a
-switch. The simulation then measured how much each reason earns. Personal guilt earns 10 from 15
-to 65, and 5 outside that window. Partner-specific commitment earns 10 across the whole range.
-General guilt, which serves as a control, also earns 10: it is the same line.
+switch. In the simulation, the other person sees your type, meaning which reason moves you, before
+playing, and only joins if you will roll; if they don't join, each keeps 5. That is why rolling
+pays 10 and not rolling pays 5. The simulation then measured how much each reason earns. Personal
+guilt earns 10 from 15 to 65 (measured in steps of 5), and 5 outside that window.
+Partner-specific commitment earns 10 across the whole range. General guilt, the "what the other
+expects" reason from above, serves as a control and also earns 10: it is the same line as
+commitment.
 
 This is a comparison across worlds, each with its background trust held fixed. It is not a
 population moving along the curve. And in the middle, the two earn the same, so which of them ends
 up there is a matter of chance.
 
-A lab session sees a single point of the curve below. Covering it takes comparing populations with
+A lab session sees a single point of the curve below. Tracing it takes comparing populations with
 different background trust.
