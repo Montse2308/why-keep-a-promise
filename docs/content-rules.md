@@ -74,5 +74,7 @@ que las lista. La lista no incluye nombres de revistas (regla (c)).
 
 - No se publica el resultado: ni datos de la curva, ni parámetros del modelo, ni qué motivo paga
   dónde, hasta la fase que lo autorice y dentro de estas reglas. Desde F3, el acto 5 los muestra
-  solo detrás de su candado (ADR 0015); los parámetros del modelo no se muestran nunca.
+  solo detrás de su candado (ADR 0015). Los parámetros del modelo no se muestran nunca, salvo θ, c,
+  la culpa disponible y la variante de robustez en `/finding`, y solo detrás del mismo candado
+  (ADR 0017).
 - Sin fechas de sumisión ni correspondencia con autores en ningún archivo (ADR 0011).

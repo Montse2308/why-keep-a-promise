@@ -3,8 +3,8 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** F3.1, en revisión de Montse. F2, F2.1 y F3 en revisión de Montse. F0, F0.1, F1
-y F1.1 cerradas.
+**Fase activa:** F4, en revisión de Montse. F2, F2.1, F3 y F3.1 en revisión de Montse. F0, F0.1,
+F1 y F1.1 cerradas.
 
 ## F0 · Esqueleto
 
@@ -154,10 +154,52 @@ y F1.1 cerradas.
 - [x] `AGENTS.md`: nombre del repo del motor en GitHub y su carpeta local.
 - [ ] Revisión de la prosa del acto 5 por Montse.
 
+## F4 · Subpáginas
+
+- [x] Acto 5, dos pulidos: "There, the other person sees…" / "Ahí, la otra persona ve…" (cuarto
+      párrafo) y "así que quien siente culpa personal también tira menos" (ES, segundo párrafo).
+- [x] Colección `subpages` (`src/content/subpages/{en,es}/<slug>.md`, frontmatter `act` y
+      `title`) y `SubpageView`: la prosa, los componentes de sus marcas `<!-- slot:… -->`, lo que
+      sigue a `<!-- lock -->` solo detrás del candado, y un enlace de vuelta al acto
+      (`src/lib/subpages.ts`, con tests).
+- [x] Mismo registro de cifras, lint de frases prohibidas, paridad EN/ES y presupuesto por idioma
+      que los actos (`tests/prose.test.ts`): `/dilemma` ≤ 600, `/vanberg` ≤ 700, `/finding` ≤ 700,
+      `/how-its-built` ≤ 600, sin tablas ni código. Quedan en EN/ES: 343/355, 403/436, 352/377 y
+      430/453.
+- [x] Regla (h): un test falla si una subpágina comparte una oración completa con su acto.
+- [x] `/dilemma`: estrategia dominante, equilibrio de Nash, ineficiencia, `2R > T + S`, el dilema
+      repetido en un párrafo que termina con *The Evolution of Trust*, y *cheap talk* con el abstract
+      de Vanberg (2008) (ES: traducción propia).
+- [x] `/dilemma`, mejor respuesta: lógica pura en `src/lib/pd/` con tests; `BestResponse.astro`
+      con botones nativos, teclado, `aria-live` y la matriz estática sin JavaScript. Probada solo con
+      teclado y a 360 px en Edge sin interfaz (reporte de la sesión F4).
+- [x] `/vanberg`: diseño completo con su pantalla o página, las seis celdas del tratamiento con
+      cambio de pareja (`src/lib/vanberg/cells.ts`, cuentas exactas) y los tratamientos base.
+- [x] `/finding`, completa bajo el candado: cuatro razones y dos pares, la fórmula, la segunda
+      gráfica (`Curve.astro`, `variant="guilt"`), robustez, límites, estado y `TODO(launch)`.
+      Cifras contra `curve.json` y corte analítico con la cuadrática en enteros
+      (`tests/finding.test.ts`).
+- [x] `/how-its-built`: la ingeniería de la página, dos fragmentos del código del sitio (un test
+      exige que coincidan con `src/`), y la parte del motor bajo el candado. Test que falla si
+      `curve.json` cambia.
+- [x] JetBrains Mono autoalojada, `latin` y `latin-ext`, sin precarga, solo en los bloques de
+      código de `/how-its-built`: 55 600 bytes (40 404 + 15 196). Sin resaltado de sintaxis.
+- [x] `verify:dist`: marcas de `/finding` y del motor; con `'under-review'`, el contenido en las seis
+      páginas que lo llevan. Build probado en los dos estados.
+- [x] `sources.md` (cifras nuevas, verificadas contra los suplementos y los datos públicos; Axelrod
+      sigue por verificar), ADR 0017, `AGENTS.md`, `content-rules.md` y `launch-checklist.md`
+      (pasos 4 y 8).
+- [ ] Revisión de la prosa de las cuatro subpáginas por Montse.
+- [ ] Confirmar las cifras nuevas de `/vanberg` (`sources.md`, "Cifras de `/vanberg` (F4)").
+- [ ] F5: con el candado abierto, la tabla oculta de la gráfica del acto 5 ensancha la página de
+      inicio a 360 px (653 px). La de `/finding` se corrigió envolviéndola en un `div` oculto; la
+      del acto 5 es del momento 3 y queda para F5.
+
 ## Preguntas abiertas
 
-- Verificar antes del lanzamiento Axelrod (1984), con la página de los pagos del dilema: la prosa
-  ya lo usa y sigue "por verificar" en `docs/sources.md`.
+- Verificar antes del lanzamiento Axelrod (1984), con la página de los pagos del dilema, de la
+  condición `2R > T + S`, de la sombra del futuro y del torneo: la prosa ya lo usa (acto 2 y
+  `/dilemma`) y sigue "por verificar" en `docs/sources.md`.
 
 ## Preguntas cerradas
 

@@ -1,7 +1,7 @@
 # 0014 · Dirección visual: ensayo de investigación
 
-**Estado:** aceptada (F1). La consecuencia sobre el JavaScript del sitio está precisada por el
-ADR 0015.
+**Estado:** aceptada (F1). La consecuencia sobre el JavaScript del sitio está precisada por los
+ADR 0015 y 0017. JetBrains Mono entra en F4 (ADR 0017).
 
 ## Contexto
 

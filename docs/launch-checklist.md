@@ -11,15 +11,18 @@ el paso 6.
       `TODO(launch)`, que se resuelve en el paso 8).
 - [ ] **4. Estado del manuscrito.** Pasar `MANUSCRIPT_STATUS` en `src/config.ts` a
       `'under-review'` ("The manuscript is under review." / "El manuscrito está en revisión.").
-      Cambiar el estado también desbloquea el acto 5: su prosa, su gráfica y el momento 3 (ADR 0015).
-      Luego se corren `npm run build` y `npm run verify:dist`, y se revisa el acto 5 completo en
-      `npm run preview`, en EN y ES, antes del paso 6.
+      Cambiar el estado también desbloquea el acto 5: su prosa, su gráfica y el momento 3 (ADR 0015),
+      además de `/finding` y la parte del motor de `/how-its-built` (ADR 0017).
+      Luego se corren `npm run build` y `npm run verify:dist`, y se revisan en `npm run preview` el
+      acto 5, `/finding` y `/how-its-built` completos, en EN y ES, antes del paso 6.
 - [ ] **5. PDF.** Decisión explícita de Montse sobre publicar o no el PDF. Sin decisión, no hay PDF.
 - [ ] **6. Visibilidad.** Hacer público el repo.
 - [ ] **7. Pages.** Activar GitHub Pages con *Source = GitHub Actions*.
-- [ ] **8. Enlace al motor.** Reemplazar `TODO(launch): enlace al repo del motor` en el acto 6
-      (`src/content/acts/{en,es}/06-how-its-built.md`) por el enlace al repo del motor, público desde
-      el paso 2. Después, `npm run build` y `grep -r "TODO(" dist/` vacío.
+- [ ] **8. Enlace al motor.** Reemplazar `TODO(launch): enlace al repo del motor` por el enlace al
+      repo del motor, público desde el paso 2, en el acto 6
+      (`src/content/acts/{en,es}/06-how-its-built.md`), en `/finding`
+      (`src/content/subpages/{en,es}/finding.md`) y en `/how-its-built`
+      (`src/content/subpages/{en,es}/how-its-built.md`). Después, `npm run build` y `grep -r "TODO(" dist/` vacío.
 - [ ] **9. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`).
 - [ ] **10. Verificación.** Comprobar `/` y `/es/` en línea en
       `https://montse2308.github.io/why-keep-a-promise/`, incluido el switch EN/ES y `hreflang`.

@@ -53,6 +53,7 @@ src/
   config.ts              author links, manuscript status (it also opens act 5's lock)
   content.config.ts      the acts content collection (frontmatter schema)
   content/acts/{en,es}/  act prose in Markdown, one file per act (F2)
+  content/subpages/{en,es}/  subpage prose, one file per subpage (F4); <!-- slot:… --> and <!-- lock -->
   content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md
   data/curve.json        the engine's precomputed curve, copied with provenance; never edited (ADR 0010)
   i18n/en.json, es.json  UI strings, flat keys, full parity
@@ -64,20 +65,27 @@ src/
     template.ts          fill({name}) placeholders in UI strings
     lock.ts              act 5's lock: full content only under review or in dev (ADR 0015)
     design/              palette.ts (single source of colour values), colour maths
+    subpages.ts          splits subpage prose at its slot and lock markers (ADR 0017)
     table/               game logic for the table: exact payoffs, moments 1–2 state machines
-    curve/               reads curve.json (build time only), step-chart geometry, moment 3 logic
-  assets/fonts/          self-hosted woff2 (Newsreader, Inter), OFL licences, provenance
+    curve/               reads curve.json (build time only), step-chart geometry, moment 3 logic;
+                         finding.ts: guilt, θ, c and robustness for /finding, behind the lock
+    pd/                  the prisoner's dilemma and /dilemma's best-reply state machine
+    vanberg/             every cell of the switch treatment and the baselines, exact counts
+  assets/fonts/          self-hosted woff2 (Newsreader, Inter, JetBrains Mono), OFL licences, provenance
   styles/                tokens.css (mirrors palette.ts, test-checked), base.css
   components/            AuthorStrip, LanguageSwitch, SiteFooter, Act,
                          table/GameTable + controller.ts (client script, moments 1–2),
-                         curve/Curve + controller.ts (act 5's chart and moment 3, behind the lock),
-                         curve/Locked (the empty stub a locked build uses instead)
+                         curve/Curve + controller.ts (act 5's chart and moment 3, and /finding's
+                         guilt chart, behind the lock), curve/Locked (the empty stub a locked build
+                         uses instead), pd/BestResponse + controller.ts (/dilemma's best reply),
+                         vanberg/SwitchTable (/vanberg's table)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers: / and /es/, plus four subpages each
-scripts/verify-dist.mjs  checks dist/ against act 5's lock
-tests/                   repo-level tests (page parity, prose figures and budgets, forbidden phrases,
-                         curve figures against curve.json, verify:dist markers)
+scripts/verify-dist.mjs  checks dist/ against the lock: act 5, /finding, the engine on /how-its-built
+tests/                   repo-level tests (page parity, prose figures and budgets, rule (h), forbidden
+                         phrases, curve and /finding figures against curve.json, verify:dist markers,
+                         code quoted on /how-its-built)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy)
 scratch/                 local notes, git-ignored, never committed
 ```
@@ -100,7 +108,8 @@ scratch/                 local notes, git-ignored, never committed
 
 - **Publishing the result.** No curve data, which motive pays where, or content for act 5 or
   `/finding` beyond the status sentence, except behind act 5's lock (ADR 0015). Model parameters
-  never appear on the page. Do not change the repository's visibility, do not
+  never appear on the page, except θ, c, the guilt available and the robustness variant on
+  `/finding`, behind the same lock (ADR 0017). Do not change the repository's visibility, do not
   enable GitHub Pages, do not run `deploy.yml` (manual-only, F6).
 - **Copying the manuscript or the paper's context.** Do not read or copy the manuscript or its working
   files, wherever they live (local folders, Drive). If something is missing, ask.
@@ -109,8 +118,9 @@ scratch/                 local notes, git-ignored, never committed
   no file is copied from it. Its output reaches this repo only as `src/data/curve.json`, copied with
   provenance in F3 (ADR 0010).
 - **Choosing another visual.** The only piece is the table, with three moments. No PixiJS, WebGPU,
-  agent canvases, grids or population animations, no four panels, no extra charts, no playable
-  dilemma in the main scroll.
+  agent canvases, grids or population animations, no four panels, no extra charts beyond
+  `/finding`'s guilt chart, no playable dilemma in the main scroll, no playable repeated dilemma
+  anywhere. `/dilemma`'s one-shot best reply is the only other interaction (ADR 0017).
 - Naming the journal the manuscript was submitted to, submission dates or correspondence with
   authors in any file. Third-party references carry their journal, as any bibliography (ADR 0016).
 - Inventing personal data (display name, profile URLs, email, photo). Anything not provided goes as

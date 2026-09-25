@@ -1,6 +1,7 @@
 # 0004 · Subpáginas en v1, scroll primero
 
-**Estado:** aceptada (F0)
+**Estado:** aceptada (F0). Las interacciones de las subpáginas (la mejor respuesta de `/dilemma`
+y la segunda gráfica de `/finding`) están en el ADR 0017.
 
 ## Contexto
 

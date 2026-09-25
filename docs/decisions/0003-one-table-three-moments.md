@@ -1,6 +1,7 @@
 # 0003 · Una mesa, tres momentos, sin visuales de población
 
-**Estado:** aceptada (F0)
+**Estado:** aceptada (F0). La exclusión de gráficas extra está precisada por el ADR 0017: la
+única excepción es la segunda gráfica de `/finding`.
 
 ## Contexto
 
