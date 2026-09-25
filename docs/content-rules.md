@@ -60,6 +60,14 @@ mesa es otro juego con la misma tensión.
 
 Una subpágina no repite la prosa de su acto: solo agrega.
 
+## (i) Frases prohibidas
+
+Estas cadenas no aparecen en ningún archivo del sitio ni en su código, en ningún idioma y sin
+importar mayúsculas: "bi-stab", "bistab", "biestab", "bi-estab", "universalis", "particularis",
+"coming soon", "próximamente", "not yet approved", "aún no se aprueba", "está por lanzarse".
+`tests/forbidden-phrases.test.ts` las busca en `src/` y en los README; es el único archivo de código
+que las lista. La lista no incluye nombres de revistas (regla (c)).
+
 ## Además (de `AGENTS.md`)
 
 - No se publica el resultado: ni datos de la curva, ni parámetros del modelo, ni qué motivo paga
