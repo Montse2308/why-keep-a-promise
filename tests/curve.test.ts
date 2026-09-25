@@ -23,6 +23,25 @@ describe("the curve's figures, checked against src/data/curve.json", () => {
     expect(pullWindow(curve)).toEqual(CURVE_FIGURES.window);
   });
 
+  it('measures the window in steps of 5: the rows next to its edges are 5 away', () => {
+    const trust = curve.rows.map((row) => row.trust);
+    const { from, to } = CURVE_FIGURES.window;
+    expect(trust).toContain(from - CURVE_FIGURES.step);
+    expect(trust).toContain(to + CURVE_FIGURES.step);
+    expect(trust.filter((t) => t > from - CURVE_FIGURES.step && t < from)).toEqual([]);
+    expect(trust.filter((t) => t > to && t < to + CURVE_FIGURES.step)).toEqual([]);
+  });
+
+  it('is a trust game in which the other sees your type: rolling pays 10 and not rolling pays 5', () => {
+    expect(raw.params.game).toBe('trust');
+    expect(raw.params.p).toBe(1);
+    for (const row of raw.grid) {
+      for (const id of ['PGA', 'MC-b', 'GA'] as const) {
+        expect(row.payoff[id], `${id} at ${row.beta0.num}`).toBe(row.rolls[id] ? CURVE_FIGURES.payoffs.high : CURVE_FIGURES.payoffs.low);
+      }
+    }
+  });
+
   it('has the payoffs 5 and 10, and no other', () => {
     expect(payoffLevels(curve)).toEqual([CURVE_FIGURES.payoffs.low, CURVE_FIGURES.payoffs.high]);
   });
@@ -49,7 +68,7 @@ describe('act 5 states those figures and no others', () => {
 
   it.each(['en', 'es'] as const)('%s prose', (locale) => {
     const text = acts[locale];
-    for (const value of [...Object.values(CURVE_FIGURES.axis), ...Object.values(CURVE_FIGURES.window), ...Object.values(CURVE_FIGURES.payoffs), CURVE_FIGURES.peak]) {
+    for (const value of [...Object.values(CURVE_FIGURES.axis), ...Object.values(CURVE_FIGURES.window), ...Object.values(CURVE_FIGURES.payoffs), CURVE_FIGURES.peak, CURVE_FIGURES.step]) {
       expect(states(text, value), `${value}`).toBe(true);
     }
     expect([...numbers(text.replace(/^---[\s\S]*?---/, ''))].filter((n) => !allowed.has(n))).toEqual([]);

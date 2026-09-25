@@ -188,7 +188,9 @@ arriba. Por eso el camino con cambio del visitante siempre resalta una de esas d
   experimental test of a new model. *Journal of Economic Behavior & Organization*, 102, 1–9. RePEc:
   <https://ideas.repec.org/a/eee/jeborg/v102y2014icp1-9.html>
 - **Clave:** `kawagoe-narita-2014`.
-- **Uso:** la culpa personal: te duele defraudar una expectativa solo si tú la creaste (acto 5).
+- **Uso:** la culpa personal: te duele defraudar una expectativa solo si tú la creaste (acto 5). En
+  su especificación, la culpa personal es el producto de dos cantidades: la expectativa que ya había
+  y lo que tu promesa le agregó (tercer párrafo del acto 5, sin cifras).
 - **Verificada:** sí (Montse, F3).
 - **Cifras:** —
 
@@ -217,15 +219,25 @@ arriba. Por eso el camino con cambio del visitante siempre resalta una de esas d
   Clave: `curve`.
   Fuente: `axis` de `curve.json`; el 76 es la creencia después de una promesa (`vanberg-second-order`).
   Usada en: acto 5; ejes y `aria-label` de la gráfica.
-- Cifra: la culpa personal tira de "15" a "65": primera y última fila donde tira.
+- Cifra: la culpa personal tira de "15" a "65": primera y última fila donde tira, "medido en pasos
+  de 5": las filas vecinas de la ventana son 10 y 70, sin filas intermedias.
   Clave: `curve`.
-  Fuente: `grid[].rolls.PGA` de `curve.json`.
+  Fuente: `grid[].rolls.PGA` y `grid[].beta0` de `curve.json`.
   Usada en: acto 5; `aria-label` de la gráfica.
 - Cifra: pagos "10" y "5": la culpa personal gana 10 dentro de esa ventana y 5 fuera; el compromiso
   específico a la pareja y la culpa general (control) ganan 10 en todo el recorrido.
   Clave: `curve`.
   Fuente: `grid[].payoff` de `curve.json`.
   Usada en: acto 5; gráfica, tabla oculta y momento 3.
+- Cifra: la regla de entrada, "tirar paga 10 y no tirar paga 5". En la simulación, la otra persona
+  ve tu tipo (cuál de las razones te mueve) antes de jugar y solo entra si vas a tirar; si no entra,
+  cada quien se queda con "5".
+  Clave: `curve`.
+  Fuente: `curve.json`: `params.game = "trust"` y `params.p = 1` (el otro ve el tipo); el 5 de
+  quedarse fuera es la opción externa del motor (`TRUST.outside`), que llega a este repo solo a
+  través del JSON, como el pago de cada fila donde un tipo no tira. `tests/curve.test.ts` comprueba
+  en cada fila y cada serie que tirar paga 10 y no tirar paga 5.
+  Usada en: acto 5 (cuarto párrafo).
 - Cifra: pico en "38", donde más pesa la culpa personal.
   Clave: `curve`.
   Fuente: `peak` de `curve.json`.

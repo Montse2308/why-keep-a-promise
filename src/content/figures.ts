@@ -62,8 +62,9 @@ export const FIGURES: readonly Figure[] = [
   { value: '100', source: 'curve', what: 'background trust is read out of 100' },
   { value: '15', source: 'curve', what: 'first background trust at which personal guilt rolls' },
   { value: '65', source: 'curve', what: 'last background trust at which personal guilt rolls' },
-  { value: '10', source: 'curve', what: 'higher payoff on the curve' },
-  { value: '5', source: 'curve', what: 'lower payoff on the curve' },
+  { value: '10', source: 'curve', what: 'higher payoff on the curve: you roll and the other joins' },
+  { value: '5', source: 'curve', what: 'lower payoff on the curve: the other does not join, each keeps 5' },
+  { value: '5', source: 'curve', what: 'grid step around the personal guilt window' },
   { value: '38', source: 'curve', what: 'background trust at which personal guilt weighs most' },
 ];
 
@@ -71,6 +72,9 @@ export const FIGURES: readonly Figure[] = [
 export const CURVE_FIGURES = {
   axis: { min: 0, max: 76 },
   window: { from: 15, to: 65 },
+  /** Grid step at the window's edges: the rows next to 15 and 65 are 5 away. */
+  step: 5,
+  /** Rolling pays `high`; not rolling pays `low`, what each keeps when the other does not join. */
   payoffs: { low: 5, high: 10 },
   peak: 38,
   /** The belief after a promise, out of 100 (docs/sources.md, `vanberg-second-order`). */
