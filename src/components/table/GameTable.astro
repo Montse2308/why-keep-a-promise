@@ -1,22 +1,508 @@
 ---
 /**
- * "The table": the one visual piece of the site, Vanberg's (2008) partner-switching game.
- * Moment 1 (acts 1–2) and moment 2 (act 4) are built in F1; moment 3 (act 5) arrives in F3.
- * Game logic goes in pure, tested modules under src/lib/table/.
+ * "The table": the one visual piece of the site, Vanberg's (2008) Roll / Don't Roll game.
+ * `moment1` (act 1): decide with no promise. `moment2` (act 4): promise, partner draw, decide,
+ * then what real participants did. Moment 3 (act 5) arrives in F3.
+ * Game logic lives in src/lib/table/; this file renders the markup and ./controller.ts drives it.
  */
+import RoleMark from './RoleMark.astro';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { branches, CHOICES, type Branch, type Choice } from '../../lib/table/game';
+import { METER_POSITION } from '../../lib/table/expectation';
+import { clientStrings } from '../../lib/table/strings';
+import { fill } from '../../lib/template';
+
 interface Props {
-  moment: 1 | 2;
+  mode: 'moment1' | 'moment2';
+  locale: Locale;
+  /** Unique on the page; prefixes every id inside the table. */
+  id: string;
 }
 
-const { moment } = Astro.props;
+const { mode, locale, id } = Astro.props;
+const tr = useTranslations(locale);
+
+const choiceLabel: Record<Choice, string> = { roll: tr('table.choice.roll'), dont: tr('table.choice.dont') };
+
+/** "12 (5 in 6) or 0 (1 in 6)", or just "14" when the payoff is certain. */
+function terms(options: readonly Branch[]): string {
+  if (options.length === 1) return String(options[0]?.payoff);
+  return options
+    .map(({ payoff, probability }) => `${payoff} (${fill(tr('table.chance'), { n: probability.num, d: probability.den })})`)
+    .join(` ${tr('table.or')} `);
+}
+
+const options = CHOICES.map((choice) => ({ choice, label: choiceLabel[choice], you: terms(branches(choice).you), other: terms(branches(choice).other) }));
+const pips = ['tl', 'tr', 'ml', 'c', 'mr', 'bl', 'br'] as const;
+const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 30], bl: [17, 43], br: [43, 43] } as const;
 ---
 
-<figure class="game-table" data-moment={moment}>
-  <p class="todo">TODO(F1): the table, moment {moment}</p>
+<figure class="game-table wide" id={id} data-game-table data-mode={mode} data-strings={JSON.stringify(clientStrings(tr))} aria-labelledby={`${id}-caption`}>
+  <figcaption id={`${id}-caption`} class="gt-caption">{tr(mode === 'moment1' ? 'table.moment1.caption' : 'table.moment2.caption')}</figcaption>
+
+  <div class="gt-live" data-live hidden>
+    <ul class="gt-seats" role="list">
+      <li class="gt-seat"><RoleMark role="you" /> {tr('table.you')}</li>
+      <li class="gt-seat"><RoleMark role="other" /> {tr('table.other')}</li>
+    </ul>
+
+    {
+      mode === 'moment2' && (
+        <>
+          <section class="gt-step" data-step="promise" aria-labelledby={`${id}-promise`}>
+            <p class="gt-step__label" id={`${id}-promise`}>{tr('table.step.promise')}</p>
+            <div class="gt-actions" data-controls>
+              <button type="button" class="gt-button gt-button--promise" data-action="promise" data-value="yes">
+                <svg class="gt-seal" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M6 1 11 6 6 11 1 6Z" /></svg>
+                {tr('table.promise.yes')}
+              </button>
+              <button type="button" class="gt-button" data-action="promise" data-value="no">{tr('table.promise.no')}</button>
+            </div>
+            <p class="gt-summary" data-slot="promise-summary" hidden></p>
+          </section>
+
+          <section class="gt-step" data-step="draw" aria-labelledby={`${id}-draw`} hidden>
+            <p class="gt-step__label" id={`${id}-draw`}>{tr('table.step.draw')}</p>
+            <p class="gt-summary" data-slot="partner"></p>
+            <p class="gt-illustrative" data-slot="illustrative" hidden>
+              <span class="gt-tag">{tr('table.switch.illustrative-tag')}</span>
+              {tr('table.switch.illustrative')}
+            </p>
+            <p class="gt-note" data-slot="promiser" hidden></p>
+            <div class="gt-meter">
+              <p class="gt-meter__value">
+                {tr('table.meter.label')}: <strong data-slot="level"></strong>
+              </p>
+              <div class="gt-meter__scale">
+                <svg class="gt-meter__svg" viewBox="0 0 240 24" role="img" data-slot="meter" aria-label={tr('table.meter.label')}>
+                  <rect class="gt-meter__track" x="0" y="10" width="240" height="4" rx="2" />
+                  {Object.values(METER_POSITION).map((at) => <line class="gt-meter__tick" x1={at * 240} x2={at * 240} y1="4" y2="20" />)}
+                  <rect class="gt-meter__marker" data-slot="marker" x="-7" y="5" width="14" height="14" rx="2" />
+                </svg>
+                {(['lower', 'higher'] as const).map((level) => (
+                  <span class="gt-meter__tick-label" style={`left: ${METER_POSITION[level] * 100}%`} aria-hidden="true">
+                    {tr(level === 'lower' ? 'table.meter.lower' : 'table.meter.higher')}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
+      )
+    }
+
+    <section class="gt-step" data-step="choice" aria-labelledby={`${id}-choice`} hidden={mode === 'moment2'}>
+      <p class="gt-step__label" id={`${id}-choice`}>{tr('table.step.choice')}</p>
+      <div class="gt-actions gt-actions--options" data-controls>
+        {
+          options.map((option) => (
+            <button type="button" class="gt-button gt-option" data-action="choose" data-value={option.choice}>
+              <span class="gt-option__name">{option.label}</span>
+              <span class="gt-option__terms">
+                <span class="gt-term"><RoleMark role="you" /> {tr('table.you')} <span class="gt-num">{option.you}</span></span>
+                <span class="gt-term"><RoleMark role="other" /> {tr('table.other')} <span class="gt-num">{option.other}</span></span>
+              </span>
+            </button>
+          ))
+        }
+      </div>
+      <p class="gt-summary" data-slot="choice-summary" hidden></p>
+    </section>
+
+    <section class="gt-step gt-result" data-step="outcome" aria-labelledby={`${id}-payoffs`} hidden>
+      <div class="gt-result__row">
+      <div class="gt-die" role="img" data-slot="die" hidden>
+        <svg viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+          <rect class="gt-die__face" x="3" y="3" width="54" height="54" rx="9" />
+          {pips.map((pip) => <circle class="gt-die__pip" data-pip={pip} cx={pipAt[pip][0]} cy={pipAt[pip][1]} r="5" />)}
+        </svg>
+      </div>
+      <table class="gt-grid">
+        <caption id={`${id}-payoffs`} class="gt-step__label">{tr('table.payoffs')}</caption>
+        <thead>
+          <tr>
+            <td></td>
+            <th scope="col"><RoleMark role="you" /> {tr('table.you')}</th>
+            <th scope="col"><RoleMark role="other" /> {tr('table.other')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">{tr('table.expected')}</th>
+            <td class="gt-num" data-slot="expected-you"></td>
+            <td class="gt-num" data-slot="expected-other"></td>
+          </tr>
+          <tr>
+            <th scope="row">{tr('table.realized')}</th>
+            <td class="gt-num gt-num--strong" data-slot="realized-you"></td>
+            <td class="gt-num gt-num--strong" data-slot="realized-other"></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="gt-actions" data-controls>
+        {
+          mode === 'moment2' ? (
+            <button type="button" class="gt-button" data-action="reveal">{tr('table.reveal.show')}</button>
+          ) : (
+            <button type="button" class="gt-button" data-action="reset">{tr('table.again')}</button>
+          )
+        }
+      </div>
+    </section>
+
+    {
+      mode === 'moment2' && (
+        <section class="gt-step" data-step="reveal" aria-labelledby={`${id}-reveal`} hidden>
+          <p class="gt-step__label" id={`${id}-reveal`}>{tr('table.reveal.title')}</p>
+          <p class="todo">TODO(vanberg-rates): published roll rates by condition, with citation</p>
+          <div class="gt-actions" data-controls>
+            <button type="button" class="gt-button" data-action="reset">{tr('table.again')}</button>
+          </div>
+        </section>
+      )
+    }
+
+    <p class="visually-hidden" role="status" aria-live="polite" data-slot="status"></p>
+  </div>
+
+  <noscript>
+    <p class="gt-note">{tr('table.noscript')}</p>
+    <table class="gt-grid">
+      <caption class="gt-step__label">{tr('table.payoffs')}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{tr('table.choice.header')}</th>
+          <th scope="col">{tr('table.you')}</th>
+          <th scope="col">{tr('table.other')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          options.map((option) => (
+            <tr>
+              <th scope="row">{option.label}</th>
+              <td class="gt-num">{option.you}</td>
+              <td class="gt-num">{option.other}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </noscript>
 </figure>
+
+<script>
+  import { mountAll } from './controller';
+
+  mountAll();
+</script>
 
 <style>
   .game-table {
-    margin: var(--space-8) 0;
+    margin: var(--space-8) auto;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  @media (min-width: 40rem) {
+    .game-table {
+      padding: var(--space-6);
+    }
+  }
+
+  .gt-caption,
+  .gt-step__label {
+    margin: 0 0 var(--space-3);
+    font-size: var(--step-n2);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    text-align: start;
+  }
+
+  .gt-live {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .gt-seats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin: 0;
+    padding: 0 0 var(--space-4);
+    list-style: none;
+    border-bottom: var(--border-width) solid var(--color-border);
+    font-weight: 600;
+  }
+
+  .gt-seat {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .gt-step > :last-child {
+    margin-bottom: 0;
+  }
+
+  .gt-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .gt-actions--options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+
+  .gt-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--target-min);
+    min-width: var(--target-min);
+    padding: var(--space-2) var(--space-4);
+    font: inherit;
+    font-weight: 600;
+    color: var(--color-fg);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-control);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .gt-button:hover {
+    background: var(--color-surface-hover);
+  }
+
+  .gt-button:focus-visible {
+    outline: var(--focus-width) solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .gt-seal {
+    width: 0.75em;
+    height: 0.75em;
+    fill: var(--color-promise);
+  }
+
+  .gt-option {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    padding-block: var(--space-3);
+    text-align: start;
+  }
+
+  .gt-option__name {
+    font-size: var(--step-0);
+  }
+
+  .gt-option__terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+
+  .gt-term {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .gt-num {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-fg);
+  }
+
+  .gt-num--strong {
+    font-weight: 700;
+  }
+
+  .gt-summary {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .gt-note,
+  .gt-illustrative {
+    margin: var(--space-2) 0 0;
+    color: var(--color-muted);
+  }
+
+  .gt-tag {
+    display: inline-block;
+    margin-inline-end: var(--space-2);
+    padding: 0 var(--space-2);
+    font-size: var(--step-n2);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-promise);
+    border: var(--border-width) solid currentColor;
+    border-radius: var(--radius-sm);
+  }
+
+  .gt-meter {
+    margin-top: var(--space-4);
+    max-width: 22rem;
+  }
+
+  .gt-meter__value {
+    margin: 0 0 var(--space-2);
+  }
+
+  .gt-meter__scale {
+    position: relative;
+    padding-bottom: 1.5em;
+  }
+
+  .gt-meter__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .gt-meter__track {
+    fill: var(--color-border);
+    stroke: var(--color-control);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .gt-meter__tick {
+    stroke: var(--color-control);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .gt-meter__marker {
+    fill: var(--color-other);
+    stroke: var(--color-surface);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+  }
+
+  .gt-meter__marker[data-on] {
+    opacity: 1;
+  }
+
+  .gt-meter__tick-label {
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+    font-size: var(--step-n2);
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+
+  .gt-result {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .gt-result__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-6);
+  }
+
+  .gt-die {
+    flex: none;
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .gt-die svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .gt-die__face {
+    fill: var(--color-surface);
+    stroke: var(--color-control);
+    stroke-width: 2;
+  }
+
+  .gt-die__pip {
+    fill: var(--color-fg);
+    opacity: 0;
+  }
+
+  .gt-die__pip[data-on] {
+    opacity: 1;
+  }
+
+  .gt-grid {
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gt-grid caption {
+    caption-side: top;
+  }
+
+  .gt-grid th,
+  .gt-grid td {
+    padding: var(--space-2) var(--space-4) var(--space-2) 0;
+    text-align: start;
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .gt-grid th {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .gt-grid thead th {
+    color: var(--color-muted);
+  }
+
+  /* Motion adds nothing the text does not already say, and only runs when the visitor allows it. */
+  @media (prefers-reduced-motion: no-preference) {
+    .gt-step[data-entered] {
+      animation: gt-enter var(--duration-base) var(--ease-standard);
+    }
+
+    .gt-die[data-rolled] {
+      animation: gt-roll var(--duration-max) var(--ease-standard);
+    }
+
+    .gt-meter__marker {
+      transition:
+        transform var(--duration-base) var(--ease-standard),
+        opacity var(--duration-fast) linear;
+    }
+  }
+
+  @keyframes gt-enter {
+    from {
+      opacity: 0;
+      transform: translateY(0.25rem);
+    }
+  }
+
+  @keyframes gt-roll {
+    from {
+      opacity: 0.2;
+      transform: rotate(-90deg) scale(0.8);
+    }
   }
 </style>

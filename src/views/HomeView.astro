@@ -17,8 +17,8 @@ const title = t(locale, 'site.title');
   {
     ACTS.map((act) => (
       <Act act={act} locale={locale} heading={act.id === 'question' ? title : undefined}>
-        {act.id === 'question' && <GameTable moment={1} />}
-        {act.id === 'vanberg' && <GameTable moment={2} />}
+        {act.id === 'question' && <GameTable mode="moment1" locale={locale} id="table-question" />}
+        {act.id === 'vanberg' && <GameTable mode="moment2" locale={locale} id="table-vanberg" />}
       </Act>
     ))
   }
