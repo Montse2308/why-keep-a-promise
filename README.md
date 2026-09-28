@@ -3,8 +3,8 @@
 [Español](README.es.md)
 
 The outreach page of a personal research project on why people keep promises that no longer pay
-them. It walks through the question in six short acts around one interactive piece: the
-partner-switching game from Vanberg (2008).
+them. It is being rebuilt as a short scroll-driven film in nine chapters, from the prisoner's
+dilemma to the partner-switching game of Vanberg (2008), with a notebook for the technical depth.
 
 **Work in progress.** Nothing here is final.
 
