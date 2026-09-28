@@ -99,7 +99,29 @@ export default defineConfig({
         variants: /** @type {any} */ (variants('inter', '100 900', ['normal'])),
       },
     },
-    // Code blocks only, on /how-its-built; never preloaded (ADR 0017).
+    // The film's faces (ADR 0022): Fraunces for display, Nunito for text and interface. Weight axis only, to
+    // keep the first load within budget (ADR 0025); they replace Newsreader and Inter as the film lands (P1).
+    {
+      provider: fontProviders.local(),
+      name: 'Fraunces',
+      cssVariable: '--font-display',
+      fallbacks: ['Georgia', 'serif'],
+      display: 'swap',
+      options: {
+        variants: /** @type {any} */ (variants('fraunces', '100 900', ['normal', 'italic'], 'wght')),
+      },
+    },
+    {
+      provider: fontProviders.local(),
+      name: 'Nunito',
+      cssVariable: '--font-body',
+      fallbacks: ['system-ui', 'sans-serif'],
+      display: 'swap',
+      options: {
+        variants: /** @type {any} */ (variants('nunito', '200 1000', ['normal'], 'wght')),
+      },
+    },
+    // Code blocks only, on /how-its-built; never preloaded (ADR 0022).
     {
       provider: fontProviders.local(),
       name: 'JetBrains Mono',
