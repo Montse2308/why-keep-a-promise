@@ -56,7 +56,8 @@ export interface LightPoint {
 /** The day, from the arrival to the closing (ADR 0027). Between points the light is eased, never cut. */
 export const LIGHT_POINTS: readonly LightPoint[] = [
   { name: 'dawn', at: 0, colours: { 'sky-top': '#ffc58f', 'sky-bottom': '#ffe6cf', 'hill-far': '#b9c9a4', 'hill-near': '#9dba9a', floor: '#86ae98' } },
-  { name: 'morning', at: 0.15, colours: { 'sky-top': '#9ed0ff', 'sky-bottom': '#e3f1ff', 'hill-far': '#a9c8b0', 'hill-near': '#8db59c', floor: '#7fa99a' } },
+  { name: 'sunrise', at: 0.08, colours: { 'sky-top': '#f6b3c0', 'sky-bottom': '#ffd9cf', 'hill-far': '#b4c8a8', 'hill-near': '#96b89b', floor: '#83ac99' } },
+  { name: 'morning', at: 0.17, colours: { 'sky-top': '#9ed0ff', 'sky-bottom': '#d3eaff', 'hill-far': '#a9c8b0', 'hill-near': '#8db59c', floor: '#7fa99a' } },
   { name: 'noon', at: 0.34, colours: { 'sky-top': '#8fb8f5', 'sky-bottom': '#d9e8ff', 'hill-far': '#a2c4ae', 'hill-near': '#86b097', floor: '#78a092' } },
   { name: 'afternoon', at: 0.55, colours: { 'sky-top': '#c7a8e0', 'sky-bottom': '#ffd3e6', 'hill-far': '#a9b3b8', 'hill-near': '#8ea3a6', floor: '#8a9fa0' } },
   { name: 'sunset', at: 0.73, colours: { 'sky-top': '#ff9f6b', 'sky-bottom': '#ffd08a', 'hill-far': '#b3a98a', 'hill-near': '#99a07c', floor: '#8d9a78' } },
@@ -77,6 +78,13 @@ export const LAMP_FROM = 0.8;
  * of one (ADR 0027: no cuts).
  */
 export const MAX_LIGHT_CHANGE_PER_SCREEN = 25;
+
+/**
+ * The least colour the sky keeps anywhere between two light points: the spread between its
+ * strongest and weakest channel, out of 255. Below it the sky reads grey and dirty. The horizon is
+ * paler by nature, so it may keep less.
+ */
+export const MIN_SKY_COLOUR = { 'sky-top': 24, 'sky-bottom': 18 } as const;
 
 /** The minimum distances of ADR 0027, as in palette.ts: the cast apart, the thread apart from all. */
 export const FILM_DISTANCE = { cast: 40, thread: 20 } as const;

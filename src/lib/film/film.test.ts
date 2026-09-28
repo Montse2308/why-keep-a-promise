@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ANCHOR, frame, isPortrait, viewBoxAttribute, type Shot } from './camera';
 import { spanAt, spans, totalScreens, within } from './spans';
+import { parseHex } from '../design/color';
 import { easeInOut, mixHex, progress, sample, steepestColourRate, track } from './track';
 
 describe('easing and spans of the scroll', () => {
@@ -42,10 +43,18 @@ describe('tracks', () => {
     expect(sample(numbers, 0.125)).toBeLessThan(12.5);
   });
 
-  it('mixes colours channel by channel', () => {
-    expect(mixHex('#000000', '#ffffff', 0.5)).toBe('#808080');
+  it('mixes colours in OKLCH: exact at the ends, grey stays grey, and opposite hues keep their colour', () => {
     expect(mixHex('#ff0000', '#0000ff', 0)).toBe('#ff0000');
-    expect(sample(track([{ at: 0, value: '#000000' }, { at: 1, value: '#ffffff' }]), 0.5)).toBe('#808080');
+    expect(mixHex('#ff0000', '#0000ff', 1)).toBe('#0000ff');
+    const grey = parseHex(mixHex('#000000', '#ffffff', 0.5));
+    expect(new Set(grey).size).toBe(1);
+    expect(grey[0]).toBeGreaterThan(90);
+    expect(grey[0]).toBeLessThan(110);
+    expect(sample(track([{ at: 0, value: '#000000' }, { at: 1, value: '#ffffff' }]), 0.5)).toBe(mixHex('#000000', '#ffffff', 0.5));
+    // Halfway from pink to sky blue: channel by channel it would be a grey; by hue, a lavender.
+    const [r, g, b] = parseHex(mixHex('#f6b3c0', '#9ed0ff', 0.5));
+    expect(Math.max(r, g, b) - Math.min(r, g, b)).toBeGreaterThan(30);
+    expect(b).toBeGreaterThan(g);
   });
 
   it('rejects tracks that are empty, out of order, out of range or mixed', () => {

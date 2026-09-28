@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import faviconSvg from '../../../public/favicon.svg?raw';
 import filmCss from '../../styles/film.css?raw';
 import { CHAPTERS } from '../chapters';
-import { steepestColourRate } from '../film/track';
+import { sample, steepestColourRate } from '../film/track';
 import { totalScreens } from '../film/spans';
 import { contrastRatio, deltaE, parseHex, simulate, type Deficiency } from './color';
-import { FILM, FILM_DISTANCE, FILM_TOKENS, LAMP_FROM, LIGHT, LIGHT_POINTS, LIGHT_SURFACES, MAX_LIGHT_CHANGE_PER_SCREEN } from './film';
+import { FILM, FILM_DISTANCE, FILM_TOKENS, LAMP_FROM, LIGHT, LIGHT_POINTS, LIGHT_SURFACES, MAX_LIGHT_CHANGE_PER_SCREEN, MIN_SKY_COLOUR } from './film';
 import { MIN_CONTRAST } from './palette';
 
 const visions: Array<Deficiency | 'typical'> = ['typical', 'protanopia', 'deuteranopia'];
@@ -62,6 +63,16 @@ describe('the day’s light (ADR 0027)', () => {
     expect(contrastRatio(FILM.ink, dawn?.['sky-bottom'] ?? '#000000')).toBeGreaterThanOrEqual(MIN_CONTRAST.text);
   });
 
+  it('never turns the sky grey on its way between two light points', () => {
+    for (let i = 0; i <= 400; i++) {
+      const p = i / 400;
+      for (const surface of ['sky-top', 'sky-bottom'] as const) {
+        const [r, g, b] = parseHex(sample(LIGHT[surface], p));
+        expect(Math.max(r, g, b) - Math.min(r, g, b), `${surface} at ${p}`).toBeGreaterThanOrEqual(MIN_SKY_COLOUR[surface]);
+      }
+    }
+  });
+
   it.each(LIGHT_SURFACES)('never cuts: %s changes at most a few ΔE per screen of scroll', (surface) => {
     const perScreen = steepestColourRate(LIGHT[surface]) / totalScreens(CHAPTERS);
     expect(perScreen).toBeLessThanOrEqual(MAX_LIGHT_CHANGE_PER_SCREEN);
@@ -72,5 +83,14 @@ describe('film.css', () => {
   it('carries exactly the values of film.ts', () => {
     const declared = Object.fromEntries([...filmCss.matchAll(/--film-([a-z-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2]?.trim()]));
     expect(declared).toEqual(Object.fromEntries(FILM_TOKENS.map((token) => [token, FILM[token]])));
+  });
+});
+
+describe('favicon.svg', () => {
+  it('draws the thread between you and the other in the film’s colours only', () => {
+    const used = new Set([...faviconSvg.matchAll(/#[0-9a-f]{6}\b/gi)].map((m) => m[0].toLowerCase()));
+    const values = new Set(Object.values(FILM));
+    expect([...used].filter((hex) => !values.has(hex))).toEqual([]);
+    for (const token of ['you', 'other', 'thread', 'ink'] as const) expect(used).toContain(FILM[token]);
   });
 });

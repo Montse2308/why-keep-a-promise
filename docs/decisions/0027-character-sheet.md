@@ -30,13 +30,14 @@ mesa en los capítulos de noche. Las hojas están en `docs/prototipo/`.
 
 ### La luz del día, continua
 
-- **La película dura un día.** Los seis puntos de luz y sus colores viven en `LIGHT_POINTS` de
+- **La película dura un día.** Los siete puntos de luz y sus colores viven en `LIGHT_POINTS` de
   `src/lib/design/film.ts`:
 
   | Punto | En el scroll | Capítulo |
   | ----- | ------------ | -------- |
   | Amanecer | 0 | Llegada |
-  | Mañana | 0.15 | Dos cuartos |
+  | Salida del sol | 0.08 | Llegada · Dos cuartos |
+  | Mañana | 0.17 | Dos cuartos |
   | Mediodía | 0.34 | La matriz se dobla |
   | Tarde | 0.55 | El apagón |
   | Atardecer | 0.73 | La gente real |
@@ -45,6 +46,10 @@ mesa en los capítulos de noche. Las hojas están en `docs/prototipo/`.
 - **No hay cortes de color.** Entre dos puntos, el color se interpola con aceleración suave. Un test
   exige que ninguna superficie cambie más de 25 ΔE\*ab por pantalla de scroll
   (`MAX_LIGHT_CHANGE_PER_SCREEN`). Un corte daría cientos.
+- **El cielo nunca pasa por gris.** El color se mezcla por tono (OKLCH, por el camino corto del
+  círculo de tonos), no canal por canal: del rosa al azul pasa por lavanda. Por eso entre el amanecer
+  y la mañana hay una salida del sol rosada; mezclado canal por canal, el durazno y el azul daban un
+  gris sucio. Un test exige que el cielo conserve color en todo el recorrido (`MIN_SKY_COLOUR`).
 - **La lámpara.** Desde 0.8 (los capítulos 7 y 8), una lámpara ilumina la mesa con luz cálida, y los
   personajes no se apagan de noche.
 - **La película tiene su propia luz, como un film.** No sigue el tema claro u oscuro del sistema.
