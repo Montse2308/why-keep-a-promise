@@ -68,10 +68,12 @@ El acto 5 cerrado sigue como lo fija el ADR 0015: su título y la frase, en el t
   enlaza y no repite nada de esas páginas.
 - La prosa va en Markdown por idioma (ADR 0005), en `src/content/sections/{en,es}/research.md`.
   Los enlaces bloqueados siguen a una marca `<!-- lock -->`, como en las subpáginas (ADR 0017).
-- **`verify:dist`** suma una marca propia de esos enlaces (un atributo, por ejemplo
-  `data-research-links`; el nombre se fija en R2). Con `'in-preparation'` falla si la marca está en
-  `dist/`. Con `'under-review'` exige la marca en `/` y en `/es/`. La frase de estado no es una
-  marca: se renderiza en los dos estados.
+- **`verify:dist`** suma una marca propia de esos enlaces, el atributo `data-research-links`
+  (fijado en R2). Con `'in-preparation'` falla si la marca está en `dist/`. Con `'under-review'`
+  exige la marca en `/` y en `/es/`. La frase de estado no es una marca: se renderiza en los dos
+  estados. En los dos estados, además, `verify:dist` exige la frase activa exactamente dos veces
+  como texto propio de un elemento en `/` y en `/es/` (la estampa y el acto 5), y la frase del
+  otro estado en ninguna página.
 - El párrafo del motor sale del acto 6 y pasa aquí. La aritmética exacta y los tests que detienen
   el build son de la página: se quedan en el acto 6.
 

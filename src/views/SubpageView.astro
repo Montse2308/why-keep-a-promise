@@ -15,7 +15,7 @@ import { actForSubpage } from '../lib/acts';
 import { t, type Locale } from '../lib/i18n';
 import { findingUnlocked, statusKey } from '../lib/lock';
 import { href, type Subpage } from '../lib/routes';
-import { focusableCode, splitSubpage, type Segment } from '../lib/subpages';
+import { focusableCode, slotsIn, splitSubpage, type Segment, type SlotName } from '../lib/subpages';
 import { fill } from '../lib/template';
 
 interface Props {
@@ -38,6 +38,10 @@ const lockedWhole = !unlocked && parts.open.length === 0;
 const showStatus = subpage === 'finding';
 const status = t(locale, statusKey(MANUSCRIPT_STATUS));
 const back = fill(t(locale, 'subpage.back'), { title: t(locale, act.titleKey) });
+// The home sections' slots (ADR 0019) have no place on a subpage.
+const SUBPAGE_SLOTS: readonly SlotName[] = ['best-response', 'switch-table', 'guilt-chart'];
+const stray = slotsIn([...parts.open, ...parts.locked]).filter((slot) => !SUBPAGE_SLOTS.includes(slot));
+if (stray.length > 0) throw new Error(`Subpage ${subpage} uses slots that are not a subpage's: ${stray.join(', ')}`);
 ---
 
 <BaseLayout locale={locale} route={subpage} title={`${heading} · ${t(locale, 'site.title')}`} codeFont={subpage === 'how-its-built'}>
@@ -51,9 +55,9 @@ const back = fill(t(locale, 'subpage.back'), { title: t(locale, act.titleKey) })
           <BestResponse locale={locale} id="dilemma-best-reply" />
         ) : segment.name === 'switch-table' ? (
           <SwitchTable locale={locale} />
-        ) : (
+        ) : segment.name === 'guilt-chart' ? (
           <Curve locale={locale} id="finding-guilt" variant="guilt" />
-        ),
+        ) : null,
       )
     }
     {showStatus && <p class="subpage__status">{status}</p>}

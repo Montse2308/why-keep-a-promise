@@ -137,6 +137,11 @@ textarea {
   white-space: nowrap;
 }
 
+/* A hairline between the home page's blocks, acts and sections alike (ADR 0019). */
+main > section + section {
+  border-top: var(--border-width) solid var(--color-border);
+}
+
 .container {
   width: 100%;
   max-width: var(--content-max);

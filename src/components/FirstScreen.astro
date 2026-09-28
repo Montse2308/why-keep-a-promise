@@ -1,0 +1,78 @@
+---
+/**
+ * What the first screen carries under the question (ADR 0019): the manuscript's status as a stamp,
+ * the author's full name on a line apart, and a plain link down to "The research". The stamp is the status
+ * sentence exactly as rule (b) fixes it, from the same keys as act 5; CSS only sets it in capitals,
+ * so the text itself never changes. Act 5 carries the same sentence at its usual size: on `/` it
+ * appears twice, and `verify:dist` counts it.
+ */
+import { MANUSCRIPT_STATUS } from '../config';
+import { useTranslations, type Locale } from '../lib/i18n';
+import { statusKey } from '../lib/lock';
+import { href } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+---
+
+<div class="first-screen">
+  <p class="stamp" data-manuscript-stamp>{tr(statusKey(MANUSCRIPT_STATUS))}</p>
+  <p class="byline">{tr('author.name')}</p>
+  <p class="jump">
+    <a href={href(locale, 'home', 'research')}>{tr('section.research.title')}<span class="jump__arrow" aria-hidden="true">↓</span></a>
+  </p>
+</div>
+
+<style>
+  .first-screen {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-4);
+    margin-block: var(--space-6) var(--space-12);
+    font-family: var(--font-ui);
+  }
+
+  /* A rubber stamp: capitals, wide tracking, a double border, a slight tilt. */
+  .stamp {
+    max-width: 100%;
+    margin: 0;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--step-1);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    color: var(--color-fg);
+    border: 4px double currentColor;
+    border-radius: var(--radius-sm);
+    transform: rotate(-2deg);
+    transform-origin: left center;
+  }
+
+  .byline {
+    margin: 0;
+    font-size: var(--step-0);
+    font-weight: 600;
+  }
+
+  .jump {
+    margin: 0;
+    font-size: var(--step-n1);
+    font-weight: 600;
+  }
+
+  .jump a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+  }
+
+  .jump__arrow {
+    margin-inline-start: 0.35em;
+  }
+</style>

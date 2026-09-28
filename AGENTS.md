@@ -13,8 +13,7 @@ itself, the manuscript status as a stamp, and the author's name. It is **not** a
 **not** the instrument of a paper. Details: `docs/plan.md`.
 
 The page is being redesigned in phases R0–R4, between F4 and F5 (ADR 0018, 0019, 0020). R1 (the visual
-system) is in; until R2–R3 land, parts of the map below describe the code as it is, not as those
-ADRs decide.
+system) and R2 (the structure) are in; until R3 lands, act 1 has no scene yet.
 
 ## Reading order
 
@@ -38,7 +37,7 @@ Work only on what the current session authorises. If two instructions conflict, 
 | `npm test`        | Vitest, once                                      |
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
-| `npm run verify:dist` | After `build`: fails if act 5's locked content reached `dist/` (ADR 0015) |
+| `npm run verify:dist` | After `build`: fails if locked content reached `dist/`, or if the status sentence is off (ADR 0015, ADR 0019) |
 
 `check`, `test`, `build` and `verify:dist` must be green before every commit. CI
 (`.github/workflows/ci.yml`) runs install → check → test → build → verify:dist on every push and PR.
@@ -57,9 +56,10 @@ Work only on what the current session authorises. If two instructions conflict, 
 ```
 src/
   config.ts              author links, manuscript status (it also opens act 5's lock)
-  content.config.ts      the acts content collection (frontmatter schema)
+  content.config.ts      the acts, subpages and sections content collections (frontmatter schemas)
   content/acts/{en,es}/  act prose in Markdown, one file per act (F2)
   content/subpages/{en,es}/  subpage prose, one file per subpage (F4); <!-- slot:… --> and <!-- lock -->
+  content/sections/{en,es}/  research.md and about.md, the home sections that are not acts (ADR 0019)
   content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md
   data/curve.json        the engine's precomputed curve, copied with provenance; never edited (ADR 0010)
   i18n/en.json, es.json  UI strings, flat keys, full parity
@@ -68,11 +68,12 @@ src/
     locales.ts           locale list, no dictionary imports (safe for client scripts)
     routes.ts            buildHref/href/assetHref: every internal link goes through here
     acts.ts              the six acts, their ids and subpage links
+    sections.ts          the home page's order: the acts, "The research" after act 4, "About" last
     template.ts          fill({name}) placeholders in UI strings
     lock.ts              act 5's lock: full content only under review or in dev (ADR 0015)
     design/              palette.ts (single source of colour values: the paper in two themes, and
                          the stage, always dark; ADR 0018), colour maths
-    subpages.ts          splits subpage prose at its slot and lock markers (ADR 0017)
+    subpages.ts          splits subpage and section prose at its slot and lock markers (ADR 0017)
     table/               game logic for the table: exact payoffs, moments 1–2 state machines
     curve/               reads curve.json (build time only), step-chart geometry, moment 3 logic;
                          finding.ts: guilt, θ, c and robustness for /finding, behind the lock
@@ -82,6 +83,9 @@ src/
   styles/                tokens.css (mirrors palette.ts, test-checked; its .stage block redefines
                          the tokens on the stage), base.css (.stage, .display, the prose column)
   components/            LanguageSwitch (the first screen's corner and the footer), SiteFooter, Act,
+                         FirstScreen (act 1: the status stamp, the author, the link to the research),
+                         HomeSection + SectionSegments ("The research", its links behind the lock;
+                         "About"),
                          table/GameTable + controller.ts (always on the stage; client script,
                          moments 1–2),
                          curve/Curve + controller.ts (act 5's chart and moment 3, and /finding's
@@ -91,7 +95,8 @@ src/
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers: / and /es/, plus four subpages each
-scripts/verify-dist.mjs  checks dist/ against the lock: act 5, /finding, the engine on /how-its-built
+scripts/verify-dist.mjs  checks dist/ against the lock: act 5, /finding, the engine on /how-its-built,
+                         the research links; and the status sentence, twice on each home page
 tests/                   repo-level tests (page parity, prose figures and budgets, rule (h), forbidden
                          phrases, curve and /finding figures against curve.json, verify:dist markers,
                          code quoted on /how-its-built)

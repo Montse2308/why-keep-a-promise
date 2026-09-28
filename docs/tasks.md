@@ -3,7 +3,7 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** R1 (sistema visual), en revisión de Montse; R0 también. Siguen R2–R4, antes de F5
+**Fase activa:** R2 (estructura), en revisión de Montse; R0 y R1 también. Siguen R3–R4, antes de F5
 (`docs/phases.md`). F3, F3.1, F4 y F4.1 en revisión de Montse, sin depender del rediseño. La
 revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 cerradas.
 
@@ -250,18 +250,35 @@ revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 
 
 ## R2 · Estructura (ADR 0019)
 
-- [ ] Primera pantalla: sello (Inter, mayúsculas, tracking, borde doble) desde
-      `manuscript.status.*`, línea de autora desde `author.name`, ancla «La investigación ↓».
-- [ ] Colección `sections` (`src/content/sections/{en,es}/research.md`, `about.md`) y su render
-      en `HomeView`: `research` entre el acto 4 y el acto 5, `about` al final.
-- [ ] «La investigación»: la pregunta y el motor en TypeScript; después de `<!-- lock -->`, los
-      enlaces al acto 5, a `/finding` y al repo del motor (`TODO(launch)`).
-- [ ] «Quién es»: GitHub y LinkedIn desde `AUTHOR`; lo demás, `TODO(F5)`.
-- [ ] El párrafo del motor sale del acto 6.
-- [ ] `verify:dist`: marca de los enlaces de «La investigación», en los dos estados del candado.
-- [ ] Tests: orden de `research` y `about`, paridad EN/ES, regla (j) (la parte abierta sin marcas
-      del candado).
-- [ ] Mapa de `AGENTS.md` al día.
+- [x] Primera pantalla (`FirstScreen.astro`, dentro del acto 1): sello (Inter, mayúsculas por CSS,
+      tracking, borde doble, inclinado) desde `manuscript.status.*`, línea de autora desde
+      `author.name`, ancla «La investigación ↓» a `#research`.
+- [x] Colección `sections` (`src/content/sections/{en,es}/research.md`, `about.md`) y
+      `src/lib/sections.ts` (orden de `/`, con tests): `research` entre el acto 4 y el acto 5,
+      `about` al final. Cada sección solo puede usar sus slots (`research-links`, `author-links`);
+      `SubpageView` rechaza esos slots.
+- [x] «La investigación» (`HomeSection.astro`): título, la pregunta grande y la prosa (la pregunta y
+      el motor en TypeScript), en primera persona. Después de `<!-- lock -->`, dentro de
+      `data-research-links`: los enlaces al acto 5 y a `/finding` y el repo del motor
+      (`TODO(launch)`).
+- [x] «Quién es»: el nombre, GitHub y LinkedIn desde `AUTHOR`; lo demás, `TODO(F5)`.
+- [x] El párrafo del motor sale del acto 6 (EN y ES).
+- [x] `verify:dist`: marca `data-research-links` (19 marcas); la frase de estado activa exactamente
+      dos veces como texto propio de un elemento en `/` y `/es/`, y la del otro estado en ninguna
+      página. Probado con el candado cerrado y abierto.
+- [x] Tests: orden de `research` y `about`, archivos y títulos por idioma, slots propios, cifras y
+      citas, regla (j) (la parte abierta dice la pregunta y TypeScript, sin tests del motor,
+      semillas, generaciones, imitación, procedencia, curva, parámetros ni hallazgo, y sin marcas
+      del candado), `TODO(launch)` solo en la investigación y `TODO(F5)` solo en «Quién es»;
+      conteo de la frase de estado, incluido el falso positivo de `/how-its-built` («…until the
+      manuscript is under review. While…»).
+- [x] Separador entre bloques de `/` en `base.css` (`main > section + section`), para actos y
+      secciones por igual.
+- [x] Mapa de `AGENTS.md` al día.
+- [x] Probado por CDP: primera pantalla a 360 px (EN, claro) y 1280 px (ES, oscuro); «La
+      investigación» a 1280 y 360 px; «Quién es»; sin scroll horizontal.
+- [ ] Revisión de R2 por Montse, en especial la voz en primera persona de «La investigación» y el
+      título en inglés de «Quién es» («About»).
 
 ## R3 · La escena (ADR 0020)
 

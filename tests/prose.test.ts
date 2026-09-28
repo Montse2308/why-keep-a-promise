@@ -6,10 +6,14 @@ import { CITATIONS, FIGURES, SOURCE_KEYS } from '../src/content/figures';
 import { ACTS } from '../src/lib/acts';
 import { LOCALES, type Locale } from '../src/lib/locales';
 import { SUBPAGES, type Subpage } from '../src/lib/routes';
+import { SECTIONS } from '../src/lib/sections';
+import { slotsIn, splitSubpage } from '../src/lib/subpages';
+import { MARKERS, findMarks } from '../scripts/verify-dist.mjs';
 
 type Raw = Record<string, string>;
 const actSources = import.meta.glob('../src/content/acts/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
 const subpageSources = import.meta.glob('../src/content/subpages/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
+const sectionSources = import.meta.glob('../src/content/sections/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
 
 interface ProseFile {
   locale: Locale;
@@ -18,7 +22,7 @@ interface ProseFile {
   body: string;
 }
 
-function parse(files: Raw, collection: 'acts' | 'subpages'): ProseFile[] {
+function parse(files: Raw, collection: 'acts' | 'subpages' | 'sections'): ProseFile[] {
   return Object.entries(files).map(([path, raw]) => {
     const match = new RegExp(`/${collection}/(\\w+)/([^/]+)\\.md$`).exec(path);
     const parts = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(raw.replace(/\r\n/g, '\n'));
@@ -35,6 +39,7 @@ function parse(files: Raw, collection: 'acts' | 'subpages'): ProseFile[] {
 
 const actFiles = parse(actSources, 'acts');
 const subpageFiles = parse(subpageSources, 'subpages');
+const sectionFiles = parse(sectionSources, 'sections');
 
 const byAct = (locale: Locale, act: number) => actFiles.find((f) => f.locale === locale && Number(f.data.act) === act);
 const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
@@ -130,9 +135,65 @@ describe('subpage files', () => {
   });
 });
 
+describe('home section files (ADR 0019)', () => {
+  it('exist for every section in every locale, named by its id', () => {
+    for (const locale of LOCALES) {
+      expect(sectionFiles.filter((f) => f.locale === locale).map((f) => f.name).sort()).toEqual(SECTIONS.map((s) => s.id).sort());
+    }
+  });
+
+  it.each(sectionFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s carries its section title and only its own slots', (_name, file) => {
+    const section = SECTIONS.find((candidate) => candidate.id === file.name);
+    const dictionary = file.locale === 'en' ? en : es;
+    expect(file.data.title).toBe(section && dictionary[section.titleKey]);
+    const { open, locked } = splitSubpage(file.body);
+    expect(slotsIn([...open, ...locked])).toEqual(section?.slots);
+  });
+
+  it('keeps "The research" to the question and the engine while locked (rule (j))', () => {
+    const outsideTheLock = /\b(tests?|seeds?|semillas?|generations?|generaci[oó]n(es)?|imitat\w*|imitaci[oó]n|provenance|procedencia|curves?|curvas?|parameters?|par[aá]metros?|finding|hallazgo)\b|θ/iu;
+    for (const locale of LOCALES) {
+      const file = sectionFiles.find((f) => f.locale === locale && f.name === 'research');
+      const { open, locked } = splitSubpage(file?.body ?? '');
+      const openText = readable(open.map((segment) => (segment.kind === 'html' ? segment.html : '')).join('\n'));
+      expect(openText).toContain('TypeScript');
+      expect(openText).toMatch(locale === 'en' ? /\bmy research\b/ : /\bmi investigación\b/);
+      expect(openText).not.toMatch(outsideTheLock);
+      expect(findMarks(openText)).toEqual([]);
+      // Behind the lock: only the links and the engine's repository, no finding either.
+      expect(slotsIn(locked)).toEqual(['research-links']);
+      expect(findMarks(locked.map((segment) => (segment.kind === 'html' ? segment.html : '')).join('\n'), MARKERS)).toEqual([]);
+    }
+  });
+
+  it('keeps "About" to the facts Montse gave: the author links, and a TODO for the rest', () => {
+    for (const locale of LOCALES) {
+      const body = sectionFiles.find((f) => f.locale === locale && f.name === 'about')?.body ?? '';
+      expect(readable(body).trim()).toBe('');
+      expect([...body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1])).toEqual(['F5']);
+    }
+  });
+
+  it('marks the research only with TODO(launch), the engine link of step 8', () => {
+    for (const locale of LOCALES) {
+      const body = sectionFiles.find((f) => f.locale === locale && f.name === 'research')?.body ?? '';
+      expect([...body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1])).toEqual(['launch']);
+    }
+  });
+
+  it.each(LOCALES)('%s: "The research" stays short, within 60 words', (locale) => {
+    const body = sectionFiles.find((f) => f.locale === locale && f.name === 'research')?.body ?? '';
+    expect(wordCount(readable(body))).toBeLessThanOrEqual(60);
+  });
+});
+
 describe('figures in the prose', () => {
   const allowed = new Set(FIGURES.map((f) => f.value));
-  const proseFiles = [...actFiles, ...subpageFiles.map((f) => ({ ...f, name: `subpage ${f.name}` }))];
+  const proseFiles = [
+    ...actFiles,
+    ...subpageFiles.map((f) => ({ ...f, name: `subpage ${f.name}` })),
+    ...sectionFiles.map((f) => ({ ...f, name: `section ${f.name}` })),
+  ];
 
   it.each(proseFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s uses only registered figures', (_name, file) => {
     expect(numbersIn(readable(file.body)).filter((n) => !allowed.has(n))).toEqual([]);

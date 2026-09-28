@@ -15,7 +15,3 @@ redondea hasta que se muestra. Los pagos vienen de las instrucciones publicadas 
 las tasas y las apuestas se recalcularon desde sus datos suplementarios públicos, con el método de
 su propio código. Los tests, pequeños programas que revisan el código, fallan si alguna cifra
 cambia.
-
-Detrás de la página hay un motor de simulación, un programa que calcula lo que se sigue de un
-conjunto de reglas, escrito en TypeScript. Su código está en
-<span class="todo">TODO(launch): enlace al repo del motor</span>.

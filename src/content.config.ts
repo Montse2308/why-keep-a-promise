@@ -29,4 +29,16 @@ const subpages = defineCollection({
   }),
 });
 
-export const collections = { acts, subpages };
+/**
+ * The home page's two sections that are not acts (ADR 0019): src/content/sections/{en,es}/<id>.md,
+ * `research` and `about`. They use the subpages' markers: `<!-- slot:… -->` for a component and
+ * `<!-- lock -->` for what renders only behind act 5's lock (docs/content-rules.md, rule (j)).
+ */
+const sections = defineCollection({
+  loader: glob({ pattern: '{en,es}/*.md', base: './src/content/sections' }),
+  schema: z.object({
+    title: z.string().min(1),
+  }),
+});
+
+export const collections = { acts, subpages, sections };

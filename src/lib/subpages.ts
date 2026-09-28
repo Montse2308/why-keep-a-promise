@@ -1,6 +1,6 @@
 /**
- * A subpage's prose, split where the page inserts a component or where act 5's lock begins
- * (ADR 0015, ADR 0017). The Markdown marks those places with HTML comments:
+ * A subpage's prose, or a home section's (ADR 0019), split where the page inserts a component or
+ * where act 5's lock begins (ADR 0015, ADR 0017). The Markdown marks those places with HTML comments:
  *
  *   <!-- slot:best-response -->   a component the view renders in place
  *   <!-- lock -->                 everything after it renders only behind the lock
@@ -9,7 +9,7 @@
  * so locked prose never reaches a locked build.
  */
 
-export const SLOTS = ['best-response', 'switch-table', 'guilt-chart'] as const;
+export const SLOTS = ['best-response', 'switch-table', 'guilt-chart', 'research-links', 'author-links'] as const;
 export type SlotName = (typeof SLOTS)[number];
 
 export type Segment = { readonly kind: 'html'; readonly html: string } | { readonly kind: 'slot'; readonly name: SlotName };

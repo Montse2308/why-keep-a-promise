@@ -14,7 +14,3 @@ Every figure is computed with exact arithmetic, as fractions of whole numbers, s
 rounded until it is shown. The payoffs come from the published instructions of Vanberg (2008); the
 rates and guesses were recalculated from his public supplementary data, with the method of his own
 code. Tests, small programs that check the code, fail if any figure changes.
-
-Behind the page there is a simulation engine, a program that works out what follows from a set of
-rules, written in TypeScript. Its code is at
-<span class="todo">TODO(launch): enlace al repo del motor</span>.

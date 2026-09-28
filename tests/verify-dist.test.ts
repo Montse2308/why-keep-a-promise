@@ -6,15 +6,27 @@ import actEn from '../src/content/acts/en/05-finding.md?raw';
 import actEs from '../src/content/acts/es/05-finding.md?raw';
 import en from '../src/i18n/en.json';
 import es from '../src/i18n/es.json';
+import homeSection from '../src/components/HomeSection.astro?raw';
 import homeView from '../src/views/HomeView.astro?raw';
 import subpageView from '../src/views/SubpageView.astro?raw';
 import { splitSubpage } from '../src/lib/subpages';
-import { findMarks, MARKERS, readStatus, UNLOCKED_MARKERS, UNLOCKED_PAGES } from '../scripts/verify-dist.mjs';
+import {
+  countStandalone,
+  findMarks,
+  HOME_PAGES,
+  MARKERS,
+  readStatus,
+  STATUS_ON_HOME,
+  statusProblems,
+  UNLOCKED_MARKERS,
+  UNLOCKED_PAGES,
+} from '../scripts/verify-dist.mjs';
 
 const subpages = import.meta.glob('../src/content/subpages/*/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+const sections = import.meta.glob('../src/content/sections/*/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 
-/** Each subpage's Markdown, split at its lock marker (src/lib/subpages.ts). */
-const parts = Object.entries(subpages).map(([path, raw]) => {
+/** Each subpage's and home section's Markdown, split at its lock marker (src/lib/subpages.ts). */
+const parts = Object.entries({ ...subpages, ...sections }).map(([path, raw]) => {
   const { open, locked } = splitSubpage(raw.replace(/^---[\s\S]*?---/, ''));
   const text = (segments: typeof open) => segments.map((segment) => (segment.kind === 'html' ? segment.html : '')).join('\n');
   return { path, open: text(open), locked: text(locked) };
@@ -26,7 +38,8 @@ const curveKeys = (dictionary: Record<string, string>) =>
     .map(([, value]) => value)
     .join('\n');
 
-// What the lock covers once open: act 5, /finding and the engine part of /how-its-built.
+// What the lock covers once open: act 5, /finding, the engine part of /how-its-built and the links
+// of "The research".
 const lockedSources = [
   actEn,
   actEs,
@@ -35,11 +48,12 @@ const lockedSources = [
   curveComponent,
   curveController,
   homeView,
+  homeSection,
   subpageView,
   ...parts.map((part) => part.locked),
 ].join('\n');
 
-describe('verify:dist (ADR 0015, ADR 0017)', () => {
+describe('verify:dist (ADR 0015, ADR 0017, ADR 0019)', () => {
   it('looks for marks that the locked content really carries, so the list cannot go stale', () => {
     expect(findMarks(lockedSources)).toEqual(MARKERS);
     for (const mark of UNLOCKED_MARKERS) expect(MARKERS).toContain(mark);
@@ -51,7 +65,7 @@ describe('verify:dist (ADR 0015, ADR 0017)', () => {
     );
   });
 
-  it.each(parts.map((part) => [part.path.replace(/^.*subpages\//, ''), part] as const))(
+  it.each(parts.map((part) => [part.path.replace(/^.*content\//, ''), part] as const))(
     "%s: the open part carries none of the lock's marks",
     (_path, part) => {
       expect(findMarks(part.open)).toEqual([]);
@@ -62,8 +76,23 @@ describe('verify:dist (ADR 0015, ADR 0017)', () => {
     for (const part of parts) {
       if (part.path.endsWith('/finding.md')) expect(part.open.trim()).toBe('');
       if (part.path.endsWith('/how-its-built.md')) expect(findMarks(part.locked).length).toBeGreaterThan(0);
-      if (/\/(dilemma|vanberg)\.md$/.test(part.path)) expect(part.locked).toBe('');
+      if (/\/(dilemma|vanberg|about)\.md$/.test(part.path)) expect(part.locked).toBe('');
     }
+  });
+
+  it('keeps "The research" visible and puts only its links behind the lock', () => {
+    const research = parts.filter((part) => part.path.endsWith('/research.md'));
+    expect(research).toHaveLength(2);
+    for (const part of research) {
+      expect(part.open).toContain('TypeScript');
+      expect(part.locked).toContain('TODO(launch)');
+    }
+    // The links render inside the mark only when unlocked, so a locked build cannot carry them.
+    expect(homeSection).toMatch(/unlocked && parts\.locked\.length > 0 && \(\s*<div class="research__more" data-research-links>/);
+  });
+
+  it('requires the research links on both home pages once unlocked', () => {
+    for (const page of Object.keys(HOME_PAGES)) expect(UNLOCKED_PAGES[page as keyof typeof UNLOCKED_PAGES]).toContain('data-research-links');
   });
 
   it('matches across line breaks and case', () => {
@@ -75,6 +104,50 @@ describe('verify:dist (ADR 0015, ADR 0017)', () => {
     const lockedEs = `<h2>${es['act.finding.title']}</h2><p>${es['manuscript.status.in-preparation']}</p>`;
     const subpage = `<article class="subpage"><h1 id="subpage-title">${en['act.finding.title']}</h1><p class="subpage__status">${en['manuscript.status.in-preparation']}</p></article>`;
     expect(findMarks(locked + lockedEs + subpage)).toEqual([]);
+  });
+
+  it('counts the status sentence where it stands alone, across line breaks and case', () => {
+    const sentence = en['manuscript.status.in-preparation'];
+    expect(countStandalone('<p class="stamp">A manuscript is in preparation.</p><p class="act__status">\n A manuscript\n is in PREPARATION.</p>', sentence)).toBe(2);
+    expect(countStandalone('<p>Nothing to see.</p>', sentence)).toBe(0);
+    expect(() => countStandalone('<p>text</p>', ' ')).toThrow();
+  });
+
+  it('does not count the same words inside a sentence of prose (/how-its-built)', () => {
+    const prose = '<p>Part of the site stays closed until the manuscript is under review. While it is closed…</p>';
+    expect(countStandalone(prose, en['manuscript.status.under-review'])).toBe(0);
+  });
+
+  describe('the status sentence (rule (b), ADR 0019)', () => {
+    const dictionaries = { en, es };
+    const page = (sentence: string, times: number) => `<main>${`<p>${sentence}</p>`.repeat(times)}</main>`;
+    const home = (status: 'in-preparation' | 'under-review', times = STATUS_ON_HOME) => ({
+      'index.html': page(en[`manuscript.status.${status}`], times),
+      'es/index.html': page(es[`manuscript.status.${status}`], times),
+      'finding/index.html': page(en[`manuscript.status.${status}`], 1),
+    });
+
+    it('passes with the stamp and act 5 on each home page, in both states', () => {
+      expect(statusProblems('in-preparation', dictionaries, home('in-preparation'))).toEqual([]);
+      expect(statusProblems('under-review', dictionaries, home('under-review'))).toEqual([]);
+    });
+
+    it('fails when the sentence appears once, or three times', () => {
+      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 1))).toHaveLength(2);
+      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 3))[0]).toMatch(/appears 3 times, not 2/);
+    });
+
+    it('fails when the inactive sentence ships anywhere', () => {
+      const pages = { ...home('in-preparation'), 'vanberg/index.html': page(es['manuscript.status.under-review'], 1) };
+      expect(statusProblems('in-preparation', dictionaries, pages)).toEqual([
+        "vanberg/index.html: carries the 'under-review' sentence while the status is 'in-preparation'",
+      ]);
+    });
+
+    it('fails when a home page is missing', () => {
+      const { 'es/index.html': _gone, ...pages } = home('in-preparation');
+      expect(statusProblems('in-preparation', dictionaries, pages)).toEqual(['es/index.html: missing']);
+    });
   });
 
   it('reads the manuscript status from src/config.ts', () => {
