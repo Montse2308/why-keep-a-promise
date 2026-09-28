@@ -1,6 +1,6 @@
 # 0002 · Un hilo, seis actos
 
-**Estado:** aceptada (F0)
+**Estado:** reemplazada por el ADR 0019 (R0). Se conserva como registro; no rige.
 
 ## Contexto
 

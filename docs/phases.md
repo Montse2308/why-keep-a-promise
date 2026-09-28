@@ -75,6 +75,76 @@ Si las horas no alcanzan, aquí se decide qué subpágina se pospone.
 - Cada una enlazada desde "Go deeper →" de su acto y desde el footer.
 - `/finding` cumple las reglas (b)–(e).
 
+## R0–R4 · Rediseño
+
+Montse vio la página terminada y la rechazó por verse como un ensayo quieto. El rediseño (ADR
+0018, 0019 y 0020) va entre F4 y F5, sin renumerar: F5 y F6 conservan su nombre, porque el
+checklist, `AGENTS.md` y varios ADR citan F6. Cada fase R se cierra, como las F, con `check`,
+`test`, `build` y `verify:dist` en verde.
+
+### R0 · Documentos
+
+ADR 0018, 0019 y 0020; el 0002 y el 0014 marcados como reemplazados; la línea de estado del 0003
+apunta al 0020. Reglas (b), (d), (j) y (k) en `content-rules.md`. `plan.md`, `phases.md`,
+`tasks.md`, `launch-checklist.md` y `AGENTS.md`. No toca `src/`.
+
+**Criterio de salida**
+
+- Ningún documento contradice a otro, y todos citan los ADR nuevos donde aplica.
+
+### R1 · Sistema visual (ADR 0018)
+
+Tokens del escenario y del papel en `palette.ts` y `tokens.css`, `--step-7`, sombras de objeto y
+topes de movimiento. Sale `AuthorStrip`; el enlace EN/ES pasa a la esquina de la primera pantalla
+y al footer.
+
+**Criterio de salida**
+
+- La página actual, sin rehacer, se ve con el sistema nuevo: las dos mesas sobre el escenario, la
+  prosa sobre papel.
+- Los tests de contraste y de daltonismo cubren los pares del escenario y pasan con los colores
+  nuevos, o la promesa recupera un tono.
+- Sin franja fija.
+
+### R2 · Estructura (ADR 0019)
+
+Primera pantalla con el sello, la autora y el ancla «La investigación ↓». Las secciones `research`
+(entre el acto 4 y el acto 5) y `about` (al final), con prosa EN/ES en
+`src/content/sections/{en,es}/`. El párrafo del motor sale del acto 6. `verify:dist` suma la marca
+de los enlaces de «La investigación».
+
+**Criterio de salida**
+
+- Con el candado cerrado, la frase del manuscrito sale dos veces (estampa y acto 5), la sección
+  «La investigación» se ve y sus tres enlaces no están en `dist/`.
+- Con el candado abierto, los tres enlaces están en `/` y en `/es/`.
+- Tests del orden de las secciones, de paridad y de la regla (j).
+
+### R3 · La escena (ADR 0020)
+
+Los golpes 0–6 en el SVG de la mesa del acto 1, atados al scroll solo con CSS; la versión quieta;
+el paso del asiento a "tú" en el golpe 6; las leyendas en claves de i18n.
+
+**Criterio de salida**
+
+- Una sola mesa en el acto 1; ningún script nuevo.
+- La versión quieta con movimiento reducido y donde no hay animaciones ligadas al scroll.
+- Teclado, lector de pantalla y 360 px; los controles del momento 1 no se enfocan antes del golpe
+  6.
+- Tests de la regla (k) y del orden de los golpes.
+
+### R4 · Prosa corta
+
+Los actos 1–4 y 6, reescritos más cortos contra la escena ya construida. Absorbe la revisión
+pendiente de la prosa de F2.
+
+**Criterio de salida**
+
+- Paridad EN/ES y cada cifra en el registro y en `docs/sources.md`.
+- Ningún acto vuelve a contar la escena; el acto 4 se queda con la decisión y las cifras citadas;
+  el acto 6 habla solo de la página.
+- Revisión explícita contra las reglas (a)–(k).
+
 ## F5 · QA
 
 Revisión integral antes del lanzamiento.
@@ -82,8 +152,12 @@ Revisión integral antes del lanzamiento.
 **Criterio de salida**
 
 - Móvil: sin scroll horizontal a 320 px; la mesa usable al tacto.
+- La escena a 320 px, y su versión quieta en navegadores sin animaciones ligadas al scroll y con
+  movimiento reducido.
 - Accesibilidad: teclado completo, lector de pantalla, contraste, `lang` correcto por página.
 - Movimiento reducido verificado.
+- «Quién es» sin `TODO`: con los hechos que Montse haya dado o, si no hay, solo con GitHub y
+  LinkedIn (regla (j)).
 - `hreflang`, canonical y `x-default` correctos en las veinte combinaciones ruta/idioma.
 - Sin enlaces rotos (internos con `base` y externos).
 - Metadatos Open Graph y descripción por página e idioma.

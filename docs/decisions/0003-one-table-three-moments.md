@@ -1,7 +1,8 @@
 # 0003 · Una mesa, tres momentos, sin visuales de población
 
-**Estado:** aceptada (F0). La exclusión de gráficas extra está precisada por el ADR 0017: la
-única excepción es la segunda gráfica de `/finding`.
+**Estado:** aceptada (F0). La escena del acto 1 está en el ADR 0020: es la mesa antes del
+momento 1, no un cuarto momento ni una segunda pieza. La exclusión de gráficas extra está precisada
+por el ADR 0017: la única excepción es la segunda gráfica de `/finding`.
 
 ## Contexto
 

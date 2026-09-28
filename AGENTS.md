@@ -6,9 +6,14 @@ Single source of instructions for any agent (Claude, Copilot, others) working in
 ## What this is
 
 The outreach page of a personal research project on why people keep promises that no longer pay.
-A portfolio piece: one scrolling thread in six acts, one visual piece ("the table", Vanberg's 2008
-partner-switching game), English at `/` and Spanish at `/es/`. It is **not** a simulator and **not**
-the instrument of a paper. Details: `docs/plan.md`.
+A portfolio piece: one scrolling thread in six acts plus two sections ("The research" between acts
+4 and 5, "About" at the end), one visual piece ("the table", Vanberg's 2008 partner-switching game),
+English at `/` and Spanish at `/es/`. Act 1 is the hero: a scroll-bound scene played on the table
+itself, the manuscript status as a stamp, and the author's name. It is **not** a simulator and
+**not** the instrument of a paper. Details: `docs/plan.md`.
+
+The page is being redesigned in phases R0–R4, between F4 and F5 (ADR 0018, 0019, 0020). Until R1–R3
+land, parts of the map below describe the code as it is, not as those ADRs decide.
 
 ## Reading order
 
@@ -16,7 +21,7 @@ Read these before changing anything, in this order:
 
 1. `docs/plan.md` — what the page is (decided; do not reopen).
 2. `docs/content-rules.md` — what may and may not be written, anywhere.
-3. `docs/phases.md` — phases F0–F6 and their exit criteria.
+3. `docs/phases.md` — phases F0–F6, the redesign phases R0–R4, and their exit criteria.
 4. `docs/tasks.md` — current tasks; only work on the active phase.
 5. `docs/decisions/` — ADRs. A decision changes only through a new ADR that supersedes it.
 
@@ -109,7 +114,12 @@ scratch/                 local notes, git-ignored, never committed
 - **Publishing the result.** No curve data, which motive pays where, or content for act 5 or
   `/finding` beyond the status sentence, except behind act 5's lock (ADR 0015). Model parameters
   never appear on the page, except θ, c, the guilt available and the robustness variant on
-  `/finding`, behind the same lock (ADR 0017). Do not change the repository's visibility, do not
+  `/finding`, behind the same lock (ADR 0017). "The research" section is always visible, with only
+  the question and the fact that Montse built a simulation engine in TypeScript; its links to act 5,
+  `/finding` and the engine repository exist only behind the lock (ADR 0019, rule (j)). Nothing about
+  the engine's tests, seed, generations, imitation or provenance outside the lock. The manuscript
+  status sentence is never reworded or added to, even as the hero's stamp (rule (b)). Do not change
+  the repository's visibility, do not
   enable GitHub Pages, do not run `deploy.yml` (manual-only, F6).
 - **Copying the manuscript or the paper's context.** Do not read or copy the manuscript or its working
   files, wherever they live (local folders, Drive). If something is missing, ask.
@@ -117,13 +127,16 @@ scratch/                 local notes, git-ignored, never committed
   local folder `dilema-prisionero`) is never opened, added as a dependency, submodule or alias, and
   no file is copied from it. Its output reaches this repo only as `src/data/curve.json`, copied with
   provenance in F3 (ADR 0010).
-- **Choosing another visual.** The only piece is the table, with three moments. No PixiJS, WebGPU,
-  agent canvases, grids or population animations, no four panels, no extra charts beyond
-  `/finding`'s guilt chart, no playable dilemma in the main scroll, no playable repeated dilemma
-  anywhere. `/dilemma`'s one-shot best reply is the only other interaction (ADR 0017).
+- **Choosing another visual.** The only piece is the table, with three moments. Act 1's scene is
+  the table before moment 1, not a fourth moment nor a second piece; it moves with scroll-bound CSS
+  only, never hijacks the scroll, and has a still version (ADR 0020, rule (k)). No PixiJS, WebGPU,
+  canvas, GSAP, Lottie, agent canvases, grids or population animations, no four panels, no extra
+  charts beyond `/finding`'s guilt chart, no playable dilemma in the main scroll, no playable
+  repeated dilemma anywhere. `/dilemma`'s one-shot best reply is the only other interaction
+  (ADR 0017).
 - Naming the journal the manuscript was submitted to, submission dates or correspondence with
   authors in any file. Third-party references carry their journal, as any bibliography (ADR 0016).
-- Inventing personal data (display name, profile URLs, email, photo). Anything not provided goes as
-  `TODO(...)`.
+- Inventing personal data (display name, profile URLs, email, photo, school, job, city, biography).
+  Anything not provided goes as `TODO(...)`; "About" follows rule (j).
 - Writing act prose outside the phase that owns it.
 - Adding dependencies outside the stack without asking.

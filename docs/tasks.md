@@ -3,8 +3,9 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** F4.1, en revisión de Montse. F2, F2.1, F3, F3.1 y F4 en revisión de Montse. F0,
-F0.1, F1 y F1.1 cerradas.
+**Fase activa:** R0 (documentos del rediseño), en revisión de Montse. Siguen R1–R4, antes de F5
+(`docs/phases.md`). F3, F3.1, F4 y F4.1 en revisión de Montse, sin depender del rediseño. La
+revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 cerradas.
 
 ## F0 · Esqueleto
 
@@ -94,7 +95,7 @@ F0.1, F1 y F1.1 cerradas.
 - [x] Registro de cifras y citas (`src/content/figures.ts`) con test de números, citas, paridad
       EN/ES y claves de `docs/sources.md`.
 - [x] Lint de frases prohibidas (regla (i) de `content-rules.md`).
-- [ ] Revisión de la prosa por Montse.
+- [ ] Revisión de la prosa por Montse. Absorbida en R4: esa prosa se reescribe más corta.
 - [x] Revisión explícita contra cada regla de `content-rules.md` (criterio de salida de F2), en el
       reporte de la sesión F2.
 
@@ -205,6 +206,68 @@ F0.1, F1 y F1.1 cerradas.
       la derivación de Kawagoe y Narita (2014), verificada contra su lectura del working paper
       (SSRN 1704884), sin citar su numeración de secciones.
 
+## R0 · Documentos del rediseño
+
+- [x] ADR 0018 (dirección visual: escenario y papel), que reemplaza al 0014.
+- [x] ADR 0019 (estructura: el hero es el acto 1, «La investigación» y «Quién es»), que reemplaza
+      al 0002 y precisa el 0015 y el 0017.
+- [x] ADR 0020 (la escena del acto 1), que precisa el 0003.
+- [x] 0002 y 0014 marcados como reemplazados; líneas de estado del 0003, 0015 y 0017.
+- [x] `content-rules.md`: (b) con la estampa, (d) con los cuatro paneles precisados, (j) y (k)
+      nuevas.
+- [x] `plan.md`, `phases.md` (R0–R4 y criterios nuevos de F5), `launch-checklist.md` (pasos 4 y 8)
+      y `AGENTS.md`.
+- [ ] Revisión de R0 por Montse.
+
+## R1 · Sistema visual (ADR 0018)
+
+- [ ] `palette.ts` y `tokens.css`: superficie del escenario (siempre oscuro, más profunda que la
+      tinta de lectura en tema oscuro), foco de luz, colores de rol más saturados, promesa por
+      luminosidad o con tono si el test lo pide.
+- [ ] Tests de contraste y de daltonismo extendidos a los pares del escenario.
+- [ ] `--step-7`, sombras y radios de objeto, topes de movimiento (600 ms; 900 ms el dado).
+- [ ] Las dos mesas sobre el escenario; la prosa, la mejor respuesta de `/dilemma`, la tabla de
+      `/vanberg` y las dos gráficas sobre papel.
+- [ ] Sale `AuthorStrip`; el enlace EN/ES en la esquina de la primera pantalla, sin quedarse fijo,
+      y en el footer.
+- [ ] Mapa de `AGENTS.md` al día con los componentes.
+
+## R2 · Estructura (ADR 0019)
+
+- [ ] Primera pantalla: sello (Inter, mayúsculas, tracking, borde doble) desde
+      `manuscript.status.*`, línea de autora desde `author.name`, ancla «La investigación ↓».
+- [ ] Colección `sections` (`src/content/sections/{en,es}/research.md`, `about.md`) y su render
+      en `HomeView`: `research` entre el acto 4 y el acto 5, `about` al final.
+- [ ] «La investigación»: la pregunta y el motor en TypeScript; después de `<!-- lock -->`, los
+      enlaces al acto 5, a `/finding` y al repo del motor (`TODO(launch)`).
+- [ ] «Quién es»: GitHub y LinkedIn desde `AUTHOR`; lo demás, `TODO(F5)`.
+- [ ] El párrafo del motor sale del acto 6.
+- [ ] `verify:dist`: marca de los enlaces de «La investigación», en los dos estados del candado.
+- [ ] Tests: orden de `research` y `about`, paridad EN/ES, regla (j) (la parte abierta sin marcas
+      del candado).
+- [ ] Mapa de `AGENTS.md` al día.
+
+## R3 · La escena (ADR 0020)
+
+- [ ] Golpes 0–6 en el SVG de la mesa del acto 1, solo con CSS ligado al scroll; scroll nativo.
+- [ ] A, B y C en tinta neutra con etiquetas; en el golpe 6 el asiento pasa a "tú" y empieza el
+      momento 1; sus controles no se enfocan antes.
+- [ ] Versión quieta (movimiento reducido, `@supports`, sin JS): golpe 5 y la lista numerada;
+      la primera elección limpia la escena con el script que ya tiene la mesa.
+- [ ] Leyendas en claves de i18n, en el HTML y en orden.
+- [ ] Tests de la regla (k) (pagos desde `PAYOFFS`, ninguna leyenda afirma que la expectativa no
+      cambió) y del orden de los golpes.
+- [ ] Compatibilidad de las animaciones ligadas al scroll comprobada con los datos oficiales.
+- [ ] Mapa de `AGENTS.md` al día.
+
+## R4 · Prosa corta
+
+- [ ] Actos 1–4 y 6, más cortos, EN/ES: el acto 1 con una entrada mínima; el acto 4 con la
+      decisión y las cifras citadas, sin contar el cambio de pareja; el acto 6 solo de la página.
+- [ ] Registro de cifras, presupuestos de palabras y regla (h) al día.
+- [ ] Revisión explícita contra las reglas (a)–(k).
+- [ ] Revisión de la prosa por Montse (absorbe la de F2).
+
 ## F5 · QA
 
 Pendientes que dejó F4 (se trabajan en F5, no antes):
@@ -222,13 +285,17 @@ Pendientes que dejó F4 (se trabajan en F5, no antes):
 - Verificar antes del lanzamiento Axelrod (1984), con la página de los pagos del dilema, de la
   condición `2R > T + S`, de la sombra del futuro y del torneo: la prosa ya lo usa (acto 2 y
   `/dilemma`) y sigue "por verificar" en `docs/sources.md`.
+- Hechos de «Quién es» (escuela y lo demás): los da Montse. Si no llegan antes de F5, la sección
+  sale solo con GitHub y LinkedIn (regla (j)).
+- Nombre en la estampa: completo, sin prefijo. Si se ve largo, se acorta solo con aprobación de
+  Montse.
 
 ## Preguntas cerradas
 
 - ~~Pagos, sorteo, creencias y tasas de Vanberg (2008) con página.~~ Resuelta en F1.1 con el
   material suplementario (`docs/sources.md`).
 - ~~Tipografía para autoalojar en F1.~~ Resuelta en F1: Newsreader + Inter variables, JetBrains
-  Mono diferida a F4 (ADR 0014).
+  Mono diferida a F4 (ADR 0014, hoy reemplazado por el ADR 0018).
 - ~~URL del perfil de LinkedIn.~~ Resuelta en F0.1: está en `AUTHOR.linkedin`.
 - ~~Título en español.~~ Confirmado en F0.1: "¿Por qué cumplir una promesa que ya no conviene?".
 - ~~Regla (d) frente al momento 2 y la regla (a).~~ Resuelta en F0.1: el modelo no se presenta

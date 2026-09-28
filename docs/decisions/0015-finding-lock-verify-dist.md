@@ -3,7 +3,9 @@
 **Estado:** aceptada (F3). Precisa el ADR 0014 sobre el JavaScript del sitio. El ADR 0017 extiende
 el candado a `/finding` y a la parte del motor de `/how-its-built`, permite mostrar detrás del
 candado θ, c, la culpa disponible y la variante de robustez en `/finding`, y precisa otra vez el
-JavaScript del sitio.
+JavaScript del sitio. El ADR 0019 extiende el candado a los tres enlaces de «La investigación»
+(la sección se ve en los dos estados) y lleva la frase de estado también a la estampa de la
+primera pantalla. El ADR 0014 está reemplazado por el ADR 0018.
 
 ## Contexto
 

@@ -1,7 +1,8 @@
 # 0017 · Subpáginas: mejor respuesta, segunda gráfica, parámetros tras el candado y JetBrains Mono
 
 **Estado:** aceptada (F4). Precisa los ADR 0003, 0004, 0014 y 0015, y la frase sobre los
-parámetros del modelo de `AGENTS.md` y de `docs/content-rules.md`.
+parámetros del modelo de `AGENTS.md` y de `docs/content-rules.md`. El ADR 0019 extiende el
+candado a los enlaces de «La investigación». El ADR 0014 está reemplazado por el ADR 0018.
 
 ## Contexto
 
