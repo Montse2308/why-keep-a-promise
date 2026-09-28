@@ -1,0 +1,22 @@
+/*
+ * The film's colours (ADR 0027). Values mirror src/lib/design/film.ts exactly; a test fails if they
+ * drift apart. The film owns its light, so these do not change with the visitor's theme; the day's
+ * light is applied by the film's script from the tracks in film.ts.
+ */
+
+:root {
+  --film-you: #5d7ee0;
+  --film-other: #ed6b41;
+  --film-new: #2ab2ac;
+  --film-thread: #f3bd46;
+  --film-thread-edge: #8a6500;
+  --film-ink: #1d1b3a;
+  --film-rim: #fffaf0;
+  --film-card: #fffdf8;
+  --film-card-muted: #5b5875;
+  --film-voice-expects: #b9b6d8;
+  --film-voice-word: #fff4d6;
+  --film-table-top: #d99a5b;
+  --film-table-front: #b8733a;
+  --film-lamp: #ffcf8a;
+}

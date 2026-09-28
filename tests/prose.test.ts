@@ -6,9 +6,7 @@ import { CITATIONS, FIGURES, SOURCE_KEYS } from '../src/content/figures';
 import { ACTS } from '../src/lib/acts';
 import { LOCALES, type Locale } from '../src/lib/locales';
 import { SUBPAGES, type Subpage } from '../src/lib/routes';
-import type { UiKey } from '../src/lib/i18n';
 import { SECTIONS } from '../src/lib/sections';
-import { sceneCaptions } from '../src/lib/table/scene';
 import { slotsIn, splitSubpage } from '../src/lib/subpages';
 import { MARKERS, findMarks } from '../scripts/verify-dist.mjs';
 
@@ -309,21 +307,8 @@ describe('voice', () => {
   });
 });
 
-describe('the acts after the scene (R4, ADR 0019, ADR 0020)', () => {
-  const normalized = (text: string) => text.replace(/\s+/g, ' ').replace(/[*_"«»“”]/g, '').trim().toLocaleLowerCase('und');
-
-  it.each(LOCALES)("%s: no act repeats a caption of the scene (rule (k))", (locale) => {
-    const dictionary = locale === 'en' ? en : es;
-    const tr = (key: UiKey) => dictionary[key];
-    const acts = actFiles.filter((f) => f.locale === locale).map((f) => normalized(readable(f.body)));
-    for (const { text } of sceneCaptions(tr)) {
-      for (const sentence of text.split(/(?<=[.!?])\s+/)) {
-        for (const act of acts) expect(act).not.toContain(normalized(sentence));
-      }
-    }
-  });
-
-  it.each(LOCALES)('%s: act 4 keeps the figures the scene does not show, without the steps', (locale) => {
+describe('the acts still to be replaced (R4, ADR 0019)', () => {
+  it.each(LOCALES)('%s: act 4 keeps its cited figures, without the steps', (locale) => {
     const body = byAct(locale, 4)?.body ?? '';
     expect(body).not.toMatch(/^\s*\d+\.\s/m);
     for (const figure of ['192', '8', '73', '54', '70', '68']) expect(numbersIn(readable(body))).toContain(figure);

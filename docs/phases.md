@@ -25,7 +25,7 @@ Los ADR 0021–0026, el archivo de lo que ya no rige, `plan.md`, `content-rules.
 ## P1 · Cimientos y capítulo 0
 
 - **La hoja de personajes:** tú, el otro, la pareja nueva, las dos voces, sus expresiones, el
-  diamante, las monedas, los gestos y la paleta Papel con sus puntos de luz. Va como página de
+  hilo dorado, las monedas, los boletos y la paleta Papel con sus puntos de luz. Va como página de
   prueba fuera del sitio o como artifact, para que Montse la apruebe.
 - **Los tokens de Papel** en `palette.ts` y `tokens.css`, con los tests de contraste y daltonismo
   sobre los puntos de luz.

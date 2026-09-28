@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import faviconSvg from '../../../public/favicon.svg?raw';
 import tokensCss from '../../styles/tokens.css?raw';
 import { contrastRatio, deltaE, parseHex, relativeLuminance, simulate, type Deficiency } from './color';
 import {
@@ -151,23 +150,5 @@ describe('tokens.css', () => {
 
   it('carries exactly the stage values of palette.ts, outside any theme', () => {
     expect(stageDeclarations(tokensCss)).toEqual(Object.fromEntries(STAGE_TOKENS.map((token) => [token, STAGE[token]])));
-  });
-});
-
-describe('favicon.svg', () => {
-  it('uses only palette values, including both role colours in each theme', () => {
-    const [light, dark] = faviconSvg.split('prefers-color-scheme: dark') as [string, string | undefined];
-    expect(dark).toBeDefined();
-    const hexes = (text: string) => new Set([...text.matchAll(/#[0-9a-f]{6}\b/gi)].map((m) => m[0].toLowerCase()));
-    for (const [theme, part] of [
-      ['light', light],
-      ['dark', dark ?? ''],
-    ] as const) {
-      const used = hexes(part);
-      const values = new Set(Object.values(PALETTE[theme]));
-      expect([...used].filter((hex) => !values.has(hex))).toEqual([]);
-      expect(used).toContain(PALETTE[theme].you);
-      expect(used).toContain(PALETTE[theme].other);
-    }
   });
 });

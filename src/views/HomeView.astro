@@ -1,9 +1,9 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Act from '../components/Act.astro';
-import FirstScreen from '../components/FirstScreen.astro';
 import HomeSection from '../components/HomeSection.astro';
 import Curve from '../components/curve/Curve.astro';
+import Film from '../components/film/Film.astro';
 import GameTable from '../components/table/GameTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { MANUSCRIPT_STATUS } from '../config';
@@ -45,23 +45,13 @@ const blocks = homeBlocks().map((block) => {
 });
 ---
 
-<BaseLayout locale={locale} route="home" title={title} stageTop>
+<BaseLayout locale={locale} route="home" title={title} film>
   {
     blocks.map((block) => {
       if (block.kind === 'section') return <HomeSection section={block.section} locale={locale} />;
       const { act, locked, entry, Content } = block;
-      if (act.id === 'question') {
-        // Act 1 is the hero, on the stage: the first screen, then the scene and its table (ADR 0020).
-        // Its prose is the scene's entry at beat 0 (R4), so the table shows in the first screen.
-        return (
-          <Act act={act} locale={locale} title={entry?.data.title} hero pending={!Content}>
-            <FirstScreen slot="first" locale={locale} />
-            <GameTable slot="scene" mode="moment1" locale={locale} id="table-question" scene>
-              {Content && <Content slot="intro" />}
-            </GameTable>
-          </Act>
-        );
-      }
+      // The film replaces act 1 (ADR 0021); the acts still to be replaced follow it (docs/phases.md).
+      if (act.id === 'question') return <Film locale={locale} />;
       return act.id === 'finding' ? (
         <Act act={act} locale={locale} title={entry?.data.title} pending={!locked && !Content} status={status} lockedContent={!locked} deeper={!locked}>
           {Content && <Content />}

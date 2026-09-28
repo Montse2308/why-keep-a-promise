@@ -1,5 +1,9 @@
 # 0022 · Dirección de arte: Papel
 
+> **Archivada (P1).** Reemplazada por el ADR 0027 (Papel y la hoja de personajes aprobada), que
+> reescribe lo que sigue vigente de aquí. Se conserva como registro; no rige. Sus referencias a otros
+> ADR y a rutas del repo son de su momento.
+
 **Estado:** aceptada (P0). Reemplaza el ADR 0018 (archivado). Recoge de él y del 0017 lo que sigue
 vigente: los tests de color, el color que nunca va solo y JetBrains Mono.
 

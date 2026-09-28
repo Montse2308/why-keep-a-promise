@@ -1,0 +1,116 @@
+---
+/**
+ * The paper diorama (ADR 0027), drawn at one point of the film. The film's live stage draws it once
+ * and its script moves it; the storyboard draws one still frame per chapter at its key pose. Parts
+ * the script changes carry `data-part`, so nothing depends on ids, which differ per drawing.
+ */
+import { FILM } from '../../lib/design/film';
+import { frame, viewBoxAttribute } from '../../lib/film/camera';
+import { castPositions, threadPath, WORLD, type StageView } from '../../lib/film/stage';
+import Character from './Character.astro';
+
+interface Props {
+  /** Prefix for this drawing's gradient and filter ids. */
+  uid: string;
+  view: StageView;
+  /** The live stage: hidden from assistive technology, since the chapters tell the same story. */
+  live?: boolean;
+  /** What a still frame shows, for a screen reader. */
+  label?: string;
+}
+
+const { uid, view, live = false, label } = Astro.props;
+const viewBox = viewBoxAttribute(frame(view.shot, { width: 1440, height: 900 }));
+const cast = castPositions(view.spread);
+const shadow = `${uid}-shadow`;
+const sky = `${uid}-sky`;
+const lamp = `${uid}-lamp`;
+---
+
+<svg
+  class:list={['world', { 'world--live': live }]}
+  viewBox={viewBox}
+  preserveAspectRatio={live ? 'none' : 'xMidYMid meet'}
+  role={live ? undefined : 'img'}
+  aria-label={live ? undefined : label}
+  aria-hidden={live ? 'true' : undefined}
+  data-world={live ? 'live' : 'still'}
+>
+  <defs>
+    <linearGradient id={sky} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color={view.light['sky-top']} data-part="sky-top" />
+      <stop offset="1" stop-color={view.light['sky-bottom']} data-part="sky-bottom" />
+    </linearGradient>
+    <radialGradient id={lamp} cx="50%" cy="58%" r="45%">
+      <stop offset="0" stop-color={FILM.lamp} stop-opacity="0.9" />
+      <stop offset="0.6" stop-color={FILM.lamp} stop-opacity="0.3" />
+      <stop offset="1" stop-color={FILM.lamp} stop-opacity="0" />
+    </radialGradient>
+    <filter id={shadow} x="-40%" y="-40%" width="180%" height="190%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#281e3c" flood-opacity="0.28" />
+    </filter>
+  </defs>
+
+  <rect x="-4000" y="-4000" width="9600" height="9600" fill={`url(#${sky})`} />
+
+  <g data-part="far">
+    <circle cx="1250" cy="190" r="64" fill="#fff4c2" filter={`url(#${shadow})`} />
+    <g fill="#ffffff" opacity="0.9" filter={`url(#${shadow})`}>
+      <ellipse cx="300" cy="170" rx="92" ry="32" />
+      <ellipse cx="362" cy="148" rx="60" ry="38" />
+      <ellipse cx="1000" cy="104" rx="80" ry="26" />
+      <ellipse cx="1052" cy="90" rx="50" ry="30" />
+    </g>
+    <path d="M-2000 640 C -600 420, 200 520, 700 470 S 1700 380, 3600 560 L 3600 3000 L -2000 3000 Z" fill={view.light['hill-far']} filter={`url(#${shadow})`} data-part="hill-far" />
+  </g>
+  <g data-part="near">
+    <path d="M-2000 660 C -300 560, 500 600, 900 560 S 2000 520, 3600 640 L 3600 3000 L -2000 3000 Z" fill={view.light['hill-near']} filter={`url(#${shadow})`} data-part="hill-near" />
+  </g>
+  <rect x="-4000" y={WORLD.floor} width="9600" height="5000" fill={view.light.floor} data-part="floor" />
+  <rect x="200" y="200" width="1200" height="700" fill={`url(#${lamp})`} opacity={view.lamp} data-part="lamp" />
+
+  <ellipse cx={cast.you[0]} cy={WORLD.floor + 12} rx="70" ry="12" fill="#140f28" opacity="0.2" data-part="shadow-you" />
+  <ellipse cx={cast.other[0]} cy={WORLD.floor + 12} rx="76" ry="12" fill="#140f28" opacity="0.2" data-part="shadow-other" />
+
+  <g data-part="thread" opacity={view.thread.state === 'none' ? 0 : 1}>
+    <path d={threadPath(view.spread)} fill="none" stroke={FILM['thread-edge']} stroke-width="11" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset={1 - view.thread.drawn} data-part="thread-edge" />
+    <path d={threadPath(view.spread)} fill="none" stroke={FILM.thread} stroke-width="6" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset={1 - view.thread.drawn} data-part="thread-line" />
+  </g>
+
+  <g transform={`translate(${cast.you[0]} ${cast.you[1]})`} data-part="you">
+    <Character kind="circle" mood={view.moods.you} shadow={shadow} />
+  </g>
+  <g transform={`translate(${cast.other[0]} ${cast.other[1]})`} data-part="other">
+    <Character kind="square" mood={view.moods.other} shadow={shadow} />
+  </g>
+
+  <g filter={`url(#${shadow})`} data-part="table">
+    <rect x="560" y="560" width="480" height="70" rx="10" fill={FILM['table-front']} />
+    <rect x="590" y="600" width="26" height="48" rx="4" fill={FILM['table-front']} />
+    <rect x="984" y="600" width="26" height="48" rx="4" fill={FILM['table-front']} />
+    <ellipse cx={WORLD.centre} cy={WORLD.tableTop} rx="270" ry="36" fill={FILM['table-top']} stroke={FILM.rim} stroke-width="5" />
+  </g>
+
+  <g transform={`translate(${WORLD.centre} ${view.die.y})`} opacity={view.die.opacity} data-part="die">
+    <g data-part="die-spin" filter={`url(#${shadow})`}>
+      <rect x="-34" y="-34" width="68" height="68" rx="14" fill="#fffaf0" stroke={FILM.ink} stroke-width="4.5" />
+      <circle cx="-14" cy="-14" r="6.5" fill={FILM.ink} />
+      <circle cx="14" cy="-14" r="6.5" fill={FILM.ink} />
+      <circle cx="0" cy="0" r="6.5" fill={FILM.ink} />
+      <circle cx="-14" cy="14" r="6.5" fill={FILM.ink} />
+      <circle cx="14" cy="14" r="6.5" fill={FILM.ink} />
+    </g>
+  </g>
+</svg>
+
+<style>
+  .world {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .world--live {
+    height: 100%;
+  }
+</style>

@@ -1,4 +1,4 @@
-// Checks the built site against act 5's lock (ADR 0015, ADR 0017, ADR 0019). Run after `npm run build`.
+// Checks the built site against the lock (ADR 0026). Run after `npm run build`.
 //
 // The lock covers act 5 (prose, chart, moment 3), all of /finding, the engine part of
 // /how-its-built and the links of "The research". While MANUSCRIPT_STATUS in src/config.ts is
@@ -8,7 +8,10 @@
 // so a broken unlock is caught too.
 //
 // In both states it also checks the status sentence (docs/content-rules.md, rule (b)): the active one
-// appears exactly twice on each home page, the stamp and act 5, and the other one appears nowhere.
+// appears exactly `STATUS_ON_HOME` times on each home page, and the other one appears nowhere.
+//
+// The lock still guards the previous version's places (act 5, /finding, /how-its-built, "The
+// research"); it moves to chapter 7 and the notebook in P4 (ADR 0026).
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
@@ -56,8 +59,12 @@ export const UNLOCKED_MARKERS = [...new Set(Object.values(UNLOCKED_PAGES).flat()
 /** The home pages, by their path in dist/, with their locale. */
 export const HOME_PAGES = { 'index.html': 'en', 'es/index.html': 'es' };
 
-/** The active status sentence on each home page: the first screen's stamp and act 5 (ADR 0019). */
-export const STATUS_ON_HOME = 2;
+/**
+ * The active status sentence on each home page. While the film lands (P1–P3) it is act 5 alone: the
+ * film replaced the first screen and its stamp. From P4 it is two: the stamp of chapter 7 and the
+ * notebook's entry (ADR 0026).
+ */
+export const STATUS_ON_HOME = 1;
 
 /** The two manuscript states (docs/content-rules.md, rule (b)). */
 export const STATUSES = /** @type {const} */ (['in-preparation', 'under-review']);
@@ -187,7 +194,7 @@ function main() {
       process.exit(1);
     }
     console.log(
-      `verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, and the status sentence appears ${STATUS_ON_HOME} times on each home page.`,
+      `verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, and the status sentence appears ${STATUS_ON_HOME === 1 ? 'once' : `${STATUS_ON_HOME} times`} on each home page.`,
     );
     return;
   }
@@ -202,7 +209,7 @@ function main() {
     process.exit(1);
   }
   console.log(
-    `verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content, and the status sentence appears ${STATUS_ON_HOME} times on each home page.`,
+    `verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content, and the status sentence appears ${STATUS_ON_HOME === 1 ? 'once' : `${STATUS_ON_HOME} times`} on each home page.`,
   );
 }
 

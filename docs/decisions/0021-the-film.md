@@ -1,7 +1,8 @@
 # 0021 · La película «Te lo prometo»
 
 **Estado:** aceptada (P0). Reemplaza los ADR 0019 y 0020 (archivados). Precisa el ADR 0001 y el
-0012. El candado de la película está en el ADR 0026.
+0012. El candado de la película está en el ADR 0026. Precisado por el ADR 0027: la promesa del
+visitante se ve como un hilo dorado, no como un diamante, y la dirección de arte es la del 0027.
 
 ## Contexto
 
@@ -34,7 +35,7 @@ visual. No es código del sitio.
 ### Dos capas
 
 - **La película.** El home (`/`, `/es/`) es una película corta ligada al scroll, en nueve capítulos,
-  sobre un solo escenario que cambia de luz poco a poco (ADR 0022).
+  sobre un solo escenario que cambia de luz poco a poco (ADR 0027).
 - **El cuaderno.** Lo técnico y lo académico, a fondo, a un toque desde cualquier punto (ADR 0024).
 
 ### El título y el nombre

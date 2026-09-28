@@ -1,0 +1,374 @@
+---
+/**
+ * The film (ADR 0021, ADR 0025): the home's chapters on one paper stage. Astro renders a storyboard
+ * first: each chapter as a still frame with its text, readable without JavaScript. When the page has
+ * JavaScript (`html.js`, set before first paint), the stage sticks to the screen, the chapters scroll
+ * over it, and ./film.ts moves the camera, the light and the cast with the native scroll.
+ *
+ * Only the chapters built so far render (docs/phases.md); the previous version of the home follows.
+ */
+import { getCollection, render } from 'astro:content';
+import { builtBy } from '../../lib/chapters';
+import { FILM } from '../../lib/design/film';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { KEY_POSE, SPANS, stageAt } from '../../lib/film/stage';
+import World from './World.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const built = builtBy('P1');
+const spans = SPANS.filter((span) => built.some((c) => c.id === span.id));
+const first = spans[0];
+const last = spans.at(-1);
+if (!first || !last) throw new Error('The film has no built chapter');
+
+const entries = await getCollection('chapters', (entry) => entry.id.startsWith(`${locale}/`));
+const caption = async (id: string) => {
+  const entry = entries.find((candidate) => candidate.data.chapter === id);
+  if (!entry) throw new Error(`No caption for chapter "${id}" in ${locale}`);
+  return (await render(entry)).Content;
+};
+const Arrival = await caption('arrival');
+const arrival = built.find((c) => c.id === 'arrival');
+---
+
+<section
+  class="film"
+  aria-label={tr('film.label')}
+  data-film
+  data-from={first.from}
+  data-to={last.to}
+  data-thread-tied={tr('film.thread.tied')}
+  data-thread-none={tr('film.thread.none')}
+>
+  <div class="film__stage">
+    <World uid="live" view={stageAt(0, { promised: null }, false, false)} live />
+    <p class="film__spool" aria-live="polite">
+      <svg viewBox="-24 -24 48 48" aria-hidden="true" data-spool="none">
+        <rect x="-15" y="-19" width="30" height="7" rx="3" fill={FILM['table-front']} stroke={FILM.ink} stroke-width="2.5" />
+        <rect x="-15" y="12" width="30" height="7" rx="3" fill={FILM['table-front']} stroke={FILM.ink} stroke-width="2.5" />
+        <rect x="-10" y="-12" width="20" height="24" fill="#fffaf0" stroke={FILM.ink} stroke-width="2.5" />
+        <g class="film__spool-thread">
+          <rect x="-10" y="-12" width="20" height="24" fill={FILM.thread} stroke={FILM.ink} stroke-width="2.5" />
+          <path d="M-10 -6 H10 M-10 0 H10 M-10 6 H10" stroke={FILM['thread-edge']} stroke-width="1.5" />
+        </g>
+      </svg>
+      <span data-spool-label>{tr('film.thread.none')}</span>
+    </p>
+  </div>
+
+  <div class="film__chapters">
+    <section id="arrival" class="chapter chapter--arrival" style={`--screens: ${arrival?.screens ?? 3}`} data-chapter="arrival" aria-labelledby="arrival-title">
+      <div class="chapter__frame">
+        <div class="chapter__still">
+          <World uid="still-arrival" view={stageAt(KEY_POSE.arrival ?? 0, { promised: true }, false, true)} label={tr('film.arrival.still')} />
+        </div>
+        <h1 id="arrival-title" class="chapter__title">{tr('site.title')}</h1>
+        <div class="card">
+          <p class="card__say">
+            <span class="card__who" aria-hidden="true"></span>
+            <span><span class="visually-hidden">{tr('film.arrival.who')}: </span>{tr('film.arrival.ask')}</span>
+          </p>
+          <div class="tickets" role="group" aria-label={tr('film.arrival.ask')}>
+            <button type="button" class="ticket" data-promise="yes" aria-pressed="false">
+              <span class="ticket__icon" aria-hidden="true">
+                <svg viewBox="-24 -24 48 48"><path d="M-16 8 C-8 -14 8 -14 16 8" fill="none" stroke={FILM['thread-edge']} stroke-width="7" stroke-linecap="round" /><path d="M-16 8 C-8 -14 8 -14 16 8" fill="none" stroke={FILM.thread} stroke-width="4" stroke-linecap="round" /><circle cx="-16" cy="10" r="6" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" /><rect x="10" y="4" width="12" height="12" rx="2" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" /></svg>
+              </span>
+              <span class="ticket__text"><b>{tr('film.ticket.promise')}</b><small>{tr('film.ticket.promise.detail')}</small></span>
+            </button>
+            <button type="button" class="ticket" data-promise="no" aria-pressed="false">
+              <span class="ticket__icon" aria-hidden="true">
+                <svg viewBox="-24 -24 48 48"><circle cx="-14" cy="6" r="6" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" /><rect x="8" y="0" width="12" height="12" rx="2" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" /><path d="M-4 -4 L4 4 M4 -4 L-4 4" stroke={FILM.ink} stroke-width="2.5" stroke-linecap="round" /></svg>
+              </span>
+              <span class="ticket__text"><b>{tr('film.ticket.none')}</b><small>{tr('film.ticket.none.detail')}</small></span>
+            </button>
+          </div>
+          <p class="card__out" aria-live="polite" data-out-yes={tr('film.arrival.promised')} data-out-no={tr('film.arrival.refused')}></p>
+          <p class="card__noscript">{tr('film.arrival.noscript')}</p>
+          <div class="card__caption"><Arrival /></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="film__fade" aria-hidden="true"></div>
+</section>
+
+<script>
+  import { start } from './film';
+  start();
+</script>
+
+<style>
+  .film {
+    position: relative;
+    color: var(--film-ink);
+    font-family: var(--font-body, system-ui, sans-serif);
+    background: linear-gradient(#ffc58f, #ffe6cf);
+  }
+
+  /* Storyboard (no JavaScript): each chapter is a still frame and its text, in order. */
+  .film__stage {
+    display: none;
+  }
+
+  .chapter__frame {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-8) var(--gutter) var(--space-12);
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+
+  .chapter__still {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgb(40 30 60 / 0.2);
+  }
+
+  .chapter__title {
+    margin: 0;
+    font-family: var(--font-display, Georgia, serif);
+    font-size: clamp(2rem, 6.4vw, 5rem);
+    font-style: italic;
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-align: center;
+    max-width: 16ch;
+    margin-inline: auto;
+    color: var(--film-ink);
+  }
+
+  .card {
+    width: min(38rem, 100%);
+    justify-self: center;
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4) var(--space-4);
+    background: var(--film-card);
+    color: var(--film-ink);
+    border-radius: 14px;
+    box-shadow: 0 10px 28px rgb(40 30 60 / 0.2);
+    transform: rotate(-0.4deg);
+  }
+
+  .card :global(p) {
+    margin: 0;
+  }
+
+  .card__say {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 800;
+    font-size: clamp(1.25rem, 3.2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .card__who {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.2rem;
+    border-radius: 5px;
+    background: var(--film-other);
+    box-shadow: 0 0 0 2.5px var(--film-ink);
+  }
+
+  .tickets {
+    display: none;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .ticket {
+    font: inherit;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: stretch;
+    min-height: 3.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: var(--film-card);
+    color: var(--film-ink);
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 0 0 2px var(--film-ink), 0 4px 0 2px var(--film-ink);
+    transition: transform 120ms var(--ease-standard), box-shadow 120ms var(--ease-standard);
+  }
+
+  .ticket:active {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 2px var(--film-ink), 0 1px 0 2px var(--film-ink);
+  }
+
+  .ticket[aria-pressed='true'] {
+    background: var(--film-ink);
+    color: var(--film-card);
+  }
+
+  /* The chosen ticket inverts, but its drawing keeps its paper so the ink still shows. */
+  .ticket[aria-pressed='true'] .ticket__icon {
+    background: var(--film-card);
+    border-radius: 10px 0 0 10px;
+  }
+
+  .ticket:focus-visible {
+    outline: 3px solid var(--film-you);
+    outline-offset: 4px;
+  }
+
+  .ticket__icon {
+    display: grid;
+    place-items: center;
+    padding: 0 var(--space-3);
+    border-right: 2px dashed currentColor;
+  }
+
+  .ticket__icon svg {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .ticket__text {
+    display: grid;
+    align-content: center;
+    padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3);
+  }
+
+  .ticket__text b {
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .ticket__text small {
+    font-size: 0.85rem;
+    font-weight: 700;
+    opacity: 0.8;
+  }
+
+  .card__out {
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  .card__out:empty {
+    display: none;
+  }
+
+  .card__noscript,
+  .card__caption {
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--film-card-muted);
+  }
+
+  .film__fade {
+    height: 8rem;
+    background: linear-gradient(#86ae98, var(--color-bg));
+  }
+
+  /* The film (JavaScript): the stage sticks, each chapter's frame sticks over it while it plays. */
+  :global(html.js) .film {
+    background: none;
+  }
+
+  :global(html.js) .film__stage {
+    display: block;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  :global(html.js) .film__chapters {
+    position: relative;
+    margin-top: -100vh;
+    margin-top: -100svh;
+  }
+
+  :global(html.js) .chapter {
+    height: calc(var(--screens) * 100vh);
+    height: calc(var(--screens) * 100svh);
+  }
+
+  :global(html.js) .chapter__frame {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    max-width: none;
+    grid-template-rows: auto 1fr auto;
+    padding: calc(var(--space-16) + env(safe-area-inset-top, 0px)) var(--gutter) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    pointer-events: none;
+  }
+
+  :global(html.js) .chapter__still,
+  :global(html.js) .card__noscript {
+    display: none;
+  }
+
+  :global(html.js) .chapter__title {
+    grid-row: 1;
+    opacity: calc(1 - var(--title-gone, 0));
+    transform: translateY(calc(var(--title-gone, 0) * -2rem));
+  }
+
+  :global(html.js) .card {
+    grid-row: 3;
+    pointer-events: auto;
+  }
+
+  :global(html.js) .tickets {
+    display: flex;
+  }
+
+  :global(html.js) .film__fade {
+    background: linear-gradient(var(--film-fade-from, #86ae98), var(--color-bg));
+  }
+
+  .film__spool {
+    position: absolute;
+    top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
+    left: var(--gutter);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+    border-radius: 999px;
+    background: var(--film-card);
+    box-shadow: 0 4px 14px rgb(40 30 60 / 0.2);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .film__spool svg {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .film__spool svg[data-spool='none'] .film__spool-thread {
+    opacity: 0;
+  }
+
+  @media (max-width: 30rem) {
+    .card__say {
+      font-size: 1.15rem;
+    }
+
+    .ticket {
+      flex: 1 1 100%;
+    }
+  }
+</style>

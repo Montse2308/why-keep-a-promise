@@ -3,7 +3,7 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P0 (documentos), en revisión de Montse. Sigue P1.
+**Fase activa:** P1 (cimientos y capítulo 0). P0 cerrada: Montse la revisó y la mergeó.
 
 **Estado del código:** `src/` sigue siendo la versión anterior (los seis actos, la escena y la mesa).
 La película la reemplaza por capítulos desde P1 (ADR 0021).
@@ -25,24 +25,40 @@ La película la reemplaza por capítulos desde P1 (ADR 0021).
       nueva.
 - [x] `AGENTS.md` y los README.
 - [x] El prototipo de los capítulos 0 a 3 en `docs/prototipo/te-lo-prometo.html`.
-- [ ] Revisión de P0 por Montse.
+- [x] Revisión de P0 por Montse (PR #1, mergeado).
 
 ## P1 · Cimientos y capítulo 0
 
-- [ ] La hoja de personajes (formas, expresiones, las dos voces, el diamante, las monedas, los
-      gestos, la paleta y los puntos de luz, el favicon), aprobada por Montse.
-- [ ] Fraunces y Nunito autoalojadas (`woff2` de `@fontsource-variable/*`, versión verificada, OFL
-      y procedencia).
-- [ ] `palette.ts` y `tokens.css` de Papel; tests de contraste y de daltonismo sobre los puntos de
-      luz y sobre el papel del cuaderno; test de luz continua.
-- [ ] `src/lib/film/`: pistas, curvas, interpolación de colores, cámara según la pantalla y tramos,
+- [x] La hoja de personajes, aprobada por Montse con tres cambios, que recoge el ADR 0027 (que
+      reemplaza al 0022): el hilo dorado en lugar del diamante, los boletos en lugar de los gestos y
+      el color «punto medio» entre Aciano y Aciano luminoso. De noche, la lámpara. Las hojas y
+      barajas, en `docs/prototipo/`.
+- [x] Fraunces y Nunito autoalojadas: `@fontsource-variable/*@5.3.0`, solo el eje de peso (121 404
+      bytes en la primera carga), OFL y procedencia. Registradas; se cargan con el capítulo 0.
+- [x] Colores de la película en `src/lib/design/film.ts` y `src/styles/film.css`: el elenco, el
+      hilo, el papel, los seis puntos de luz y la lámpara; tests de contraste en cada punto de luz, de
+      daltonismo (44 y 22), de luz continua (≤ 25 ΔE por pantalla) y de cielo que nunca pasa por gris
+      (la luz se mezcla por tono, OKLCH, y hay una salida del sol entre el amanecer y la mañana).
+- [ ] El papel del cuaderno en `palette.ts` y `tokens.css`, con sus tests (con el cuaderno, P5).
+- [x] `src/lib/film/`: pistas, curvas, interpolación de colores, cámara según la pantalla y tramos,
       con tests.
-- [ ] `src/lib/chapters.ts` (ids y orden, con test) y la colección `src/content/chapters/{en,es}/`.
-- [ ] El storyboard en HTML y el script de la película encima; el scroll nativo.
-- [ ] El capítulo 0 en EN y ES: la promesa, el diamante y la promesa de la página, con versión quieta
-      y de movimiento reducido.
-- [ ] Retirar la primera pantalla y la escena de la versión anterior; lo que aún no tiene capítulo
-      sigue abajo.
+- [x] `src/lib/chapters.ts`: los nueve ids, su orden, su largo en pantallas y su fase, con test.
+- [x] La colección `src/content/chapters/{en,es}/`, con el texto del capítulo 0.
+- [x] El storyboard en HTML y el script de la película encima (`src/components/film/`): el escenario
+      se fija y los capítulos pasan encima, con el scroll nativo; `html.js` se marca antes de pintar.
+      Sin JavaScript, cada capítulo es un cuadro quieto con su texto.
+- [x] El capítulo 0 en EN y ES: la pregunta sobre el amanecer, el otro que pide la promesa, los dos
+      boletos, el hilo dorado que se dibuja, el carrete de la esquina y la promesa de la página. Con
+      movimiento reducido, la cámara corta entre dos planos y nada flota. Tests de la coreografía y
+      de las caras (`src/lib/film/stage.test.ts`).
+- [x] Retirados la primera pantalla (sello, autora y ancla), la escena del acto 1 y la mesa del
+      momento 1, con sus tests y sus claves; también el modo hero de `Act`. Los actos 2 a 6 siguen
+      abajo, tal cual, hasta P2–P4. El ícono de la pestaña es el del hilo.
+- [x] `verify:dist`, durante la transición: la frase de estado sale una vez en el home (acto 5), porque
+      el sello se fue con la primera pantalla. En P4 vuelven a ser dos: el sello del capítulo 7 y la
+      entrada del cuaderno (ADR 0026).
+- Transición, a resolver en P2: el acto 2 dice «la mesa que jugaste arriba», y esa mesa volverá como
+  capítulo 3. El archivo `01-question.md` del acto 1 ya no se muestra; sale con `acts.ts` en P4.
 - [ ] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS).
 
 ## Preguntas abiertas
@@ -60,6 +76,6 @@ La película la reemplaza por capítulos desde P1 (ADR 0021).
 - ~~¿Otro repo o el mismo?~~ El mismo, con archivo (P0).
 - ~~¿Se abre el candado en revisión o al aceptar?~~ En revisión, después de revisar la política de
   la revista (paso 1b del checklist, ADR 0026).
-- ~~Dirección de arte.~~ Papel (ADR 0022).
+- ~~Dirección de arte.~~ Papel (ADR 0022, hoy en el ADR 0027).
 - ~~«Quién es».~~ Solo nombre, GitHub y LinkedIn, en `/about` (ADR 0024).
 - ~~«Cómo está hecho».~~ Sale del home y se queda como caso de estudio en el cuaderno (ADR 0024).

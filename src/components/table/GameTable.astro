@@ -1,15 +1,12 @@
 ---
 /**
  * "The table": the one visual piece of the site, Vanberg's (2008) Roll / Don't Roll game.
- * `moment1` (act 1): decide with no promise. `moment2` (act 4): promise, partner draw, decide,
- * then what real participants did. Moment 3 is act 5's slider (src/components/curve/).
- * The table always sits on the stage, wherever it appears (ADR 0018). With `scene` (act 1 only), it
- * is told first as the scene of ADR 0020, drawn by ./Scene.astro, and its controls follow the scene
- * inside the stage act 1 already provides; otherwise it brings its own stage.
+ * `moment1`: decide with no promise. `moment2` (act 4): promise, partner draw, decide, then what
+ * real participants did. Moment 3 is act 5's slider (src/components/curve/). Previous version: the
+ * film replaces it chapter by chapter (ADR 0021); it always brings its own dark stage.
  * Game logic lives in src/lib/table/; this file renders the markup and ./controller.ts drives it.
  */
 import RoleMark from './RoleMark.astro';
-import Scene from './Scene.astro';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import { branches, CHOICES, type Branch, type Choice } from '../../lib/table/game';
 import { expectationFor } from '../../lib/table/expectation';
@@ -23,12 +20,9 @@ interface Props {
   locale: Locale;
   /** Unique on the page; prefixes every id inside the table. */
   id: string;
-  /** Act 1's scene before moment 1 (ADR 0020); the parent is already the stage. */
-  scene?: boolean;
 }
 
-const { mode, locale, id, scene = false } = Astro.props;
-if (scene && mode !== 'moment1') throw new Error('Only moment 1 opens with the scene (ADR 0020)');
+const { mode, locale, id } = Astro.props;
 const tr = useTranslations(locale);
 
 const choiceLabel: Record<Choice, string> = { roll: tr('table.choice.roll'), dont: tr('table.choice.dont') };
@@ -52,14 +46,7 @@ const pips = ['tl', 'tr', 'ml', 'c', 'mr', 'bl', 'br'] as const;
 const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 30], bl: [17, 43], br: [43, 43] } as const;
 ---
 
-{
-  scene && (
-    <Scene locale={locale} table={id}>
-      <slot name="intro" slot="intro" />
-    </Scene>
-  )
-}
-<div class={scene ? 'scene-table' : 'stage'}>
+<div class="stage">
 <figure class="game-table" id={id} data-game-table data-mode={mode} data-strings={JSON.stringify(clientStrings(tr))} aria-labelledby={`${id}-caption`}>
   <figcaption id={`${id}-caption`} class="gt-caption">{tr(mode === 'moment1' ? 'table.moment1.caption' : 'table.moment2.caption')}</figcaption>
 
@@ -256,11 +243,6 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
 </script>
 
 <style>
-  /* After the scene, the same table, now the visitor's (ADR 0020). */
-  .scene-table {
-    padding: 0 var(--gutter) var(--space-12);
-  }
-
   /* The table is an object on the stage: it carries volume, the prose around it does not (ADR 0018). */
   .game-table {
     max-width: var(--table-max);

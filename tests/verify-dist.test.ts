@@ -118,7 +118,7 @@ describe('verify:dist (ADR 0015, ADR 0017, ADR 0019)', () => {
     expect(countStandalone(prose, en['manuscript.status.under-review'])).toBe(0);
   });
 
-  describe('the status sentence (rule (b), ADR 0019)', () => {
+  describe('the status sentence (rule (b), ADR 0026)', () => {
     const dictionaries = { en, es };
     const page = (sentence: string, times: number) => `<main>${`<p>${sentence}</p>`.repeat(times)}</main>`;
     const home = (status: 'in-preparation' | 'under-review', times = STATUS_ON_HOME) => ({
@@ -127,14 +127,15 @@ describe('verify:dist (ADR 0015, ADR 0017, ADR 0019)', () => {
       'finding/index.html': page(en[`manuscript.status.${status}`], 1),
     });
 
-    it('passes with the stamp and act 5 on each home page, in both states', () => {
+    it('passes with act 5 alone on each home page while the film lands, in both states', () => {
+      expect(STATUS_ON_HOME).toBe(1);
       expect(statusProblems('in-preparation', dictionaries, home('in-preparation'))).toEqual([]);
       expect(statusProblems('under-review', dictionaries, home('under-review'))).toEqual([]);
     });
 
-    it('fails when the sentence appears once, or three times', () => {
-      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 1))).toHaveLength(2);
-      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 3))[0]).toMatch(/appears 3 times, not 2/);
+    it('fails when the sentence is missing, or appears twice', () => {
+      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 0))).toHaveLength(2);
+      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 2))[0]).toMatch(/appears 2 times, not 1/);
     });
 
     it('fails when the inactive sentence ships anywhere', () => {

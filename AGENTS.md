@@ -64,7 +64,7 @@ not by reading test output.
   and tested. Native scroll: no snapping, no wheel or touch capture.
 - Logic lives in pure modules with Vitest tests (`src/lib/`).
 - CSS with tokens (`src/styles/tokens.css`, mirroring `src/lib/design/palette.ts`). Self-hosted
-  fonts: Fraunces and Nunito from P1 (ADR 0022), JetBrains Mono for code only.
+  fonts: Fraunces and Nunito from P1 (ADR 0027), JetBrains Mono for code only.
 - Sound: optional, off by default, synthesised with Web Audio.
 - Budgets: home JS ≤ 40 KB gzipped, first load ≤ 450 KB, LCP ≤ 2.5 s on a mid-range phone.
 - The only new dependency the plan allows is `@resvg/resvg-js`, as a dev dependency, for Open Graph
@@ -93,10 +93,12 @@ src/
     locales.ts           locale list, no dictionary imports (safe for client scripts)
     routes.ts            buildHref/href/assetHref: every internal link goes through here
     lock.ts              the lock: full content only under review or in dev (ADR 0026)
-    film/                (P1+) the scene engine: tracks, easing, colours, camera, chapter spans
+    film/                (P1+) the scene engine: tracks, easing, colours (OKLCH), camera, chapter
+                         spans; faces.ts (the moods); stage.ts (what the stage shows at each point)
     chapters.ts          (P1+) the nine chapters, their ids and order
     acts.ts, sections.ts previous version: the acts and the home's order
-    design/              palette.ts (single source of colour values), colour maths
+    design/              film.ts (the film's colours and the day's light; film.css mirrors it),
+                         palette.ts (the notebook and the previous version), colour maths
     subpages.ts          splits notebook prose at its slot and lock markers
     table/               Vanberg's game: exact payoffs (PAYOFFS), moment 2 logic, recipient beliefs,
                          real roll counts; scene.ts is the previous act 1 scene (retired in P1)
@@ -109,7 +111,7 @@ src/
   components/            previous version: FirstScreen, Act, HomeSection, table/ (GameTable, Scene),
                          pd/BestResponse, vanberg/SwitchTable, curve/Curve + Locked (the stub a
                          locked build uses), LanguageSwitch, SiteFooter
-                         (P1+) film/ (the stage, characters, chapters), notebook/ (the panel)
+                         film/ (P1+: Film, World, Character, film.ts), notebook/ (P5, the panel)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale
@@ -162,7 +164,7 @@ scratch/                 local notes, git-ignored, never committed
 - **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,
   local folder `dilema-prisionero`) is never opened, added as a dependency, submodule or alias, and
   no file is copied from it. Its output reaches this repo only as `src/data/curve.json` (ADR 0010).
-- **Visuals and games outside ADR 0022/0023.**
+- **Visuals and games outside ADR 0023/0027.**
   - No WebGL, WebGPU, PixiJS, canvas, GSAP or Lottie.
   - No visualising populations or dynamics: no agents, grids or one dot per person.
   - No playable repeated prisoner's dilemma anywhere: link to *The Evolution of Trust* instead. The

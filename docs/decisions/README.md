@@ -18,11 +18,11 @@ números no se reutilizan.
 | [0013](0013-language-switch-plain-link.md) | El enlace EN/ES es un enlace simple, sin memoria ni redirección. |
 | [0016](0016-journal-rule-precision.md) | Ningún archivo nombra la revista del manuscrito; la bibliografía de terceros sí lleva la suya. |
 | [0021](0021-the-film.md) | La película «Te lo prometo»: dos capas, nueve capítulos, personajes, la autora y el archivo de documentos. |
-| [0022](0022-art-direction-paper.md) | Dirección de arte Papel: el diorama, la luz continua, los personajes, la tipografía y los tests de color. |
 | [0023](0023-games.md) | Los juegos permitidos y sus límites. |
 | [0024](0024-the-notebook.md) | El cuaderno: las seis páginas de profundidad y cómo se llega a ellas. |
 | [0025](0025-technology.md) | La tecnología: mejora progresiva, el motor de escenas propio, sonido, presupuestos y dependencias. |
 | [0026](0026-the-lock.md) | El candado: qué cubre, cómo se cierra en el build, `verify:dist` y cómo se abre. |
+| [0027](0027-character-sheet.md) | Dirección de arte Papel y la hoja de personajes aprobada: la luz del día, el elenco y sus colores, las dos voces, el hilo dorado, los boletos y la tipografía. |
 
-Archivados (no rigen): 0002, 0003, 0004, 0009, 0014, 0015, 0017, 0018, 0019 y 0020, en
+Archivados (no rigen): 0002, 0003, 0004, 0009, 0014, 0015, 0017, 0018, 0019, 0020 y 0022, en
 [`docs/archivo/decisiones/`](../archivo/decisiones/).
