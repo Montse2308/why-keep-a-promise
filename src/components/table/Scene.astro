@@ -125,9 +125,13 @@ if (!landed) throw new Error(`No pips drawn for face ${SCENE_FACE}`);
         </g>
       </svg>
 
-      <ol class="scene__captions" aria-label={tr('scene.captions')}>
-        {captions.map((caption) => <li class={`scene__caption scene__caption--${caption.beat}`}>{caption.text}</li>)}
-      </ol>
+      <div class="scene__text">
+        <!-- Act 1's minimal entry (R4): the scene's opening words at beat 0, gone when the chat starts. -->
+        {Astro.slots.has('intro') && <div class="scene__intro"><slot name="intro" /></div>}
+        <ol class="scene__captions" aria-label={tr('scene.captions')}>
+          {captions.map((caption) => <li class={`scene__caption scene__caption--${caption.beat}`}>{caption.text}</li>)}
+        </ol>
+      </div>
 
       <p class="scene__hint" aria-hidden="true">{tr('scene.hint')} ↓</p>
     </div>
@@ -169,12 +173,19 @@ if (!landed) throw new Error(`No pips drawn for face ${SCENE_FACE}`);
     font-family: var(--font-ui);
   }
 
-  .scene__captions {
-    margin: 0;
-    padding-inline-start: 1.5em;
+  .scene__text {
     font-family: var(--font-prose);
     font-size: var(--step-0);
     line-height: var(--leading-body);
+  }
+
+  .scene__intro :global(p) {
+    margin: 0 0 var(--space-4);
+  }
+
+  .scene__captions {
+    margin: 0;
+    padding-inline-start: 1.5em;
   }
 
   .scene__caption + .scene__caption {
@@ -338,27 +349,43 @@ if (!landed) throw new Error(`No pips drawn for face ${SCENE_FACE}`);
         top: 0;
         grid-template-columns: none;
         grid-template-rows: auto auto;
-        align-content: center;
+        /* The table sits high, so the first screen already shows A and B at it (beat 0). */
+        align-content: start;
         height: 100vh;
         height: 100svh;
         max-width: none;
-        padding-block: var(--space-6);
-        background: radial-gradient(ellipse 45% 55% at 50% 42%, var(--color-spot), transparent);
+        padding-block: max(var(--space-4), 4svh) var(--space-12);
+        /* The light fades out before the frame's edges, so it never draws a line at its top. */
+        background: radial-gradient(ellipse 50% 40% at 50% 38%, var(--color-spot), transparent);
       }
 
       .scene__svg {
-        max-height: 58svh;
+        max-height: 56svh;
+      }
+
+      /* The entry and every caption share one place under the table, and take turns in it. */
+      .scene__text {
+        display: grid;
+        width: min(100%, 38rem);
+        min-height: 5.5em;
+        text-align: center;
+        font-size: var(--step-1);
+        line-height: var(--leading-tight);
+      }
+
+      .scene__intro,
+      .scene__captions {
+        grid-area: 1 / 1;
+      }
+
+      .scene__intro :global(p) {
+        margin: 0;
       }
 
       .scene__captions {
         display: grid;
-        width: min(100%, 38rem);
-        min-height: 5.5em;
         padding: 0;
         list-style: none;
-        text-align: center;
-        font-size: var(--step-1);
-        line-height: var(--leading-tight);
       }
 
       .scene__caption {
@@ -387,6 +414,7 @@ if (!landed) throw new Error(`No pips drawn for face ${SCENE_FACE}`);
       }
 
       .scene__hint,
+      .scene__intro,
       .scene__caption,
       .sc-a,
       .sc-b,
@@ -409,6 +437,10 @@ if (!landed) throw new Error(`No pips drawn for face ${SCENE_FACE}`);
 
       .scene__hint {
         animation-name: scene-hint;
+      }
+
+      .scene__intro {
+        animation-name: scene-intro;
       }
 
       .scene__caption--1 {
@@ -486,6 +518,21 @@ if (!landed) throw new Error(`No pips drawn for face ${SCENE_FACE}`);
     4%,
     100% {
       opacity: 0;
+    }
+  }
+
+  /* Beat 0: act 1's entry, until the chat starts. */
+  @keyframes scene-intro {
+    0%,
+    4% {
+      opacity: 1;
+      transform: none;
+    }
+
+    8%,
+    100% {
+      opacity: 0;
+      transform: translateY(-0.5rem);
     }
   }
 

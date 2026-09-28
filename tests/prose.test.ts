@@ -6,7 +6,9 @@ import { CITATIONS, FIGURES, SOURCE_KEYS } from '../src/content/figures';
 import { ACTS } from '../src/lib/acts';
 import { LOCALES, type Locale } from '../src/lib/locales';
 import { SUBPAGES, type Subpage } from '../src/lib/routes';
+import type { UiKey } from '../src/lib/i18n';
 import { SECTIONS } from '../src/lib/sections';
+import { sceneCaptions } from '../src/lib/table/scene';
 import { slotsIn, splitSubpage } from '../src/lib/subpages';
 import { MARKERS, findMarks } from '../scripts/verify-dist.mjs';
 
@@ -89,13 +91,14 @@ function sentences(body: string): string[] {
 }
 
 const WRITTEN_ACTS = [1, 2, 3, 4, 5, 6] as const;
+/** Words per act and language. R4 shortened acts 1–4 and 6 (ADR 0019); act 5 keeps its F3.1 budget. */
 const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: boolean }> = {
-  1: { max: 60, tables: true },
-  2: { max: 250, tables: true },
-  3: { max: 250, tables: false }, // the predictions table comes on top of the budget
-  4: { max: 350, tables: true },
+  1: { max: 30, tables: true }, // a minimal entry: the scene sets up the situation
+  2: { max: 210, tables: true },
+  3: { max: 110, tables: false }, // the predictions table comes on top of the budget
+  4: { max: 230, tables: true },
   5: { max: 420, tables: true },
-  6: { max: 200, tables: true },
+  6: { max: 145, tables: true },
 };
 
 /** Words per subpage and language, tables not counted (the F4 session's budget). */
@@ -303,6 +306,31 @@ describe('voice', () => {
     for (const file of subpageFiles) {
       expect([...file.body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1]).every((phase) => phase === 'launch'), `${file.locale}/${file.name}`).toBe(true);
     }
+  });
+});
+
+describe('the acts after the scene (R4, ADR 0019, ADR 0020)', () => {
+  const normalized = (text: string) => text.replace(/\s+/g, ' ').replace(/[*_"«»“”]/g, '').trim().toLocaleLowerCase('und');
+
+  it.each(LOCALES)("%s: no act repeats a caption of the scene (rule (k))", (locale) => {
+    const dictionary = locale === 'en' ? en : es;
+    const tr = (key: UiKey) => dictionary[key];
+    const acts = actFiles.filter((f) => f.locale === locale).map((f) => normalized(readable(f.body)));
+    for (const { text } of sceneCaptions(tr)) {
+      for (const sentence of text.split(/(?<=[.!?])\s+/)) {
+        for (const act of acts) expect(act).not.toContain(normalized(sentence));
+      }
+    }
+  });
+
+  it.each(LOCALES)('%s: act 4 keeps the figures the scene does not show, without the steps', (locale) => {
+    const body = byAct(locale, 4)?.body ?? '';
+    expect(body).not.toMatch(/^\s*\d+\.\s/m);
+    for (const figure of ['192', '8', '73', '54', '70', '68']) expect(numbersIn(readable(body))).toContain(figure);
+  });
+
+  it.each(LOCALES)('%s: act 6 is about the page only; the engine is in "The research"', (locale) => {
+    expect(byAct(locale, 6)?.body ?? '').not.toMatch(/engine|motor|simulat|simulaci/i);
   });
 });
 

@@ -13,7 +13,7 @@ itself, the manuscript status as a stamp, and the author's name. It is **not** a
 **not** the instrument of a paper. Details: `docs/plan.md`.
 
 The page is being redesigned in phases R0–R4, between F4 and F5 (ADR 0018, 0019, 0020). R1 (the visual
-system), R2 (the structure) and R3 (the scene) are in; R4 (shorter act prose) is next.
+system), R2 (the structure), R3 (the scene) and R4 (the shorter act prose) are in; F5 (QA) is next.
 
 ## Reading order
 

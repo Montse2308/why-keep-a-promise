@@ -4,13 +4,13 @@ title: Cómo está hecho
 deeper: how-its-built
 ---
 
-Esta página es estática: es un conjunto de archivos simples, hecho con Astro, una herramienta que
-convierte código en páginas web, y TypeScript, un lenguaje de programación que atrapa errores
-antes de armar la página. Tu navegador solo corre el código de la mesa, en sus tres momentos; lo
-demás es texto y dibujo. La mesa está dibujada en SVG, un formato para describir figuras con
-código, sin frameworks, las bibliotecas grandes que muchos sitios cargan para armar su interfaz.
+Esta página es estática: archivos hechos con Astro, una herramienta que convierte código en
+páginas web, y TypeScript, un lenguaje que atrapa errores antes de armar la página. Tu navegador solo
+corre el código de la mesa, en sus tres momentos; lo demás es texto y dibujo. La mesa está dibujada
+en SVG, un formato para describir figuras con código, y la escena de arriba se mueve con el scroll
+solo con CSS, el lenguaje que da estilo a la página.
 
-Cada cifra se calcula con aritmética exacta, como fracciones de números enteros, así que nada se
+Cada cifra se calcula con aritmética exacta, como fracciones de enteros, así que nada se
 redondea hasta que se muestra. Los pagos vienen de las instrucciones publicadas de Vanberg (2008);
 las tasas y las apuestas se recalcularon desde sus datos suplementarios públicos, con el método de
 su propio código. Los tests, pequeños programas que revisan el código, fallan si alguna cifra

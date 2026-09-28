@@ -4,17 +4,10 @@ title: El experimento de Vanberg
 deeper: vanberg
 ---
 
-Lo que acabas de hacer en la mesa sigue, paso por paso, el experimento de Vanberg (2008).
-
-1. Antes de que nadie sepa su rol, las dos personas de cada pareja chatean: 2 mensajes cada una,
-   de 90 caracteres como máximo. Ahí se hacen las promesas.
-2. Se sortean los roles. Una persona queda como dictador, quien decide; la otra, como receptor,
-   quien solo recibe.
-3. En la mitad de las parejas, después del sorteo de roles, al dictador le cambian la pareja. Solo
-   el dictador se entera del cambio.
-4. El dictador decide si tira el dado.
-
-En el tratamiento con cambio de pareja participaron 192 personas, en 8 rondas.
+Lo que acabas de hacer en la mesa sigue el experimento de Vanberg (2008). Ahí, quien decide es el
+dictador y quien recibe, el receptor; el chat antes de los roles era de 2 mensajes por persona, de 90
+caracteres como máximo; y en el tratamiento con cambio de pareja participaron 192 personas, en 8
+rondas.
 
 La mesa simplifica dos cosas. En ella ya sabes que decides tú; en el experimento, al chatear nadie
 lo sabía todavía. Y cuando la mesa te cambia de pareja, siempre te da el mismo caso: tu nueva

@@ -3,7 +3,7 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** R3 (la escena), en revisión de Montse; R0, R1 y R2 también. Sigue R4, antes de F5
+**Fase activa:** R4 (prosa corta), en revisión de Montse; R0–R3 también. Sigue F5 (QA)
 (`docs/phases.md`). F3, F3.1, F4 y F4.1 en revisión de Montse, sin depender del rediseño. La
 revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 cerradas.
 
@@ -324,17 +324,57 @@ revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 
          así un lector de pantalla o un teclado no podrían llegar a ellos sin hacer scroll.
       2. **El dibujo lleva texto alternativo** (`scene.alt`), en vez de ser decorativo: cuenta
          también el mensaje de A y los golpes 2 y 3, que no tienen leyenda.
-- [ ] Para R4: la prosa del acto 1 queda ahora sobre el escenario, entre la primera pantalla y la
-      escena, y todavía dice «Decide at the table, just below.»; su entrada mínima y su lugar se
-      deciden allí. Mientras tanto, empuja la escena fuera de la primera pantalla.
+- [x] ~~Para R4: la prosa del acto 1 queda sobre el escenario y empuja la escena fuera de la
+      primera pantalla.~~ Resuelto en R4: la entrada mínima del acto 1 es el texto del golpe 0,
+      dentro del marco de la escena.
 
 ## R4 · Prosa corta
 
-- [ ] Actos 1–4 y 6, más cortos, EN/ES: el acto 1 con una entrada mínima; el acto 4 con la
-      decisión y las cifras citadas, sin contar el cambio de pareja; el acto 6 solo de la página.
-- [ ] Registro de cifras, presupuestos de palabras y regla (h) al día.
-- [ ] Revisión explícita contra las reglas (a)–(k).
+- [x] Actos 1–4 y 6, más cortos, EN/ES (palabras EN/ES, antes → después; el acto 3 sin su tabla):
+      acto 1, 27/23 → 23/23; acto 2, 218/227 → 198/208; acto 3, 118/112 → 101/101; acto 4,
+      276/277 → 222/226; acto 6, 138/143 → 138/143.
+  - Acto 1: una entrada mínima («Two people sit down at a table, and one of them is about to
+    promise something. Watch what happens, then take the seat.» / «Dos personas se sientan a una
+    mesa, y una de ellas va a prometer algo. Mira qué pasa y después toma el asiento.»). No
+    plantea la situación: eso lo hace la escena. Va dentro del marco de la escena, como texto del
+    golpe 0, que se va cuando empieza el chat (en la versión quieta, como párrafo sobre la lista);
+    así la mesa ya se ve en la primera pantalla.
+  - Acto 2: la matriz, T > R > P > S con sus letras (las usa `/dilemma`, «2R > T + S»), la regla
+    (g), *cheap talk* y el enlace a *The Evolution of Trust*.
+  - Acto 3: las dos razones, sus citas y la tabla de predicciones, más apretados.
+  - Acto 4: sin la lista de pasos del cambio de pareja. Se queda con la decisión del visitante
+    (el momento 2, arriba), las cifras citadas que la escena no muestra (2 mensajes de 90
+    caracteres, 192 personas, 8 rondas, 73 % y 54 %, 70 y 68), las dos simplificaciones de la mesa
+    y la conclusión de Vanberg (2008). Define «dictador» y «receptor», que antes definía la lista.
+  - Acto 6: solo la página; suma que la escena se mueve con el scroll solo con CSS, y conserva la
+    frase «Your browser only runs the table's code, in its three moments…».
+- [x] Presupuestos de palabras nuevos en `tests/prose.test.ts` (1: 30, 2: 210, 3: 110, 4: 230,
+      6: 145; el acto 5 sigue en 420), y tests de R4: ningún acto repite una leyenda de la escena
+      (regla (k)); el acto 4 conserva sus cifras sin pasos numerados; el acto 6 no habla del motor.
+      Registro de cifras y regla (h) en verde sin cambios: no entró ninguna cifra nueva.
+- [x] Revisión explícita contra las reglas (a)–(k):
+  - (a) Solo el dilema del prisionero (Axelrod, 1984), Vanberg (2008) y las citas de aversión a la
+    culpa ya registradas; cada cifra en `figures.ts` y en `docs/sources.md` (test en verde).
+  - (b) Ningún acto toca la frase de estado; la estampa y el acto 5 no cambian.
+  - (c) Sin revista, sin PDF, sin correspondencia ni fechas.
+  - (d) Sin bi-estabilidad, población, cuatro paneles ni el modelo como tasas de laboratorio;
+    las tasas son las publicadas de Vanberg (2008), con cita.
+  - (e) La curva no se toca.
+  - (f) El enlace a *The Evolution of Trust* sigue en el acto 2; nada jugable repetido.
+  - (g) El acto 2 sigue diciendo que la mesa no es la matriz y que es otro juego con la misma
+    tensión.
+  - (h) Ninguna subpágina comparte una oración con su acto (test), y `/dilemma` sigue teniendo las
+    letras T, R, P y S definidas en el acto 2.
+  - (i) Ninguna frase prohibida (test).
+  - (j) «La investigación» y «Quién es» no se tocan.
+  - (k) La entrada del acto 1 no afirma resultados; ninguna leyenda de la escena reaparece en un
+    acto (test).
+- [x] Probado por CDP: el golpe 0 a 1280 px y a 360 px (la entrada bajo la mesa, «Scroll ↓»),
+      la primera pantalla a 1440×1000 (A y B a la vista sin scroll) y a 1280×900 (asoman), la
+      versión quieta con la entrada sobre la lista, y el golpe 1 ya sin la entrada.
 - [ ] Revisión de la prosa por Montse (absorbe la de F2).
+- Nota: dos veces, en local, Vitest falló al arrancar sus workers («no tests» en los 29 archivos)
+  y pasó al repetir; no se reprodujo en seis corridas seguidas. No es un test que falle.
 
 ## F5 · QA
 

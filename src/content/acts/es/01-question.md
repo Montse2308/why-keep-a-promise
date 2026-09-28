@@ -4,6 +4,5 @@ title: ¿Por qué cumplir una promesa que ya no conviene?
 deeper: null
 ---
 
-Le prometiste algo a alguien. Cumplir ya no te conviene, y nadie se va a enterar. ¿Cumples?
-
-Decide en la mesa, aquí abajo.
+Dos personas se sientan a una mesa, y una de ellas va a prometer algo. Mira qué pasa y después toma
+el asiento.
