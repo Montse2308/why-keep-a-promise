@@ -1,5 +1,9 @@
 # 0002 · Un hilo, seis actos
 
+> **Archivada (P0).** Reemplazada por el ADR 0019, que a su vez quedó reemplazado por el ADR 0021.
+> Se conserva como registro; no rige. Sus referencias a otros ADR y a rutas del repo son de su
+> momento.
+
 **Estado:** reemplazada por el ADR 0019 (R0). Se conserva como registro; no rige.
 
 ## Contexto

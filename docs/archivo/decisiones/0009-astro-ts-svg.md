@@ -1,5 +1,9 @@
 # 0009 · Astro + TypeScript + SVG
 
+> **Archivada (P0).** Reemplazada por el ADR 0025 (tecnología), que reescribe lo que sigue vigente
+> de aquí. Se conserva como registro; no rige. Sus referencias a otros ADR y a rutas del repo son de
+> su momento.
+
 **Estado:** aceptada (F0)
 
 ## Contexto

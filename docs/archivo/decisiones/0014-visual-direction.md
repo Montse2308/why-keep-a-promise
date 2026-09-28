@@ -1,5 +1,9 @@
 # 0014 · Dirección visual: ensayo de investigación
 
+> **Archivada (P0).** Reemplazada por el ADR 0018, que a su vez quedó reemplazado por el ADR 0022.
+> Se conserva como registro; no rige. Sus referencias a otros ADR y a rutas del repo son de su
+> momento.
+
 **Estado:** reemplazada por el ADR 0018 (R0). Se conserva como registro; no rige. Lo que se
 mantiene de aquí está escrito otra vez en el ADR 0018.
 

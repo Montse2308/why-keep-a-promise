@@ -1,5 +1,8 @@
 # 0004 · Subpáginas en v1, scroll primero
 
+> **Archivada (P0).** Reemplazada por el ADR 0024 (el cuaderno). Se conserva como registro; no rige.
+> Sus referencias a otros ADR y a rutas del repo son de su momento.
+
 **Estado:** aceptada (F0). Las interacciones de las subpáginas (la mejor respuesta de `/dilemma`
 y la segunda gráfica de `/finding`) están en el ADR 0017.
 

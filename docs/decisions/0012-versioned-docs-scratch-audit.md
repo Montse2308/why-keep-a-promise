@@ -1,6 +1,7 @@
 # 0012 · Docs versionados, `scratch/` ignorado, auditoría antes de hacerlo público
 
-**Estado:** aceptada (F0)
+**Estado:** aceptada (F0). Precisada por el ADR 0021: lo que ya no rige se mueve a `docs/archivo/`,
+que sigue versionado y entra en la misma auditoría.
 
 ## Contexto
 
