@@ -1,5 +1,9 @@
 # 0003 · Una mesa, tres momentos, sin visuales de población
 
+> **Archivada (P0).** Reemplazada por el ADR 0023 (juegos). La prohibición de visualizar poblaciones
+> sigue en el ADR 0023 y en la regla (d). Se conserva como registro; no rige. Sus referencias a
+> otros ADR y a rutas del repo son de su momento.
+
 **Estado:** aceptada (F0). La escena del acto 1 está en el ADR 0020: es la mesa antes del
 momento 1, no un cuarto momento ni una segunda pieza. La exclusión de gráficas extra está precisada
 por el ADR 0017: la única excepción es la segunda gráfica de `/finding`.

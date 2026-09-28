@@ -1,411 +1,65 @@
 # Tareas
 
-Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
-en verde.
+Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
+`verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** R4 (prosa corta), en revisión de Montse; R0–R3 también. Sigue F5 (QA)
-(`docs/phases.md`). F3, F3.1, F4 y F4.1 en revisión de Montse, sin depender del rediseño. La
-revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 cerradas.
+**Fase activa:** P0 (documentos), en revisión de Montse. Sigue P1.
 
-## F0 · Esqueleto
+**Estado del código:** `src/` sigue siendo la versión anterior (los seis actos, la escena y la mesa).
+La película la reemplaza por capítulos desde P1 (ADR 0021).
 
-- [x] Revisar versiones de Node, npm, git y gh.
-- [x] Crear el proyecto Astro (plantilla mínima, TypeScript strict) con `create-astro`.
-- [x] `astro.config.mjs`: `site`, `base`, salida estática, i18n `en`/`es` sin prefijo para `en`.
-- [x] Configuración del repo: `.gitattributes`, `.gitignore`, `.editorconfig`, `.nvmrc`, `tsconfig` strict.
-- [x] Scripts `dev`, `build`, `preview`, `check`, `test`.
-- [x] Helper de enlaces que respeta `base` (`src/lib/routes.ts`) con tests.
-- [x] `src/lib/i18n.ts` tipado que falla en `check` y en `build` ante claves desbalanceadas, con test.
-- [x] Layout base: franja de autora, switch EN/ES que cambia de ruta, footer con subpáginas,
-      `hreflang`. (La memoria de la elección se quitó en F0.1, ADR 0013.)
-- [x] Rutas placeholder: `/`, `/dilemma`, `/vanberg`, `/finding`, `/how-its-built` y sus pares en
-      `/es/`; `/` con seis secciones con id por acto. Test de paridad de páginas.
-- [x] Lugar de la mesa en el árbol (`src/components/table/GameTable.astro`, `src/lib/table/`), sin
-      implementar.
-- [x] `src/styles/tokens.css` con tokens base, claro/oscuro y `prefers-reduced-motion`.
-- [x] `ci.yml` (install → check → test → build) y `deploy.yml` (solo `workflow_dispatch`).
-- [x] `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, `README.md`, `README.es.md`,
-      `LICENSE`.
-- [x] `docs/`: plan, phases, tasks, content-rules, launch-checklist, sources, ADR 0001–0012.
+## P0 · Documentos
 
-## F0.1 · Correcciones de auditoría
+- [x] Plan cerrado con Montse en cinco rondas: contexto, lluvia de ideas votada, concepto,
+      prototipo en dos direcciones (eligió Papel) y plan.
+- [x] ADR 0021 (la película), 0022 (Papel), 0023 (juegos), 0024 (el cuaderno), 0025 (tecnología) y
+      0026 (el candado).
+- [x] Archivo: los ADR 0002, 0003, 0004, 0009, 0014, 0015, 0017, 0018, 0019 y 0020 en
+      `docs/archivo/decisiones/`, cada uno con la línea de qué lo reemplaza. También el plan, las
+      reglas, las fases y las tareas anteriores.
+- [x] Líneas de estado de los ADR 0001, 0005 y 0012.
+- [x] `docs/decisions/README.md`: el índice de los ADR vigentes.
+- [x] `plan.md`, `content-rules.md` (con (b), (d), (f), (g), (j) y (k) precisadas), `phases.md` y
+      este archivo.
+- [x] `launch-checklist.md`: el paso 1b (política de la revista) y los pasos 4 y 8 con la estructura
+      nueva.
+- [x] `AGENTS.md` y los README.
+- [x] El prototipo de los capítulos 0 a 3 en `docs/prototipo/te-lo-prometo.html`.
+- [ ] Revisión de P0 por Montse.
 
-- [x] `content-rules.md`: regla (d) aclarada; reglas (g) y (h) nuevas.
-- [x] `phases.md`: F2 (matriz del PD ≠ juego de Vanberg), F3 (series encimadas y etiquetadas),
-      F4 (dónde se pospone una subpágina).
-- [x] Nombre visible en `author.name` (EN y ES).
-- [x] `AGENTS.md`: prohibido inventar datos personales.
-- [x] Switch EN/ES como enlace simple: fuera la redirección, el almacenamiento, sus tests y el
-      `<script>`. ADR 0013; `AGENTS.md`, mapa y plan actualizados.
-- [x] URL de LinkedIn en `AUTHOR.linkedin`.
+## P1 · Cimientos y capítulo 0
 
-## F1 · Sistema visual + mesa (momentos 1–2)
-
-- [x] Resolver las preguntas abiertas de abajo que bloquean F1 (tipografía: ADR 0014).
-- [x] Sistema visual: paleta final en `tokens.css` (claro/oscuro, contraste AA), escala tipográfica.
-      Valores en `src/lib/design/palette.ts`; tests de contraste, daltonismo y paridad con
-      `tokens.css`.
-- [x] Fuentes autoalojadas (Newsreader + Inter variables) en `src/assets/fonts/`, con la API de
-      fuentes de Astro (proveedor `local`), `font-display: swap`, fallbacks métricos y precarga
-      del texto. JetBrains Mono, diferida a F4.
-- [x] Favicon propio: cara de dado con los dos colores de rol (el de Astro, fuera).
-- [x] Verificar en Vanberg (2008) los pagos y el diseño del juego, con página (F1.1: Suppl. A,
-      p. 2; Suppl. B, p. 1).
-- [x] Lógica pura de la mesa en `src/lib/table/` (pagos con aritmética exacta, RNG inyectable,
-      máquinas de estado de los momentos 1 y 2, expectativa del receptor) con tests.
-- [x] Momento 1 en el acto 1: Roll / Don't Roll sin promesa, pago propio contra el del otro,
-      esperado y realizado.
-- [x] Momento 2 en el acto 4: promesa → sorteo → Roll / Don't; lo que espera el otro no cambia con
-      el sorteo (test del invariante).
-- [x] Momento 2: lo que hicieron los participantes reales, con cita (F1.1: titular 73 % contra
-      54 % y las cuatro celdas, con la del visitante resaltada).
-- [x] Medidor con niveles numéricos de expectativa (F1.1: 69 / 100 y 48 / 100, creencia de primer
-      orden del receptor).
-- [x] Teclado completo y foco visible en la mesa; el foco pasa al primer control del paso
-      siguiente.
-- [x] Resultados anunciados en una región `aria-live`.
-- [x] Movimiento reducido: sin animación que cargue información sola.
-- [x] Textos de interfaz de la mesa en `en.json` / `es.json`.
-- [x] `<noscript>`: tabla estática de pagos.
-- [x] ADR 0014: dirección visual, roles de color y movimiento.
-
-## F1.1 · Cifras de Vanberg desde el material suplementario
-
-- [x] Pagos y dado (Suppl. A, p. 2): coinciden con `PAYOFFS`; cerrado `verify-vanberg`.
-- [x] Sorteo de cambio de pareja con probabilidad ½ (Suppl. A, p. 2, Step 3; Suppl. B, p. 1).
-- [x] Medidor con la creencia de primer orden del receptor, en fracciones exactas; cerrado
-      `vanberg-beliefs`.
-- [x] Reveal con las tasas de Roll de los dictadores, en cuentas exactas; cerrado `vanberg-rates`.
-- [x] `docs/sources.md`: cada cifra con su fuente, marcada verificada (suplementos).
-- [ ] PENDIENTE(pdf), no bloquea: cotejar contra las Tablas I–III impresas y agregar su página
-      cuando esté el PDF del artículo.
-
-## F2 · Prosa de los actos 1–4 y 6
-
-- [x] Colección de contenido `acts` (`src/content.config.ts`): `src/content/acts/{en,es}/<nn>-<slug>.md`,
-      frontmatter `act`, `title`, `deeper` validado con schema. `HomeView` renderiza cada acto desde
-      su archivo; la mesa sigue en los actos 1 y 4.
-- [x] Prosa EN/ES de los actos 1, 2, 3, 4 y 6, dentro del presupuesto de palabras (test).
-- [x] Acto 2: matriz del dilema del prisionero como tabla estática; la mesa es otro juego con la
-      misma tensión (regla (g)); una frase con enlace a *The Evolution of Trust* (regla (f)).
-- [x] Acto 3: las dos razones y la tabla de predicciones.
-- [x] Acto 4: diseño en el orden del momento 2, resultados y conclusión atribuida a Vanberg (2008).
-      Cierre: el marcador de la transición al acto 5, que F3 resolvió.
-- [x] Acto 6: cómo está hecho. Enlace al motor: `TODO(launch)`, paso 8 del checklist.
-- [x] Registro de cifras y citas (`src/content/figures.ts`) con test de números, citas, paridad
-      EN/ES y claves de `docs/sources.md`.
-- [x] Lint de frases prohibidas (regla (i) de `content-rules.md`).
-- [ ] Revisión de la prosa por Montse. Absorbida en R4: esa prosa se reescribe más corta.
-- [x] Revisión explícita contra cada regla de `content-rules.md` (criterio de salida de F2), en el
-      reporte de la sesión F2.
-
-## F2.1 · Correcciones de precisión
-
-- [x] Acto 4: escala de cinco puntos de las apuestas, leída de 0 a 100; nota del medidor
-      (`table.meter.note`) con la misma descripción.
-- [x] Acto 4: las tasas de Roll cuentan rondas, no personas.
-- [x] Acto 4: 192 participantes solo en el tratamiento con cambio de pareja.
-- [x] Acto 3: atribución a Vanberg ("en su planteamiento") y tabla en términos de tirar el dado.
-- [x] Acto 2: traicionar conviene si el juego se juega una sola vez.
-- [x] Acto 6: sin "no da detalles"; pagos de las instrucciones, tasas y apuestas de los datos.
-- [x] `docs/sources.md`: Charness y Dufwenberg (2006), Battigalli y Dufwenberg (2007), la ficha de
-      Vanberg (2008) y Case (2017), verificadas.
-
-## F3 · Acto 5 + momento 3
-
-- [x] `src/data/curve.json` copiado del motor por Montse (commit `68bc4ba…`), sin cambios. Test de
-      procedencia (ADR 0010): `schemaVersion` 1, commit de 40 hex, 18 filas ordenadas por confianza
-      de fondo con denominador 100, pagos enteros, series `PGA`, `MC-b` y `GA`.
-- [x] Lectura pura de la curva en `src/lib/curve/` (`curve.ts`, `chart.ts`, `moment3.ts`), con
-      tests. La página no recalcula el modelo ni interpola; el cliente no importa el JSON.
-- [x] Cifras de la curva en la prosa (ventana 15–65, pagos 5 y 10, eje de 0 a 76, pico en 38)
-      comprobadas contra el JSON en `tests/curve.test.ts`.
-- [x] Candado del acto 5 (ADR 0015): contenido completo solo con `'under-review'` o en `dev`; si no,
-      título y frase de estado. Plugin `lockFinding` en `astro.config.mjs`.
-- [x] `npm run verify:dist` en `ci.yml` y `deploy.yml`, después de `build`.
-- [x] Acto 4 termina en la conclusión de Vanberg; la transición es la primera frase del acto 5.
-- [x] Prosa EN/ES del acto 5 (312 y 332 palabras, tope 350), con las seis afirmaciones en orden.
-- [x] Gráfica escalonada en SVG estático, sin JS: tres series, etiquetas directas, pico en 38,
-      `role="img"` con `aria-label` y tabla oculta con las 18 filas.
-- [x] Tres colores nuevos (`series-1` … `series-3`) en `palette.ts` y `tokens.css`, con tests de
-      contraste y de daltonismo.
-- [x] Momento 3: control deslizante sobre las 18 filas, `aria-valuetext`, cursor, pago de cada
-      razón, si la culpa personal tira, anuncio en `aria-live`.
-- [x] ADR 0015 (candado y `verify:dist`), ADR 0016 (regla (c)); `content-rules.md`,
-      `launch-checklist.md` (paso 4), `sources.md` y `AGENTS.md`.
-- [ ] Revisión de la prosa del acto 5 por Montse.
-- [x] Decidir la frase del acto 6 "Your browser runs a single script… and it is the table's": con
-      el candado abierto hay dos scripts, los dos de la mesa (momentos 1–2 y momento 3).
-      Resuelta en F3.1.
-
-## F3.1 · Correcciones de fondo del acto 5 y del acto 6
-
-- [x] Acto 5, tercer párrafo: la culpa personal como producto de dos cantidades, según la
-      especificación de Kawagoe y Narita (2014).
-- [x] Acto 5, cuarto párrafo: regla de entrada (el otro ve tu tipo y solo entra si vas a tirar;
-      fuera, 5 y 5), "medido en pasos de 5" y la culpa general como la razón de «lo que el otro
-      espera». Cierre en EN: "Tracing it".
-- [x] Presupuesto del acto 5: ≤ 420 palabras por idioma (decisión de Montse; queda en EN 385 y
-      ES 415).
-- [x] `sources.md`: regla de entrada con su fuente (`params.game`, `params.p`, `TRUST.outside` a
-      través del JSON) y el paso de 5; test contra el JSON de que tirar paga 10 y no tirar, 5.
-- [x] Acto 6: "Your browser only runs the table's code, in its three moments; the rest is text and
-      drawing." / "Tu navegador solo corre el código de la mesa, en sus tres momentos; lo demás es
-      texto y dibujo."
-- [x] `AGENTS.md`: nombre del repo del motor en GitHub y su carpeta local.
-- [ ] Revisión de la prosa del acto 5 por Montse.
-
-## F4 · Subpáginas
-
-- [x] Acto 5, dos pulidos: "There, the other person sees…" / "Ahí, la otra persona ve…" (cuarto
-      párrafo) y "así que quien siente culpa personal también tira menos" (ES, segundo párrafo).
-- [x] Colección `subpages` (`src/content/subpages/{en,es}/<slug>.md`, frontmatter `act` y
-      `title`) y `SubpageView`: la prosa, los componentes de sus marcas `<!-- slot:… -->`, lo que
-      sigue a `<!-- lock -->` solo detrás del candado, y un enlace de vuelta al acto
-      (`src/lib/subpages.ts`, con tests).
-- [x] Mismo registro de cifras, lint de frases prohibidas, paridad EN/ES y presupuesto por idioma
-      que los actos (`tests/prose.test.ts`): `/dilemma` ≤ 600, `/vanberg` ≤ 700, `/finding` ≤ 700,
-      `/how-its-built` ≤ 600, sin tablas ni código. Quedan en EN/ES: 343/355, 403/436, 352/377 y
-      430/453.
-- [x] Regla (h): un test falla si una subpágina comparte una oración completa con su acto.
-- [x] `/dilemma`: estrategia dominante, equilibrio de Nash, ineficiencia, `2R > T + S`, el dilema
-      repetido en un párrafo que termina con *The Evolution of Trust*, y *cheap talk* con el abstract
-      de Vanberg (2008) (ES: traducción propia).
-- [x] `/dilemma`, mejor respuesta: lógica pura en `src/lib/pd/` con tests; `BestResponse.astro`
-      con botones nativos, teclado, `aria-live` y la matriz estática sin JavaScript. Probada solo con
-      teclado y a 360 px en Edge sin interfaz (reporte de la sesión F4).
-- [x] `/vanberg`: diseño completo con su pantalla o página, las seis celdas del tratamiento con
-      cambio de pareja (`src/lib/vanberg/cells.ts`, cuentas exactas) y los tratamientos base.
-- [x] `/finding`, completa bajo el candado: cuatro razones y dos pares, la fórmula, la segunda
-      gráfica (`Curve.astro`, `variant="guilt"`), robustez, límites, estado y `TODO(launch)`.
-      Cifras contra `curve.json` y corte analítico con la cuadrática en enteros
-      (`tests/finding.test.ts`).
-- [x] `/how-its-built`: la ingeniería de la página, dos fragmentos del código del sitio (un test
-      exige que coincidan con `src/`), y la parte del motor bajo el candado. Test que falla si
-      `curve.json` cambia.
-- [x] JetBrains Mono autoalojada, `latin` y `latin-ext`, sin precarga, solo en los bloques de
-      código de `/how-its-built`: 55 600 bytes (40 404 + 15 196). Sin resaltado de sintaxis.
-- [x] `verify:dist`: marcas de `/finding` y del motor; con `'under-review'`, el contenido en las seis
-      páginas que lo llevan. Build probado en los dos estados.
-- [x] `sources.md` (cifras nuevas, verificadas contra los suplementos y los datos públicos; Axelrod
-      sigue por verificar), ADR 0017, `AGENTS.md`, `content-rules.md` y `launch-checklist.md`
-      (pasos 4 y 8).
-- [ ] Revisión de la prosa de las cuatro subpáginas por Montse.
-- [x] Confirmar los datos de diseño de `/vanberg` (`sources.md`, "Cifras de `/vanberg` (F4)"):
-      confirmados por Montse en F4.1.
-
-## F4.1 · Correcciones de `/finding` y fuentes verificadas
-
-- [x] `/finding`: la cita de Kawagoe y Narita (2014) va sin número de sección (la numeración es la
-      del working paper y no aplica a la versión publicada).
-- [x] `/finding`: nueva frase que introduce la tabla de cuatro razones (versión general y una más
-      estrecha de cada razón).
-- [x] `/finding`: θ definida la primera vez que aparece: cuánto pesa una unidad de culpa frente a una
-      unidad de dinero.
-- [x] `sources.md`: datos de diseño de `/vanberg` verificados por Montse contra Suppl. A y Suppl. B;
-      la derivación de Kawagoe y Narita (2014), verificada contra su lectura del working paper
-      (SSRN 1704884), sin citar su numeración de secciones.
-
-## R0 · Documentos del rediseño
-
-- [x] ADR 0018 (dirección visual: escenario y papel), que reemplaza al 0014.
-- [x] ADR 0019 (estructura: el hero es el acto 1, «La investigación» y «Quién es»), que reemplaza
-      al 0002 y precisa el 0015 y el 0017.
-- [x] ADR 0020 (la escena del acto 1), que precisa el 0003.
-- [x] 0002 y 0014 marcados como reemplazados; líneas de estado del 0003, 0015 y 0017.
-- [x] `content-rules.md`: (b) con la estampa, (d) con los cuatro paneles precisados, (j) y (k)
-      nuevas.
-- [x] `plan.md`, `phases.md` (R0–R4 y criterios nuevos de F5), `launch-checklist.md` (pasos 4 y 8)
-      y `AGENTS.md`.
-- [ ] Revisión de R0 por Montse.
-
-## R1 · Sistema visual (ADR 0018)
-
-- [x] `palette.ts` y `tokens.css`: `STAGE`, un bloque `.stage` fuera de todo tema que redefine los
-      tokens de la mesa. Fondo azul-negro `#0b0e14`, más profundo que el papel oscuro; foco de luz
-      `spot`; roles más saturados (`#5c9dff`, `#ff7a45`); la promesa solo por luminosidad
-      (`#dce4ee`): pasó los tests sin necesitar tono. El papel no cambia.
-- [x] Tests de contraste y de daltonismo extendidos a los pares del escenario (23 pares, más
-      debajo de la luz); tests de que el escenario es más profundo que el papel en los dos temas,
-      de que la luz es más clara que el fondo, de que la curva no se redefine en el escenario y de
-      paridad del bloque `.stage` con `palette.ts`.
-- [x] `--step-6`, `--step-7`, `--leading-display`; sombras de objeto (`--shadow-object`,
-      `--shadow-table`, `--shadow-die`) y `--radius-lg` (12 px); topes de movimiento (600 ms,
-      `--duration-die` 900 ms, `--ease-settle`). La pregunta del acto 1 ya va en `.display`
-      (Newsreader itálica, peso 700, `--step-7`).
-- [x] Las dos mesas sobre el escenario: `GameTable` se envuelve siempre en `.stage`, así que
-      cualquier página que la muestre la pone en oscuro. La banda ocupa todo el ancho con una
-      sombra de 100vmax recortada con `clip-path`, sin ensanchar la página. La mesa, los asientos y
-      el dado llevan volumen; el dado gira en 3D en 600 ms. La prosa, la mejor respuesta de
-      `/dilemma`, la tabla de `/vanberg` y las dos gráficas siguen sobre papel.
-- [x] Sale `AuthorStrip` (y la clave `strip.label`, `--strip-height`, el relleno de `main`). El
-      enlace EN/ES va en la esquina de la primera pantalla de cada página, sin quedarse fijo, y en
-      el footer; solo el de la esquina es un landmark `nav`.
-- [x] Mapa de `AGENTS.md` al día con los componentes.
-- [x] Probado con Edge sin interfaz por el protocolo de DevTools (viewport real, tema y movimiento
-      emulados): sin scroll horizontal a 320 px (ES) y a 360 px (EN); a 1280 px en claro y oscuro;
-      el dado tras tirar y el momento 2 tras prometer.
-- [ ] Revisión de R1 por Montse. Entre R1 y R2 la página no muestra el nombre de la autora ni
-      GitHub y LinkedIn: vuelven en R2 (la línea de autora y «Quién es»).
-
-## R2 · Estructura (ADR 0019)
-
-- [x] Primera pantalla (`FirstScreen.astro`, dentro del acto 1): sello (Inter, mayúsculas por CSS,
-      tracking, borde doble, inclinado) desde `manuscript.status.*`, línea de autora desde
-      `author.name`, ancla «La investigación ↓» a `#research`.
-- [x] Colección `sections` (`src/content/sections/{en,es}/research.md`, `about.md`) y
-      `src/lib/sections.ts` (orden de `/`, con tests): `research` entre el acto 4 y el acto 5,
-      `about` al final. Cada sección solo puede usar sus slots (`research-links`, `author-links`);
-      `SubpageView` rechaza esos slots.
-- [x] «La investigación» (`HomeSection.astro`): título, la pregunta grande y la prosa (la pregunta y
-      el motor en TypeScript), en primera persona. Después de `<!-- lock -->`, dentro de
-      `data-research-links`: los enlaces al acto 5 y a `/finding` y el repo del motor
-      (`TODO(launch)`).
-- [x] «Quién es»: el nombre, GitHub y LinkedIn desde `AUTHOR`; lo demás, `TODO(F5)`.
-- [x] El párrafo del motor sale del acto 6 (EN y ES).
-- [x] `verify:dist`: marca `data-research-links` (19 marcas); la frase de estado activa exactamente
-      dos veces como texto propio de un elemento en `/` y `/es/`, y la del otro estado en ninguna
-      página. Probado con el candado cerrado y abierto.
-- [x] Tests: orden de `research` y `about`, archivos y títulos por idioma, slots propios, cifras y
-      citas, regla (j) (la parte abierta dice la pregunta y TypeScript, sin tests del motor,
-      semillas, generaciones, imitación, procedencia, curva, parámetros ni hallazgo, y sin marcas
-      del candado), `TODO(launch)` solo en la investigación y `TODO(F5)` solo en «Quién es»;
-      conteo de la frase de estado, incluido el falso positivo de `/how-its-built` («…until the
-      manuscript is under review. While…»).
-- [x] Separador entre bloques de `/` en `base.css` (`main > section + section`), para actos y
-      secciones por igual.
-- [x] Mapa de `AGENTS.md` al día.
-- [x] Probado por CDP: primera pantalla a 360 px (EN, claro) y 1280 px (ES, oscuro); «La
-      investigación» a 1280 y 360 px; «Quién es»; sin scroll horizontal.
-- [ ] Revisión de R2 por Montse, en especial la voz en primera persona de «La investigación» y el
-      título en inglés de «Quién es» («About»).
-
-## R3 · La escena (ADR 0020)
-
-- [x] Golpes 0–6 (`src/lib/table/scene.ts`: tramos del scroll, pasos internos, leyendas, cara fija
-      5 y pagos desde `PAYOFFS`) en el SVG de `src/components/table/Scene.astro`, que `GameTable`
-      dibuja con `scene` solo en el momento 1. Solo CSS: `view-timeline` sobre una pista de 500svh,
-      marco `sticky` de 100svh, `animation-range: contain`; scroll nativo, sin ajuste ni captura.
-- [x] A, B y C en tinta neutra con letra y posición; mensaje ilustrativo «I'll roll the die.» /
-      «Voy a tirar el dado.»; rombo de A a B; etiqueta «decide»; B sale con su rombo y entra C con
-      otro; el dado gira con el scroll y cae en 5; fichas «10 en vez de 14» y «10 esperado»; en el
-      golpe 6 salen A, B y C y los asientos pasan a «Tú» (círculo azul) y «El otro» (cuadrado).
-- [x] Acto 1 entero sobre el escenario (`Act` con `hero`: la pregunta, la primera pantalla, la
-      prosa y la escena con su mesa), y la esquina del idioma también en la página de inicio
-      (`BaseLayout` con `stageTop`). La luz va en el marco de la escena, sobre la mesa.
-- [x] Versión quieta por defecto; la animada solo dentro de
-      `@media (prefers-reduced-motion: no-preference) and (scripting: enabled)` y
-      `@supports (animation-timeline: view())`. Así movimiento reducido, navegadores sin
-      animaciones ligadas al scroll y sin JavaScript ven la quieta: el golpe 5 (B aparte, atenuado,
-      «antes del cambio») y la lista numerada. Sin JS, además, la tabla estática de pagos. Al
-      elegir, el script de la mesa marca `data-scene-state="played"` y la quieta pasa al momento 1.
-- [x] Leyendas en claves `scene.*` (EN y ES), en el HTML y en orden; en la animada se apilan y
-      cambian con el scroll; la del golpe 1 sigue durante los golpes 2 y 3.
-- [x] Tests (`tests/scene.test.ts`): orden y continuidad de los golpes; leyendas 1, 4, 5 y 6;
-      regla (k) (pagos desde `PAYOFFS`, la cara no es un pago, ninguna cifra del experimento ni
-      «la expectativa no cambió», el mensaje no es una cita); el CSS usa solo los tramos del
-      módulo, solo anima `transform`, `opacity` y `clip-path`, solo detrás de la compuerta, sin
-      script ni captura del scroll; ningún elemento animado lleva atributo `transform`; una sola
-      mesa del momento 1, con la escena antes de sus controles. Comprobado que fallan al romper un
-      tramo y al poner un `transform` en un elemento animado.
-- [x] Compatibilidad según MDN browser-compat-data: `animation-timeline`, `view-timeline` y
-      `animation-range` en Chrome y Edge 115+ y Safari 26+ (en Firefox solo en preview: ve la
-      quieta); `@media (scripting)` en Chrome 120+, Firefox 113+ y Safari 17+; `svh` en los tres.
-- [x] Probado por CDP en Edge: la escena a 1280 px en los golpes 0–6 (la leyenda correcta visible
-      en cada tramo), a 360 y 320 px sin scroll horizontal, la versión quieta con movimiento
-      reducido y sin JS, la quieta tras elegir, y el teclado: el cuarto Tab enfoca «Tirar el dado»,
-      el navegador lo lleva a la vista y la escena queda en su final.
-- [x] Mapa de `AGENTS.md` al día.
-- [ ] Revisión de R3 por Montse. Dos precisiones de implementación para confirmar antes de
-      ajustar el texto del ADR 0020:
-      1. **Los controles del momento 1 se cumplen por posición.** Van después de la pista de la
-         escena, así que solo están en pantalla cuando la escena llegó al golpe 6; enfocarlos con
-         teclado desplaza la página y deja la escena en su final. No se esconden con CSS, porque
-         así un lector de pantalla o un teclado no podrían llegar a ellos sin hacer scroll.
-      2. **El dibujo lleva texto alternativo** (`scene.alt`), en vez de ser decorativo: cuenta
-         también el mensaje de A y los golpes 2 y 3, que no tienen leyenda.
-- [x] ~~Para R4: la prosa del acto 1 queda sobre el escenario y empuja la escena fuera de la
-      primera pantalla.~~ Resuelto en R4: la entrada mínima del acto 1 es el texto del golpe 0,
-      dentro del marco de la escena.
-
-## R4 · Prosa corta
-
-- [x] Actos 1–4 y 6, más cortos, EN/ES (palabras EN/ES, antes → después; el acto 3 sin su tabla):
-      acto 1, 27/23 → 23/23; acto 2, 218/227 → 198/208; acto 3, 118/112 → 101/101; acto 4,
-      276/277 → 222/226; acto 6, 138/143 → 138/143.
-  - Acto 1: una entrada mínima («Two people sit down at a table, and one of them is about to
-    promise something. Watch what happens, then take the seat.» / «Dos personas se sientan a una
-    mesa, y una de ellas va a prometer algo. Mira qué pasa y después toma el asiento.»). No
-    plantea la situación: eso lo hace la escena. Va dentro del marco de la escena, como texto del
-    golpe 0, que se va cuando empieza el chat (en la versión quieta, como párrafo sobre la lista);
-    así la mesa ya se ve en la primera pantalla.
-  - Acto 2: la matriz, T > R > P > S con sus letras (las usa `/dilemma`, «2R > T + S»), la regla
-    (g), *cheap talk* y el enlace a *The Evolution of Trust*.
-  - Acto 3: las dos razones, sus citas y la tabla de predicciones, más apretados.
-  - Acto 4: sin la lista de pasos del cambio de pareja. Se queda con la decisión del visitante
-    (el momento 2, arriba), las cifras citadas que la escena no muestra (2 mensajes de 90
-    caracteres, 192 personas, 8 rondas, 73 % y 54 %, 70 y 68), las dos simplificaciones de la mesa
-    y la conclusión de Vanberg (2008). Define «dictador» y «receptor», que antes definía la lista.
-  - Acto 6: solo la página; suma que la escena se mueve con el scroll solo con CSS, y conserva la
-    frase «Your browser only runs the table's code, in its three moments…».
-- [x] Presupuestos de palabras nuevos en `tests/prose.test.ts` (1: 30, 2: 210, 3: 110, 4: 230,
-      6: 145; el acto 5 sigue en 420), y tests de R4: ningún acto repite una leyenda de la escena
-      (regla (k)); el acto 4 conserva sus cifras sin pasos numerados; el acto 6 no habla del motor.
-      Registro de cifras y regla (h) en verde sin cambios: no entró ninguna cifra nueva.
-- [x] Revisión explícita contra las reglas (a)–(k):
-  - (a) Solo el dilema del prisionero (Axelrod, 1984), Vanberg (2008) y las citas de aversión a la
-    culpa ya registradas; cada cifra en `figures.ts` y en `docs/sources.md` (test en verde).
-  - (b) Ningún acto toca la frase de estado; la estampa y el acto 5 no cambian.
-  - (c) Sin revista, sin PDF, sin correspondencia ni fechas.
-  - (d) Sin bi-estabilidad, población, cuatro paneles ni el modelo como tasas de laboratorio;
-    las tasas son las publicadas de Vanberg (2008), con cita.
-  - (e) La curva no se toca.
-  - (f) El enlace a *The Evolution of Trust* sigue en el acto 2; nada jugable repetido.
-  - (g) El acto 2 sigue diciendo que la mesa no es la matriz y que es otro juego con la misma
-    tensión.
-  - (h) Ninguna subpágina comparte una oración con su acto (test), y `/dilemma` sigue teniendo las
-    letras T, R, P y S definidas en el acto 2.
-  - (i) Ninguna frase prohibida (test).
-  - (j) «La investigación» y «Quién es» no se tocan.
-  - (k) La entrada del acto 1 no afirma resultados; ninguna leyenda de la escena reaparece en un
-    acto (test).
-- [x] Probado por CDP: el golpe 0 a 1280 px y a 360 px (la entrada bajo la mesa, «Scroll ↓»),
-      la primera pantalla a 1440×1000 (A y B a la vista sin scroll) y a 1280×900 (asoman), la
-      versión quieta con la entrada sobre la lista, y el golpe 1 ya sin la entrada.
-- [ ] Revisión de la prosa por Montse (absorbe la de F2).
-- Nota: dos veces, en local, Vitest falló al arrancar sus workers («no tests» en los 29 archivos)
-  y pasó al repetir; no se reprodujo en seis corridas seguidas. No es un test que falle.
-
-## F5 · QA
-
-Pendientes que dejó F4 (se trabajan en F5, no antes):
-
-- [ ] Con el candado abierto, la tabla oculta de la gráfica del acto 5 ensancha la página de inicio
-      a 653 px en un viewport de 360 px: una `<table>` ignora `width` y `overflow`. La de `/finding`
-      se corrigió en F4 envolviéndola en un `div` oculto; la del acto 5 es del momento 3.
-- [ ] Con el candado abierto, `/finding` carga el script del momento 3 (el de `Curve.astro`), que no
-      encuentra un control deslizante y no hace nada.
-- [ ] El comentario de `src/components/table/controller.ts` dice "the site's only JavaScript"; ya no
-      es cierto desde F3 (momento 3) ni desde F4 (mejor respuesta de `/dilemma`, ADR 0017).
+- [ ] La hoja de personajes (formas, expresiones, las dos voces, el diamante, las monedas, los
+      gestos, la paleta y los puntos de luz, el favicon), aprobada por Montse.
+- [ ] Fraunces y Nunito autoalojadas (`woff2` de `@fontsource-variable/*`, versión verificada, OFL
+      y procedencia).
+- [ ] `palette.ts` y `tokens.css` de Papel; tests de contraste y de daltonismo sobre los puntos de
+      luz y sobre el papel del cuaderno; test de luz continua.
+- [ ] `src/lib/film/`: pistas, curvas, interpolación de colores, cámara según la pantalla y tramos,
+      con tests.
+- [ ] `src/lib/chapters.ts` (ids y orden, con test) y la colección `src/content/chapters/{en,es}/`.
+- [ ] El storyboard en HTML y el script de la película encima; el scroll nativo.
+- [ ] El capítulo 0 en EN y ES: la promesa, el diamante y la promesa de la página, con versión quieta
+      y de movimiento reducido.
+- [ ] Retirar la primera pantalla y la escena de la versión anterior; lo que aún no tiene capítulo
+      sigue abajo.
+- [ ] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS).
 
 ## Preguntas abiertas
 
-- Verificar antes del lanzamiento Axelrod (1984), con la página de los pagos del dilema, de la
-  condición `2R > T + S`, de la sombra del futuro y del torneo: la prosa ya lo usa (acto 2 y
-  `/dilemma`) y sigue "por verificar" en `docs/sources.md`.
-- Hechos de «Quién es» (escuela y lo demás): los da Montse. Si no llegan antes de F5, la sección
-  sale solo con GitHub y LinkedIn (regla (j)).
-- Nombre en la estampa: completo, sin prefijo. Si se ve largo, se acorta solo con aprobación de
-  Montse.
+- **Axelrod (1984):** verificar antes del lanzamiento la página de los pagos del dilema, de la
+  condición `2R > T + S`, de la sombra del futuro y del torneo. La prosa ya la usa y sigue «por
+  verificar» en `docs/sources.md`.
+- **La forma de las dos voces:** se decide con la hoja de personajes (P1).
+- **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
+- **Los pendientes de la versión anterior** (en `docs/archivo/tareas-anteriores.md`, sección F5)
+  desaparecen con el código que reemplaza la película. Si alguno sobrevive a P4, vuelve aquí.
 
 ## Preguntas cerradas
 
-- ~~Pagos, sorteo, creencias y tasas de Vanberg (2008) con página.~~ Resuelta en F1.1 con el
-  material suplementario (`docs/sources.md`).
-- ~~Tipografía para autoalojar en F1.~~ Resuelta en F1: Newsreader + Inter variables, JetBrains
-  Mono diferida a F4 (ADR 0014, hoy reemplazado por el ADR 0018).
-- ~~URL del perfil de LinkedIn.~~ Resuelta en F0.1: está en `AUTHOR.linkedin`.
-- ~~Título en español.~~ Confirmado en F0.1: "¿Por qué cumplir una promesa que ya no conviene?".
-- ~~Regla (d) frente al momento 2 y la regla (a).~~ Resuelta en F0.1: el modelo no se presenta
-  como si reprodujera tasas de experimentos; las cifras publicadas de Vanberg (2008), con cita, sí
-  se muestran.
+- ~~¿Otro repo o el mismo?~~ El mismo, con archivo (P0).
+- ~~¿Se abre el candado en revisión o al aceptar?~~ En revisión, después de revisar la política de
+  la revista (paso 1b del checklist, ADR 0026).
+- ~~Dirección de arte.~~ Papel (ADR 0022).
+- ~~«Quién es».~~ Solo nombre, GitHub y LinkedIn, en `/about` (ADR 0024).
+- ~~«Cómo está hecho».~~ Sale del home y se queda como caso de estudio en el cuaderno (ADR 0024).

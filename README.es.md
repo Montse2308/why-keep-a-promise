@@ -3,8 +3,9 @@
 [English](README.md)
 
 La página de divulgación de un proyecto personal de investigación sobre por qué la gente cumple
-promesas que ya no le convienen. Recorre la pregunta en seis actos breves alrededor de una sola
-pieza interactiva: el juego de cambio de pareja de Vanberg (2008).
+promesas que ya no le convienen. Se está reconstruyendo como una película corta ligada al scroll,
+en nueve capítulos, del dilema del prisionero al juego de cambio de pareja de Vanberg (2008), con
+un cuaderno para la profundidad técnica.
 
 **Trabajo en curso.** Nada de lo que hay aquí es definitivo.
 

@@ -1,5 +1,8 @@
 # 0018 · Dirección visual: escenario y papel
 
+> **Archivada (P0).** Reemplazada por el ADR 0022 (dirección de arte Papel). Se conserva como
+> registro; no rige. Sus referencias a otros ADR y a rutas del repo son de su momento.
+
 **Estado:** aceptada (R0). Reemplaza al ADR 0014.
 
 ## Contexto

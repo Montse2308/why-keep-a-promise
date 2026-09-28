@@ -1,5 +1,9 @@
 # 0015 · Candado del acto 5 y `verify:dist`
 
+> **Archivada (P0).** Reemplazada por el ADR 0026 (el candado), que reescribe el candado completo.
+> Se conserva como registro; no rige. Sus referencias a otros ADR y a rutas del repo son de su
+> momento.
+
 **Estado:** aceptada (F3). Precisa el ADR 0014 sobre el JavaScript del sitio. El ADR 0017 extiende
 el candado a `/finding` y a la parte del motor de `/how-its-built`, permite mostrar detrás del
 candado θ, c, la culpa disponible y la variante de robustez en `/finding`, y precisa otra vez el

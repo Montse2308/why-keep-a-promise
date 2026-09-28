@@ -14,6 +14,10 @@ falla si la prosa usa un número o una cita que no están registrados, o si una 
 Una referencia que ya se usa en la página y sigue "por verificar" bloquea el lanzamiento hasta que
 Montse la verifique (`docs/tasks.md`, preguntas abiertas).
 
+Mientras la película reemplaza la versión anterior (P1–P4, ADR 0021), las líneas «Usada en» describen
+el código que hay en ese momento: los actos, la mesa y sus momentos. Cada fase las actualiza cuando
+mueve una cifra a un capítulo, en el mismo commit.
+
 ## Referencias
 
 ### Vanberg (2008)
@@ -293,7 +297,7 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   76, fracciones de denominador 100); en cada una, el pago material de las tres razones y si la
   culpa personal tira. Es una comparación entre mundos, cada uno con su confianza de fondo fija
   (regla (e)). Desde F4, `/finding` lee además, solo detrás del candado, la culpa disponible de cada
-  fila, θ y c (`params.sens`) y la variante de robustez (ADR 0017). Ningún otro parámetro ni valor
+  fila, θ y c (`params.sens`) y la variante de robustez (ADR 0026). Ningún otro parámetro ni valor
   intermedio del archivo se lee ni se muestra.
 - **Verificada:** `tests/curve.test.ts` y `src/lib/curve/curve.test.ts` validan la procedencia
   (ADR 0010) y comprueban cada cifra de abajo contra el archivo. Ninguna se escribe a mano sin test.
@@ -327,9 +331,9 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   Fuente: `peak` de `curve.json`.
   Usada en: acto 5; marca del pico y valor inicial del control deslizante.
 
-#### Cifras de `/finding` (F4, ADR 0017)
+#### Cifras de `/finding` (F4, ADR 0026)
 
-Solo en `/finding` y solo detrás del candado del acto 5 (ADR 0015, ADR 0017). La página no
+Solo en `/finding` y solo detrás del candado (ADR 0026). La página no
 recalcula el modelo: la culpa, los pagos, θ y c se leen de `curve.json` (`src/lib/curve/finding.ts`).
 La única cuenta es la cuadrática del corte analítico, y solo en un test, para verificar la prosa.
 `tests/finding.test.ts` comprueba cada cifra de abajo contra el archivo.

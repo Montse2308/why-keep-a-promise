@@ -1,5 +1,9 @@
 # 0019 · Estructura: el hero es el acto 1, «La investigación» y «Quién es»
 
+> **Archivada (P0).** Reemplazada por el ADR 0021 (la película) y, en lo del candado, el ADR 0026.
+> Se conserva como registro; no rige. Sus referencias a otros ADR y a rutas del repo son de su
+> momento.
+
 **Estado:** aceptada (R0). Reemplaza al ADR 0002. Precisa los ADR 0015 y 0017: el candado se
 extiende a los enlaces de «La investigación».
 

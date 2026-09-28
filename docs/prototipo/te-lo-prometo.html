@@ -1,0 +1,713 @@
+<title>Te lo prometo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,800;1,9..144,700;1,9..144,900&family=Nunito:wght@500;700;800&family=Unbounded:wght@500;800&family=Manrope:wght@500;700;800&display=swap">
+<style>
+/* Layout: one fixed stage (an SVG world moved by a scroll-driven camera), a fixed caption card at the
+   bottom, a fixed title at the top for the first beat, and an empty tall track that only supplies scroll. */
+:root {
+  --you: #2f5bff;
+  --other: #ff7a3d;
+  --gold: #f2b705;
+  --ink: #1d1b3a;
+  --card: #fffdf8;
+  --card-ink: #1d1b3a;
+  --muted: #5b5875;
+  --btn: #ffffff;
+  --btn-ink: #1d1b3a;
+  --btn-edge: #1d1b3a;
+  --outline: rgba(255, 255, 255, .92);
+  --table-top: #d99a5b;
+  --table-front: #b8733a;
+  --shadow: rgba(40, 30, 60, .28);
+  --display: "Fraunces", Georgia, serif;
+  --body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+body[data-dir="teatro"] {
+  --you: #5b86ff;
+  --other: #ff8a47;
+  --gold: #ffd24a;
+  --ink: #f4f1ff;
+  --card: rgba(12, 9, 26, .82);
+  --card-ink: #f4f1ff;
+  --muted: #b9b3d9;
+  --btn: transparent;
+  --btn-ink: #f4f1ff;
+  --btn-edge: #f4f1ff;
+  --outline: #ffffff;
+  --table-top: #2a2350;
+  --table-front: #1b1638;
+  --shadow: rgba(0, 0, 0, .6);
+  --display: "Unbounded", "Segoe UI", system-ui, sans-serif;
+  --body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-family: var(--body); color: var(--ink); background: #ffcf9e; }
+body[data-dir="teatro"] { background: #0c0818; }
+
+#stage { position: fixed; inset: 0; z-index: 0; }
+#stage svg { width: 100%; height: 100%; display: block; }
+#grain { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .18; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .25 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+body[data-dir="teatro"] #grain { opacity: .08; mix-blend-mode: screen; }
+.curtain { position: fixed; top: 0; bottom: 0; width: 7vw; min-width: 12px; z-index: 1; pointer-events: none; display: none;
+  background: repeating-linear-gradient(90deg, #3a0c2a 0 14px, #5a1640 14px 22px, #2a0820 22px 34px); box-shadow: 0 0 40px rgba(0,0,0,.8); }
+.curtain.l { left: 0; border-right: 3px solid #1a0512; }
+.curtain.r { right: 0; border-left: 3px solid #1a0512; }
+body[data-dir="teatro"] .curtain { display: block; }
+
+.only-papel { }
+body[data-dir="teatro"] .only-papel { display: none; }
+.only-teatro { display: none; }
+body[data-dir="teatro"] .only-teatro { display: inline; }
+
+#top { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 16px; pointer-events: none; }
+#top > * { pointer-events: auto; }
+.gem { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+.gem svg { width: 30px; height: 30px; overflow: visible; }
+.dirs { display: flex; gap: 4px; background: var(--card); border-radius: 999px; padding: 4px; box-shadow: 0 4px 14px var(--shadow); }
+.dirs button { font: 700 13px var(--body); border: 0; border-radius: 999px; padding: 8px 12px; min-height: 36px; background: transparent; color: var(--card-ink); cursor: pointer; }
+.dirs button[aria-pressed="true"] { background: var(--card-ink); color: var(--card); }
+body[data-dir="teatro"] .dirs button[aria-pressed="true"] { color: #0c0818; }
+
+#title { position: fixed; z-index: 3; left: 16px; right: 16px; top: calc(64px + env(safe-area-inset-top, 0px)); text-align: center; pointer-events: none; }
+#title h1 { margin: 0 auto; max-width: 16ch; font-family: var(--display); font-weight: 900; font-style: italic; font-size: clamp(30px, 6.2vw, 78px); line-height: .98; letter-spacing: -.02em; text-wrap: balance; color: var(--ink); }
+body[data-dir="teatro"] #title h1 { font-style: normal; font-weight: 800; font-size: clamp(26px, 5vw, 64px); letter-spacing: -.03em; text-shadow: 0 0 30px rgba(255, 210, 74, .35); }
+#title h1 em { font-style: inherit; color: var(--gold); }
+body[data-dir="papel"] #title h1 em { color: #c2410c; }
+
+#captions { position: fixed; z-index: 4; left: 0; right: 0; bottom: 0; padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px)); pointer-events: none; display: grid; }
+.beat { grid-area: 1 / 1; align-self: end; justify-self: center; width: min(600px, 100%); background: var(--card); color: var(--card-ink); border-radius: 14px; padding: 16px 18px; box-shadow: 0 10px 30px var(--shadow); opacity: 0; transform: translateY(12px); visibility: hidden; }
+body[data-dir="papel"] .beat { transform: translateY(12px) rotate(-.4deg); border: 1px solid rgba(29, 27, 58, .08); }
+body[data-dir="teatro"] .beat { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, .16); }
+.beat.on { opacity: 1; transform: none; visibility: visible; pointer-events: auto; }
+body[data-dir="papel"] .beat.on { transform: rotate(-.4deg); }
+@media (prefers-reduced-motion: no-preference) { .beat { transition: opacity .35s, transform .35s, visibility .35s; } }
+.beat .kicker { font-weight: 800; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.beat p { margin: 0 0 10px; font-size: 17px; line-height: 1.45; }
+.beat p:last-child { margin-bottom: 0; }
+.beat .big { font-family: var(--display); font-weight: 800; font-size: clamp(20px, 3.4vw, 26px); line-height: 1.15; letter-spacing: -.01em; }
+.say { display: flex; gap: 10px; align-items: flex-start; }
+.say .who { flex: none; width: 26px; height: 26px; margin-top: 3px; }
+.say .who.sq { background: var(--other); border-radius: 5px; }
+.say .who.ci { background: var(--you); border-radius: 50%; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.act { font: 800 16px var(--body); min-height: 48px; padding: 0 16px; border-radius: 12px; border: 2px solid var(--btn-edge); background: var(--btn); color: var(--btn-ink); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.act .hand { font-size: 20px; line-height: 1; }
+.act .pay { font-weight: 700; font-size: 14px; opacity: .8; }
+.act:hover { transform: translateY(-1px); }
+.act[aria-pressed="true"] { background: var(--card-ink); color: var(--card); }
+body[data-dir="teatro"] .act[aria-pressed="true"] { background: var(--gold); color: #0c0818; border-color: var(--gold); }
+.act:disabled { opacity: .45; cursor: default; transform: none; }
+.act[aria-pressed="true"]:disabled { opacity: 1; }
+.act:focus-visible, .dirs button:focus-visible, a:focus-visible { outline: 3px solid var(--you); outline-offset: 3px; }
+.out { font-weight: 700; min-height: 1.4em; margin-top: 10px; }
+.note { font-size: 14px; color: var(--muted); }
+.beat a { color: inherit; font-weight: 800; }
+.chat { display: grid; gap: 8px; margin: 6px 0 4px; }
+.bub { max-width: 85%; padding: 9px 13px; border-radius: 16px; font-size: 16px; line-height: 1.35; }
+.bub.me { justify-self: end; background: var(--you); color: #fff; border-bottom-right-radius: 4px; }
+.bub.them { justify-self: start; background: var(--other); color: #1d1b3a; border-bottom-left-radius: 4px; }
+.bub[hidden] { display: none; }
+.hint { position: fixed; z-index: 3; left: 50%; transform: translateX(-50%); bottom: calc(10px + env(safe-area-inset-bottom, 0px)); font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); opacity: .7; pointer-events: none; }
+#track { height: 1500vh; height: 1500svh; position: relative; z-index: -1; }
+
+/* SVG world styling through tokens */
+.ch-you .body { fill: var(--you); }
+.ch-other .body { fill: var(--other); }
+.ch .body { stroke: var(--outline); stroke-width: 5; }
+.ch .eye { fill: #fff; }
+.ch .pupil { fill: #14122b; }
+.ch .mouth, .ch .brow { fill: none; stroke: #14122b; stroke-width: 5; stroke-linecap: round; }
+body[data-dir="papel"] .ch, body[data-dir="papel"] .paper { filter: url(#paperShadow); }
+body[data-dir="teatro"] .ch-you { filter: url(#glowYou); }
+body[data-dir="teatro"] .ch-other { filter: url(#glowOther); }
+.tbl-top { fill: var(--table-top); stroke: var(--outline); stroke-width: 4; }
+.tbl-front { fill: var(--table-front); }
+.die rect { fill: #fffaf0; stroke: #14122b; stroke-width: 4; }
+.die circle { fill: #14122b; }
+.wall { fill: #e9dcc8; stroke: var(--outline); stroke-width: 4; }
+body[data-dir="teatro"] .wall { fill: #221a44; stroke: rgba(255,255,255,.5); }
+.cord { stroke: #14122b; stroke-width: 3; }
+body[data-dir="teatro"] .cord { stroke: #6b6392; }
+.bulb { fill: #fff3b0; }
+.board-cell { fill: #fffaf0; stroke: #14122b; stroke-width: 3; }
+body[data-dir="teatro"] .board-cell { fill: #181236; stroke: rgba(255,255,255,.7); }
+.board-cell.hot { fill: #ffe6a8; }
+body[data-dir="teatro"] .board-cell.hot { fill: #3b2c10; }
+.svg-label { font-family: var(--body); font-weight: 800; font-size: 22px; fill: #14122b; }
+body[data-dir="teatro"] .svg-label { fill: #f4f1ff; }
+.svg-num { font-family: var(--display); font-weight: 800; font-size: 34px; fill: #14122b; }
+body[data-dir="teatro"] .svg-num { fill: #f4f1ff; }
+.coin { fill: var(--gold); stroke: #8a6500; stroke-width: 3; }
+.coin-num { font-family: var(--display); font-weight: 800; font-size: 40px; fill: var(--ink); }
+.floor-shadow { fill: rgba(20, 15, 40, .22); }
+body[data-dir="teatro"] .floor-shadow { fill: rgba(0,0,0,.55); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 520px) {
+  .beat { padding: 13px 15px; }
+  .beat p { font-size: 15.5px; margin-bottom: 8px; }
+  .row { gap: 8px; margin-top: 8px; }
+  .act { font-size: 15px; padding: 0 12px; }
+  .gem span { display: none; }
+}
+
+.nb-btn { font: 800 14px var(--body); display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 12px; border: 0; border-radius: 12px 12px 12px 4px; background: var(--card); color: var(--card-ink); box-shadow: 0 6px 16px var(--shadow); cursor: pointer; transform: rotate(1.2deg); }
+.nb-btn svg { width: 22px; height: 22px; }
+.nb-btn:focus-visible, .nb a:focus-visible, .nb-close:focus-visible, .lupa:focus-visible { outline: 3px solid var(--you); outline-offset: 3px; }
+dialog.nb { border: 0; padding: 0; margin: 0 0 0 auto; height: 100%; max-height: 100%; width: min(440px, 100%); background: #fffdf6; color: #1d1b3a; box-shadow: -18px 0 40px rgba(40,30,60,.25); }
+dialog.nb::backdrop { background: rgba(29, 27, 58, .35); }
+.nb-inner { min-height: 100%; padding: 22px 20px 28px 34px; background-image: repeating-linear-gradient(transparent 0 31px, rgba(47,91,255,.12) 31px 32px); background-position: 0 70px; border-left: 3px solid rgba(232,100,27,.45); display: grid; align-content: start; gap: 14px; }
+.nb-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.nb h2 { margin: 0; font-family: "Fraunces", Georgia, serif; font-weight: 900; font-style: italic; font-size: 30px; line-height: 1; }
+.nb .sub { margin: 4px 0 0; color: #5b5875; font-size: 15px; }
+.nb-close { font: 800 15px var(--body); min-height: 44px; min-width: 44px; border: 2px solid #1d1b3a; background: #fff; border-radius: 10px; cursor: pointer; }
+.nb ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.nb li a { display: grid; grid-template-columns: 36px 1fr; gap: 2px 12px; padding: 12px 12px; border-radius: 12px; background: #fff; border: 1.5px solid rgba(29,27,58,.12); color: inherit; text-decoration: none; box-shadow: 0 3px 8px rgba(40,30,60,.08); }
+.nb li a:hover, .nb li a.hl { border-color: #e8641b; box-shadow: 0 4px 14px rgba(232,100,27,.25); }
+.nb li .ic { grid-row: span 2; font-size: 24px; line-height: 36px; text-align: center; }
+.nb li b { font-size: 17px; }
+.nb li span.d { font-size: 14.5px; color: #5b5875; line-height: 1.35; }
+.nb .lock b { font-style: italic; }
+.nb .foot { font-size: 13.5px; color: #5b5875; margin-top: 6px; }
+.lupa { display: inline-flex; align-items: center; gap: 6px; font: 800 14px var(--body); color: var(--card-ink); background: transparent; border: 1.5px dashed currentColor; border-radius: 999px; padding: 6px 12px; min-height: 36px; cursor: pointer; margin-top: 4px; }
+</style>
+
+<div id="stage" aria-hidden="true">
+  <svg id="world" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop id="skyTop" offset="0" stop-color="#ffcf9e"/>
+        <stop id="skyBot" offset="1" stop-color="#ffe3c9"/>
+      </linearGradient>
+      <radialGradient id="spot" cx="50%" cy="0%" r="100%">
+        <stop id="spotC" offset="0" stop-color="#fff4d6" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#fff4d6" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="paperShadow" x="-30%" y="-30%" width="160%" height="170%">
+        <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#281e3c" flood-opacity=".3"/>
+      </filter>
+      <filter id="glowYou" x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow dx="0" dy="0" stdDeviation="14" flood-color="#5b86ff" flood-opacity=".85"/>
+      </filter>
+      <filter id="glowOther" x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow dx="0" dy="0" stdDeviation="14" flood-color="#ff8a47" flood-opacity=".85"/>
+      </filter>
+      <filter id="glowGold" x="-80%" y="-80%" width="260%" height="260%">
+        <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#ffd24a" flood-opacity=".9"/>
+      </filter>
+    </defs>
+    <rect id="bg" x="-4000" y="-4000" width="9600" height="9600" fill="url(#sky)"/>
+    <g id="cam">
+      <!-- Papel: layered paper hills, sun and clouds that move slower than the set -->
+      <g id="far" class="only-papel">
+        <circle id="sun" cx="1260" cy="190" r="70" fill="#fff4c2" class="paper"/>
+        <g class="paper" fill="#ffffff" opacity=".85">
+          <ellipse cx="300" cy="170" rx="90" ry="34"/><ellipse cx="360" cy="150" rx="60" ry="38"/>
+          <ellipse cx="1000" cy="110" rx="80" ry="28"/><ellipse cx="1050" cy="96" rx="50" ry="30"/>
+        </g>
+        <path id="hill1" class="paper" d="M-2000 640 C -600 420, 200 520, 700 470 S 1700 380, 3600 560 L 3600 3000 L -2000 3000 Z" fill="#a9c8b0"/>
+        <path id="hill2" class="paper" d="M-2000 660 C -300 560, 500 600, 900 560 S 2000 520, 3600 640 L 3600 3000 L -2000 3000 Z" fill="#8db59c"/>
+      </g>
+      <!-- Teatro: spotlight cones from above -->
+      <g id="spots" class="only-teatro">
+        <polygon id="coneC" points="700,-600 900,-600 1180,660 420,660" fill="url(#spot)" opacity=".55"/>
+        <polygon id="coneL" points="-" fill="url(#spot)" opacity="0"/>
+        <polygon id="coneR" points="-" fill="url(#spot)" opacity="0"/>
+      </g>
+      <rect id="floor" x="-4000" y="640" width="9600" height="5000" fill="#7fa894"/>
+      <ellipse id="shYou" class="floor-shadow" cx="520" cy="652" rx="70" ry="12"/>
+      <ellipse id="shOther" class="floor-shadow" cx="1080" cy="652" rx="76" ry="12"/>
+
+      <g id="wallG" class="paper"><rect class="wall" x="788" y="480" width="24" height="168" rx="4"/></g>
+      <g id="bulbL"><line class="cord" x1="0" y1="-900" x2="0" y2="212"/><circle class="bulb" cx="0" cy="228" r="18"/></g>
+      <g id="bulbR"><line class="cord" x1="0" y1="-900" x2="0" y2="212"/><circle class="bulb" cx="0" cy="228" r="18"/></g>
+
+      <!-- the other: a square -->
+      <g id="other" class="ch ch-other">
+        <rect class="body" x="-64" y="-64" width="128" height="128" rx="20"/>
+        <g class="face">
+          <ellipse class="eye" cx="-24" cy="-12" rx="15" ry="17"/><ellipse class="eye" cx="24" cy="-12" rx="15" ry="17"/>
+          <circle class="pupil" cx="-24" cy="-10" r="7"/><circle class="pupil" cx="24" cy="-10" r="7"/>
+          <path class="brow" d="M-36 -38 L-14 -34"/><path class="brow" d="M36 -38 L14 -34"/>
+          <path class="mouth" d="M-20 26 Q0 40 20 26"/>
+        </g>
+      </g>
+      <!-- you: a circle -->
+      <g id="you" class="ch ch-you">
+        <circle class="body" cx="0" cy="0" r="64"/>
+        <g class="face">
+          <ellipse class="eye" cx="-22" cy="-12" rx="14" ry="16"/><ellipse class="eye" cx="22" cy="-12" rx="14" ry="16"/>
+          <circle class="pupil" cx="-22" cy="-10" r="7"/><circle class="pupil" cx="22" cy="-10" r="7"/>
+          <path class="brow" d="M-34 -36 L-12 -33"/><path class="brow" d="M34 -36 L12 -33"/>
+          <path class="mouth" d="M-18 24 L18 24"/>
+        </g>
+        <path id="sweat" d="M52 -40 q10 16 0 24 q-10 -8 0 -24z" fill="#8fd3ff" stroke="#fff" stroke-width="3" opacity="0"/>
+      </g>
+
+      <g id="tableG" class="paper">
+        <rect class="tbl-front" x="560" y="560" width="480" height="70" rx="10"/>
+        <rect class="tbl-front" x="590" y="600" width="26" height="48" rx="4"/>
+        <rect class="tbl-front" x="984" y="600" width="26" height="48" rx="4"/>
+        <ellipse class="tbl-top" cx="800" cy="560" rx="270" ry="36"/>
+      </g>
+
+      <!-- the 2x2 board -->
+      <g id="board">
+        <g id="boardInner">
+          <text class="svg-label" x="-110" y="-150" text-anchor="middle">el otro coopera</text>
+          <text class="svg-label" x="110" y="-150" text-anchor="middle">el otro traiciona</text>
+          <text class="svg-label" x="-240" y="-58" text-anchor="end">cooperas</text>
+          <text class="svg-label" x="-240" y="78" text-anchor="end">traicionas</text>
+          <g id="cCC"><rect class="board-cell" x="-220" y="-130" width="218" height="126" rx="10"/><text class="svg-num" x="-111" y="-52" text-anchor="middle">3 · 3</text></g>
+          <g id="cCD"><rect class="board-cell" x="2" y="-130" width="218" height="126" rx="10"/><text class="svg-num" x="111" y="-52" text-anchor="middle">0 · 5</text></g>
+          <g id="cDC"><rect class="board-cell" x="-220" y="4" width="218" height="126" rx="10"/><text class="svg-num" x="-111" y="82" text-anchor="middle">5 · 0</text></g>
+          <g id="cDD"><rect class="board-cell" x="2" y="4" width="218" height="126" rx="10"/><text class="svg-num" x="111" y="82" text-anchor="middle">1 · 1</text></g>
+          <text class="svg-label" x="0" y="172" text-anchor="middle" opacity=".75">tu pago · el del otro</text>
+        </g>
+      </g>
+
+      <g id="die" class="die paper">
+        <g id="dieSpin">
+          <rect x="-34" y="-34" width="68" height="68" rx="14"/>
+          <g id="pips"></g>
+        </g>
+      </g>
+
+      <g id="coinsYou" opacity="0"><g class="stack"></g><text class="coin-num" x="0" y="-8" text-anchor="middle"></text></g>
+      <g id="coinsOther" opacity="0"><g class="stack"></g><text class="coin-num" x="0" y="-8" text-anchor="middle"></text></g>
+    </g>
+  </svg>
+</div>
+<div id="grain"></div>
+<div class="curtain l"></div><div class="curtain r"></div>
+
+<div id="top">
+  <div class="gem" aria-live="polite">
+    <svg viewBox="-20 -20 40 40" aria-hidden="true"><g id="gem"><path id="gemShape" d="M0 -16 L14 0 L0 16 L-14 0 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 4"/><path id="gemCrack" d="M-2 -12 L3 -3 L-3 3 L2 12" fill="none" stroke="#14122b" stroke-width="2.5" opacity="0"/></g></svg>
+    <span id="gemLabel">Sin promesa</span>
+  </div>
+  <button type="button" class="nb-btn" id="nbOpen" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="15" height="18" rx="2" fill="#fff4c2" stroke="#1d1b3a" stroke-width="2"/><path d="M8 3v18M11 8h5M11 12h5" stroke="#1d1b3a" stroke-width="2"/><path d="M19 6h2M19 10h2M19 14h2" stroke="#e8641b" stroke-width="2"/></svg>Cuaderno</button>
+</div>
+
+<div id="title"><h1>¿Por qué cumplir una promesa que <em>ya no conviene</em>?</h1></div>
+<div class="hint" id="hint">Baja ↓</div>
+
+<div id="captions">
+  <section class="beat" data-a="0" data-b="0.075" aria-label="Llegada">
+    <div class="say"><span class="who sq" aria-hidden="true"></span><p class="big">«¿Me prometes que vas a tirar el dado?»</p></div>
+    <div class="row">
+      <button type="button" class="act" id="bPromise"><span class="hand" aria-hidden="true">✋</span> Te lo prometo</button>
+      <button type="button" class="act" id="bNoPromise"><span class="hand" aria-hidden="true">✊</span> No prometo nada</button>
+    </div>
+    <p class="out" id="oPromise" aria-live="polite"></p>
+    <p class="note">Y yo te prometo que esto vale tus próximos cuatro minutos. Baja para ver qué pasa.</p>
+  </section>
+
+  <section class="beat" data-a="0.085" data-b="0.16" aria-label="El dilema">
+    <p class="kicker">Antes de la promesa, un juego famoso</p>
+    <p class="big">El dilema del prisionero.</p>
+    <p>Dos cómplices, en cuartos separados. Cada uno elige <b>cooperar</b> o <b>traicionar</b>, sin saber qué hace el otro, y sin poder hablar.</p>
+  </section>
+
+  <section class="beat" data-a="0.17" data-b="0.265" aria-label="Juega una vez">
+    <p class="kicker">Juega una vez</p>
+    <p>Si los dos cooperan, 3 monedas cada uno. Si los dos traicionan, 1. Si uno traiciona y el otro no, el que traiciona se lleva 5 y el otro nada.</p>
+    <div class="row">
+      <button type="button" class="act" data-pd="c"><span class="hand" aria-hidden="true">✋</span> Cooperar</button>
+      <button type="button" class="act" data-pd="d"><span class="hand" aria-hidden="true">✊</span> Traicionar</button>
+    </div>
+    <p class="out" id="oPd" aria-live="polite"></p>
+  </section>
+
+  <section class="beat" data-a="0.275" data-b="0.365" aria-label="Prueba las dos columnas">
+    <p class="kicker">¿Por qué traicionó? Piénsalo como él</p>
+    <p id="qCol"><b>Si el otro coopera</b>, ¿qué te conviene?</p>
+    <div class="row" id="rowCol">
+      <button type="button" class="act" data-col="c"><span class="hand" aria-hidden="true">✋</span> Cooperar <span class="pay" id="payC">3</span></button>
+      <button type="button" class="act" data-col="d"><span class="hand" aria-hidden="true">✊</span> Traicionar <span class="pay" id="payD">5</span></button>
+    </div>
+    <p class="out" id="oCol" aria-live="polite"></p>
+  </section>
+
+  <section class="beat" data-a="0.375" data-b="0.455" aria-label="La trampa">
+    <p class="big">Hagas lo que hagas, traicionar paga más.</p>
+    <p>Y el otro razona igual que tú, como un espejo. Así que los dos traicionan y se quedan con 1, cuando cooperando tenían 3.</p>
+    <p class="note">¿Y si jugaran muchas veces? Eso lo explica mejor que nadie <a href="https://ncase.me/trust/" target="_blank" rel="noopener">The Evolution of Trust</a>, de Nicky Case.</p>
+    <button type="button" class="lupa" data-open="dilema">🔍 El dilema, a fondo</button>
+  </section>
+
+  <section class="beat" data-a="0.465" data-b="0.575" aria-label="¿Y si pudieran hablar?">
+    <p class="kicker">¿Y si pudieran hablar?</p>
+    <div class="chat">
+      <div class="bub them">Oye… ¿qué vas a hacer?</div>
+      <div class="bub me" id="bubMe" hidden></div>
+      <div class="bub them" id="bubThem" hidden></div>
+    </div>
+    <div class="row" id="rowChat">
+      <button type="button" class="act" data-msg="Voy a cooperar. Te lo prometo.">«Te lo prometo»</button>
+      <button type="button" class="act" data-msg="Confía en mí.">«Confía en mí»</button>
+      <button type="button" class="act" data-msg="No te prometo nada.">«Nada»</button>
+    </div>
+    <p class="out" id="oChat" aria-live="polite"></p>
+  </section>
+
+  <section class="beat" data-a="0.585" data-b="0.68" aria-label="La matriz se dobla">
+    <p class="kicker">Otro juego, la misma tensión</p>
+    <p class="big">La matriz se dobla.</p>
+    <p>En el juego de Vanberg (2008) solo decide uno. El otro no elige nada: recibe lo que el primero decida. No es el dilema del prisionero, pero duele igual: cumplir te cuesta.</p>
+    <button type="button" class="lupa" data-open="vanberg">🔍 El experimento completo</button>
+  </section>
+
+  <section class="beat" data-a="0.69" data-b="0.905" aria-label="Tu decisión">
+    <p class="kicker" id="kDecide">Tu decisión</p>
+    <p id="pDecide">Te quedas 14 monedas y el otro nada, o tiras el dado: tú recibes 10 y al otro le tocan 12, salvo que salga 1.</p>
+    <div class="row">
+      <button type="button" class="act" data-dec="keep"><span class="hand" aria-hidden="true">✊</span> Quedarme los 14</button>
+      <button type="button" class="act" data-dec="roll"><span class="hand" aria-hidden="true">✋</span> Tirar el dado</button>
+    </div>
+    <p class="out" id="oDec" aria-live="polite"></p>
+  </section>
+
+  <section class="beat" data-a="0.915" data-b="1.01" aria-label="Fin del prototipo">
+    <p class="kicker">Aquí termina el prototipo</p>
+    <p>En la página completa siguen: las dos voces, el truco de Vanberg, el apagón, la gente real, «aquí entro yo» y el cierre.</p>
+    <div class="row"><button type="button" class="act" id="bRestart">Volver a empezar</button></div>
+  </section>
+</div>
+
+
+<dialog class="nb" id="nb" aria-labelledby="nbTitle">
+  <div class="nb-inner">
+    <div class="nb-head">
+      <div><h2 id="nbTitle">El cuaderno</h2><p class="sub">La historia va arriba. Aquí está todo lo demás, a fondo.</p></div>
+      <button type="button" class="nb-close" id="nbClose" aria-label="Cerrar el cuaderno">✕</button>
+    </div>
+    <ol>
+      <li><a href="#" data-sec="dilema"><span class="ic" aria-hidden="true">◧</span><b>El dilema, a fondo</b><span class="d">Estrategia dominante, equilibrio de Nash, por qué 2R &gt; T + S, y qué cambia si se juega muchas veces.</span></a></li>
+      <li><a href="#" data-sec="vanberg"><span class="ic" aria-hidden="true">⚄</span><b>El experimento de Vanberg, completo</b><span class="d">El diseño paso a paso, las seis celdas y los datos públicos recalculados con aritmética exacta.</span></a></li>
+      <li class="lock"><a href="#" data-sec="hallazgo"><span class="ic" aria-hidden="true">✉</span><b>El hallazgo</b><span class="d">Hay un manuscrito en preparación.</span></a></li>
+      <li><a href="#" data-sec="como"><span class="ic" aria-hidden="true">⚙</span><b>Cómo está hecha esta página</b><span class="d">Arquitectura, el motor de escenas, el candado que revisa cada build, las pruebas, la accesibilidad y el rendimiento.</span></a></li>
+      <li><a href="#" data-sec="fuentes"><span class="ic" aria-hidden="true">❝</span><b>Fuentes</b><span class="d">Cada cifra de la página, con su referencia y de dónde sale.</span></a></li>
+      <li><a href="#" data-sec="quien"><span class="ic" aria-hidden="true">●</span><b>Quién es</b><span class="d">Montserrat Ximena Hernández Gallegos · GitHub · LinkedIn</span></a></li>
+    </ol>
+    <p class="foot">En el prototipo estos enlaces todavía no llevan a ningún lado.</p>
+  </div>
+</dialog>
+<main id="track"><h2 class="sr">Te lo prometo: prototipo de las primeras escenas</h2></main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
+const ease = (t) => (t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const lerp = (a, b, t) => a + (b - a) * t;
+const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, t) => { const x = hex(a), y = hex(b); return "rgb(" + x.map((v, i) => Math.round(lerp(v, y[i], t))).join(",") + ")"; };
+function track(p, frames, key) {
+  if (p <= frames[0].p) return frames[0][key];
+  for (let i = 1; i < frames.length; i++) {
+    if (p <= frames[i].p) {
+      const t = ease((p - frames[i - 1].p) / (frames[i].p - frames[i - 1].p));
+      const a = frames[i - 1][key], b = frames[i][key];
+      return typeof a === "string" ? mix(a, b, t) : lerp(a, b, t);
+    }
+  }
+  return frames[frames.length - 1][key];
+}
+
+// Continuous light: no cuts. Each direction has its own day.
+const LIGHT = {
+  papel: [
+    { p: 0, top: "#ffc58f", bot: "#ffe6cf", floor: "#86ae98", spot: "#fff4d6" },
+    { p: .12, top: "#9ed0ff", bot: "#e3f1ff", floor: "#7fa99a", spot: "#ffffff" },
+    { p: .40, top: "#8fb8f5", bot: "#d9e8ff", floor: "#78a092", spot: "#ffffff" },
+    { p: .52, top: "#c7a8e0", bot: "#ffd3e6", floor: "#8a9fa0", spot: "#fff0f6" },
+    { p: .72, top: "#ff9f6b", bot: "#ffd08a", floor: "#8d9a78", spot: "#fff1c9" },
+    { p: 1, top: "#5b4a86", bot: "#e27d73", floor: "#5f6b6e", spot: "#ffd9a8" },
+  ],
+  teatro: [
+    { p: 0, top: "#1a0f2e", bot: "#0c0818", floor: "#140f24", spot: "#ffcf7a" },
+    { p: .14, top: "#0b1430", bot: "#070a18", floor: "#0e1226", spot: "#8cc2ff" },
+    { p: .42, top: "#0b1430", bot: "#070a18", floor: "#0e1226", spot: "#8cc2ff" },
+    { p: .52, top: "#07221f", bot: "#050f12", floor: "#0a1a1a", spot: "#72f2c8" },
+    { p: .72, top: "#2a0b1f", bot: "#12050d", floor: "#1a0a14", spot: "#ff86b0" },
+    { p: 1, top: "#1c1033", bot: "#0a0714", floor: "#130d22", spot: "#ffd76a" },
+  ],
+};
+// Camera: centre and visible width, desktop and phone.
+const CAM = [
+  { p: 0, cx: 800, cy: 500, w: 1250, wm: 560 },
+  { p: .10, cx: 800, cy: 480, w: 1500, wm: 620 },
+  { p: .20, cx: 800, cy: 470, w: 1450, wm: 600 },
+  { p: .36, cx: 800, cy: 420, w: 1400, wm: 600 },
+  { p: .48, cx: 800, cy: 440, w: 1300, wm: 580 },
+  { p: .62, cx: 800, cy: 430, w: 1350, wm: 600 },
+  { p: .76, cx: 800, cy: 500, w: 1100, wm: 540 },
+  { p: 1, cx: 800, cy: 510, w: 1150, wm: 560 },
+];
+
+const MOUTH = {
+  neutral: "M-18 24 L18 24",
+  happy: "M-22 18 Q0 42 22 18",
+  sad: "M-20 34 Q0 14 20 34",
+  worried: "M-20 28 Q-10 20 0 28 Q10 36 20 28",
+  shock: "M-10 26 Q0 12 10 26 Q0 40 -10 26",
+};
+const BROW = {
+  neutral: ["M-34 -36 L-12 -33", "M34 -36 L12 -33"],
+  happy: ["M-34 -38 L-12 -40", "M34 -38 L12 -40"],
+  sad: ["M-34 -32 L-12 -40", "M34 -32 L12 -40"],
+  worried: ["M-34 -30 L-12 -40", "M34 -30 L12 -40"],
+  shock: ["M-34 -44 L-12 -46", "M34 -44 L12 -46"],
+};
+const PIPS = { 1: [[0,0]], 2: [[-14,-14],[14,14]], 3: [[-14,-14],[0,0],[14,14]], 4: [[-14,-14],[14,-14],[-14,14],[14,14]], 5: [[-14,-14],[14,-14],[0,0],[-14,14],[14,14]], 6: [[-14,-14],[14,-14],[-14,0],[14,0],[-14,14],[14,14]] };
+
+const S = { dir: "papel", promised: null, pd: null, col: 0, colPicks: [], chat: null, dec: null, face: 5, spin: 0 };
+let camNow = null, pointer = { x: .5, y: .5 };
+
+function setPips(n) {
+  const g = $("#pips"); g.textContent = "";
+  for (const [x, y] of PIPS[n]) { const c = document.createElementNS("http://www.w3.org/2000/svg", "circle"); c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 6.5); g.append(c); }
+}
+function face(id, mood) {
+  const g = $("#" + id);
+  g.querySelector(".mouth").setAttribute("d", MOUTH[mood]);
+  const b = g.querySelectorAll(".brow"); b[0].setAttribute("d", BROW[mood][0]); b[1].setAttribute("d", BROW[mood][1]);
+}
+function coins(id, n, x, y, show) {
+  const g = $("#" + id);
+  g.setAttribute("transform", `translate(${x} ${y})`);
+  g.setAttribute("opacity", show ? 1 : 0);
+  const st = g.querySelector(".stack"); st.textContent = "";
+  for (let i = 0; i < Math.min(n, 14); i++) {
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+    c.setAttribute("class", "coin"); c.setAttribute("cx", 0); c.setAttribute("cy", 40 - i * 7); c.setAttribute("rx", 26); c.setAttribute("ry", 9);
+    st.append(c);
+  }
+  const t = g.querySelector("text"); t.textContent = n; t.setAttribute("y", 20 - Math.min(n, 14) * 7);
+}
+function gem() {
+  const shape = $("#gemShape"), crack = $("#gemCrack"), label = $("#gemLabel"), g = $("#gem");
+  if (S.promised === true) {
+    shape.setAttribute("fill", "var(--gold)"); shape.setAttribute("stroke", "#8a6500"); shape.removeAttribute("stroke-dasharray");
+    g.style.filter = S.dir === "teatro" ? "url(#glowGold)" : "drop-shadow(0 3px 3px rgba(40,30,60,.35))";
+    const broke = S.dec === "keep";
+    crack.setAttribute("opacity", broke ? 1 : 0);
+    shape.setAttribute("opacity", broke ? .55 : 1);
+    label.textContent = broke ? "Promesa rota" : S.dec === "roll" ? "Promesa cumplida" : "Tu promesa";
+  } else {
+    shape.setAttribute("fill", "none"); shape.setAttribute("stroke", "currentColor"); shape.setAttribute("stroke-dasharray", "4 4");
+    crack.setAttribute("opacity", 0); shape.setAttribute("opacity", 1); g.style.filter = "none";
+    label.textContent = S.promised === false ? "No prometiste" : "Sin promesa";
+  }
+}
+
+function render() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const p = max > 0 ? clamp(scrollY / max, 0, 1) : 0;
+  const portrait = innerWidth / innerHeight < 0.9;
+  const svg = $("#world");
+
+  // light
+  const L = LIGHT[S.dir];
+  $("#skyTop").setAttribute("stop-color", track(p, L, "top"));
+  $("#skyBot").setAttribute("stop-color", track(p, L, "bot"));
+  $("#floor").setAttribute("fill", track(p, L, "floor"));
+  $("#spotC").setAttribute("stop-color", track(p, L, "spot"));
+  document.body.style.background = track(p, L, "bot");
+
+  // camera
+  const target = { cx: track(p, CAM, "cx"), cy: track(p, CAM, "cy"), w: track(p, CAM, portrait ? "wm" : "w") };
+  if (!camNow || reduce) camNow = { ...target };
+  else for (const k in target) camNow[k] = lerp(camNow[k], target[k], .18);
+  const h = camNow.w * innerHeight / innerWidth;
+  const anchor = portrait ? .36 : .46;
+  svg.setAttribute("viewBox", `${camNow.cx - camNow.w / 2} ${camNow.cy - h * anchor} ${camNow.w} ${h}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+  // parallax for the far paper layer
+  $("#far").setAttribute("transform", `translate(${(camNow.cx - 800) * .5} ${(camNow.cy - 480) * .6})`);
+
+  // positions: table → rooms → table
+  const dT = portrait ? 180 : 280, dR = portrait ? 205 : 390;
+  const toRooms = ease(seg(p, .095, .16)), back = ease(seg(p, .59, .66));
+  const d = lerp(lerp(dT, dR, toRooms), dT, back);
+  const bob = reduce ? 0 : Math.sin(performance.now() / 600) * 4;
+  const xY = 800 - d, xO = 800 + d;
+  $("#you").setAttribute("transform", `translate(${xY} ${500 + bob * .5})`);
+  $("#other").setAttribute("transform", `translate(${xO} ${496 - bob * .5})`);
+  $("#shYou").setAttribute("cx", xY); $("#shOther").setAttribute("cx", xO);
+  const inRooms = toRooms * (1 - back);
+  $("#tableG").setAttribute("opacity", 1 - inRooms);
+  $("#wallG").setAttribute("transform", `translate(800 648) scale(1 ${inRooms}) translate(-800 -648)`);
+  $("#wallG").setAttribute("opacity", inRooms > .02 ? 1 : 0);
+  for (const [id, x] of [["#bulbL", xY], ["#bulbR", xO]]) {
+    $(id).setAttribute("transform", `translate(${x} ${lerp(-500, 0, inRooms)})`);
+    $(id).setAttribute("opacity", inRooms);
+  }
+  // teatro cones follow the characters in the rooms
+  $("#coneC").setAttribute("opacity", .55 * (1 - inRooms));
+  const cone = (x) => `${x - 60},-600 ${x + 60},-600 ${x + 170},660 ${x - 170},660`;
+  $("#coneL").setAttribute("points", cone(xY)); $("#coneR").setAttribute("points", cone(xO));
+  $("#coneL").setAttribute("opacity", .6 * inRooms); $("#coneR").setAttribute("opacity", .6 * inRooms);
+
+  // board: appears after the columns, folds into the die
+  const bIn = ease(seg(p, .365, .40)), fold = ease(seg(p, .59, .645));
+  const bs = portrait ? .78 : 1;
+  $("#board").setAttribute("transform", `translate(800 250) scale(${bs * (1 - fold * .15)} ${bs * bIn * (1 - fold)})`);
+  $("#board").setAttribute("opacity", bIn * (1 - fold * .6));
+  for (const id of ["cCC", "cCD", "cDC", "cDD"]) $("#" + id + " rect").classList.remove("hot");
+  if (p > .37 && p < .59) $("#cDD rect").classList.add("hot");
+
+  // die: floats at arrival, hides in the rooms, is born from the fold, rests on the table
+  const dieIn = ease(seg(p, .62, .67));
+  let dx = 800, dy = 470 + bob * 2, dop = 1 - ease(seg(p, .07, .11));
+  if (p > .6) { dy = lerp(250, 520, dieIn); dop = dieIn; }
+  const spinIdle = reduce ? 0 : (p < .1 ? performance.now() / 40 % 360 : 0);
+  $("#die").setAttribute("transform", `translate(${dx} ${dy})`);
+  $("#die").setAttribute("opacity", dop);
+  $("#dieSpin").setAttribute("transform", `rotate(${S.spin || (p < .1 ? Math.sin(performance.now() / 700) * 12 : 0)})`);
+
+  // coins and moods by beat
+  let mY = "neutral", mO = S.promised === true ? "happy" : S.promised === false ? "sad" : "neutral";
+  let showCoins = false, cy = 0, co = 0;
+  if (p > .16 && p < .37 && S.pd) {
+    showCoins = true;
+    cy = S.pd === "c" ? 0 : 1; co = S.pd === "c" ? 5 : 1;
+    mY = S.pd === "c" ? "shock" : "sad"; mO = S.pd === "c" ? "happy" : "sad";
+  } else if (p > .16 && p < .59) { mY = "worried"; mO = "worried"; }
+  if (p > .46 && p < .59 && S.chat) { mY = "happy"; mO = "happy"; }
+  if (p > .69) {
+    mY = S.dec ? (S.dec === "roll" ? "happy" : "neutral") : "worried";
+    mO = S.dec ? (S.dec === "roll" ? (S.face === 1 ? "sad" : "happy") : "sad") : (S.promised ? "happy" : "neutral");
+    if (S.dec) { showCoins = true; cy = S.dec === "roll" ? 10 : 14; co = S.dec === "roll" ? (S.face === 1 ? 0 : 12) : 0; }
+  }
+  face("you", mY); face("other", mO);
+  $("#sweat").setAttribute("opacity", p > .69 && !S.dec ? 1 : 0);
+  coins("coinsYou", cy, xY, 350, showCoins);
+  coins("coinsOther", co, xO, 350, showCoins);
+
+  // pupils follow the pointer
+  const px = (pointer.x - .5) * 8, py = (pointer.y - .5) * 6;
+  $$(".pupil").forEach((c, i) => { const base = [-24, 24, -22, 22][i]; c.setAttribute("cx", base + px); c.setAttribute("cy", -10 + py); });
+
+  // beats
+  $$(".beat").forEach((b) => b.classList.toggle("on", p >= +b.dataset.a && p < +b.dataset.b));
+  $("#title").style.opacity = 1 - seg(p, .03, .07);
+  $("#hint").style.opacity = p < .02 ? .7 : 0;
+}
+
+let ticking = false;
+function loop() { render(); requestAnimationFrame(loop); }
+
+function setDir(dir) {
+  S.dir = dir; document.body.dataset.dir = dir;
+  $$(".dirs button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.dir === dir)));
+  try { localStorage.setItem("tlp-dir", dir); } catch {}
+  camNow = null; gem();
+}
+
+
+$("#bPromise").addEventListener("click", () => {
+  S.promised = true; $("#bPromise").setAttribute("aria-pressed", "true"); $("#bNoPromise").setAttribute("aria-pressed", "false");
+  $("#oPromise").textContent = "Prometiste. Tu promesa te acompaña arriba, a la izquierda."; gem();
+});
+$("#bNoPromise").addEventListener("click", () => {
+  S.promised = false; $("#bNoPromise").setAttribute("aria-pressed", "true"); $("#bPromise").setAttribute("aria-pressed", "false");
+  $("#oPromise").textContent = "No prometiste. El cuadrado se queda con las ganas."; gem();
+});
+$$("[data-pd]").forEach((b) => b.addEventListener("click", () => {
+  S.pd = b.dataset.pd;
+  $$("[data-pd]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  $("#oPd").textContent = S.pd === "c"
+    ? "Cooperaste… y el otro traicionó. Tú: 0 monedas. Él: 5."
+    : "Traicionaste, y el otro también. Los dos: 1 moneda.";
+}));
+function colStep() {
+  const first = S.col === 0;
+  $("#qCol").innerHTML = first ? "<b>Si el otro coopera</b>, ¿qué te conviene?" : "<b>Y si el otro traiciona</b>, ¿qué te conviene?";
+  $("#payC").textContent = first ? "3" : "0";
+  $("#payD").textContent = first ? "5" : "1";
+  $$("[data-col]").forEach((x) => x.setAttribute("aria-pressed", "false"));
+}
+$$("[data-col]").forEach((b) => b.addEventListener("click", () => {
+  const first = S.col === 0;
+  b.setAttribute("aria-pressed", "true");
+  if (first) {
+    $("#oCol").textContent = "Traicionar paga 5 contra 3. Ahora la otra columna…";
+    S.col = 1; setTimeout(colStep, reduce ? 0 : 900);
+  } else {
+    $("#oCol").textContent = "Traicionar paga 1 contra 0. Otra vez gana traicionar.";
+    S.col = 2; $$("[data-col]").forEach((x) => (x.disabled = true));
+  }
+}));
+$$("[data-msg]").forEach((b) => b.addEventListener("click", () => {
+  S.chat = b.dataset.msg;
+  $("#bubMe").textContent = S.chat; $("#bubMe").hidden = false;
+  $("#bubThem").textContent = S.chat.includes("Nada") || S.chat.includes("nada") ? "Ok… ya veremos." : "Yo también. Te lo prometo.";
+  $("#bubThem").hidden = false;
+  $("#oChat").textContent = "Hablar es gratis y no obliga a nadie: los economistas le dicen cheap talk. Y aun así, la gente cumple.";
+  $$("[data-msg]").forEach((x) => (x.disabled = true));
+}));
+$$("[data-dec]").forEach((b) => b.addEventListener("click", () => {
+  if (S.dec) return;
+  S.dec = b.dataset.dec;
+  $$("[data-dec]").forEach((x) => { x.setAttribute("aria-pressed", String(x === b)); x.disabled = true; });
+  if (S.dec === "roll") {
+    const f = 1 + Math.floor(Math.random() * 6);
+    const done = () => {
+      S.face = f; setPips(f); S.spin = 0; gem();
+      $("#oDec").textContent = (f === 1 ? "Salió 1: al otro no le tocó nada esta vez. " : "Salió " + f + ": al otro le tocan 12. ") + "Tú te quedas con 10. Tirar te costó 4; al otro le da 10 en promedio." + (S.promised ? " Cumpliste." : "");
+    };
+    if (reduce) return done();
+    const t0 = performance.now();
+    const spin = (t) => {
+      const k = Math.min(1, (t - t0) / 900);
+      S.spin = 720 * (1 - Math.pow(1 - k, 3)) || 0.001;
+      setPips(1 + Math.floor(Math.random() * 6));
+      if (k < 1) requestAnimationFrame(spin); else done();
+    };
+    requestAnimationFrame(spin);
+  } else {
+    gem();
+    $("#oDec").textContent = "Te quedas 14; el otro, nada." + (S.promised ? " Tu promesa se agrieta." : "");
+  }
+}));
+$("#bRestart").addEventListener("click", () => {
+  Object.assign(S, { promised: null, pd: null, col: 0, chat: null, dec: null, face: 5, spin: 0 });
+  $$(".act").forEach((x) => { x.disabled = false; x.setAttribute("aria-pressed", "false"); });
+  ["#oPromise", "#oPd", "#oCol", "#oChat", "#oDec"].forEach((s) => ($(s).textContent = ""));
+  $("#bubMe").hidden = true; $("#bubThem").hidden = true; colStep(); setPips(5); gem();
+  scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+});
+
+function decideText() {
+  $("#kDecide").textContent = S.promised === true ? "Le prometiste que tirarías el dado" : S.promised === false ? "No le prometiste nada" : "Tu decisión";
+}
+addEventListener("scroll", decideText, { passive: true });
+addEventListener("pointermove", (e) => { pointer = { x: e.clientX / innerWidth, y: e.clientY / innerHeight }; }, { passive: true });
+
+
+const nb = $("#nb");
+function openNb(sec) {
+  $$(".nb li a").forEach((a) => a.classList.toggle("hl", a.dataset.sec === sec));
+  if (nb.showModal) nb.showModal(); else nb.setAttribute("open", "");
+  const target = sec ? $(`.nb li a[data-sec="${sec}"]`) : null;
+  (target || $("#nbClose")).focus();
+}
+$("#nbOpen").addEventListener("click", () => openNb(null));
+$$(".lupa").forEach((b) => b.addEventListener("click", () => openNb(b.dataset.open)));
+$("#nbClose").addEventListener("click", () => nb.close());
+nb.addEventListener("click", (e) => { if (e.target === nb) nb.close(); });
+$$(".nb li a").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+let start = "papel";
+try { start = localStorage.getItem("tlp-dir") || start; } catch {}
+start = location.hash === "#teatro" ? "teatro" : "papel";
+setDir(start); setPips(5); gem();
+requestAnimationFrame(loop);
+</script>

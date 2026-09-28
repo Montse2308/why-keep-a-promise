@@ -1,7 +1,8 @@
 # 0005 · i18n por rutas + claves + Markdown
 
 **Estado:** aceptada (F0). La parte del switch que recuerda la elección está reemplazada por el
-ADR 0013.
+ADR 0013. El ADR 0024 suma las rutas `/sources` y `/about`, con el mismo slug en los dos idiomas; el
+ADR 0021 pasa la prosa de los actos a los capítulos de la película.
 
 ## Contexto
 

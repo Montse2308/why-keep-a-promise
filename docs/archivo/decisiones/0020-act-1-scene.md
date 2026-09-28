@@ -1,5 +1,8 @@
 # 0020 · La escena del acto 1
 
+> **Archivada (P0).** Reemplazada por el ADR 0021 (la película). Se conserva como registro; no rige.
+> Sus referencias a otros ADR y a rutas del repo son de su momento.
+
 **Estado:** aceptada (R0). Precisa el ADR 0003: la escena es la mesa antes del momento 1, no un
 cuarto momento ni una segunda pieza. Su contenido se rige por la regla (k) de
 `docs/content-rules.md`.

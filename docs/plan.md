@@ -1,97 +1,106 @@
 # Plan
 
-Qué es la página. Todo lo de este documento está decidido; no se rediscute. Un cambio entra solo
-con un ADR nuevo en `docs/decisions/`.
+Qué es la página. Todo lo de este documento está decidido y no se rediscute: un cambio entra solo
+con un ADR nuevo en `docs/decisions/` (índice en `docs/decisions/README.md`). El plan anterior está
+en `docs/archivo/plan-anterior.md`.
 
 ## Propósito
 
-Página de divulgación para portafolio sobre una pregunta: por qué la gente cumple promesas que ya
-no le convienen. No es un simulador ni el instrumento de un paper (ADR 0001).
+Página de divulgación para el portafolio de Montse sobre una pregunta: por qué la gente cumple
+promesas que ya no le convienen. No es un simulador ni el instrumento de un paper (ADR 0001).
 
-## Estructura
+Tiene que:
 
-Un solo hilo en scroll: seis actos y dos secciones que no son actos (ADR 0019).
+- sorprender en los primeros 10 segundos, aunque el visitante no juegue;
+- dejar que alguien que nunca oyó del dilema del prisionero lo entienda y sepa, al terminar, de qué
+  va la investigación (sin el hallazgo mientras el candado esté cerrado);
+- tener en cada capítulo algo a lo que alguien le tomaría captura para enseñárselo a otro;
+- mostrar oficio, técnico y de diseño, para puestos fullstack.
 
-| # | id en `/`       | Bloque                                       | Subpágina        |
-| - | --------------- | -------------------------------------------- | ---------------- |
-| 1 | `question`      | La pregunta: primera pantalla, escena y mesa | —                |
-| 2 | `dilemma`       | El dilema                                    | `/dilemma`       |
-| 3 | `two-reasons`   | Dos razones                                  | —                |
-| 4 | `vanberg`       | Vanberg                                      | `/vanberg`       |
-| — | `research`      | La investigación                             | —                |
-| 5 | `finding`       | El hallazgo                                  | `/finding`       |
-| 6 | `how-its-built` | Cómo está hecho                              | `/how-its-built` |
-| — | `about`         | Quién es                                     | —                |
+## Dos capas
 
-- **Primera pantalla (acto 1):** la pregunta "Why keep a promise that no longer pays?", la
-  escena en su golpe 0 (ADR 0020), el sello con la frase de estado del manuscrito, el nombre de
-  la autora (clave `author.name`, completo, sin prefijo) en una línea aparte, el enlace EN/ES en
-  la esquina (no se queda fijo) y el ancla «La investigación ↓».
-- **Sin franja fija.** GitHub y LinkedIn (`AUTHOR` en `src/config.ts`) van en «Quién es».
-- **La frase del manuscrito** sale dos veces: la estampa y el acto 5 (regla (b)).
-- **La investigación:** la pregunta y que Montse construyó un motor de simulación en TypeScript,
-  en los dos estados del candado. Con el candado abierto, enlaza al acto 5, a `/finding` y al
-  repositorio del motor (regla (j)).
-- **Quién es:** GitHub, LinkedIn y solo los hechos que Montse dé (regla (j)).
-- **Los actos, cortos:** ninguno vuelve a contar la escena. El acto 4 se queda con la decisión
-  del visitante y las cifras citadas; el acto 6, con cómo está hecha la página.
-- **Footer:** enlaces a las subpáginas y el enlace EN/ES.
+| Capa | Qué es | Rutas (EN y ES) | ADR |
+| ---- | ------ | --------------- | --- |
+| **La película** | El home: la historia en nueve capítulos, ligada al scroll, sobre un solo escenario de papel que cambia de luz. | `/`, `/es/` | 0021 |
+| **El cuaderno** | La profundidad técnica y académica, a un toque desde cualquier punto. | `/dilemma`, `/vanberg`, `/finding`, `/how-its-built`, `/sources`, `/about` | 0024 |
 
-## La pieza visual: la mesa
+- Nombre interno: «Te lo prometo» / «I promise».
+- Título visible: «Why keep a promise that no longer pays?» / «¿Por qué cumplir una promesa que ya
+  no conviene?».
 
-Una sola pieza visual, "la mesa": el juego de cambio de pareja de Vanberg (2008). En código se
-llama `GameTable` (`src/components/table/`, lógica en `src/lib/table/`). Sin visuales de
-población (ADR 0003).
+## La película
 
-**La escena del acto 1** (ADR 0020) es la mesa antes del momento 1, no un cuarto momento: A, B y
-C, en tinta neutra, hablan, se sortean los roles, cambia la pareja y el dado rueda, atado al
-scroll y solo con CSS. En el golpe 6 el asiento pasa a ser "tú" y empieza el momento 1. Con
-movimiento reducido se ve quieta.
+| # | id | Capítulo | En pocas palabras | Juego (ADR 0023) |
+| - | -- | -------- | ----------------- | ---------------- |
+| 0 | `arrival` | Llegada | El otro pide una promesa. La página promete que esto vale unos minutos. | Prometer o no. |
+| 1 | `two-rooms` | Dos cuartos | El dilema del prisionero desde cero: traicionar paga más y los dos terminan peor. El dilema repetido queda en *The Evolution of Trust*. | Una ronda; las dos columnas. |
+| 2 | `talk` | ¿Y si pudieran hablar? | *Cheap talk*: hablar no obliga, y aun así la gente cumple. | Elegir un mensaje. |
+| 3 | `fold` | La matriz se dobla | Otro juego, la misma tensión: el de Vanberg (2008). | Quedarse 14 o tirar el dado. |
+| 4 | `two-voices` | Dos voces | Lo que el otro espera y la palabra dada. El truco: cambiar a la persona. | — |
+| 5 | `blackout` | El apagón | El cambio de pareja: solo quien decide lo sabe. | El mazo; ser quien recibe. |
+| 6 | `real-people` | La gente real | 73 % contra 54 %; lo que esperaban, 70 contra 68. La conclusión de Vanberg. | Adivinar antes de ver. |
+| 7 | `my-research` | Aquí entro yo | La pregunta de Montse, el motor en TypeScript y el sello. El hallazgo, detrás del candado. | El control de la curva (con el candado abierto). |
+| 8 | `closing` | Cierre | La promesa cobrada, «¿Cumplí?» y los créditos. | Contestar. |
 
-| Momento | Dónde      | Qué hace el visitante                                                                                                                                                   | Fase |
-| ------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
-| 1       | Acto 1     | Al terminar la escena, elige Roll o Don't Roll sin promesa y ve su pago contra el del otro.                                                                              | F1   |
-| 2       | Acto 4     | Promete o no → sorteo de cambio de pareja → Roll o Don't. Ve que lo que espera el otro no cambia con el sorteo, y después lo que hicieron los participantes reales. | F1   |
-| 3       | Acto 5     | Un slider mueve un cursor sobre datos precalculados (`src/data/curve.json`).                                                                                            | F3   |
+- **Personajes:** tú (círculo), el otro (cuadrado), la pareja nueva (triángulo) y las dos voces.
+- **Dos hilos:** la promesa del visitante (el diamante) y la promesa de la página.
+- **Cifras:** solo las de `docs/sources.md` (regla (a)).
+- **La autora:** su nombre va en el capítulo 7 y en los créditos. GitHub y LinkedIn, en `/about`.
+- **La prosa:** leyendas y diálogos en `src/content/chapters/{en,es}/`, con paridad EN/ES.
 
-El acto 3 es estático.
+## El cuaderno
 
-El acto 2 incluye la matriz 2×2 del dilema del prisionero como tabla estática de texto (regla (g)).
-No es una pieza visual ni interactiva; la única pieza sigue siendo la mesa.
+- Un botón «Cuaderno» en todas las páginas abre un panel con las seis entradas.
+- Las lupas de la película abren la página que toca, y los créditos enlazan a todas.
+- Cada página solo agrega a la película (regla (h)).
+- `/how-its-built` es un caso de estudio de ingeniería.
+- `/sources` lista cada cifra con su referencia.
+- `/about` lleva solo el nombre, GitHub y LinkedIn.
 
-## Dirección visual
+## Dirección de arte (ADR 0022)
 
-Dos superficies de un mismo sistema (ADR 0018): el **escenario**, siempre oscuro, para la escena
-y las dos mesas; el **papel**, para todo lo demás, incluida la prosa de las subpáginas.
+- **El escenario:** un diorama de papel recortado, con luz continua que va del amanecer al
+  anochecer y sin cortes de color.
+- **Los personajes:** formas con cara que reaccionan. La promesa es un diamante dorado, y los gestos
+  sustituyen los botones de formulario.
+- **Tipografía:** Fraunces y Nunito, autoalojadas. JetBrains Mono solo para el código.
+- **Luz y tema:** la película tiene su propia luz; el cuaderno sigue el tema claro u oscuro del
+  sistema.
+- **Referencia visual:** el prototipo de los capítulos 0 a 3, en `docs/prototipo/te-lo-prometo.html`.
+  Ábrelo en un navegador y elige «Papel».
 
-## Subpáginas (v1)
+## Tecnología (ADR 0025)
 
-Cada una profundiza un acto. Se llega desde "Go deeper →" al final de ese acto y desde el footer.
-No hay menú de pestañas. Reutilizan la mesa o la curva; no hay un segundo estilo visual (ADR 0004,
-ADR 0018).
+- Astro estático, TypeScript strict y lógica pura con tests.
+- **Mejora progresiva:** un storyboard en HTML que el JavaScript convierte en película.
+- Motor de escenas propio en `src/lib/film/`, con el scroll nativo.
+- Sonido opcional con Web Audio.
+- **Presupuestos:** JS del home ≤ 40 KB comprimido, primera carga ≤ 450 KB, LCP ≤ 2.5 s.
+- **La única dependencia nueva:** `@resvg/resvg-js`, solo de desarrollo, para los pósteres de
+  Open Graph.
 
-| Ruta             | Profundiza | Se llega desde                      | Fase |
-| ---------------- | ---------- | ----------------------------------- | ---- |
-| `/dilemma`       | Acto 2     | "Go deeper →" del acto 2 · footer   | F4   |
-| `/vanberg`       | Acto 4     | "Go deeper →" del acto 4 · footer   | F4   |
-| `/finding`       | Acto 5     | "Go deeper →" del acto 5 · footer   | F4   |
-| `/how-its-built` | Acto 6     | "Go deeper →" del acto 6 · footer   | F4   |
+## Accesibilidad y respaldo
 
-Cada ruta existe también en `/es/` con paridad completa.
+- Las leyendas están en el HTML, en orden.
+- Botones nativos, teclado completo, foco visible y anuncios en `aria-live`.
+- Contraste AA, objetivos táctiles de 44 px o más, y 320 px sin scroll horizontal.
+- **Sin JavaScript** o en navegadores viejos: el storyboard.
+- **Con movimiento reducido:** cortes limpios entre cuadros quietos, con todos los juegos.
+
+## El candado (ADR 0026)
+
+- Cubre el hallazgo del capítulo 7, `/finding`, la parte del motor de `/how-its-built` y sus
+  enlaces.
+- Cerrado, se ve un sobre sellado con la frase de estado.
+- Se abre en el paso 4 del checklist, después de revisar la política de la revista (paso 1b).
 
 ## Idiomas
 
-- Inglés en `/`, español en `/es/`, con paridad completa (ADR 0005).
-- Texto de interfaz en claves: `src/i18n/en.json` y `src/i18n/es.json`. Una clave que existe en un
-  idioma y no en el otro rompe `npm run check` y `npm run build`.
-- La prosa de los actos va en Markdown por idioma, desde F2; la de «La investigación» y «Quién
-  es», en `src/content/sections/{en,es}/` (ADR 0019).
-- El botón EN/ES es un enlace a la misma ruta en el otro idioma; no guarda preferencia ni
-  redirige, así que un enlace compartido abre siempre el idioma de su URL (ADR 0013). Va en la
-  esquina de la primera pantalla y en el footer (ADR 0019).
-- Idioma de los artefactos: ADR 0006.
+- Inglés en `/` y español en `/es/`, con paridad completa (ADR 0005).
+- El enlace EN/ES es un enlace simple a la misma ruta en el otro idioma (ADR 0013).
 
 ## Hosting
 
-GitHub Pages en `https://montse2308.github.io/why-keep-a-promise/`. El repo es privado hasta el
-lanzamiento (F6); un solo lanzamiento, sin deploy parcial. Presupuesto cero (ADR 0007, ADR 0008).
+- GitHub Pages en `https://montse2308.github.io/why-keep-a-promise/`.
+- El repo es privado hasta el lanzamiento (F6), con un solo lanzamiento, sin deploy parcial.
+- Presupuesto cero (ADR 0007, ADR 0008).
