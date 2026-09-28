@@ -43,7 +43,7 @@ Tiene que:
 | 8 | `closing` | Cierre | La promesa cobrada, «¿Cumplí?» y los créditos. | Contestar. |
 
 - **Personajes:** tú (círculo), el otro (cuadrado), la pareja nueva (triángulo) y las dos voces.
-- **Dos hilos:** la promesa del visitante (el diamante) y la promesa de la página.
+- **Dos hilos:** la promesa del visitante (el hilo dorado) y la promesa de la página.
 - **Cifras:** solo las de `docs/sources.md` (regla (a)).
 - **La autora:** su nombre va en el capítulo 7 y en los créditos. GitHub y LinkedIn, en `/about`.
 - **La prosa:** leyendas y diálogos en `src/content/chapters/{en,es}/`, con paridad EN/ES.
@@ -57,12 +57,13 @@ Tiene que:
 - `/sources` lista cada cifra con su referencia.
 - `/about` lleva solo el nombre, GitHub y LinkedIn.
 
-## Dirección de arte (ADR 0022)
+## Dirección de arte (ADR 0027)
 
 - **El escenario:** un diorama de papel recortado, con luz continua que va del amanecer al
   anochecer y sin cortes de color.
-- **Los personajes:** formas con cara que reaccionan. La promesa es un diamante dorado, y los gestos
-  sustituyen los botones de formulario.
+- **Los personajes:** formas con cara que reaccionan: el círculo (tú), el cuadrado (el otro) y el
+  triángulo (la pareja nueva), con doble borde de tinta y papel. La promesa es un hilo dorado que te
+  une al otro, y las decisiones se toman con boletos que dicen la consecuencia.
 - **Tipografía:** Fraunces y Nunito, autoalojadas. JetBrains Mono solo para el código.
 - **Luz y tema:** la película tiene su propia luz; el cuaderno sigue el tema claro u oscuro del
   sistema.

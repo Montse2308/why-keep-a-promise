@@ -1,0 +1,343 @@
+<title>Hoja de personajes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,700;1,9..144,900&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: a single sheet of paper, sections stacked, each a board of paper cut-outs. The film owns its light,
+   so this sheet commits to one paper look in both themes. */
+:root {
+  --you: #2f5bff;
+  --other: #e0570f;
+  --new: #00a0a0;
+  --gold: #f2b705;
+  --gold-deep: #8a6500;
+  --ink: #1d1b3a;
+  --paper: #fff8ec;
+  --paper-2: #fdf1dc;
+  --muted: #5b5875;
+  --culpa: #b9b6d8;
+  --palabra: #fff4d6;
+  --display: "Fraunces", Georgia, serif;
+  --body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #e9e3d6; color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.5; padding-inline: 16px; padding-block: 24px 64px; }
+.sheet { max-width: 1040px; margin: 0 auto; background: var(--paper); border-radius: 6px; box-shadow: 0 1px 0 #fff inset, 0 18px 40px rgba(40,30,60,.18); padding-block: 36px 48px; padding-inline: clamp(18px, 4vw, 48px);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .33 0 0 0 0 .25 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+header .eyebrow { font-weight: 800; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--display); font-weight: 900; font-style: italic; font-size: clamp(38px, 7vw, 72px); line-height: .95; margin: 8px 0 14px; letter-spacing: -.02em; text-wrap: balance; }
+h1 em { color: #c2410c; font-style: inherit; }
+header p { max-width: 62ch; margin: 0 0 10px; }
+h2 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 4vw, 36px); line-height: 1.05; margin: 0 0 6px; letter-spacing: -.01em; text-wrap: balance; }
+section { margin-top: 44px; }
+section > p.lead { color: var(--muted); margin: 0 0 18px; max-width: 64ch; }
+.board { background: var(--paper-2); border-radius: 14px; padding: 18px; box-shadow: inset 0 0 0 1.5px rgba(29,27,58,.08); }
+.grid { display: grid; gap: 14px; }
+.cast { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.cell { display: grid; justify-items: center; gap: 6px; text-align: center; min-width: 0; }
+.cell svg { width: 100%; max-width: 220px; height: auto; overflow: visible; }
+.cell b { font-size: 18px; }
+.cell span { color: var(--muted); font-size: 14.5px; line-height: 1.35; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; padding: 2px 10px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1.5px rgba(29,27,58,.15); }
+.chip i { width: 12px; height: 12px; display: inline-block; }
+.moods { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
+.moods .cell svg { max-width: 110px; }
+.moods .cell span { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.rowlabel { font-weight: 800; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; }
+.rowlabel:first-child { margin-top: 0; }
+.voices { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.voices .cell svg { max-width: 260px; }
+.things { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.things .cell svg { max-width: 140px; }
+.gestures { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.gbtn { font: 800 17px var(--body); display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 18px 0 12px; border-radius: 14px; border: 2.5px solid var(--ink); background: #fff; color: var(--ink); box-shadow: 0 4px 0 var(--ink); cursor: pointer; }
+.gbtn svg { width: 30px; height: 30px; }
+.gbtn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.gbtn.on { background: var(--ink); color: var(--paper); }
+.gbtn:focus-visible { outline: 3px solid var(--you); outline-offset: 3px; }
+.day { border-radius: 14px; overflow: hidden; box-shadow: inset 0 0 0 1.5px rgba(29,27,58,.1); }
+.day .strip { height: 120px; }
+.day .strip.floor { height: 34px; }
+.stops { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 10px; }
+.stop { font-size: 13px; line-height: 1.3; min-width: 0; }
+.stop b { display: block; font-size: 14px; }
+.stop .sw { height: 28px; border-radius: 6px; margin-bottom: 6px; box-shadow: inset 0 0 0 1.5px rgba(29,27,58,.12); }
+.checks { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.checks li { display: flex; gap: 10px; align-items: baseline; }
+.checks li::before { content: "✓"; font-weight: 800; color: #0f7a4f; }
+.type { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; }
+.type .title { font-family: var(--display); font-weight: 900; font-style: italic; font-size: 44px; line-height: .98; letter-spacing: -.02em; }
+.card { background: #fffdf8; border-radius: 14px; padding: 16px 18px; box-shadow: 0 10px 26px rgba(40,30,60,.18); transform: rotate(-.5deg); }
+.card .kicker { font-weight: 800; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.card p { margin: 0 0 8px; }
+.card .big { font-family: var(--display); font-weight: 800; font-size: 24px; line-height: 1.15; }
+.fav { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; align-items: end; }
+.fav figure { margin: 0; display: grid; justify-items: center; gap: 8px; }
+.tab { display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 10px 10px 0 0; padding: 8px 14px; font-size: 14px; box-shadow: inset 0 0 0 1.5px rgba(29,27,58,.12); }
+.scene svg { width: 100%; height: auto; display: block; border-radius: 14px; }
+.ask { background: #fff; border-radius: 14px; padding: 18px 20px; box-shadow: inset 0 0 0 2px var(--ink); }
+.ask ol { margin: 8px 0 0; padding-left: 22px; display: grid; gap: 6px; }
+@media (max-width: 560px) {
+  .stops { grid-template-columns: repeat(3, 1fr); }
+  .type .title { font-size: 34px; }
+}
+</style>
+
+<div class="sheet">
+  <header>
+    <div class="eyebrow">Te lo prometo · P1 · para aprobar</div>
+    <h1>Hoja de <em>personajes</em></h1>
+    <p>Quiénes salen en la película, cómo se ven cuando sienten algo, los objetos, los gestos y la luz del día. Todo lo que se construya desde el capítulo 1 sale de aquí, así que esta es la hoja que apruebas antes de seguir.</p>
+    <p>Los colores ya pasan las pruebas del repo: contraste y daltonismo (protanopia y deuteranopia). Los números están abajo.</p>
+  </header>
+
+  <section aria-labelledby="h-cast">
+    <h2 id="h-cast">El elenco</h2>
+    <p class="lead">Tres formas de papel recortado, cada una con su color y su forma, para que nunca dependan solo del color. Llevan doble borde, papel y tinta: así se separan del cielo a cualquier hora.</p>
+    <div class="board"><div class="grid cast" id="cast"></div></div>
+  </section>
+
+  <section aria-labelledby="h-moods">
+    <h2 id="h-moods">Lo que sienten</h2>
+    <p class="lead">Siete expresiones. Con ellas reaccionan a todo: a tu promesa, a la tentación, a la traición y a cumplir. El triángulo solo necesita cuatro.</p>
+    <div class="board" id="moods"></div>
+  </section>
+
+  <section aria-labelledby="h-voices">
+    <h2 id="h-voices">Las dos voces</h2>
+    <p class="lead">Aparecen en el capítulo 4 y te acompañan hasta el final. Son las dos razones de la historia, con cara. Casi siempre dicen lo mismo, hasta el apagón.</p>
+    <div class="board"><div class="grid voices" id="voices"></div></div>
+  </section>
+
+  <section aria-labelledby="h-things">
+    <h2 id="h-things">Los objetos</h2>
+    <p class="lead">El diamante es tu promesa y te sigue en la esquina durante toda la película. Las monedas sustituyen las tablas de pagos.</p>
+    <div class="board"><div class="grid things" id="things"></div></div>
+  </section>
+
+  <section aria-labelledby="h-gestures">
+    <h2 id="h-gestures">Los gestos</h2>
+    <p class="lead">En lugar de botones de formulario: mano abierta para cooperar o tirar el dado, puño para traicionar o quedarte el dinero. Siguen siendo botones de verdad (teclado, lector de pantalla). Pruébalos.</p>
+    <div class="board"><div class="gestures" id="gestures"></div></div>
+  </section>
+
+  <section aria-labelledby="h-day">
+    <h2 id="h-day">La luz del día</h2>
+    <p class="lead">La película dura un día. El cielo pasa de un punto al siguiente poco a poco, sin cortes. Estos son los seis puntos, del capítulo 0 al 8.</p>
+    <div class="day"><div class="strip" id="sky"></div><div class="strip floor" id="floor"></div></div>
+    <div class="stops" id="stops"></div>
+    <ul class="checks">
+      <li>Los tres personajes se distinguen entre sí con visión típica, protanopia y deuteranopia: diferencia mínima ΔE 60 (la prueba exige 40).</li>
+      <li>El diamante se separa de los tres (mínimo ΔE 24; la prueba exige 20).</li>
+      <li>El doble borde separa a cada personaje del cielo con al menos 3:1 en los seis puntos de luz (el papel a oscuras, la tinta de día).</li>
+      <li>El texto de la película va sobre tarjetas de papel (tinta sobre papel, 16:1). El título del inicio va sobre el amanecer (10.7:1).</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-type">
+    <h2 id="h-type">Las letras</h2>
+    <p class="lead">Fraunces para lo grande, con sus curvas un poco traviesas; Nunito, redonda y fácil de leer, para todo lo demás. Se autoalojan en el sitio.</p>
+    <div class="type">
+      <div class="title">¿Por qué cumplir una promesa que ya no conviene?</div>
+      <div class="card">
+        <p class="kicker">Dos cuartos</p>
+        <p class="big">Hagas lo que hagas, traicionar paga más.</p>
+        <p>Y el otro razona igual que tú, como un espejo. Así que los dos traicionan y se quedan con 1, cuando cooperando tenían 3.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-scene">
+    <h2 id="h-scene">Juntos, al mediodía</h2>
+    <p class="lead">Una prueba de composición: el elenco en el diorama, con las dos voces arriba y tu diamante.</p>
+    <div class="scene" id="scene"></div>
+  </section>
+
+  <section aria-labelledby="h-fav">
+    <h2 id="h-fav">El ícono de la pestaña</h2>
+    <p class="lead">Dos opciones, a tamaño real de pestaña. Recomiendo el diamante: es el símbolo de toda la película y se reconoce hasta a 16 px.</p>
+    <div class="board"><div class="fav" id="fav"></div></div>
+  </section>
+
+  <section aria-labelledby="h-ask">
+    <div class="ask">
+      <h2 id="h-ask">Lo que necesito que me digas</h2>
+      <ol>
+        <li>¿Te gustan los tres personajes y sus colores?</li>
+        <li>¿Las dos voces se entienden como «lo que el otro espera» y «mi palabra»?</li>
+        <li>¿Diamante o dado para el ícono?</li>
+        <li>Lo que quieras cambiar, aunque sea una sola cosa.</li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+<script>
+const INK = "#1d1b3a";
+const C = { you: "#2f5bff", other: "#e0570f", new: "#00a0a0", gold: "#f2b705" };
+
+// Paper cut-out: an ink contour, a paper rim, then the fill; the soft shadow sits under all three.
+const rim = (shape, fill) => `
+  <g filter="url(#sh)">
+    ${shape(`fill="${INK}" stroke="${INK}" stroke-width="13" stroke-linejoin="round"`)}
+    ${shape(`fill="${fill}" stroke="#fffaf0" stroke-width="7" stroke-linejoin="round"`)}
+  </g>`;
+
+const BODY = {
+  circle: (a) => `<circle cx="0" cy="0" r="58" ${a}/>`,
+  square: (a) => `<rect x="-56" y="-56" width="112" height="112" rx="18" ${a}/>`,
+  triangle: (a) => `<path d="M0 -66 L62 50 L-62 50 Z" ${a}/>`,
+};
+const FACE_Y = { circle: 0, square: 0, triangle: 24 };
+
+function face(mood, dy) {
+  const y = (v) => v + dy;
+  const eyes = (px = 0, py = 0, r = 7, rx = 14, ry = 16) => `
+    <ellipse cx="-21" cy="${y(-10)}" rx="${rx}" ry="${ry}" fill="#fff"/><ellipse cx="21" cy="${y(-10)}" rx="${rx}" ry="${ry}" fill="#fff"/>
+    <circle cx="${-21 + px}" cy="${y(-8 + py)}" r="${r}" fill="${INK}"/><circle cx="${21 + px}" cy="${y(-8 + py)}" r="${r}" fill="${INK}"/>
+    <circle cx="${-18 + px}" cy="${y(-11 + py)}" r="2.2" fill="#fff"/><circle cx="${24 + px}" cy="${y(-11 + py)}" r="2.2" fill="#fff"/>`;
+  const closed = `<path d="M-33 ${y(-8)} Q-21 ${y(-22)} -9 ${y(-8)}" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M9 ${y(-8)} Q21 ${y(-22)} 33 ${y(-8)}" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+  const brow = (l, r) => `<path d="${l}" transform="translate(0 ${dy})" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="${r}" transform="translate(0 ${dy})" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+  const mouth = (d) => `<path d="${d}" transform="translate(0 ${dy})" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const blush = `<ellipse cx="-34" cy="${y(12)}" rx="9" ry="5" fill="#ff8fa3" opacity=".6"/><ellipse cx="34" cy="${y(12)}" rx="9" ry="5" fill="#ff8fa3" opacity=".6"/>`;
+  switch (mood) {
+    case "happy": return eyes() + brow("M-32 -34 L-10 -37", "M32 -34 L10 -37") + mouth("M-20 16 Q0 38 20 16");
+    case "proud": return closed + blush + brow("M-32 -36 L-10 -39", "M32 -36 L10 -39") + mouth("M-22 14 Q0 42 22 14 Z");
+    case "sad": return eyes(0, 4) + brow("M-32 -28 L-10 -36", "M32 -28 L10 -36") + mouth("M-18 32 Q0 16 18 32") + `<path d="M-30 ${y(4)} q5 10 0 14 q-5 -4 0 -14z" fill="#8fd3ff" stroke="#fff" stroke-width="2"/>`;
+    case "worried": return eyes(0, 2) + brow("M-32 -27 L-10 -37", "M32 -27 L10 -37") + mouth("M-20 26 Q-10 18 0 26 Q10 34 20 26");
+    case "shock": return eyes(0, 0, 5, 16, 19) + brow("M-32 -42 L-10 -45", "M32 -42 L10 -45") + mouth("M-9 24 Q0 10 9 24 Q0 40 -9 24 Z");
+    case "tempted": return eyes(7, 0) + brow("M-32 -32 L-10 -32", "M32 -36 L10 -32") + mouth("M-18 24 Q4 32 20 18") + `<path d="M46 ${y(-40)} q9 15 0 22 q-9 -7 0 -22z" fill="#8fd3ff" stroke="#fff" stroke-width="3"/>`;
+    default: return eyes() + brow("M-32 -34 L-10 -32", "M32 -34 L10 -32") + mouth("M-16 22 L16 22");
+  }
+}
+
+const DEFS = `<defs><filter id="sh" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#281e3c" flood-opacity=".28"/></filter></defs>`;
+function character(kind, mood = "neutral", fill = C[kind === "circle" ? "you" : kind === "square" ? "other" : "new"]) {
+  const f = kind === "triangle" ? `<g transform="translate(0 16) scale(.74)">${face(mood, 0)}</g>` : face(mood, FACE_Y[kind]);
+  return `<g>${rim(BODY[kind], fill)}${f}</g>`;
+}
+const svg = (vb, inner, label) => `<svg viewBox="${vb}" role="img" aria-label="${label}">${DEFS}${inner}</svg>`;
+
+// Cast
+const cast = [
+  ["circle", "Tú", "El círculo azul. Eres tú desde el primer segundo: la película te sienta a la mesa.", C.you],
+  ["square", "El otro", "El cuadrado naranja. Te pide la promesa y reacciona a todo lo que haces.", C.other],
+  ["triangle", "La pareja nueva", "El triángulo turquesa. Llega en el apagón, con una promesa que no le hiciste tú.", C.new],
+];
+document.getElementById("cast").innerHTML = cast.map(([k, n, d, c]) => `
+  <div class="cell">${svg("-90 -90 180 180", character(k, k === "square" ? "happy" : "neutral"), n)}
+  <span class="chip"><i style="background:${c};border-radius:${k === "circle" ? "50%" : k === "square" ? "2px" : "0"};${k === "triangle" ? "clip-path:polygon(50% 0,100% 100%,0 100%)" : ""}"></i>${n}</span>
+  <span>${d}</span></div>`).join("");
+
+// Moods
+const MOODS = [["neutral", "Neutral"], ["happy", "Contento"], ["proud", "Cumplió"], ["tempted", "Tentado"], ["worried", "Preocupado"], ["shock", "Sorprendido"], ["sad", "Traicionado"]];
+const moodRow = (kind, moods, who) => `<div class="rowlabel">${who}</div><div class="grid moods">${moods.map(([m, n]) => `<div class="cell">${svg("-90 -90 180 180", character(kind, m), `${who}, ${n}`)}<span>${n}</span></div>`).join("")}</div>`;
+document.getElementById("moods").innerHTML =
+  moodRow("circle", MOODS, "Tú") + moodRow("square", MOODS, "El otro") +
+  moodRow("triangle", [["neutral", "Neutral"], ["happy", "Contento"], ["shock", "Sorprendido"], ["sad", "Traicionado"]], "La pareja nueva");
+
+// The two voices
+const culpa = `
+  <g transform="translate(-40 10)">
+    ${rim((a) => `<path d="M-62 30 C-92 30 -92 -14 -60 -14 C-58 -46 -14 -54 0 -30 C14 -56 64 -44 58 -12 C90 -10 88 30 58 30 Z" ${a}/>`, "#b9b6d8")}
+    <ellipse cx="-14" cy="-2" rx="12" ry="14" fill="#fff"/><ellipse cx="18" cy="-2" rx="12" ry="14" fill="#fff"/>
+    <circle cx="-8" cy="0" r="6" fill="${INK}"/><circle cx="24" cy="0" r="6" fill="${INK}"/>
+    <path d="M-26 -24 L-4 -30 M30 -24 L8 -30" stroke="${INK}" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M-6 20 Q2 14 10 20" stroke="${INK}" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(70 -50)">
+    <circle cx="-22" cy="36" r="5" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="-12" cy="24" r="8" fill="#fff" stroke="${INK}" stroke-width="3"/>
+    <ellipse cx="18" cy="0" rx="32" ry="26" fill="#fff" stroke="${INK}" stroke-width="3"/>
+    <g transform="translate(18 0) scale(.26)">${character("square", "happy")}</g>
+  </g>`;
+const palabra = `
+  <g transform="translate(0 6)">
+    ${rim((a) => `<path d="M-70 -34 H70 A10 10 0 0 1 70 -14 V40 A10 10 0 0 0 70 60 H-70 A10 10 0 0 1 -70 40 V-14 A10 10 0 0 0 -70 -34 Z" ${a}/>`, "#fff4d6")}
+    <ellipse cx="-22" cy="-6" rx="12" ry="14" fill="#fff" stroke="${INK}" stroke-width="2"/><ellipse cx="22" cy="-6" rx="12" ry="14" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <circle cx="-22" cy="-4" r="6" fill="${INK}"/><circle cx="22" cy="-4" r="6" fill="${INK}"/>
+    <path d="M-34 -28 L-12 -26 M34 -28 L12 -26" stroke="${INK}" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M-12 18 L12 18" stroke="${INK}" stroke-width="4.5" stroke-linecap="round"/>
+    <g transform="translate(0 44)"><path d="M0 -14 L12 0 L0 14 L-12 0 Z" fill="${C.gold}" stroke="#8a6500" stroke-width="3"/><path d="M-5 -4 L0 -9 L5 -4" stroke="#fff" stroke-width="2" fill="none" opacity=".8"/></g>
+  </g>`;
+document.getElementById("voices").innerHTML = `
+  <div class="cell">${svg("-130 -100 260 190", culpa, "La voz de lo que el otro espera")}<b>Lo que el otro espera</b><span>Una nube que no deja de mirar al otro, y en su globo, la cara del otro esperando. Es la culpa de decepcionar.</span></div>
+  <div class="cell">${svg("-130 -100 260 190", palabra, "La voz de la palabra dada")}<b>Mi palabra</b><span>Un pergamino con el sello de tu diamante. Seria y tranquila: lo prometido se cumple, espere el otro lo que espere.</span></div>`;
+
+// Objects
+const gem = (state) => {
+  const d = "M0 -34 L26 -4 L0 34 L-26 -4 Z";
+  if (state === "none") return `<path d="${d}" fill="none" stroke="${INK}" stroke-width="4" stroke-dasharray="7 7" stroke-linejoin="round"/>`;
+  const crack = state === "broken" ? `<path d="M-4 -26 L6 -8 L-6 4 L4 24" stroke="${INK}" stroke-width="4" fill="none" stroke-linejoin="round"/>` : "";
+  const shine = state === "broken" ? "" : `<path d="M-12 -8 L0 -22 L12 -8" stroke="#fff" stroke-width="3.5" fill="none" opacity=".85"/><circle cx="18" cy="-26" r="3" fill="#fff"/><path d="M26 -34 v10 M21 -29 h10" stroke="#fff" stroke-width="2.5"/>`;
+  return `<g filter="url(#sh)"><path d="${d}" fill="${state === "broken" ? "#c9a54a" : C.gold}" stroke="#8a6500" stroke-width="4" stroke-linejoin="round"/><path d="M-26 -4 H26 M0 -34 L-9 -4 L0 34 L9 -4 Z" stroke="#8a6500" stroke-width="2" fill="none" opacity=".45"/>${shine}${crack}</g>`;
+};
+const coins = (n) => {
+  let s = "";
+  for (let i = 0; i < n; i++) s += `<ellipse cx="0" cy="${40 - i * 6.5}" rx="28" ry="9" fill="${C.gold}" stroke="#8a6500" stroke-width="3"/>`;
+  return `<g filter="url(#sh)">${s}</g><text x="0" y="${24 - n * 6.5}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="800" font-size="30" fill="${INK}">${n}</text>`;
+};
+const die = `<g filter="url(#sh)" transform="rotate(-8)"><rect x="-32" y="-32" width="64" height="64" rx="14" fill="#fffaf0" stroke="${INK}" stroke-width="4.5"/>${[[-13,-13],[13,-13],[0,0],[-13,13],[13,13]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r="6" fill="${INK}"/>`).join("")}</g>`;
+document.getElementById("things").innerHTML = [
+  [gem("whole"), "Tu promesa", "Brilla mientras la cumples."],
+  [gem("broken"), "Promesa rota", "Se agrieta y pierde el brillo."],
+  [gem("none"), "Sin promesa", "Solo el contorno, si no prometiste."],
+  [coins(14), "Quedarte los 14", "Las monedas cambian de lado."],
+  [coins(10), "Tirar: 10 para ti", "Y al otro, 12, salvo que salga 1."],
+  [die, "El dado", "Gira y cae; la cara no es un pago."],
+].map(([s, n, d]) => `<div class="cell">${svg("-60 -84 120 140", s, n)}<b>${n}</b><span>${d}</span></div>`).join("");
+
+// Gestures
+const hand = {
+  open: `<g stroke="${INK}" stroke-width="2.4" stroke-linejoin="round" fill="#ffd9b8"><rect x="7" y="13" width="17" height="15" rx="6"/><rect x="7.5" y="3" width="4" height="13" rx="2"/><rect x="12" y="1.5" width="4" height="14" rx="2"/><rect x="16.5" y="2.5" width="4" height="13" rx="2"/><rect x="21" y="6" width="3.6" height="10" rx="1.8"/><rect x="1.5" y="12" width="9" height="4.2" rx="2.1" transform="rotate(-35 6 14)"/></g>`,
+  fist: `<g stroke="${INK}" stroke-width="2.4" stroke-linejoin="round" fill="#ffd9b8"><rect x="5" y="7" width="20" height="18" rx="6"/><path d="M10 7 v6 M15 7 v6 M20 7 v6" fill="none"/><rect x="3" y="15" width="13" height="5.5" rx="2.7"/></g>`,
+};
+const pairs = [["open", "Cooperar"], ["fist", "Traicionar"], ["open", "Tirar el dado"], ["fist", "Quedarme los 14"]];
+const gwrap = document.getElementById("gestures");
+gwrap.innerHTML = pairs.map(([h, t], i) => `<button type="button" class="gbtn" data-i="${i}" aria-pressed="false"><svg viewBox="0 0 30 30" aria-hidden="true">${hand[h]}</svg>${t}</button>`).join("");
+gwrap.addEventListener("click", (e) => {
+  const b = e.target.closest(".gbtn"); if (!b) return;
+  const group = +b.dataset.i < 2 ? [0, 1] : [2, 3];
+  gwrap.querySelectorAll(".gbtn").forEach((x) => { if (group.includes(+x.dataset.i)) { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", String(on)); } });
+});
+
+// The day
+const DAY = [
+  ["Amanecer", "Llegada", "#ffc58f", "#ffe6cf", "#86ae98"],
+  ["Mañana", "Dos cuartos", "#9ed0ff", "#e3f1ff", "#7fa99a"],
+  ["Mediodía", "La matriz se dobla", "#8fb8f5", "#d9e8ff", "#78a092"],
+  ["Tarde", "El apagón", "#c7a8e0", "#ffd3e6", "#8a9fa0"],
+  ["Atardecer", "La gente real", "#ff9f6b", "#ffd08a", "#8d9a78"],
+  ["Anochecer", "Aquí entro yo · Cierre", "#4a3b78", "#c9706a", "#4f5a60"],
+];
+const stopsAt = (i) => DAY.map((d, k) => `${d[i]} ${Math.round((k / (DAY.length - 1)) * 100)}%`).join(", ");
+document.getElementById("sky").style.background = `linear-gradient(90deg, ${stopsAt(2)})`;
+document.getElementById("floor").style.background = `linear-gradient(90deg, ${stopsAt(4)})`;
+document.getElementById("stops").innerHTML = DAY.map(([n, ch, t, b]) => `<div class="stop"><div class="sw" style="background:linear-gradient(${t}, ${b})"></div><b>${n}</b>${ch}</div>`).join("");
+
+// Scene at noon
+document.getElementById("scene").innerHTML = `
+<svg viewBox="0 0 1000 520" role="img" aria-label="El elenco en el diorama al mediodía, con las dos voces arriba y el diamante">
+  ${DEFS}
+  <defs><linearGradient id="noon" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb8f5"/><stop offset="1" stop-color="#d9e8ff"/></linearGradient></defs>
+  <rect width="1000" height="520" fill="url(#noon)"/>
+  <circle cx="840" cy="90" r="46" fill="#fff4c2" filter="url(#sh)"/>
+  <g fill="#fff" opacity=".9" filter="url(#sh)"><ellipse cx="170" cy="80" rx="70" ry="24"/><ellipse cx="215" cy="64" rx="44" ry="28"/><ellipse cx="620" cy="56" rx="56" ry="20"/></g>
+  <path d="M-10 360 C 200 290, 420 330, 560 300 S 860 250, 1010 320 L1010 520 L-10 520 Z" fill="#a9c8b0" filter="url(#sh)"/>
+  <path d="M-10 390 C 260 350, 520 370, 700 345 S 920 330, 1010 380 L1010 520 L-10 520 Z" fill="#8db59c" filter="url(#sh)"/>
+  <rect x="-10" y="410" width="1020" height="120" fill="#78a092"/>
+  <g transform="translate(300 345)">${character("circle", "tempted")}</g>
+  <g transform="translate(700 342)">${character("square", "happy")}</g>
+  <g filter="url(#sh)"><rect x="330" y="372" width="340" height="52" rx="10" fill="#b8733a"/><ellipse cx="500" cy="372" rx="200" ry="28" fill="#d99a5b" stroke="#fffaf0" stroke-width="5"/></g>
+  <g transform="translate(500 350) scale(.8)">${die}</g>
+  <g transform="translate(120 150) scale(.62)">${culpa}</g>
+  <g transform="translate(890 190) scale(.55)">${palabra}</g>
+  <g transform="translate(42 40) scale(.62)">${gem("whole")}</g>
+</svg>`;
+
+// Favicon options, at tab size
+const favGem = `<svg width="SZ" height="SZ" viewBox="-40 -40 80 80"><path d="M0 -34 L28 -4 L0 34 L-28 -4 Z" fill="${C.gold}" stroke="#8a6500" stroke-width="6" stroke-linejoin="round"/><path d="M-12 -8 L0 -22 L12 -8" stroke="#fff" stroke-width="5" fill="none"/></svg>`;
+const favDie = `<svg width="SZ" height="SZ" viewBox="-40 -40 80 80"><rect x="-34" y="-34" width="68" height="68" rx="16" fill="#fffaf0" stroke="${INK}" stroke-width="6"/><circle cx="-13" cy="-13" r="8" fill="${C.you}"/><rect x="5" y="5" width="16" height="16" rx="2" fill="${C.other}"/></svg>`;
+document.getElementById("fav").innerHTML = [[favGem, "Diamante (recomendado)"], [favDie, "Dado con los dos roles"]].map(([s, n]) => `
+  <figure><div class="tab">${s.replace(/SZ/g, 16)} Te lo prometo</div>${s.replace(/SZ/g, 64)}<figcaption>${n}</figcaption></figure>`).join("");
+</script>

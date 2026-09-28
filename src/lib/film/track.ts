@@ -71,7 +71,7 @@ export function sample<T extends number | string>(frames: Track<T>, p: number): 
 /**
  * The steepest colour change of a track: the largest ΔE*ab between two consecutive keyframes,
  * divided by the share of the scroll they span. A cut shows up as a huge rate; the light test caps
- * it (ADR 0022: no colour cuts).
+ * it (ADR 0027: no colour cuts).
  */
 export function steepestColourRate(frames: Track<string>): number {
   let steepest = 0;

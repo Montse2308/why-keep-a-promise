@@ -22,7 +22,7 @@ Self-hosted variable fonts, served through Astro's Fonts API with the `local` pr
 
 **Provenance.** Copied unmodified from the npm tarballs `@fontsource-variable/newsreader@5.3.0`,
 `@fontsource-variable/inter@5.3.0` and `@fontsource-variable/jetbrains-mono@5.3.0` (`files/`). Fraunces
-and Nunito, for the film (ADR 0022), come the same way from `@fontsource-variable/fraunces@5.3.0` and
+and Nunito, for the film (ADR 0027), come the same way from `@fontsource-variable/fraunces@5.3.0` and
 `@fontsource-variable/nunito@5.3.0`, weight axis only (`wght`): the full Fraunces axes would add about
 66 KB to the first load, over the budget of ADR 0025. Their ranges come from each package's
 `wght.css`, identical to the others. The
@@ -30,7 +30,7 @@ packages are not dependencies of this project. Unicode ranges in `astro.config.m
 package's `standard.css` (`wght.css` for JetBrains Mono, whose ranges are the same).
 
 JetBrains Mono is used only by the code blocks of `/how-its-built` and is never preloaded
-(ADR 0022). Its two files weigh 40,404 bytes (`latin`) and 15,196 bytes (`latin-ext`).
+(ADR 0027). Its two files weigh 40,404 bytes (`latin`) and 15,196 bytes (`latin-ext`).
 
 The film's first load carries Fraunces (36,620 bytes normal, 45,656 italic) and Nunito (39,128 bytes),
 `latin` only: 121,404 bytes. Spanish needs no `latin-ext`.

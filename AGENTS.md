@@ -64,7 +64,7 @@ not by reading test output.
   and tested. Native scroll: no snapping, no wheel or touch capture.
 - Logic lives in pure modules with Vitest tests (`src/lib/`).
 - CSS with tokens (`src/styles/tokens.css`, mirroring `src/lib/design/palette.ts`). Self-hosted
-  fonts: Fraunces and Nunito from P1 (ADR 0022), JetBrains Mono for code only.
+  fonts: Fraunces and Nunito from P1 (ADR 0027), JetBrains Mono for code only.
 - Sound: optional, off by default, synthesised with Web Audio.
 - Budgets: home JS ≤ 40 KB gzipped, first load ≤ 450 KB, LCP ≤ 2.5 s on a mid-range phone.
 - The only new dependency the plan allows is `@resvg/resvg-js`, as a dev dependency, for Open Graph
@@ -162,7 +162,7 @@ scratch/                 local notes, git-ignored, never committed
 - **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,
   local folder `dilema-prisionero`) is never opened, added as a dependency, submodule or alias, and
   no file is copied from it. Its output reaches this repo only as `src/data/curve.json` (ADR 0010).
-- **Visuals and games outside ADR 0022/0023.**
+- **Visuals and games outside ADR 0023/0027.**
   - No WebGL, WebGPU, PixiJS, canvas, GSAP or Lottie.
   - No visualising populations or dynamics: no agents, grids or one dot per person.
   - No playable repeated prisoner's dilemma anywhere: link to *The Evolution of Trust* instead. The

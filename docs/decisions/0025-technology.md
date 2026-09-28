@@ -15,7 +15,7 @@ librería (un motor de cámara de unas 150 líneas de TypeScript sobre SVG) y al
 
 - Astro con salida 100 % estática, TypeScript strict. Sin frameworks de UI ni Tailwind.
 - La lógica en módulos puros con tests de Vitest.
-- CSS propio con tokens (ADR 0022).
+- CSS propio con tokens (ADR 0027).
 - `astro check` y `tsc --noEmit` en el pipeline.
 - Versiones estables verificadas con las herramientas oficiales, nunca de memoria.
 
