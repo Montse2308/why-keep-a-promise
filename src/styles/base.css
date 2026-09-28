@@ -104,6 +104,15 @@ p {
   }
 }
 
+/*
+ * A flat stage: the same dark ground and tokens, with no band of its own and no light. Act 1 and the
+ * first screen's corner use it; the scene carries the light over its table (ADR 0020).
+ */
+.stage.stage--flat {
+  padding-block: 0;
+  background: var(--color-bg);
+}
+
 a {
   color: inherit;
   text-decoration-color: var(--color-control);

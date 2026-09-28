@@ -12,9 +12,11 @@ interface Props {
   title: string;
   /** Declare JetBrains Mono for the page's code blocks (/how-its-built only; never preloaded). */
   codeFont?: boolean;
+  /** The page opens on the stage (the home page's act 1), so the corner sits on it too. */
+  stageTop?: boolean;
 }
 
-const { locale, route, title, codeFont = false } = Astro.props;
+const { locale, route, title, codeFont = false, stageTop = false } = Astro.props;
 const site = Astro.site ?? new URL('https://montse2308.github.io');
 // Preload only the text face: Newsreader, normal, latin. The local provider keeps the variant order
 // of astro.config.mjs, where latin comes first; the provider does not tag subsets.
@@ -41,8 +43,10 @@ const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal
   <body>
     <a class="skip-link visually-hidden" href={href(locale, route, 'main')}>{t(locale, 'skip.link')}</a>
     <!-- No fixed strip (ADR 0019): the language link sits in the corner of the first screen and scrolls away. -->
-    <header class="corner container">
-      <LanguageSwitch locale={locale} route={route} />
+    <header class:list={['corner', { 'stage stage--flat': stageTop }]}>
+      <div class="corner__inner container">
+        <LanguageSwitch locale={locale} route={route} />
+      </div>
     </header>
     <main id="main" tabindex="-1">
       <slot />
@@ -61,7 +65,7 @@ const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal
     border-radius: var(--radius-sm);
   }
 
-  .corner {
+  .corner__inner {
     display: flex;
     justify-content: flex-end;
     padding-block: var(--space-2);

@@ -3,7 +3,7 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** R2 (estructura), en revisión de Montse; R0 y R1 también. Siguen R3–R4, antes de F5
+**Fase activa:** R3 (la escena), en revisión de Montse; R0, R1 y R2 también. Sigue R4, antes de F5
 (`docs/phases.md`). F3, F3.1, F4 y F4.1 en revisión de Montse, sin depender del rediseño. La
 revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 cerradas.
 
@@ -282,16 +282,51 @@ revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 
 
 ## R3 · La escena (ADR 0020)
 
-- [ ] Golpes 0–6 en el SVG de la mesa del acto 1, solo con CSS ligado al scroll; scroll nativo.
-- [ ] A, B y C en tinta neutra con etiquetas; en el golpe 6 el asiento pasa a "tú" y empieza el
-      momento 1; sus controles no se enfocan antes.
-- [ ] Versión quieta (movimiento reducido, `@supports`, sin JS): golpe 5 y la lista numerada;
-      la primera elección limpia la escena con el script que ya tiene la mesa.
-- [ ] Leyendas en claves de i18n, en el HTML y en orden.
-- [ ] Tests de la regla (k) (pagos desde `PAYOFFS`, ninguna leyenda afirma que la expectativa no
-      cambió) y del orden de los golpes.
-- [ ] Compatibilidad de las animaciones ligadas al scroll comprobada con los datos oficiales.
-- [ ] Mapa de `AGENTS.md` al día.
+- [x] Golpes 0–6 (`src/lib/table/scene.ts`: tramos del scroll, pasos internos, leyendas, cara fija
+      5 y pagos desde `PAYOFFS`) en el SVG de `src/components/table/Scene.astro`, que `GameTable`
+      dibuja con `scene` solo en el momento 1. Solo CSS: `view-timeline` sobre una pista de 500svh,
+      marco `sticky` de 100svh, `animation-range: contain`; scroll nativo, sin ajuste ni captura.
+- [x] A, B y C en tinta neutra con letra y posición; mensaje ilustrativo «I'll roll the die.» /
+      «Voy a tirar el dado.»; rombo de A a B; etiqueta «decide»; B sale con su rombo y entra C con
+      otro; el dado gira con el scroll y cae en 5; fichas «10 en vez de 14» y «10 esperado»; en el
+      golpe 6 salen A, B y C y los asientos pasan a «Tú» (círculo azul) y «El otro» (cuadrado).
+- [x] Acto 1 entero sobre el escenario (`Act` con `hero`: la pregunta, la primera pantalla, la
+      prosa y la escena con su mesa), y la esquina del idioma también en la página de inicio
+      (`BaseLayout` con `stageTop`). La luz va en el marco de la escena, sobre la mesa.
+- [x] Versión quieta por defecto; la animada solo dentro de
+      `@media (prefers-reduced-motion: no-preference) and (scripting: enabled)` y
+      `@supports (animation-timeline: view())`. Así movimiento reducido, navegadores sin
+      animaciones ligadas al scroll y sin JavaScript ven la quieta: el golpe 5 (B aparte, atenuado,
+      «antes del cambio») y la lista numerada. Sin JS, además, la tabla estática de pagos. Al
+      elegir, el script de la mesa marca `data-scene-state="played"` y la quieta pasa al momento 1.
+- [x] Leyendas en claves `scene.*` (EN y ES), en el HTML y en orden; en la animada se apilan y
+      cambian con el scroll; la del golpe 1 sigue durante los golpes 2 y 3.
+- [x] Tests (`tests/scene.test.ts`): orden y continuidad de los golpes; leyendas 1, 4, 5 y 6;
+      regla (k) (pagos desde `PAYOFFS`, la cara no es un pago, ninguna cifra del experimento ni
+      «la expectativa no cambió», el mensaje no es una cita); el CSS usa solo los tramos del
+      módulo, solo anima `transform`, `opacity` y `clip-path`, solo detrás de la compuerta, sin
+      script ni captura del scroll; ningún elemento animado lleva atributo `transform`; una sola
+      mesa del momento 1, con la escena antes de sus controles. Comprobado que fallan al romper un
+      tramo y al poner un `transform` en un elemento animado.
+- [x] Compatibilidad según MDN browser-compat-data: `animation-timeline`, `view-timeline` y
+      `animation-range` en Chrome y Edge 115+ y Safari 26+ (en Firefox solo en preview: ve la
+      quieta); `@media (scripting)` en Chrome 120+, Firefox 113+ y Safari 17+; `svh` en los tres.
+- [x] Probado por CDP en Edge: la escena a 1280 px en los golpes 0–6 (la leyenda correcta visible
+      en cada tramo), a 360 y 320 px sin scroll horizontal, la versión quieta con movimiento
+      reducido y sin JS, la quieta tras elegir, y el teclado: el cuarto Tab enfoca «Tirar el dado»,
+      el navegador lo lleva a la vista y la escena queda en su final.
+- [x] Mapa de `AGENTS.md` al día.
+- [ ] Revisión de R3 por Montse. Dos precisiones de implementación para confirmar antes de
+      ajustar el texto del ADR 0020:
+      1. **Los controles del momento 1 se cumplen por posición.** Van después de la pista de la
+         escena, así que solo están en pantalla cuando la escena llegó al golpe 6; enfocarlos con
+         teclado desplaza la página y deja la escena en su final. No se esconden con CSS, porque
+         así un lector de pantalla o un teclado no podrían llegar a ellos sin hacer scroll.
+      2. **El dibujo lleva texto alternativo** (`scene.alt`), en vez de ser decorativo: cuenta
+         también el mensaje de A y los golpes 2 y 3, que no tienen leyenda.
+- [ ] Para R4: la prosa del acto 1 queda ahora sobre el escenario, entre la primera pantalla y la
+      escena, y todavía dice «Decide at the table, just below.»; su entrada mínima y su lugar se
+      deciden allí. Mientras tanto, empuja la escena fuera de la primera pantalla.
 
 ## R4 · Prosa corta
 

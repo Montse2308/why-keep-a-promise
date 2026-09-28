@@ -127,6 +127,9 @@ function mount(root: HTMLElement, rng: Rng): void {
   function mountMoment1(): void {
     let state: Moment1State = MOMENT1_START;
     const send = (event: Moment1Event) => (state = moment1(state, event, rng));
+    // Act 1's scene (ADR 0020), if this table opens with one. Its still version turns to moment 1
+    // once the visitor chooses; the scroll-bound version ignores this and follows the scroll.
+    const scene = root.id ? document.querySelector<HTMLElement>(`[data-scene="${CSS.escape(root.id)}"]`) : null;
 
     function render(rolled = false): void {
       const outcome = state.phase === 'outcome' ? state : null;
@@ -142,6 +145,7 @@ function mount(root: HTMLElement, rng: Rng): void {
       const action = button.dataset.action;
       if (action === 'choose') {
         const choice = button.dataset.value as Choice;
+        scene?.setAttribute('data-scene-state', 'played');
         send({ type: 'choose', choice });
         if (choice === 'roll') send({ type: 'throw' });
         send({ type: 'settle' });

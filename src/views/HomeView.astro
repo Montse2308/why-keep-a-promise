@@ -45,22 +45,30 @@ const blocks = homeBlocks().map((block) => {
 });
 ---
 
-<BaseLayout locale={locale} route="home" title={title}>
+<BaseLayout locale={locale} route="home" title={title} stageTop>
   {
     blocks.map((block) => {
       if (block.kind === 'section') return <HomeSection section={block.section} locale={locale} />;
       const { act, locked, entry, Content } = block;
+      if (act.id === 'question') {
+        // Act 1 is the hero, on the stage: the first screen, then the scene and its table (ADR 0020).
+        return (
+          <Act act={act} locale={locale} title={entry?.data.title} hero pending={!Content}>
+            <FirstScreen slot="first" locale={locale} />
+            {Content && <Content />}
+            <GameTable slot="scene" mode="moment1" locale={locale} id="table-question" scene />
+          </Act>
+        );
+      }
       return act.id === 'finding' ? (
         <Act act={act} locale={locale} title={entry?.data.title} pending={!locked && !Content} status={status} lockedContent={!locked} deeper={!locked}>
           {Content && <Content />}
           {!locked && <Curve locale={locale} id="finding-curve" />}
         </Act>
       ) : (
-        <Act act={act} locale={locale} title={entry?.data.title} hero={act.id === 'question'} pending={!Content}>
-          {act.id === 'question' && <FirstScreen locale={locale} />}
+        <Act act={act} locale={locale} title={entry?.data.title} pending={!Content}>
           {act.id === 'vanberg' && <GameTable mode="moment2" locale={locale} id="table-vanberg" />}
           {Content && <Content />}
-          {act.id === 'question' && <GameTable mode="moment1" locale={locale} id="table-question" />}
         </Act>
       );
     })

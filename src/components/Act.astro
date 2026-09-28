@@ -8,7 +8,11 @@ interface Props {
   locale: Locale;
   /** Heading from the act's Markdown frontmatter; falls back to the act's UI key. */
   title?: string | undefined;
-  /** The first act is the hero: its heading is the page's h1. */
+  /**
+   * The first act is the hero: its heading is the page's h1, and the whole act is on the stage
+   * (ADR 0018, ADR 0019): the question, the `first` slot (the first screen's stamp and author), the
+   * act's prose, and the `scene` slot (act 1's scene and its table, ADR 0020).
+   */
   hero?: boolean;
   /** No prose yet: show the act's TODO marker. */
   pending?: boolean;
@@ -26,19 +30,33 @@ const titleId = `${act.id}-title`;
 const heading = title ?? tr(hero ? 'site.title' : act.titleKey);
 ---
 
-<section id={act.id} class="act container column" aria-labelledby={titleId} data-locked-content={lockedContent ? '' : undefined}>
-  {hero ? <h1 id={titleId} class="display">{heading}</h1> : <h2 id={titleId}>{heading}</h2>}
-  <slot />
-  {pending && <p class="todo">TODO({act.contentPhase}): act content</p>}
-  {status && <p class="act__status">{status}</p>}
-  {
-    deeper && act.deeper && (
-      <p class="act__deeper">
-        <a href={href(locale, act.deeper)}>{tr('deeper.link')}</a>
-      </p>
-    )
-  }
-</section>
+{
+  hero ? (
+    <section id={act.id} class="act act--hero stage stage--flat" aria-labelledby={titleId}>
+      <div class="container column act__head">
+        <h1 id={titleId} class="display">
+          {heading}
+        </h1>
+        <slot name="first" />
+        <slot />
+        {pending && <p class="todo">TODO({act.contentPhase}): act content</p>}
+      </div>
+      <slot name="scene" />
+    </section>
+  ) : (
+    <section id={act.id} class="act container column" aria-labelledby={titleId} data-locked-content={lockedContent ? '' : undefined}>
+      <h2 id={titleId}>{heading}</h2>
+      <slot />
+      {pending && <p class="todo">TODO({act.contentPhase}): act content</p>}
+      {status && <p class="act__status">{status}</p>}
+      {deeper && act.deeper && (
+        <p class="act__deeper">
+          <a href={href(locale, act.deeper)}>{tr('deeper.link')}</a>
+        </p>
+      )}
+    </section>
+  )
+}
 
 <style>
   .act {
@@ -47,6 +65,15 @@ const heading = title ?? tr(hero ? 'site.title' : act.titleKey);
 
   .act :global(h1) {
     margin-block: var(--space-8) var(--space-6);
+  }
+
+  /* Act 1: the stage from the top of the page; the scene brings its own space. */
+  .act--hero {
+    padding-block: 0;
+  }
+
+  .act__head {
+    padding-top: var(--space-4);
   }
 
   .act__status {

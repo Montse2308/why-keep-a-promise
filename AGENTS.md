@@ -13,7 +13,7 @@ itself, the manuscript status as a stamp, and the author's name. It is **not** a
 **not** the instrument of a paper. Details: `docs/plan.md`.
 
 The page is being redesigned in phases R0–R4, between F4 and F5 (ADR 0018, 0019, 0020). R1 (the visual
-system) and R2 (the structure) are in; until R3 lands, act 1 has no scene yet.
+system), R2 (the structure) and R3 (the scene) are in; R4 (shorter act prose) is next.
 
 ## Reading order
 
@@ -74,7 +74,8 @@ src/
     design/              palette.ts (single source of colour values: the paper in two themes, and
                          the stage, always dark; ADR 0018), colour maths
     subpages.ts          splits subpage and section prose at its slot and lock markers (ADR 0017)
-    table/               game logic for the table: exact payoffs, moments 1–2 state machines
+    table/               game logic for the table: exact payoffs, moments 1–2 state machines;
+                         scene.ts: act 1's scene, its beats, scroll stops, captions and payoffs
     curve/               reads curve.json (build time only), step-chart geometry, moment 3 logic;
                          finding.ts: guilt, θ, c and robustness for /finding, behind the lock
     pd/                  the prisoner's dilemma and /dilemma's best-reply state machine
@@ -87,7 +88,8 @@ src/
                          HomeSection + SectionSegments ("The research", its links behind the lock;
                          "About"),
                          table/GameTable + controller.ts (always on the stage; client script,
-                         moments 1–2),
+                         moments 1–2), table/Scene (act 1's scene: SVG and scroll-bound CSS, no
+                         script; the still version by default, ADR 0020),
                          curve/Curve + controller.ts (act 5's chart and moment 3, and /finding's
                          guilt chart, behind the lock), curve/Locked (the empty stub a locked build
                          uses instead), pd/BestResponse + controller.ts (/dilemma's best reply),
@@ -99,7 +101,7 @@ scripts/verify-dist.mjs  checks dist/ against the lock: act 5, /finding, the eng
                          the research links; and the status sentence, twice on each home page
 tests/                   repo-level tests (page parity, prose figures and budgets, rule (h), forbidden
                          phrases, curve and /finding figures against curve.json, verify:dist markers,
-                         code quoted on /how-its-built)
+                         code quoted on /how-its-built, act 1's scene and its CSS against rule (k))
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy)
 scratch/                 local notes, git-ignored, never committed
 ```
