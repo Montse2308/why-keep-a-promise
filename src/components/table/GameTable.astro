@@ -2,7 +2,8 @@
 /**
  * "The table": the one visual piece of the site, Vanberg's (2008) Roll / Don't Roll game.
  * `moment1` (act 1): decide with no promise. `moment2` (act 4): promise, partner draw, decide,
- * then what real participants did. Moment 3 (act 5) arrives in F3.
+ * then what real participants did. Moment 3 is act 5's slider (src/components/curve/).
+ * The table always sits on the stage, wherever it appears (ADR 0018).
  * Game logic lives in src/lib/table/; this file renders the markup and ./controller.ts drives it.
  */
 import RoleMark from './RoleMark.astro';
@@ -45,7 +46,8 @@ const pips = ['tl', 'tr', 'ml', 'c', 'mr', 'bl', 'br'] as const;
 const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 30], bl: [17, 43], br: [43, 43] } as const;
 ---
 
-<figure class="game-table wide" id={id} data-game-table data-mode={mode} data-strings={JSON.stringify(clientStrings(tr))} aria-labelledby={`${id}-caption`}>
+<div class="stage">
+<figure class="game-table" id={id} data-game-table data-mode={mode} data-strings={JSON.stringify(clientStrings(tr))} aria-labelledby={`${id}-caption`}>
   <figcaption id={`${id}-caption`} class="gt-caption">{tr(mode === 'moment1' ? 'table.moment1.caption' : 'table.moment2.caption')}</figcaption>
 
   <div class="gt-live" data-live hidden>
@@ -232,6 +234,7 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
     </table>
   </noscript>
 </figure>
+</div>
 
 <script>
   import { mountAll } from './controller';
@@ -240,12 +243,15 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
 </script>
 
 <style>
+  /* The table is an object on the stage: it carries volume, the prose around it does not (ADR 0018). */
   .game-table {
-    margin: var(--space-8) auto;
+    max-width: var(--table-max);
+    margin: 0 auto;
     padding: var(--space-4);
     background: var(--color-surface);
     border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-table);
     font-family: var(--font-ui);
     font-size: var(--step-n1);
     line-height: var(--leading-ui);
@@ -253,7 +259,7 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
 
   @media (min-width: 40rem) {
     .game-table {
-      padding: var(--space-6);
+      padding: var(--space-8);
     }
   }
 
@@ -276,18 +282,24 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
   .gt-seats {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2) var(--space-6);
+    gap: var(--space-3);
     margin: 0;
-    padding: 0 0 var(--space-4);
+    padding: 0 0 var(--space-6);
     list-style: none;
     border-bottom: var(--border-width) solid var(--color-border);
     font-weight: 600;
   }
 
+  /* The two seats: objects on the table, with a shape and a label for each role. */
   .gt-seat {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
+    min-height: var(--target-min);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface-hover);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-object);
   }
 
   .gt-step > :last-child {
@@ -517,20 +529,23 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
     gap: var(--space-4) var(--space-6);
   }
 
+  /* The die: an object with volume, lit from above. */
   .gt-die {
     flex: none;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 4rem;
+    height: 4rem;
   }
 
   .gt-die svg {
     display: block;
     width: 100%;
     height: 100%;
+    overflow: visible;
+    filter: var(--shadow-die);
   }
 
   .gt-die__face {
-    fill: var(--color-surface);
+    fill: var(--color-surface-hover);
     stroke: var(--color-control);
     stroke-width: 2;
   }
@@ -575,8 +590,9 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
       animation: gt-enter var(--duration-base) var(--ease-standard);
     }
 
+    /* A click, not the scroll, rolls this die, so it stays under the 600 ms cap (ADR 0018). */
     .gt-die[data-rolled] {
-      animation: gt-roll var(--duration-max) var(--ease-standard);
+      animation: gt-roll var(--duration-max) var(--ease-settle);
     }
 
     .gt-meter__marker {
@@ -593,10 +609,20 @@ const pipAt = { tl: [17, 17], tr: [43, 17], ml: [17, 30], c: [30, 30], mr: [43, 
     }
   }
 
+  /* A tumble in three dimensions that settles flat, face up. */
   @keyframes gt-roll {
-    from {
-      opacity: 0.2;
-      transform: rotate(-90deg) scale(0.8);
+    0% {
+      opacity: 0.3;
+      transform: perspective(16rem) translateY(-1.5rem) rotateX(-160deg) rotateY(120deg) scale(0.8);
+    }
+
+    55% {
+      opacity: 1;
+      transform: perspective(16rem) translateY(0.25rem) rotateX(25deg) rotateY(-20deg) scale(1.04);
+    }
+
+    100% {
+      transform: perspective(16rem) translateY(0) rotateX(0) rotateY(0) scale(1);
     }
   }
 </style>

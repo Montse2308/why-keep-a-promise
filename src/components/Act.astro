@@ -27,7 +27,7 @@ const heading = title ?? tr(hero ? 'site.title' : act.titleKey);
 ---
 
 <section id={act.id} class="act container column" aria-labelledby={titleId} data-locked-content={lockedContent ? '' : undefined}>
-  {hero ? <h1 id={titleId}>{heading}</h1> : <h2 id={titleId}>{heading}</h2>}
+  {hero ? <h1 id={titleId} class="display">{heading}</h1> : <h2 id={titleId}>{heading}</h2>}
   <slot />
   {pending && <p class="todo">TODO({act.contentPhase}): act content</p>}
   {status && <p class="act__status">{status}</p>}

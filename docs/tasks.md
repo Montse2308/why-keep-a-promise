@@ -3,7 +3,7 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test` y `build`
 en verde.
 
-**Fase activa:** R0 (documentos del rediseño), en revisión de Montse. Siguen R1–R4, antes de F5
+**Fase activa:** R1 (sistema visual), en revisión de Montse; R0 también. Siguen R2–R4, antes de F5
 (`docs/phases.md`). F3, F3.1, F4 y F4.1 en revisión de Montse, sin depender del rediseño. La
 revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 cerradas.
 
@@ -221,16 +221,32 @@ revisión de la prosa de F2 (y F2.1) queda absorbida en R4. F0, F0.1, F1 y F1.1 
 
 ## R1 · Sistema visual (ADR 0018)
 
-- [ ] `palette.ts` y `tokens.css`: superficie del escenario (siempre oscuro, más profunda que la
-      tinta de lectura en tema oscuro), foco de luz, colores de rol más saturados, promesa por
-      luminosidad o con tono si el test lo pide.
-- [ ] Tests de contraste y de daltonismo extendidos a los pares del escenario.
-- [ ] `--step-7`, sombras y radios de objeto, topes de movimiento (600 ms; 900 ms el dado).
-- [ ] Las dos mesas sobre el escenario; la prosa, la mejor respuesta de `/dilemma`, la tabla de
-      `/vanberg` y las dos gráficas sobre papel.
-- [ ] Sale `AuthorStrip`; el enlace EN/ES en la esquina de la primera pantalla, sin quedarse fijo,
-      y en el footer.
-- [ ] Mapa de `AGENTS.md` al día con los componentes.
+- [x] `palette.ts` y `tokens.css`: `STAGE`, un bloque `.stage` fuera de todo tema que redefine los
+      tokens de la mesa. Fondo azul-negro `#0b0e14`, más profundo que el papel oscuro; foco de luz
+      `spot`; roles más saturados (`#5c9dff`, `#ff7a45`); la promesa solo por luminosidad
+      (`#dce4ee`): pasó los tests sin necesitar tono. El papel no cambia.
+- [x] Tests de contraste y de daltonismo extendidos a los pares del escenario (23 pares, más
+      debajo de la luz); tests de que el escenario es más profundo que el papel en los dos temas,
+      de que la luz es más clara que el fondo, de que la curva no se redefine en el escenario y de
+      paridad del bloque `.stage` con `palette.ts`.
+- [x] `--step-6`, `--step-7`, `--leading-display`; sombras de objeto (`--shadow-object`,
+      `--shadow-table`, `--shadow-die`) y `--radius-lg` (12 px); topes de movimiento (600 ms,
+      `--duration-die` 900 ms, `--ease-settle`). La pregunta del acto 1 ya va en `.display`
+      (Newsreader itálica, peso 700, `--step-7`).
+- [x] Las dos mesas sobre el escenario: `GameTable` se envuelve siempre en `.stage`, así que
+      cualquier página que la muestre la pone en oscuro. La banda ocupa todo el ancho con una
+      sombra de 100vmax recortada con `clip-path`, sin ensanchar la página. La mesa, los asientos y
+      el dado llevan volumen; el dado gira en 3D en 600 ms. La prosa, la mejor respuesta de
+      `/dilemma`, la tabla de `/vanberg` y las dos gráficas siguen sobre papel.
+- [x] Sale `AuthorStrip` (y la clave `strip.label`, `--strip-height`, el relleno de `main`). El
+      enlace EN/ES va en la esquina de la primera pantalla de cada página, sin quedarse fijo, y en
+      el footer; solo el de la esquina es un landmark `nav`.
+- [x] Mapa de `AGENTS.md` al día con los componentes.
+- [x] Probado con Edge sin interfaz por el protocolo de DevTools (viewport real, tema y movimiento
+      emulados): sin scroll horizontal a 320 px (ES) y a 360 px (EN); a 1280 px en claro y oscuro;
+      el dado tras tirar y el momento 2 tras prometer.
+- [ ] Revisión de R1 por Montse. Entre R1 y R2 la página no muestra el nombre de la autora ni
+      GitHub y LinkedIn: vuelven en R2 (la línea de autora y «Quién es»).
 
 ## R2 · Estructura (ADR 0019)
 

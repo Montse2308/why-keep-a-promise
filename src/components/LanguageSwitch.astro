@@ -1,23 +1,31 @@
 ---
+/**
+ * The EN/ES switch: a plain link to the same route in the other locale, with no stored preference
+ * and no redirect (ADR 0013). It sits in the corner of the first screen and again in the footer
+ * (ADR 0019); only the corner one is a navigation landmark, so the page has one "Language" nav.
+ */
 import { otherLocale, useTranslations, type Locale } from '../lib/i18n';
 import { href, type Route } from '../lib/routes';
 
 interface Props {
   locale: Locale;
   route: Route;
+  /** Render as a navigation landmark (the corner) or as a plain group (the footer). */
+  landmark?: boolean;
 }
 
-const { locale, route } = Astro.props;
+const { locale, route, landmark = true } = Astro.props;
 const tr = useTranslations(locale);
 const target = otherLocale(locale);
+const Tag = landmark ? 'nav' : 'div';
 ---
 
-<nav class="lang" aria-label={tr('lang.label')}>
+<Tag class="lang" aria-label={tr('lang.label')} role={landmark ? undefined : 'group'}>
   <span class="lang__current" aria-current="true" lang={locale}>{tr(`lang.${locale}`)}</span>
   <a class="lang__other" href={href(target, route)} hreflang={target} lang={target}>
     {tr(`lang.${target}`)}
   </a>
-</nav>
+</Tag>
 
 <style>
   .lang {
@@ -25,6 +33,9 @@ const target = otherLocale(locale);
     flex: none;
     align-items: center;
     gap: var(--space-3);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
     white-space: nowrap;
   }
 

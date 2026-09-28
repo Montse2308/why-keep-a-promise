@@ -1,4 +1,5 @@
 ---
+import LanguageSwitch from './LanguageSwitch.astro';
 import { actForSubpage } from '../lib/acts';
 import { useTranslations, type Locale } from '../lib/i18n';
 import { href, SUBPAGES, type Route } from '../lib/routes';
@@ -17,19 +18,22 @@ const links: { route: Route; label: string }[] = [
 ---
 
 <footer class="footer">
-  <nav class="container" aria-label={tr('footer.label')}>
-    <ul class="footer__links">
-      {
-        links.map((link) => (
-          <li>
-            <a href={href(locale, link.route)} aria-current={link.route === route ? 'page' : undefined}>
-              {link.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </nav>
+  <div class="footer__inner container">
+    <nav aria-label={tr('footer.label')}>
+      <ul class="footer__links">
+        {
+          links.map((link) => (
+            <li>
+              <a href={href(locale, link.route)} aria-current={link.route === route ? 'page' : undefined}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <LanguageSwitch locale={locale} route={route} landmark={false} />
+  </div>
 </footer>
 
 <style>
@@ -39,6 +43,14 @@ const links: { route: Route; label: string }[] = [
     border-top: var(--border-width) solid var(--color-border);
     font-family: var(--font-ui);
     font-size: var(--step-n1);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-8);
   }
 
   .footer__links a {

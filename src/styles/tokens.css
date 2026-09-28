@@ -1,12 +1,12 @@
 /*
- * Design tokens (ADR 0014). Colour values mirror src/lib/design/palette.ts exactly; a test fails
+ * Design tokens (ADR 0018). Colour values mirror src/lib/design/palette.ts exactly; a test fails
  * if they drift apart. Change a colour there first, then here.
  */
 
 :root {
   color-scheme: light dark;
 
-  /* Colour: light (warm paper) */
+  /* Colour: light paper */
   --color-bg: #f6f1e7;
   --color-surface: #fbf8f2;
   --color-surface-hover: #efe8da;
@@ -29,7 +29,7 @@
   /* Code blocks only (/how-its-built). --font-jetbrains-mono is declared only on the pages that load it. */
   --font-code: var(--font-jetbrains-mono, ui-monospace, 'Cascadia Code', Consolas, monospace);
 
-  /* Fluid scale, 360 px → 1280 px: base 1.125 → 1.25 rem, ratio 1.2 → 1.25. */
+  /* Fluid scale, 360 px → 1280 px: base 1.125 → 1.25 rem, ratio 1.2 → 1.25. Step 7 is the hero's question. */
   --step-n2: clamp(0.7813rem, 0.7739rem + 0.0326vw, 0.8rem);
   --step-n1: clamp(0.9375rem, 0.913rem + 0.1087vw, 1rem);
   --step-0: clamp(1.125rem, 1.0761rem + 0.2174vw, 1.25rem);
@@ -38,6 +38,9 @@
   --step-3: clamp(1.944rem, 1.7494rem + 0.8651vw, 2.4414rem);
   --step-4: clamp(2.3328rem, 2.0515rem + 1.2504vw, 3.0518rem);
   --step-5: clamp(2.7994rem, 2.4021rem + 1.7658vw, 3.8147rem);
+  --step-6: clamp(3.3592rem, 2.8078rem + 2.4508vw, 4.7684rem);
+  --step-7: clamp(4.0311rem, 3.2761rem + 3.3555vw, 5.9605rem);
+  --leading-display: 1.02;
   --leading-tight: 1.15;
   --leading-ui: 1.4;
   --leading-body: 1.6;
@@ -52,31 +55,36 @@
   --space-8: 2rem;
   --space-12: 3rem;
   --space-16: 4rem;
+  --space-24: 6rem;
   --gutter: 1rem;
 
-  /* Shape: hairlines, small radii, almost no shadow. */
+  /* Shape: hairlines and small radii for controls; volume and larger radii for the table's objects. */
   --radius-sm: 3px;
   --radius-md: 6px;
+  --radius-lg: 12px;
   --border-width: 1px;
   --focus-width: 2px;
+  /* Objects on the stage: a faint top light and a soft drop. Prose never carries a shadow. */
+  --shadow-object: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 2px rgb(0 0 0 / 0.5), 0 12px 28px -12px rgb(0 0 0 / 0.75);
+  --shadow-table: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 2px 4px rgb(0 0 0 / 0.4), 0 32px 64px -24px rgb(0 0 0 / 0.9);
+  --shadow-die: drop-shadow(0 6px 8px rgb(0 0 0 / 0.55));
 
   /* Layout */
-  --strip-height: 4.5rem; /* two rows below 40rem, one above */
   --content-max: 72rem;
   --table-max: 56rem;
   --target-min: 2.75rem; /* 44 px touch target */
 
-  /* Motion: transform and opacity only, never longer than 250 ms. */
+  /*
+   * Motion: transform, opacity and clip-path only. A transition that does not follow the scroll
+   * lasts 600 ms at most; the scene's die follows the scroll, and 900 ms is its cap.
+   */
   --duration-fast: 120ms;
-  --duration-base: 200ms;
-  --duration-max: 250ms;
+  --duration-base: 240ms;
+  --duration-slow: 400ms;
+  --duration-max: 600ms;
+  --duration-die: 900ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-}
-
-@media (min-width: 40rem) {
-  :root {
-    --strip-height: 2.75rem;
-  }
+  --ease-settle: cubic-bezier(0.22, 1.2, 0.36, 1);
 }
 
 @media (min-width: 48rem) {
@@ -87,7 +95,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Colour: dark (warm ink) */
+    /* Colour: dark paper (warm ink) */
     --color-bg: #1c1915;
     --color-surface: #25211c;
     --color-surface-hover: #2f2a23;
@@ -109,6 +117,25 @@
   :root {
     --duration-fast: 0ms;
     --duration-base: 0ms;
+    --duration-slow: 0ms;
     --duration-max: 0ms;
+    --duration-die: 0ms;
   }
+}
+
+/* The stage: always dark, in both themes, deeper than the dark paper. It redefines the tokens it uses. */
+.stage {
+  color-scheme: dark;
+  --color-bg: #0b0e14;
+  --color-spot: #1c2333;
+  --color-surface: #161b25;
+  --color-surface-hover: #202735;
+  --color-fg: #f3efe7;
+  --color-muted: #aab1bf;
+  --color-border: #2b3242;
+  --color-control: #7b849a;
+  --color-focus: #f3efe7;
+  --color-you: #5c9dff;
+  --color-other: #ff7a45;
+  --color-promise: #dce4ee;
 }

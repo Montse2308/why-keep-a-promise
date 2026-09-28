@@ -1,7 +1,7 @@
 ---
 import { Font, fontData } from 'astro:assets';
 import '../styles/base.css';
-import AuthorStrip from '../components/AuthorStrip.astro';
+import LanguageSwitch from '../components/LanguageSwitch.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { DEFAULT_LOCALE, LOCALES, t, type Locale } from '../lib/i18n';
 import { absoluteHref, assetHref, href, type Route } from '../lib/routes';
@@ -40,7 +40,10 @@ const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal
   </head>
   <body>
     <a class="skip-link visually-hidden" href={href(locale, route, 'main')}>{t(locale, 'skip.link')}</a>
-    <AuthorStrip locale={locale} route={route} />
+    <!-- No fixed strip (ADR 0019): the language link sits in the corner of the first screen and scrolls away. -->
+    <header class="corner container">
+      <LanguageSwitch locale={locale} route={route} />
+    </header>
     <main id="main" tabindex="-1">
       <slot />
     </main>
@@ -58,8 +61,10 @@ const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal
     border-radius: var(--radius-sm);
   }
 
-  main {
-    padding-top: var(--strip-height);
+  .corner {
+    display: flex;
+    justify-content: flex-end;
+    padding-block: var(--space-2);
   }
 
   main:focus {

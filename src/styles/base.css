@@ -7,7 +7,7 @@
 }
 
 html {
-  scroll-padding-top: calc(var(--strip-height) + var(--space-4));
+  scroll-padding-top: var(--space-4);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -65,8 +65,43 @@ h3 {
   font-size: var(--step-1);
 }
 
+/* The hero's question (ADR 0018): display size, italic, a heavy weight. A thin weight looks weak on the stage. */
+.display {
+  font-size: var(--step-7);
+  font-style: italic;
+  font-weight: 700;
+  line-height: var(--leading-display);
+  letter-spacing: -0.02em;
+}
+
 p {
   text-wrap: pretty;
+}
+
+/*
+ * The stage (ADR 0018): always dark, full width, with a light falling on what sits on it. Its
+ * colour tokens are redefined in tokens.css, so everything inside picks them up. The box-shadow
+ * carries the background to both edges of the window without widening the page; clip-path keeps
+ * it from spilling above and below.
+ */
+.stage {
+  padding-block: var(--space-12);
+  color: var(--color-fg);
+  /* The light fades out before the band's sides, so it meets the box-shadow's colour without an edge. */
+  background: radial-gradient(ellipse 50% 65% at 50% 38%, var(--color-spot), var(--color-bg)) var(--color-bg);
+  box-shadow: 0 0 0 100vmax var(--color-bg);
+  clip-path: inset(0 -100vmax);
+}
+
+.column > .stage {
+  grid-column: wide;
+  margin-block: var(--space-8);
+}
+
+@media (min-width: 48rem) {
+  .stage {
+    padding-block: var(--space-16);
+  }
 }
 
 a {
@@ -170,7 +205,7 @@ textarea {
   margin-top: var(--space-2);
 }
 
-/* Code blocks (/how-its-built): JetBrains Mono, only here (ADR 0014, ADR 0017). */
+/* Code blocks (/how-its-built): JetBrains Mono, only here (ADR 0017, ADR 0018). */
 .column > pre {
   margin-block: var(--space-6);
   padding: var(--space-4);
