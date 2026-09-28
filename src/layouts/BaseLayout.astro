@@ -12,15 +12,20 @@ interface Props {
   title: string;
   /** Declare JetBrains Mono for the page's code blocks (/how-its-built only; never preloaded). */
   codeFont?: boolean;
-  /** The page opens on the stage (the home page's act 1), so the corner sits on it too. */
-  stageTop?: boolean;
+  /**
+   * The page opens on the film (the home, ADR 0021): load its faces, mark `html.js` before the first
+   * paint so the film's layout applies at once, and float the language corner over the stage.
+   */
+  film?: boolean;
 }
 
-const { locale, route, title, codeFont = false, stageTop = false } = Astro.props;
+const { locale, route, title, codeFont = false, film = false } = Astro.props;
 const site = Astro.site ?? new URL('https://montse2308.github.io');
 // Preload only the text face: Newsreader, normal, latin. The local provider keeps the variant order
 // of astro.config.mjs, where latin comes first; the provider does not tag subsets.
 const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal')?.src[0];
+// On the film, the first thing drawn in text is the title, in Fraunces italic.
+const titleFont = fontData['--font-display']?.find((font) => font.style === 'italic')?.src[0];
 // TODO(F5): description and Open Graph tags.
 ---
 
@@ -34,7 +39,11 @@ const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal
     {LOCALES.map((alt) => <link rel="alternate" hreflang={alt} href={absoluteHref(site, alt, route)} />)}
     <link rel="alternate" hreflang="x-default" href={absoluteHref(site, DEFAULT_LOCALE, route)} />
     <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
+    {film && <script is:inline>document.documentElement.classList.add('js');</script>}
+    {film && titleFont && <link rel="preload" href={titleFont.url} as="font" type="font/woff2" crossorigin />}
     {textFont && <link rel="preload" href={textFont.url} as="font" type="font/woff2" crossorigin />}
+    {film && <Font cssVariable="--font-display" />}
+    {film && <Font cssVariable="--font-body" />}
     <Font cssVariable="--font-serif" />
     <Font cssVariable="--font-sans" />
     {codeFont && <Font cssVariable="--font-jetbrains-mono" />}
@@ -42,8 +51,8 @@ const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal
   </head>
   <body>
     <a class="skip-link visually-hidden" href={href(locale, route, 'main')}>{t(locale, 'skip.link')}</a>
-    <!-- No fixed strip (ADR 0019): the language link sits in the corner of the first screen and scrolls away. -->
-    <header class:list={['corner', { 'stage stage--flat': stageTop }]}>
+    <!-- No fixed strip: the language link sits in the corner of the first screen and scrolls away. -->
+    <header class:list={['corner', { 'corner--film': film }]}>
       <div class="corner__inner container">
         <LanguageSwitch locale={locale} route={route} />
       </div>
@@ -63,6 +72,20 @@ const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal
     padding: var(--space-2) var(--space-4);
     background: var(--color-surface);
     border-radius: var(--radius-sm);
+  }
+
+  /* Over the film's stage, in ink, out of the flow so the stage starts at the very top. */
+  .corner--film {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 5;
+    color: var(--film-ink);
+    font-family: var(--font-body, system-ui, sans-serif);
+    font-weight: 700;
+  }
+
+  .corner--film .corner__inner {
+    padding-top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
   }
 
   .corner__inner {

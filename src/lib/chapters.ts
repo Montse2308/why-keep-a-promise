@@ -43,7 +43,7 @@ const PHASE: Record<ChapterId, BuildPhase> = {
 
 /** Screens per chapter; tuned against the video review of each phase. */
 const SCREENS: Record<ChapterId, number> = {
-  arrival: 2,
+  arrival: 3,
   'two-rooms': 5,
   talk: 2.5,
   fold: 4,

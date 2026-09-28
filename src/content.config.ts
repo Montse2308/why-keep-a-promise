@@ -1,9 +1,21 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { CHAPTER_IDS } from './lib/chapters';
 import { SUBPAGES } from './lib/routes';
 
-/** Act prose, one Markdown file per act and locale: src/content/acts/{en,es}/<nn>-<slug>.md */
+/**
+ * The film's captions (ADR 0021): one Markdown file per chapter and locale,
+ * src/content/chapters/{en,es}/<nn>-<id>.md. Short text only; dialogue and ticket labels are UI keys.
+ */
+const chapters = defineCollection({
+  loader: glob({ pattern: '{en,es}/*.md', base: './src/content/chapters' }),
+  schema: z.object({
+    chapter: z.enum(CHAPTER_IDS),
+  }),
+});
+
+/** Previous version: act prose, one Markdown file per act and locale: src/content/acts/{en,es}/<nn>-<slug>.md */
 const acts = defineCollection({
   loader: glob({ pattern: '{en,es}/*.md', base: './src/content/acts' }),
   schema: z.object({
@@ -41,4 +53,4 @@ const sections = defineCollection({
   }),
 });
 
-export const collections = { acts, subpages, sections };
+export const collections = { chapters, acts, subpages, sections };
