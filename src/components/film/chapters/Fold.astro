@@ -1,0 +1,100 @@
+---
+/**
+ * Chapter 3, the matrix folds (ADR 0021, ADR 0023): the board folds into the die, and the film says
+ * on screen that this is another game with the same tension (rule (g)): Vanberg's (2008), where only
+ * one decides. The visitor decides once: keep the money or roll the die. The payoffs are `PAYOFFS`;
+ * every line a decision can lead to, one per face of the die, is resolved here.
+ */
+import { beat, chapter } from '../../../lib/chapters';
+import { FILM } from '../../../lib/design/film';
+import { decisionLine } from '../../../lib/film/lines';
+import { PIP_AT, PIPS, type Pip } from '../../../lib/film/parts';
+import { KEY_POSE, RESTING_FACE, stageAt } from '../../../lib/film/stage';
+import { FILM_VALUES } from '../../../lib/film/values';
+import { useTranslations, type Locale, type UiKey } from '../../../lib/i18n';
+import { roundOf } from '../../../lib/pd/round';
+import { outcomeOf } from '../../../lib/table/decision';
+import { DIE_FACES } from '../../../lib/table/game';
+import { fill } from '../../../lib/template';
+import Beat from '../Beat.astro';
+import Chapter from '../Chapter.astro';
+import Ticket from '../Ticket.astro';
+import Tickets from '../Tickets.astro';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  captions: ReadonlyMap<string, string>;
+}
+
+const { locale, title, captions } = Astro.props;
+const tr = useTranslations(locale);
+const values = (key: UiKey) => fill(tr(key), FILM_VALUES);
+const fold = beat('fold', 'fold');
+const decide = beat('fold', 'decide');
+
+/** What rolling leads to, face by face; what keeping the money leads to. */
+const rolled = JSON.stringify(Object.fromEntries(DIE_FACES.map((face) => [face, decisionLine(tr, outcomeOf('roll', face))])));
+const kept = decisionLine(tr, outcomeOf('dont', null));
+
+// The storyboard's still frame: the die on the table, before the decision.
+const still = stageAt(KEY_POSE.fold ?? 0, { promised: true, round: roundOf('cooperate'), chat: 'promise' }, false, true);
+---
+
+<Chapter locale={locale} id="fold" labelledby="fold-title" still={still} stillLabel={tr('film.fold.still')}>
+  <Beat id={fold.id} screens={fold.screens} caption={captions.get(fold.id)}>
+    <h2 slot="top" id="fold-title" class="card__chapter">
+      <span>{fill(tr('film.chapter'), { n: chapter('fold').number })}</span>
+      <span aria-hidden="true">·</span>
+      <span>{title}</span>
+    </h2>
+  </Beat>
+
+  <Beat id={decide.id} screens={decide.screens} caption={captions.get(decide.id)}>
+    <p class="card__ask" data-promise-line data-yes={tr('film.fold.promised')} data-no={tr('film.fold.refused')} data-none={tr('film.fold.unanswered')}>
+      {tr('film.fold.promised')}
+    </p>
+    <Tickets label={tr('film.fold.group')} data-decision-tickets="">
+      <Ticket label={tr('film.ticket.roll')} detail={values('film.ticket.roll.detail')} data-choice="roll" data-said={rolled}>
+        <svg slot="icon" viewBox="-40 -40 80 80">
+          <g transform="rotate(-8)">
+            <rect x="-30" y="-30" width="60" height="60" rx="13" fill={FILM.rim} stroke={FILM.ink} stroke-width="4.5" />
+            {PIPS[RESTING_FACE].map((pip: Pip) => <circle cx={PIP_AT[pip][0] * 0.85} cy={PIP_AT[pip][1] * 0.85} r="5.5" fill={FILM.ink} />)}
+          </g>
+        </svg>
+      </Ticket>
+      <Ticket label={values('film.ticket.keep')} detail={values('film.ticket.keep.detail')} data-choice="dont" data-said={kept}>
+        <svg slot="icon" viewBox="-40 -40 80 80">
+          <path d="M-26 -8 C-34 18 -24 34 0 34 C24 34 34 18 26 -8 Z" fill={FILM['table-top']} stroke={FILM.ink} stroke-width="4.5" stroke-linejoin="round" />
+          <path d="M-14 -8 C-18 -20 -8 -26 0 -18 C8 -26 18 -20 14 -8" fill={FILM['table-top']} stroke={FILM.ink} stroke-width="4.5" stroke-linejoin="round" />
+          <path d="M-16 -8 H16" stroke={FILM.ink} stroke-width="4.5" />
+          <text y="20" text-anchor="middle" class="card__coin" fill={FILM.ink}>{FILM_VALUES.dont}</text>
+        </svg>
+      </Ticket>
+    </Tickets>
+    <p class="card__out" aria-live="polite" data-decision-out data-kept={tr('film.fold.kept')} data-broken={tr('film.fold.broken')}></p>
+    <p class="card__noscript">{tr('film.fold.noscript')}</p>
+    <table class="card__table card__noscript">
+      <caption>{tr('film.fold.table.caption')}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{tr('film.fold.table.choice')}</th>
+          <th scope="col">{tr('film.who.you')}</th>
+          <th scope="col">{tr('film.who.other')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">{tr('film.ticket.roll')}</th>
+          <td>{FILM_VALUES.roll}</td>
+          <td>{values('film.fold.table.rollother')}</td>
+        </tr>
+        <tr>
+          <th scope="row">{values('film.ticket.keep')}</th>
+          <td>{FILM_VALUES.dont}</td>
+          <td>{FILM_VALUES.dontother}</td>
+        </tr>
+      </tbody>
+    </table>
+  </Beat>
+</Chapter>

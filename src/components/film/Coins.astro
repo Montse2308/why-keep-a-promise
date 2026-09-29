@@ -1,0 +1,34 @@
+---
+/**
+ * A stack of coins over one of the cast (ADR 0027): the coins replace the tables of payoffs. The
+ * stack draws as many coins as the most anyone takes; the film's script shows `n` of them and the
+ * number on top. An empty stack is a dashed outline, so a 0 still shows.
+ */
+import { FILM } from '../../lib/design/film';
+import { COIN_STEP, STACK_MAX } from '../../lib/film/board';
+import { coinCountY, coinsTransform } from '../../lib/film/parts';
+
+interface Props {
+  part: 'coins-you' | 'coins-other';
+  x: number;
+  n: number;
+  shown: number;
+}
+
+const { part, x, n, shown } = Astro.props;
+const coins = Array.from({ length: STACK_MAX }, (_, i) => i);
+---
+
+<g data-part={part} transform={coinsTransform(x)} opacity={shown}>
+  <ellipse data-coin-empty cx="0" cy="0" rx="26" ry="9" fill="none" stroke={FILM.ink} stroke-width="2.5" stroke-dasharray="6 5" opacity={n === 0 ? 0.7 : 0} />
+  {coins.map((i) => <ellipse data-coin={i} cx="0" cy={-i * COIN_STEP} rx="26" ry="9" fill={FILM.thread} stroke={FILM['thread-edge']} stroke-width="3" visibility={i < n ? 'visible' : 'hidden'} />)}
+  <text data-coin-count x="0" y={coinCountY(n)} text-anchor="middle" class="coins__count" fill={FILM.ink} stroke={FILM.rim} stroke-width="6" paint-order="stroke">{n}</text>
+</g>
+
+<style>
+  .coins__count {
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 800;
+    font-size: 40px;
+  }
+</style>

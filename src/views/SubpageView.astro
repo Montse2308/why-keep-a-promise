@@ -1,7 +1,7 @@
 ---
 /**
  * A subpage: the prose of src/content/subpages/<locale>/<slug>.md, with the components its slots
- * name, and a link back to the act it deepens. What follows the prose's lock marker renders only
+ * name, and a link back to the act it deepens, or to the film's chapter that now tells that act. What follows the prose's lock marker renders only
  * behind act 5's lock (ADR 0015, ADR 0017); /finding is locked whole, so a locked build shows its
  * title and the status sentence and nothing else.
  */
@@ -37,7 +37,13 @@ const hasLocked = parts.locked.length > 0;
 const lockedWhole = !unlocked && parts.open.length === 0;
 const showStatus = subpage === 'finding';
 const status = t(locale, statusKey(MANUSCRIPT_STATUS));
-const back = fill(t(locale, 'subpage.back'), { title: t(locale, act.titleKey) });
+// Back to the act, or to the chapter of the film that tells it now (ADR 0021).
+const chapterEntry = act.film
+  ? (await getCollection('chapters', (candidate) => candidate.id.startsWith(`${locale}/`) && candidate.data.chapter === act.film))[0]
+  : undefined;
+if (act.film && !chapterEntry) throw new Error(`No chapter "${act.film}" for subpage ${subpage} in ${locale}`);
+const backTo = act.film ?? act.id;
+const back = fill(t(locale, 'subpage.back'), { title: chapterEntry?.data.title ?? t(locale, act.titleKey) });
 // The home sections' slots (ADR 0019) have no place on a subpage.
 const SUBPAGE_SLOTS: readonly SlotName[] = ['best-response', 'switch-table', 'guilt-chart'];
 const stray = slotsIn([...parts.open, ...parts.locked]).filter((slot) => !SUBPAGE_SLOTS.includes(slot));
@@ -64,7 +70,7 @@ if (stray.length > 0) throw new Error(`Subpage ${subpage} uses slots that are no
     {
       !lockedWhole && (
         <p class="subpage__back">
-          <a href={href(locale, 'home', act.id)}>{back}</a>
+          <a href={href(locale, 'home', backTo)}>{back}</a>
         </p>
       )
     }

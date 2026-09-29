@@ -7,7 +7,7 @@
 import { fraction, type Fraction } from './fraction';
 import { drawWith, throwDie, type Choice, type Face, type Rng } from './game';
 import { recipientAfterDraw, type Partner, type Recipient } from './expectation';
-import { outcomeOf, type Outcome } from './moment1';
+import { outcomeOf, type Outcome } from './decision';
 
 /**
  * Probability that the visitor is switched to a new partner: Vanberg (2008), Suppl. A, p. 2, Step 3.

@@ -1,12 +1,12 @@
 /**
- * Client script for the table: the site's only JavaScript. It turns clicks into events for the
- * pure state machines in src/lib/table/, shows the resulting state, moves focus to the first
- * control of the next step and announces each result in the table's `aria-live` region.
- * Every table on the page is mounted independently.
+ * Client script for the previous version's table, in its moment 2 (act 4), until chapters 4 to 6
+ * replace it (P3). It turns clicks into events for the pure state machines in src/lib/table/, shows
+ * the resulting state, moves focus to the first control of the next step and announces each result
+ * in the table's `aria-live` region. Every table on the page is mounted independently.
  */
 import { outOf100, toNumber, type Fraction } from '../../lib/table/fraction';
 import type { Choice, Face, Rng } from '../../lib/table/game';
-import { moment1, MOMENT1_START, type Moment1Event, type Moment1State, type Outcome } from '../../lib/table/moment1';
+import type { Outcome } from '../../lib/table/decision';
 import { moment2, MOMENT2_START, type Moment2Event, type Moment2State } from '../../lib/table/moment2';
 import { cellFor, HEADLINE, rollShare, type CellKey } from '../../lib/table/results';
 import type { ClientStrings } from '../../lib/table/strings';
@@ -118,46 +118,7 @@ function mount(root: HTMLElement, rng: Rng): void {
   const live = root.querySelector<HTMLElement>('[data-live]');
   if (live) live.hidden = false;
 
-  if (root.dataset.mode === 'moment2') {
-    mountMoment2();
-  } else {
-    mountMoment1();
-  }
-
-  function mountMoment1(): void {
-    let state: Moment1State = MOMENT1_START;
-    const send = (event: Moment1Event) => (state = moment1(state, event, rng));
-
-    function render(rolled = false): void {
-      const outcome = state.phase === 'outcome' ? state : null;
-      showControls('choice', state.phase === 'idle');
-      setText('choice-summary', outcome ? choiceSummary(outcome.choice) : null);
-      showStep('outcome', outcome !== null);
-      renderOutcome(outcome, rolled);
-    }
-
-    root.addEventListener('click', (event) => {
-      const button = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
-      if (!button) return;
-      const action = button.dataset.action;
-      if (action === 'choose') {
-        const choice = button.dataset.value as Choice;
-        send({ type: 'choose', choice });
-        if (choice === 'roll') send({ type: 'throw' });
-        send({ type: 'settle' });
-        render(true);
-        if (state.phase === 'outcome') announce(outcomeAnnouncement(state));
-        focusStep('outcome');
-      } else if (action === 'reset') {
-        send({ type: 'reset' });
-        render();
-        announce([s('table.announce.reset')]);
-        focusStep('choice');
-      }
-    });
-
-    render();
-  }
+  mountMoment2();
 
   function mountMoment2(): void {
     let state: Moment2State = MOMENT2_START;

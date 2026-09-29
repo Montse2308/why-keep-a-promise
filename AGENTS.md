@@ -17,10 +17,10 @@ A portfolio piece in two layers (ADR 0021):
 
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
-**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). `src/` is still the
-previous version (six acts, the act 1 scene, the table on a dark stage). From P1 on, the film
-replaces it chapter by chapter; each chapter removes what it replaces, in the same commit as its
-tests.
+**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). The film tells
+chapters 0 to 3 (P1–P2); below it, the previous version still shows acts 3 to 6, the table's
+moment 2 and the home sections. The film replaces them chapter by chapter; each chapter removes
+what it replaces, in the same commit as its tests.
 
 ## Reading order
 
@@ -74,15 +74,17 @@ not by reading test output.
 
 ## Map
 
-The current code is the previous version. The film's pieces are marked **(P1+)**: they arrive from
-P1 on and replace the previous ones.
+The film's pieces are marked **(P1+)**: they arrive from P1 on and replace the previous version's,
+which are marked as such.
 
 ```
 src/
   config.ts              author links, manuscript status (it also opens the lock)
   content.config.ts      content collections (frontmatter schemas)
-  content/acts/{en,es}/  previous version: act prose; replaced by content/chapters/ (P1–P4)
-  content/chapters/{en,es}/  (P1+) the film's captions and dialogue, one file per chapter
+  content/acts/{en,es}/  previous version: the prose of acts 3 to 6; the film tells acts 1 and 2, and
+                         replaces the rest in P3–P4
+  content/chapters/{en,es}/  (P1+) the film's captions, one file per chapter, split into beats by
+                         <!-- beat:… --> marks; a number is a {placeholder}, never a figure
   content/subpages/{en,es}/  notebook prose; <!-- slot:… --> and <!-- lock --> markers
   content/sections/{en,es}/  previous version: "The research" and "About" on the home; retired in P4
   content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md
@@ -94,31 +96,40 @@ src/
     routes.ts            buildHref/href/assetHref: every internal link goes through here
     lock.ts              the lock: full content only under review or in dev (ADR 0026)
     film/                (P1+) the scene engine: tracks, easing, colours (OKLCH), camera, chapter
-                         spans; faces.ts (the moods); stage.ts (what the stage shows at each point)
-    chapters.ts          (P1+) the nine chapters, their ids and order
+                         spans; timeline.ts (screens, beats, the native scroll mapped to the film);
+                         faces.ts (the moods); stage.ts (what the stage shows at each point);
+                         captions.ts (beats in Markdown); values.ts (every number the film says,
+                         from the pure modules); lines.ts (what it says after each choice);
+                         board.ts, parts.ts (the board, coins, die and where each part goes);
+                         talk.ts (chapter 2's chat)
+    chapters.ts          (P1+) the nine chapters, their ids, order and beats
     acts.ts, sections.ts previous version: the acts and the home's order
     design/              film.ts (the film's colours and the day's light; film.css mirrors it),
                          palette.ts (the notebook and the previous version), colour maths
     subpages.ts          splits notebook prose at its slot and lock markers
-    table/               Vanberg's game: exact payoffs (PAYOFFS), moment 2 logic, recipient beliefs,
-                         real roll counts; scene.ts is the previous act 1 scene (retired in P1)
-    pd/                  the prisoner's dilemma and its best reply (moves to chapter 1 in P2)
+    table/               Vanberg's game: exact payoffs (PAYOFFS), the decision (chapter 3),
+                         moment 2 logic (previous version, until P3), recipient beliefs, real roll
+                         counts
+    pd/                  the prisoner's dilemma: its payoffs, the one round of chapter 1 and the
+                         best reply
     curve/               reads curve.json (build time only), step-chart geometry, the curve control;
                          finding.ts: guilt, θ, c and robustness for /finding, behind the lock
     vanberg/             every cell of the switch treatment and the baselines, exact counts
   assets/fonts/          self-hosted woff2, OFL licences, provenance
   styles/                tokens.css, base.css
-  components/            previous version: FirstScreen, Act, HomeSection, table/ (GameTable, Scene),
-                         pd/BestResponse, vanberg/SwitchTable, curve/Curve + Locked (the stub a
-                         locked build uses), LanguageSwitch, SiteFooter
-                         film/ (P1+: Film, World, Character, film.ts), notebook/ (P5, the panel)
+  components/            previous version: Act, HomeSection, table/ (GameTable, moment 2 only),
+                         pd/BestResponse (on /dilemma until P5); vanberg/SwitchTable, curve/Curve +
+                         Locked (the stub a locked build uses), LanguageSwitch, SiteFooter
+                         film/ (P1+: Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
+                         chapters/ one per chapter, film.ts), notebook/ (P5, the panel)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale
 scripts/verify-dist.mjs  checks dist/ against the lock and the status sentence (ADR 0026)
-tests/                   repo-level tests (page parity, prose figures and budgets, forbidden phrases,
-                         curve and /finding figures, verify:dist markers, code quoted on
-                         /how-its-built; previous-version tests are replaced with their code)
+tests/                   repo-level tests (page parity, prose figures and budgets, the film's
+                         captions, forbidden phrases, curve and /finding figures, verify:dist
+                         markers, code quoted on /how-its-built; previous-version tests are
+                         replaced with their code)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy); archivo/ = history;
                          prototipo/ = the round-4 prototype
 scratch/                 local notes, git-ignored, never committed

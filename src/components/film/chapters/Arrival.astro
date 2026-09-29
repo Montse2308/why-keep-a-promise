@@ -1,0 +1,69 @@
+---
+/**
+ * Chapter 0, the arrival (ADR 0021): the question over the dawn, the other asking for a promise,
+ * the two tickets and the page's own promise. Choosing ties the golden thread or not (./film.ts).
+ */
+import { beat } from '../../../lib/chapters';
+import { FILM } from '../../../lib/design/film';
+import { useTranslations, type Locale } from '../../../lib/i18n';
+import { KEY_POSE, stageAt } from '../../../lib/film/stage';
+import Beat from '../Beat.astro';
+import Chapter from '../Chapter.astro';
+import Ticket from '../Ticket.astro';
+import Tickets from '../Tickets.astro';
+
+interface Props {
+  locale: Locale;
+  captions: ReadonlyMap<string, string>;
+}
+
+const { locale, captions } = Astro.props;
+const tr = useTranslations(locale);
+const ask = beat('arrival', 'ask');
+---
+
+<Chapter locale={locale} id="arrival" labelledby="arrival-title" still={stageAt(KEY_POSE.arrival ?? 0, { promised: true }, false, true)} stillLabel={tr('film.arrival.still')}>
+  <Beat id={ask.id} screens={ask.screens} caption={captions.get(ask.id)} opening>
+    <h1 slot="above" id="arrival-title" class="arrival__title" data-title>{tr('site.title')}</h1>
+    <Fragment slot="top">
+      <p class="card__say">
+        <span class="card__who" aria-hidden="true"></span>
+        <span><span class="visually-hidden">{tr('film.arrival.who')}: </span>{tr('film.arrival.ask')}</span>
+      </p>
+      <Tickets label={tr('film.arrival.ask')}>
+        <Ticket label={tr('film.ticket.promise')} detail={tr('film.ticket.promise.detail')} data-promise="yes">
+          <svg slot="icon" viewBox="-24 -24 48 48"><path d="M-16 8 C-8 -14 8 -14 16 8" fill="none" stroke={FILM['thread-edge']} stroke-width="7" stroke-linecap="round" /><path d="M-16 8 C-8 -14 8 -14 16 8" fill="none" stroke={FILM.thread} stroke-width="4" stroke-linecap="round" /><circle cx="-16" cy="10" r="6" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" /><rect x="10" y="4" width="12" height="12" rx="2" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" /></svg>
+        </Ticket>
+        <Ticket label={tr('film.ticket.none')} detail={tr('film.ticket.none.detail')} data-promise="no">
+          <svg slot="icon" viewBox="-24 -24 48 48"><circle cx="-14" cy="6" r="6" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" /><rect x="8" y="0" width="12" height="12" rx="2" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" /><path d="M-4 -4 L4 4 M4 -4 L-4 4" stroke={FILM.ink} stroke-width="2.5" stroke-linecap="round" /></svg>
+        </Ticket>
+      </Tickets>
+      <p class="card__out" aria-live="polite" data-out data-out-yes={tr('film.arrival.promised')} data-out-no={tr('film.arrival.refused')}></p>
+      <p class="card__noscript">{tr('film.arrival.noscript')}</p>
+    </Fragment>
+  </Beat>
+</Chapter>
+
+<style>
+  .arrival__title {
+    margin: 0;
+    font-family: var(--font-display, Georgia, serif);
+    font-size: clamp(2rem, 6.4vw, 5rem);
+    font-style: italic;
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-align: center;
+    max-width: 16ch;
+    margin-inline: auto;
+    color: var(--film-ink);
+  }
+
+  /* The film: the title stays at the top of the screen and fades as the camera closes in. */
+  :global(html.js) .arrival__title {
+    position: sticky;
+    top: calc(var(--space-16) + env(safe-area-inset-top, 0px));
+    opacity: calc(1 - var(--title-gone, 0));
+    transform: translateY(calc(var(--title-gone, 0) * -2rem));
+  }
+</style>

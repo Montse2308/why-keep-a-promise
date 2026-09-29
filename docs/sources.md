@@ -37,8 +37,8 @@ mueve una cifra a un capítulo, en el mismo commit.
   en paráfrasis: el efecto de las promesas no se explica por cambios en lo que el otro espera, y
   sugiere una preferencia por cumplir la palabra en sí.
   Usada en: acto 4 (`src/content/acts/{en,es}/04-vanberg.md`).
-- **Uso:** diseño del juego de cambio de pareja (la mesa, momentos 1 y 2), pagos, creencias de los
-  receptores y tasas de Roll (actos 2 y 4, `/vanberg`).
+- **Uso:** el juego y sus pagos (capítulo 3, «La matriz se dobla»), el diseño del juego de cambio de
+  pareja (la mesa del momento 2), creencias de los receptores y tasas de Roll (acto 4, `/vanberg`).
 - **Verificada:** sí. Las cifras, con los suplementos; la ficha del artículo, en EconPapers.
 - PENDIENTE(pdf): cotejar contra las Tablas I–III impresas y agregar su página cuando esté el PDF
   del artículo. Es lo único pendiente de esta referencia.
@@ -48,8 +48,9 @@ mueve una cifra a un capítulo, en el mismo commit.
   (B) recibe 0 y con las caras 2–6 recibe 12, es decir, 12 con probabilidad 5/6 y 0 con 1/6.
   Clave: `vanberg-payoffs`.
   Fuente: Suppl. A, p. 2, tabla "Payoffs From the Decision". **Verificada (suplementos).**
-  Usada en: la mesa, momentos 1 y 2 (`src/lib/table/game.ts`, `PAYOFFS`); tabla `<noscript>` de
-  `GameTable.astro`.
+  Usada en: capítulo 3 (`src/lib/table/game.ts`, `PAYOFFS`, a través de `src/lib/film/values.ts`:
+  los boletos, las monedas, el resultado de cada cara del dado y la tabla del storyboard); la mesa
+  del momento 2 (`src/lib/table/moment2.ts`) y su tabla `<noscript>` en `GameTable.astro`.
 - Cifra: Don't Roll: A recibe 14 y B recibe 0.
   Clave: `vanberg-payoffs`.
   Fuente: Suppl. A, p. 2, tabla "Payoffs From the Decision". **Verificada (suplementos).**
@@ -57,8 +58,8 @@ mueve una cifra a un capítulo, en el mismo commit.
 - Cifra: pago esperado de B con Roll, 10 (= 12 · 5/6), y costo de tirar para A, 4 (= 14 − 10). Se
   derivan de las dos anteriores; no son cifras nuevas.
   Clave: `vanberg-payoffs`.
-  Usada en: la mesa, fila "Expected" (`expectedPayoffs`); acto 2 ("te cuesta 4 y al otro le da,
-  en promedio, 10").
+  Usada en: capítulo 3, el resultado de tirar (clave `film.fold.out.cost`, con `FILM_VALUES.cost`
+  y `expectedPayoffs`); la mesa del momento 2, fila "Expected" (`expectedPayoffs`).
 - Cifra: probabilidad de cambio de pareja, 1/2 ("en la mitad de las parejas" en el acto 4). El
   cambio ocurre después de asignar los roles, y solo A sabe si hubo cambio.
   Clave: `vanberg-switch`.
@@ -214,7 +215,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 
 - **Referencia (por verificar):** Axelrod, R. (1984). *The Evolution of Cooperation*. Basic Books.
 - **Clave:** `axelrod-1984`.
-- **Uso:** matriz del dilema del prisionero (acto 2); contexto del dilema iterado (`/dilemma`).
+- **Uso:** matriz del dilema del prisionero (capítulo 1 y `/dilemma`); contexto del dilema
+  iterado (`/dilemma`).
 - **Verificada:** no.
 - **Cifras:**
 
@@ -222,8 +224,9 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   y S = 0 (T > R > P > S).
   Clave: `axelrod-1984`.
   Fuente: Axelrod (1984), página por verificar. **Por verificar; bloquea el lanzamiento.**
-  Usada en: acto 2 (`src/content/acts/{en,es}/02-dilemma.md`); `/dilemma` (la mejor respuesta,
-  `src/lib/pd/game.ts`, `PAYOFFS`, y la prosa).
+  Usada en: capítulo 1 (`src/lib/pd/game.ts`, `PAYOFFS`, a través de `src/lib/film/values.ts`: el
+  tablero, los boletos, las leyendas y los resultados de la ronda y de las dos columnas);
+  `/dilemma` (la mejor respuesta, `PAYOFFS`, y la prosa).
 - Cifra: la condición 2R > T + S, leída por ronda como "3 > 2.5": cooperar siempre deja más que
   turnarse para traicionar ((T + S) / 2 = 2.5). El "2" es el de 2R.
   Clave: `axelrod-1984`.
@@ -260,7 +263,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 - **Referencia (verificada):** Case, N. (2017). *The Evolution of Trust*.
   <https://ncase.me/trust/>
 - **Clave:** `case-2017`.
-- **Uso:** enlace para el dilema iterado (regla (f) de `content-rules.md`), acto 2.
+- **Uso:** enlace para el dilema iterado (regla (f) de `content-rules.md`): capítulo 1
+  (`src/content/chapters/{en,es}/01-two-rooms.md`) y `/dilemma`.
 - **Verificada:** sí. El enlace responde (HTTP 200, título "The Evolution of Trust", comprobado en
   F2); confirmada por Montse en F2.1.
 - **Cifras:** —

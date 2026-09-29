@@ -1,8 +1,9 @@
 /**
- * Every figure the prose of the acts and the subpages may contain, each with the key of its entry in
- * docs/sources.md ("Clave: `<key>`"). tests/prose.test.ts fails on any number in src/content/acts/
- * or src/content/subpages/ that is not listed here, and on any year that is not a citation in
- * "Author (year)" form. Code blocks are not prose and are not checked.
+ * Every figure the prose of the acts, the subpages and the film's captions may contain, each with the
+ * key of its entry in docs/sources.md ("Clave: `<key>`"). tests/prose.test.ts fails on any number in
+ * src/content/acts/ or src/content/subpages/ that is not listed here, and on any year that is not a
+ * citation in "Author (year)" form; tests/film-captions.test.ts does the same for the captions, once
+ * their placeholders are filled from the code. Code blocks are not prose and are not checked.
  */
 
 export const SOURCE_KEYS = [
@@ -37,12 +38,12 @@ export interface Figure {
 }
 
 export const FIGURES: readonly Figure[] = [
-  // Prisoner's dilemma payoffs, act 2.
+  // Prisoner's dilemma payoffs: chapter 1, /dilemma.
   { value: '3', source: 'axelrod-1984', what: 'R, both cooperate' },
   { value: '5', source: 'axelrod-1984', what: 'T, defect on a cooperator' },
   { value: '1', source: 'axelrod-1984', what: 'P, both defect' },
   { value: '0', source: 'axelrod-1984', what: 'S, cooperate with a defector' },
-  // The table: Vanberg's game.
+  // Vanberg's game: chapter 3, the table of moment 2.
   { value: '10', source: 'vanberg-payoffs', what: 'dictator after Roll; recipient expected after Roll' },
   { value: '14', source: 'vanberg-payoffs', what: "dictator after Don't Roll" },
   { value: '12', source: 'vanberg-payoffs', what: 'recipient after Roll, faces 2–6' },

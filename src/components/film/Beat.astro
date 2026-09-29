@@ -1,0 +1,240 @@
+---
+/**
+ * One beat of a chapter (src/lib/chapters.ts): its stretch of scroll and its paper card. Without
+ * JavaScript the card is simply the next one in the storyboard. With it, the beat is as tall as its
+ * screens and the card sits at its bottom, held at the bottom of the screen while the beat scrolls
+ * past, so the cards follow the native scroll one after another and a keyboard reaches each in order.
+ */
+interface Props {
+  id: string;
+  screens: number;
+  /** The caption's HTML, from the chapter's Markdown, placeholders filled. */
+  caption?: string | undefined;
+  /** The film's first beat: its card is on screen from the very top, with no gap above it. */
+  opening?: boolean;
+}
+
+const { id, screens, caption, opening = false } = Astro.props;
+---
+
+<div class:list={['beat', { 'beat--opening': opening }]} data-beat={id} style={`--screens: ${screens}`}>
+  <slot name="above" />
+  <div class="card">
+    <slot name="top" />
+    {caption && <div class="card__caption" set:html={caption} />}
+    <slot />
+  </div>
+</div>
+
+<style>
+  .beat {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: center;
+  }
+
+  .card {
+    box-sizing: border-box;
+    width: min(38rem, 100%);
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--film-card);
+    color: var(--film-ink);
+    border-radius: 14px;
+    box-shadow: 0 10px 28px rgb(40 30 60 / 0.2);
+    transform: rotate(-0.4deg);
+  }
+
+  .card :global(p),
+  .card :global(h2),
+  .card :global(h3) {
+    margin: 0;
+  }
+
+  .card__caption {
+    display: grid;
+    gap: var(--space-2);
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  .card__caption :global(h3) {
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 800;
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  .card__caption :global(a) {
+    color: inherit;
+    font-weight: 800;
+  }
+
+  /* What every chapter's card may carry besides its caption. */
+  .card :global(.card__chapter) {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--film-card-muted);
+  }
+
+  .card :global(.card__chapter [aria-hidden]) {
+    margin-inline: 0.4em;
+  }
+
+  .card :global(.card__say) {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 800;
+    font-size: clamp(1.25rem, 3.2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .card :global(.card__who) {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.2rem;
+    border-radius: 5px;
+    background: var(--film-other);
+    box-shadow: 0 0 0 2.5px var(--film-ink);
+  }
+
+  .card :global(.card__out) {
+    font-weight: 800;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .card :global(.card__out:empty) {
+    display: none;
+  }
+
+  .card :global(.card__noscript) {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--film-card-muted);
+  }
+
+  :global(html.js) .card :global(.card__noscript) {
+    display: none;
+  }
+
+  /* A step of a choice made in turns; it shows only with JavaScript, one step after another. */
+  .card :global(.card__step) {
+    display: none;
+    gap: var(--space-2);
+  }
+
+  :global(html.js) .card :global(.card__step) {
+    display: grid;
+  }
+
+  :global(html.js) .card :global(.card__step[hidden]) {
+    display: none;
+  }
+
+  .card :global(.card__ask) {
+    font-weight: 800;
+  }
+
+  .card :global(.card__coin) {
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 800;
+    font-size: 20px;
+  }
+
+  /* The payoffs, as a table, for the storyboard. */
+  .card :global(.card__table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    color: var(--film-ink);
+  }
+
+  .card :global(.card__table caption) {
+    text-align: left;
+    font-weight: 800;
+    padding-bottom: var(--space-2);
+  }
+
+  .card :global(.card__table th),
+  .card :global(.card__table td) {
+    padding: var(--space-1) var(--space-2);
+    border: 1.5px solid var(--film-ink);
+    text-align: center;
+  }
+
+  .card :global(.card__table th[scope='row']) {
+    text-align: left;
+  }
+
+  /*
+   * The film: each beat is as tall as its screens. Its card is pushed to the bottom and held at the
+   * bottom of the screen while the beat scrolls past (a flex item, so it may stick across the whole
+   * beat). The gap on top leaves the stage alone for a moment between two cards.
+   */
+  :global(html.js) .beat {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: calc(var(--screens) * 100vh);
+    height: calc(var(--screens) * 100svh);
+    padding: 35vh var(--gutter) 0;
+    padding: 35svh var(--gutter) 0;
+    pointer-events: none;
+  }
+
+  :global(html.js) .beat--opening {
+    padding-top: 0;
+  }
+
+  :global(html.js) .card {
+    margin-top: auto;
+    position: sticky;
+    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    pointer-events: auto;
+  }
+
+  /* A short screen (a small phone): tighter cards, so the stage still shows above them. */
+  @media (max-height: 40rem) {
+    .card {
+      gap: var(--space-2);
+      padding: var(--space-3);
+    }
+
+    .card__caption {
+      gap: var(--space-1);
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+
+    .card__caption :global(h3) {
+      font-size: 1.05rem;
+    }
+
+    .card :global(.card__say) {
+      font-size: 1.05rem;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .card {
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .card__caption {
+      font-size: 0.95rem;
+    }
+
+    .card :global(.card__say) {
+      font-size: 1.15rem;
+    }
+  }
+</style>

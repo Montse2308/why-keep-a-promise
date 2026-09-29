@@ -1,7 +1,7 @@
 /**
- * The best-reply exercise on /dilemma, as a pure state machine. The visitor picks a move against
- * each column of the matrix, first "the other cooperates", then "the other defects", and sees their
- * payoff against the alternative. Once both columns are done, the matrix shows that defecting pays
+ * The best-reply exercise of chapter 1 (and of /dilemma, until the notebook rewrites it in P5), as a
+ * pure state machine. The visitor picks a move against each column of the matrix, first "the other
+ * cooperates", then "the other defects", and sees their payoff against the alternative. Once both columns are done, the matrix shows that defecting pays
  * more in both (a dominant strategy) and that two players who reason so end at (1, 1), not (3, 3).
  */
 import { bestReply, bothBetterOff, dominantMove, MOVES, nashEquilibria, otherMove, payoff, type Move } from './game';

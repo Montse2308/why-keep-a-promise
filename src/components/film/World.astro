@@ -6,10 +6,15 @@
  */
 import { FILM } from '../../lib/design/film';
 import { frame, viewBoxAttribute } from '../../lib/film/camera';
-import { castPositions, threadPath, WORLD, type StageView } from '../../lib/film/stage';
+import { brokenThreadPaths, castPositions, threadPath, WORLD, type StageView } from '../../lib/film/stage';
+import { bubbleTransform, bulbTransform, PIP_AT, PIPS, wallTransform, type Pip } from '../../lib/film/parts';
+import type { Locale } from '../../lib/i18n';
+import Board from './Board.astro';
 import Character from './Character.astro';
+import Coins from './Coins.astro';
 
 interface Props {
+  locale: Locale;
   /** Prefix for this drawing's gradient and filter ids. */
   uid: string;
   view: StageView;
@@ -19,7 +24,7 @@ interface Props {
   label?: string;
 }
 
-const { uid, view, live = false, label } = Astro.props;
+const { locale, uid, view, live = false, label } = Astro.props;
 const viewBox = viewBoxAttribute(frame(view.shot, { width: 1440, height: 900 }));
 const cast = castPositions(view.spread);
 const shadow = `${uid}-shadow`;
@@ -69,12 +74,35 @@ const lamp = `${uid}-lamp`;
   <rect x="-4000" y={WORLD.floor} width="9600" height="5000" fill={view.light.floor} data-part="floor" />
   <rect x="200" y="200" width="1200" height="700" fill={`url(#${lamp})`} opacity={view.lamp} data-part="lamp" />
 
+  <g data-part="wall" opacity={view.rooms > 0.01 ? 1 : 0} transform={wallTransform(view.rooms)}>
+    <rect x={WORLD.centre - 11} y="420" width="22" height="228" rx="4" fill={FILM.rim} stroke={FILM.ink} stroke-width="4" filter={`url(#${shadow})`} />
+  </g>
+  {
+    (['you', 'other'] as const).map((who) => (
+      <g data-part={`bulb-${who}`} opacity={view.bulbs > 0.01 ? 1 : 0} transform={bulbTransform(cast[who][0], view.bulbs)}>
+        <line x1="0" y1="-1400" x2="0" y2="224" stroke={FILM.ink} stroke-width="3" />
+        <circle cy="250" r="50" fill={FILM.lamp} opacity="0.3" />
+        <rect x="-9" y="218" width="18" height="14" rx="3" fill={FILM.ink} />
+        <circle cy="250" r="19" fill={FILM.lamp} stroke={FILM.ink} stroke-width="3" />
+      </g>
+    ))
+  }
+
   <ellipse cx={cast.you[0]} cy={WORLD.floor + 12} rx="70" ry="12" fill="#140f28" opacity="0.2" data-part="shadow-you" />
   <ellipse cx={cast.other[0]} cy={WORLD.floor + 12} rx="76" ry="12" fill="#140f28" opacity="0.2" data-part="shadow-other" />
 
-  <g data-part="thread" opacity={view.thread.state === 'none' ? 0 : 1}>
+  <g data-part="thread" opacity={view.thread.state === 'tied' ? 1 : 0}>
     <path d={threadPath(view.spread)} fill="none" stroke={FILM['thread-edge']} stroke-width="11" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset={1 - view.thread.drawn} data-part="thread-edge" />
     <path d={threadPath(view.spread)} fill="none" stroke={FILM.thread} stroke-width="6" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset={1 - view.thread.drawn} data-part="thread-line" />
+  </g>
+
+  <g data-part="thread-broken" opacity={view.thread.state === 'broken' ? 1 : 0}>
+    {brokenThreadPaths(view.spread).map((d, i) => (
+      <>
+        <path d={d} fill="none" stroke={FILM['thread-edge']} stroke-width="11" stroke-linecap="round" data-part={`broken-edge-${i}`} />
+        <path d={d} fill="none" stroke={FILM.thread} stroke-width="6" stroke-linecap="round" data-part={`broken-line-${i}`} />
+      </>
+    ))}
   </g>
 
   <g transform={`translate(${cast.you[0]} ${cast.you[1]})`} data-part="you">
@@ -84,7 +112,18 @@ const lamp = `${uid}-lamp`;
     <Character kind="square" mood={view.moods.other} shadow={shadow} />
   </g>
 
-  <g filter={`url(#${shadow})`} data-part="table">
+  {
+    (['you', 'other'] as const).map((who) => (
+      <g data-part={`bubble-${who}`} opacity={view.bubbles[who]} transform={bubbleTransform(cast[who][0], view.bubbles[who])}>
+        <path d="M-26 -29 H26 A22 22 0 0 1 48 -7 V7 A22 22 0 0 1 26 29 H-12 L-50 48 L-28 27 A22 22 0 0 1 -48 7 V-7 A22 22 0 0 1 -26 -29 Z" fill={FILM.card} stroke={FILM.ink} stroke-width="3.5" stroke-linejoin="round" filter={`url(#${shadow})`} />
+        <circle cx="-18" r="5.5" fill={FILM.ink} />
+        <circle cx="0" r="5.5" fill={FILM.ink} />
+        <circle cx="18" r="5.5" fill={FILM.ink} />
+      </g>
+    ))
+  }
+
+  <g filter={`url(#${shadow})`} data-part="table" opacity={view.table}>
     <rect x="560" y="560" width="480" height="70" rx="10" fill={FILM['table-front']} />
     <rect x="590" y="600" width="26" height="48" rx="4" fill={FILM['table-front']} />
     <rect x="984" y="600" width="26" height="48" rx="4" fill={FILM['table-front']} />
@@ -94,13 +133,15 @@ const lamp = `${uid}-lamp`;
   <g transform={`translate(${WORLD.centre} ${view.die.y})`} opacity={view.die.opacity} data-part="die">
     <g data-part="die-spin" filter={`url(#${shadow})`}>
       <rect x="-34" y="-34" width="68" height="68" rx="14" fill="#fffaf0" stroke={FILM.ink} stroke-width="4.5" />
-      <circle cx="-14" cy="-14" r="6.5" fill={FILM.ink} />
-      <circle cx="14" cy="-14" r="6.5" fill={FILM.ink} />
-      <circle cx="0" cy="0" r="6.5" fill={FILM.ink} />
-      <circle cx="-14" cy="14" r="6.5" fill={FILM.ink} />
-      <circle cx="14" cy="14" r="6.5" fill={FILM.ink} />
+      {(Object.keys(PIP_AT) as Pip[]).map((pip) => (
+        <circle cx={PIP_AT[pip][0]} cy={PIP_AT[pip][1]} r="6.5" fill={FILM.ink} data-pip={pip} visibility={PIPS[view.die.face].includes(pip) ? 'visible' : 'hidden'} />
+      ))}
     </g>
   </g>
+
+  <Board locale={locale} board={view.board} shadow={shadow} />
+  <Coins part="coins-you" x={cast.you[0]} n={view.coins.you} shown={view.coins.shown} />
+  <Coins part="coins-other" x={cast.other[0]} n={view.coins.other} shown={view.coins.shown} />
 </svg>
 
 <style>
