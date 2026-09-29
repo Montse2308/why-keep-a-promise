@@ -5,7 +5,8 @@
  */
 import type { Face } from '../table/game';
 import { BOARD, COIN_STEP } from './board';
-import { WORLD } from './stage';
+import { WORLD, type Place } from './stage';
+import { VOICE_SCALE, type Point } from './voices';
 
 /** Where the bottom coin of each stack sits: just over the characters' heads. */
 export const COINS_Y = 404;
@@ -49,6 +50,28 @@ export const bubbleTransform = (x: number, shown: number): string => {
   const scale = 0.6 + 0.4 * shown;
   return `translate(${(x + side * 104).toFixed(2)} 418) scale(${(side * scale).toFixed(3)} ${scale.toFixed(3)})`;
 };
+
+/** One of the cast at its place, `lift` units up (the float of a still character). */
+export const placeTransform = ({ at: [x, y], scale }: Place, lift = 0): string =>
+  `translate(${x.toFixed(2)} ${(y - lift).toFixed(2)})${scale === 1 ? '' : ` scale(${scale.toFixed(4)})`}`;
+
+/** A character's shadow on the ground under it; a character farther off casts it higher and smaller. */
+export const shadowTransform = ({ at: [x, y], scale }: Place): string => {
+  // At the table the shadow lies on the floor; farther off, on the hill under the character.
+  const ground = scale >= 1 ? WORLD.floor + 12 : y + (WORLD.floor + 12 - 496) * scale;
+  return `translate(${x.toFixed(2)} ${ground.toFixed(2)}) scale(${scale.toFixed(4)})`;
+};
+
+/**
+ * A character's eyes, alone in the dark, where its face has them: the triangle's face sits lower and
+ * smaller (Character.astro).
+ */
+export const eyesTransform = (place: Place, kind: 'circle' | 'square' | 'triangle', lift = 0): string =>
+  `${placeTransform(place, lift)}${kind === 'triangle' ? ' translate(0 16) scale(0.74)' : ''}`;
+
+/** A voice floats at its place, drawn at the voices' scale, and pops up from a little smaller as it comes. */
+export const voiceTransform = ([x, y]: Point, shown: number): string =>
+  `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${(VOICE_SCALE * (0.7 + 0.3 * shown)).toFixed(4)})`;
 
 /** The pips of a die face, on a 68-unit die: corners, middles and centre. */
 export const PIP_AT = {

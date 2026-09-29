@@ -33,12 +33,13 @@ mueve una cifra a un capítulo, en el mismo commit.
     método de `promises.do` (bloques TABLE I y TABLE III). Cálculo de Montse. Los archivos de
     datos, el `.do` y los PDF de los suplementos no están en el repo.
 - **Clave:** `vanberg-2008` (la cita "Vanberg (2008)" en la prosa).
-- **Abstract** (texto público, **verificado**): fuente de la conclusión que el acto 4 le atribuye,
-  en paráfrasis: el efecto de las promesas no se explica por cambios en lo que el otro espera, y
-  sugiere una preferencia por cumplir la palabra en sí.
-  Usada en: acto 4 (`src/content/acts/{en,es}/04-vanberg.md`).
-- **Uso:** el juego y sus pagos (capítulo 3, «La matriz se dobla»), el diseño del juego de cambio de
-  pareja (la mesa del momento 2), creencias de los receptores y tasas de Roll (acto 4, `/vanberg`).
+- **Abstract** (texto público, **verificado**): fuente de la conclusión que el capítulo 6 le
+  atribuye, en paráfrasis: el efecto de las promesas no se explica por cambios en lo que el otro
+  espera, y sugiere una preferencia por cumplir la palabra en sí.
+  Usada en: capítulo 6, «La gente real» (`src/content/chapters/{en,es}/06-real-people.md`).
+- **Uso:** el juego y sus pagos (capítulos 3 y 5), el diseño del juego de cambio de pareja
+  (capítulos 4 y 5), creencias de los receptores (capítulos 5 y 6) y tasas de Roll (capítulo 6,
+  `/vanberg`).
 - **Verificada:** sí. Las cifras, con los suplementos; la ficha del artículo, en EconPapers.
 - PENDIENTE(pdf): cotejar contra las Tablas I–III impresas y agregar su página cuando esté el PDF
   del artículo. Es lo único pendiente de esta referencia.
@@ -49,8 +50,8 @@ mueve una cifra a un capítulo, en el mismo commit.
   Clave: `vanberg-payoffs`.
   Fuente: Suppl. A, p. 2, tabla "Payoffs From the Decision". **Verificada (suplementos).**
   Usada en: capítulo 3 (`src/lib/table/game.ts`, `PAYOFFS`, a través de `src/lib/film/values.ts`:
-  los boletos, las monedas, el resultado de cada cara del dado y la tabla del storyboard); la mesa
-  del momento 2 (`src/lib/table/moment2.ts`) y su tabla `<noscript>` en `GameTable.astro`.
+  los boletos, las monedas, el resultado de cada cara del dado y la tabla del storyboard); capítulo 5
+  (los boletos de cada carta del mazo, `src/lib/film/deck.ts`).
 - Cifra: Don't Roll: A recibe 14 y B recibe 0.
   Clave: `vanberg-payoffs`.
   Fuente: Suppl. A, p. 2, tabla "Payoffs From the Decision". **Verificada (suplementos).**
@@ -59,50 +60,64 @@ mueve una cifra a un capítulo, en el mismo commit.
   derivan de las dos anteriores; no son cifras nuevas.
   Clave: `vanberg-payoffs`.
   Usada en: capítulo 3, el resultado de tirar (clave `film.fold.out.cost`, con `FILM_VALUES.cost`
-  y `expectedPayoffs`); la mesa del momento 2, fila "Expected" (`expectedPayoffs`).
-- Cifra: probabilidad de cambio de pareja, 1/2 ("en la mitad de las parejas" en el acto 4). El
-  cambio ocurre después de asignar los roles, y solo A sabe si hubo cambio.
+  y `expectedPayoffs`).
+- Cifra: probabilidad de cambio de pareja, 1/2. El cambio ocurre después de asignar los roles, y
+  solo A sabe si hubo cambio.
   Clave: `vanberg-switch`.
   Fuente: Suppl. A, p. 2, Step 3 ("with probability ½"); Suppl. B, p. 1, Screen 1.
   **Verificada (suplementos).**
-  Usada en: la mesa, momento 2 (`src/lib/table/moment2.ts`, `SWITCH_PROBABILITY`); acto 4.
+  Usada en: ya no se muestra; la mesa del momento 2 y el acto 4 salieron en P3. El capítulo 5 dice,
+  sin la cifra, que en el experimento el cambio llegaba al azar y que solo quien decide lo sabe.
 - Cifra: chat antes de conocer el rol, 2 mensajes por persona, de 90 caracteres como máximo.
   Clave: `vanberg-chat`.
   Fuente: Suppl. B, p. 1, Screen 1. **Verificada (suplementos).**
-  Usada en: acto 4.
+  Usada en: ya no se muestra (el acto 4 salió en P3).
 - Cifra: 192 participantes, en 8 rondas, en el tratamiento con cambio de pareja.
   Clave: `vanberg-design`.
   Fuente: 192 en `switch.dat` (sujetos 1–192), que corresponde solo al tratamiento con cambio de
   pareja; los participantes de los tratamientos base (`baseline.dat`) no se cuentan. 8 rondas en
   Suppl. A, p. 1.
   **Verificada (suplementos).**
-  Usada en: acto 4.
+  Usada en: capítulo 6 (`src/lib/vanberg/cells.ts`, `SWITCH_DESIGN`, a través de
+  `src/lib/film/values.ts`). Un test comprueba que las decisiones de las seis celdas de
+  `vanberg-cells` son exactamente las de 192 / 2 personas en 8 rondas: 768.
 - Cifra: lo que espera el otro, "69 / 100" si recibió una promesa y "48 / 100" si no. Es la
   creencia de primer orden de B (`pfob`): su apuesta a que A tira el dado, en una escala de 5
   puntos codificada de 0 a 1, promediada. Con promesa: 0.689 (415.5 / 603). Sin promesa: 0.483
-  (79.75 / 165). La página la muestra sobre 100, nunca como porcentaje, con la nota "Average guess,
-  on a five-point scale read from 0 to 100." / "Promedio de su apuesta, en una escala de cinco
-  puntos leída de 0 a 100." (clave `table.meter.note`).
+  (79.75 / 165).
   Fuente: escala en Suppl. B, pp. 2–3, Screen 5B; valores de `switch.dat` con el método de
   `promises.do`. **Verificada (suplementos).**
   Clave: `vanberg-beliefs`.
-  Usada en: el medidor del momento 2 (`src/lib/table/expectation.ts`, `RECIPIENT_BELIEFS`;
-  claves `table.meter.*`).
+  Usada en: ya no se muestra; el medidor salió con el momento 2 en P3. El código guarda los dos
+  totales (`src/lib/table/expectation.ts`, `RECIPIENT_BELIEFS`): el de con promesa es la suma
+  exacta de las dos celdas de la cifra siguiente.
 - Cifra: lo que esperaban los receptores que recibieron una promesa, "70" sin cambio y "68" con
-  cambio, leídas de 0 a 100 (acto 4). Es la misma creencia de primer orden de B, separada por celda:
-  0.696 sin cambio (n = 309) y 0.682 con cambio (n = 294), redondeadas sobre 100. El 100 del acto 4
-  es el tope de esa lectura, igual que en el medidor.
+  cambio, leídas de 0 a 100. Es la misma creencia de primer orden de B, separada por celda: 0.696
+  sin cambio (n = 309) y 0.682 con cambio (n = 294), redondeadas sobre 100. El 0 y el 100 son los
+  extremos de esa lectura.
   La escala: cinco puntos, de "certainly rolls" («seguro tira») a "certainly doesn't roll" («seguro
-  no tira»), codificados de 0 a 1 y leídos de 0 a 100. El acto 4 la describe así, con "five" /
-  "cinco" escrito con letra.
+  no tira»), codificados de 0 a 1 y leídos de 0 a 100. El capítulo 5 la muestra con esos extremos,
+  en palabras.
   Clave: `vanberg-beliefs`.
   Fuente: `switch.dat` con el método de `promises.do`; escala en Suppl. B, pp. 2–3, Screen 5B.
   **Verificada (suplementos).**
-  Usada en: acto 4.
+  Usada en: capítulo 5, la escala del final (`src/lib/table/expectation.ts`,
+  `PROMISED_RECIPIENT_BELIEFS`, a través de `src/lib/film/values.ts`; claves `film.reveal.*`), con
+  la cita en la leyenda de ese tramo; capítulo 6, el tramo `expected` y las nubes de sus letreros
+  (`src/components/film/Signs.astro`).
+  El código guarda las sumas exactas: 215 / 309 sin cambio y 200.5 / 294 con cambio. Salen de las
+  medias verificadas (0.696 y 0.682), de la escala en cuartos, en la que ninguna otra suma da esas
+  medias, y del total verificado de arriba (415.5 / 603), que suman exactamente
+  (`src/lib/table/expectation.test.ts`). Los n coinciden con las celdas de los dictadores: 309, y
+  238 + 56 = 294.
+  PENDIENTE(datos): que Montse coteje las dos sumas contra `switch.dat`.
+  La apuesta del visitante en el capítulo 5 usa la misma escala de cinco puntos. Sus extremos son los
+  de la pantalla; los tres puntos de en medio («probablemente tira», «puede que sí, puede que no»,
+  «probablemente no tira») son palabras de la página, no citas.
 - Cifra: lo que hicieron los dictadores reales, tasa de Roll por celda (la página redondea a
   entero; el código guarda las cuentas exactas). Se cuentan rondas, no personas: cada decisión de un
-  dictador en una ronda es una observación. El acto 4 lo dice así ("in the rounds where…" / "en las
-  rondas en que…").
+  dictador en una ronda es una observación. El capítulo 6 lo dice así ("in the rounds where…" / "en
+  las rondas en que…").
 
   | Celda                                                      | Roll            |
   | ---------------------------------------------------------- | --------------- |
@@ -111,16 +126,18 @@ mueve una cifra a un capítulo, en el mismo commit.
   | No prometió · misma pareja                                 | 39 / 75 (52 %)   |
   | No prometió · cambio a una pareja a la que otro le prometió | 30 / 56 (54 %)   |
 
-  El titular del reveal es siempre el par 73 % contra 54 % (prometió, sin cambio contra con
-  cambio). El acto 4 cita solo ese par.
+  La película usa solo el par 73 % contra 54 % (prometió, sin cambio contra con cambio): el
+  visitante lo adivina y los letreros del capítulo 6 lo muestran.
   Clave: `vanberg-rates`.
   Fuente: `switch.dat` con el método de `promises.do`. **Verificada (suplementos).**
-  Usada en: el paso final del momento 2 (`src/lib/table/results.ts`, `ROLL_COUNTS`; claves
-  `table.reveal.*`); acto 4.
+  Usada en: capítulo 6 (`src/lib/table/results.ts`, `ROLL_COUNTS`, a través de
+  `src/lib/film/values.ts` y `src/lib/film/guess.ts`: las barras de adivinar, los letreros y su
+  tramo); `/vanberg` (la tabla de celdas, claves `table.*`).
 
 El caso ilustrativo del cambio de pareja ("tu nueva pareja recibió una promesa de otro dictador")
 corresponde exactamente a las filas "cambio a una pareja a la que otro le prometió" de la tabla de
-arriba. Por eso el camino con cambio del visitante siempre resalta una de esas dos celdas.
+arriba. Por eso el mazo del capítulo 5 usa siempre ese caso, y el capítulo 6 compara esa fila con la
+de la misma pareja.
 
 - Cifra: la creencia después de una promesa, "76" de 100, que la curva del acto 5 deja fija (acto 5
   y pie de la gráfica, clave `curve.caption`). Es la creencia de segundo orden de los dictadores sin
@@ -148,7 +165,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   Clave: `vanberg-procedure`.
   Fuente: Suppl. A, p. 1 (rondas, parejas, pago, Step 1 y Step 2); Suppl. B, p. 1, Screen 1 (los
   mensajes se alternan). **Verificada por Montse (F4.1).**
-  Usada en: `/vanberg` (`src/content/subpages/{en,es}/vanberg.md`).
+  Usada en: `/vanberg` (`src/content/subpages/{en,es}/vanberg.md`); capítulo 6, en una frase («con
+  alguien nuevo en cada ronda»).
 - Cifra: el dictador con cambio de pareja puede leer los dos chats: el suyo y el de su nueva pareja
   con otra persona.
   Clave: `vanberg-procedure`.
@@ -244,7 +262,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   *Econometrica*, 74(6), 1579–1601. RePEc:
   <https://ideas.repec.org/a/ecm/emetrp/v74y2006i6p1579-1601.html>
 - **Clave:** `charness-dufwenberg-2006`.
-- **Uso:** aversión a la culpa (acto 3).
+- **Uso:** aversión a la culpa: la voz de lo que el otro espera, en el capítulo 4
+  (`src/content/chapters/{en,es}/04-two-voices.md`).
 - **Verificada:** sí (Montse, F2.1).
 - **Cifras:** —
 
@@ -254,7 +273,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   Economic Review*, 97(2), 170–176. RePEc:
   <https://ideas.repec.org/a/aea/aecrev/v97y2007i2p170-176.html>
 - **Clave:** `battigalli-dufwenberg-2007`.
-- **Uso:** aversión a la culpa (acto 3).
+- **Uso:** aversión a la culpa: la voz de lo que el otro espera, en el capítulo 4
+  (`src/content/chapters/{en,es}/04-two-voices.md`).
 - **Verificada:** sí (Montse, F2.1).
 - **Cifras:** —
 

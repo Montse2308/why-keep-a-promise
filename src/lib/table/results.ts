@@ -24,8 +24,3 @@ export function rollShare(cell: CellKey): Fraction {
   const { rolled, n } = ROLL_COUNTS[cell];
   return fraction(rolled, n);
 }
-
-/** The cell of the visitor's own path. A switched partner is always the illustrative case. */
-export function cellFor(promised: boolean, partner: Partner): CellKey {
-  return `${promised ? 'promised' : 'not-promised'}-${partner}`;
-}

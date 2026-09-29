@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { add, fraction, outOf100 } from '../table/fraction';
 import { ROLL_COUNTS } from '../table/results';
-import { BASELINE, beliefOutOf100, cell, rollPercent, SWITCH_CELLS } from './cells';
+import { BASELINE, beliefOutOf100, cell, rollPercent, SWITCH_CELLS, SWITCH_DESIGN } from './cells';
 
 describe("the partner-switch treatment's cells", () => {
   it('has six cells: promised or not, by the partner faced', () => {
@@ -9,7 +9,13 @@ describe("the partner-switch treatment's cells", () => {
     expect(new Set(SWITCH_CELLS.map((c) => `${c.promised}-${c.partner}`)).size).toBe(6);
   });
 
-  it('agrees with the four cells the table reveals in moment 2', () => {
+  it('holds every decision of the treatment: half of its 192 people decide in each of its 8 rounds', () => {
+    const decisions = SWITCH_CELLS.reduce((sum, c) => sum + c.n, 0);
+    expect(decisions).toBe((SWITCH_DESIGN.people / 2) * SWITCH_DESIGN.rounds);
+    expect(SWITCH_DESIGN).toEqual({ people: 192, rounds: 8 });
+  });
+
+  it('agrees with the four cells whose roll counts the film uses', () => {
     expect(cell(true, 'same')).toMatchObject(ROLL_COUNTS['promised-same']);
     expect(cell(false, 'same')).toMatchObject(ROLL_COUNTS['not-promised-same']);
     expect(cell(true, 'new-promised')).toMatchObject(ROLL_COUNTS['promised-switched']);

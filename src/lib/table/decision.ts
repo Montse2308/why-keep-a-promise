@@ -2,8 +2,7 @@
  * The decision at the table (chapter 3; ADR 0023, interaction 5): keep the money or roll the die,
  * with Vanberg's payoffs (`PAYOFFS`). The visitor decides once:
  * idle → chosen(roll | dont) → [roll only: die] → outcome.
- * An event that is illegal in the current state returns that same state object. The previous
- * version's moment 2 (act 4) reuses the outcome of a decision.
+ * An event that is illegal in the current state returns that same state object.
  */
 import type { Fraction } from './fraction';
 import { expectedPayoffs, realizedPayoffs, throwDie, type Choice, type Face, type Payoffs, type Rng } from './game';

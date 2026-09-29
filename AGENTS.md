@@ -18,9 +18,9 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). The film tells
-chapters 0 to 3 (P1–P2); below it, the previous version still shows acts 3 to 6, the table's
-moment 2 and the home sections. The film replaces them chapter by chapter; each chapter removes
-what it replaces, in the same commit as its tests.
+chapters 0 to 6 (P1–P3); below it, the previous version still shows acts 5 and 6 and the home
+sections. The film replaces them chapter by chapter; each chapter removes what it replaces, in the
+same commit as its tests.
 
 ## Reading order
 
@@ -81,8 +81,8 @@ which are marked as such.
 src/
   config.ts              author links, manuscript status (it also opens the lock)
   content.config.ts      content collections (frontmatter schemas)
-  content/acts/{en,es}/  previous version: the prose of acts 3 to 6; the film tells acts 1 and 2, and
-                         replaces the rest in P3–P4
+  content/acts/{en,es}/  previous version: the prose of acts 5 and 6; the film tells acts 1 to 4, and
+                         replaces the rest in P4
   content/chapters/{en,es}/  (P1+) the film's captions, one file per chapter, split into beats by
                          <!-- beat:… --> marks; a number is a {placeholder}, never a figure
   content/subpages/{en,es}/  notebook prose; <!-- slot:… --> and <!-- lock --> markers
@@ -101,15 +101,15 @@ src/
                          captions.ts (beats in Markdown); values.ts (every number the film says,
                          from the pure modules); lines.ts (what it says after each choice);
                          board.ts, parts.ts (the board, coins, die and where each part goes);
-                         talk.ts (chapter 2's chat)
+                         talk.ts (chapter 2's chat); voices.ts (the two voices, chapter 4 on);
+                         deck.ts, bet.ts (chapter 5's deck and bet); guess.ts, signs.ts (chapter 6)
     chapters.ts          (P1+) the nine chapters, their ids, order and beats
     acts.ts, sections.ts previous version: the acts and the home's order
     design/              film.ts (the film's colours and the day's light; film.css mirrors it),
                          palette.ts (the notebook and the previous version), colour maths
     subpages.ts          splits notebook prose at its slot and lock markers
-    table/               Vanberg's game: exact payoffs (PAYOFFS), the decision (chapter 3),
-                         moment 2 logic (previous version, until P3), recipient beliefs, real roll
-                         counts
+    table/               Vanberg's game: exact payoffs (PAYOFFS), the decision (chapter 3), the
+                         recipients' beliefs and scale, real roll counts, exact fractions
     pd/                  the prisoner's dilemma: its payoffs, the one round of chapter 1 and the
                          best reply
     curve/               reads curve.json (build time only), step-chart geometry, the curve control;
@@ -117,11 +117,11 @@ src/
     vanberg/             every cell of the switch treatment and the baselines, exact counts
   assets/fonts/          self-hosted woff2, OFL licences, provenance
   styles/                tokens.css, base.css
-  components/            previous version: Act, HomeSection, table/ (GameTable, moment 2 only),
-                         pd/BestResponse (on /dilemma until P5); vanberg/SwitchTable, curve/Curve +
-                         Locked (the stub a locked build uses), LanguageSwitch, SiteFooter
+  components/            previous version: Act, HomeSection, pd/BestResponse (on /dilemma until
+                         P5); vanberg/SwitchTable, curve/Curve + Locked (the stub a locked build
+                         uses), LanguageSwitch, SiteFooter
                          film/ (P1+: Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
-                         chapters/ one per chapter, film.ts), notebook/ (P5, the panel)
+                         Voices, Signs, chapters/ one per chapter, film.ts), notebook/ (P5, the panel)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale

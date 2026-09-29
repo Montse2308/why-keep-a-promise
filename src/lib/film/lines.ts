@@ -10,8 +10,10 @@ import { otherMove, type Move } from '../pd/game';
 import type { Round } from '../pd/round';
 import type { Outcome } from '../table/decision';
 import { toNumber } from '../table/fraction';
-import { PAYOFFS } from '../table/game';
+import { PAYOFFS, type Choice } from '../table/game';
 import { fill } from '../template';
+import { BET_LABEL, type Bet } from './bet';
+import { promiseAfter, type Card } from './deck';
 import { FILM_VALUES } from './values';
 
 /** Looks up a UI string. */
@@ -65,4 +67,26 @@ export function decisionLine(tr: Strings, outcome: Outcome): string {
   const shown = fill(tr(failed ? 'film.fold.out.fail' : 'film.fold.out.roll'), { face: outcome.face, you, other });
   const cost = fill(tr('film.fold.out.cost'), { cost: FILM_VALUES.cost, expected: toNumber(outcome.expected.other) });
   return `${shown} ${cost}`;
+}
+
+/**
+ * What a decision on a card of the deck leads to (chapter 5): the promise kept or broken with the
+ * person the visitor promised; with a new partner, only that they had been promised nothing. It
+ * says what happened, never which reason moved the visitor (ADR 0023).
+ */
+export function deckLine(tr: Strings, card: Card, choice: Choice): string {
+  const promise = promiseAfter(card, choice);
+  const key: UiKey =
+    promise === 'kept' ? 'film.deck.out.kept' : promise === 'broken' ? 'film.deck.out.broken' : choice === 'roll' ? 'film.deck.out.rolled' : 'film.deck.out.kept-money';
+  return fill(tr(key), FILM_VALUES);
+}
+
+/** The deck done: how many of the visitor's promises they kept. No payoffs are added up (rule (f)). */
+export function tallyLine(tr: Strings, tally: { readonly kept: number; readonly made: number }): string {
+  return fill(tr('film.deck.tally'), { kept: tally.kept, made: tally.made });
+}
+
+/** The visitor's bet, in the scale's words. */
+export function betLine(tr: Strings, bet: Bet): string {
+  return fill(tr('film.bet.out'), { bet: tr(BET_LABEL[bet]) });
 }

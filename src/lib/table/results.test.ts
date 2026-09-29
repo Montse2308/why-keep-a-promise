@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { recipientAfterDraw } from './expectation';
+import { SWITCHED_PARTNER_RECEIVED_PROMISE } from './expectation';
 import { fraction, outOf100 } from './fraction';
-import { moment2, MOMENT2_START, type Moment2Event, type Moment2State } from './moment2';
-import { cellFor, CELLS, HEADLINE, ROLL_COUNTS, rollShare } from './results';
-import { sequence } from './testing';
+import { CELLS, HEADLINE, ROLL_COUNTS, rollShare } from './results';
 
 describe('what real dictators did', () => {
   it('keeps the exact counts', () => {
@@ -24,37 +22,9 @@ describe('what real dictators did', () => {
     expect(HEADLINE).toEqual(['promised-same', 'promised-switched']);
     expect(HEADLINE.map((cell) => outOf100(rollShare(cell)))).toEqual([73, 54]);
   });
-});
 
-describe('the visitor’s cell in the reveal', () => {
-  const SWITCHED = 0;
-  const SAME = 0.5;
-  const reveal = (promised: boolean, draw: number): Moment2State => {
-    const events: Moment2Event[] = [
-      { type: 'promise', promised },
-      { type: 'draw' },
-      { type: 'choose', choice: 'dont' },
-      { type: 'settle' },
-      { type: 'reveal' },
-    ];
-    const rng = sequence(draw);
-    return events.reduce((state, event) => moment2(state, event, rng), MOMENT2_START);
-  };
-
-  it.each([
-    [true, SAME, 'promised-same'],
-    [true, SWITCHED, 'promised-switched'],
-    [false, SAME, 'not-promised-same'],
-    [false, SWITCHED, 'not-promised-switched'],
-  ] as const)('promised=%s, draw=%s → %s', (promised, draw, expected) => {
-    const state = reveal(promised, draw);
-    if (state.phase !== 'reveal') throw new Error('expected reveal');
-    expect(cellFor(state.promised, state.partner)).toBe(expected);
-  });
-
-  it('a switched partner is always one promised by another dictator, matching the switched rows', () => {
-    for (const promised of [true, false]) {
-      expect(recipientAfterDraw(promised, 'switched').promiser).toBe('another-dictator');
-    }
+  it('counts, after a switch, only new partners promised by another dictator: the fixed case the film uses', () => {
+    expect(SWITCHED_PARTNER_RECEIVED_PROMISE).toBe(true);
+    for (const cell of CELLS.filter((c) => c.endsWith('-switched'))) expect(ROLL_COUNTS[cell].n).toBeGreaterThan(0);
   });
 });

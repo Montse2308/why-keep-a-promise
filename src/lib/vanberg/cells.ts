@@ -46,6 +46,12 @@ export function beliefOutOf100(c: SwitchCell): number {
   return outOf100(fraction(num, den * c.n));
 }
 
+/**
+ * The partner-switch treatment: 192 people over 8 rounds (docs/sources.md, `vanberg-design`). Half of
+ * them decide in each round, so its dictators made people / 2 · rounds decisions, the cells above.
+ */
+export const SWITCH_DESIGN = { people: 192, rounds: 8 } as const;
+
 /** The baseline treatments of Vanberg's Appendix A (baseline.dat): the same game with and without the chat. */
 export const BASELINE = {
   chat: { rolled: 92, n: 128 },

@@ -18,9 +18,12 @@ import { FILM_VALUES } from '../../lib/film/values';
 import { fill } from '../../lib/template';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import Arrival from './chapters/Arrival.astro';
+import Blackout from './chapters/Blackout.astro';
 import Fold from './chapters/Fold.astro';
+import RealPeople from './chapters/RealPeople.astro';
 import Talk from './chapters/Talk.astro';
 import TwoRooms from './chapters/TwoRooms.astro';
+import TwoVoices from './chapters/TwoVoices.astro';
 import World from './World.astro';
 
 interface Props {
@@ -82,6 +85,9 @@ const of = (id: ChapterId) => {
     <TwoRooms locale={locale} {...of('two-rooms')} />
     <Talk locale={locale} {...of('talk')} />
     <Fold locale={locale} {...of('fold')} />
+    <TwoVoices locale={locale} {...of('two-voices')} />
+    <Blackout locale={locale} {...of('blackout')} />
+    <RealPeople locale={locale} {...of('real-people')} />
   </div>
   <div class="film__fade" aria-hidden="true"></div>
 </section>
@@ -94,6 +100,8 @@ const of = (id: ChapterId) => {
 <style>
   .film {
     position: relative;
+    /* A card swiped or flying off the deck never widens the page; clip keeps the stage sticky. */
+    overflow-x: clip;
     color: var(--film-ink);
     font-family: var(--font-body, system-ui, sans-serif);
     background: linear-gradient(#ffc58f, #ffe6cf);

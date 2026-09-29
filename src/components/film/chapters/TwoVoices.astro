@@ -1,0 +1,116 @@
+---
+/**
+ * Chapter 4, two voices (ADR 0021, ADR 0027): the two reasons come to float over the circle, a lilac
+ * cloud for what the other expects and a paper scroll for my word. They cite guilt aversion as it is
+ * registered, and they almost always say the same; Vanberg's (2008) trick to tell them apart is to
+ * change the person, and in his reading each voice then predicts something else (rule (k)). The
+ * visitor only watches.
+ */
+import { beat, chapter } from '../../../lib/chapters';
+import { FILM } from '../../../lib/design/film';
+import { KEY_POSE, stageAt } from '../../../lib/film/stage';
+import { useTranslations, type Locale } from '../../../lib/i18n';
+import { roundOf } from '../../../lib/pd/round';
+import { outcomeOf } from '../../../lib/table/decision';
+import { fill } from '../../../lib/template';
+import Beat from '../Beat.astro';
+import Chapter from '../Chapter.astro';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  captions: ReadonlyMap<string, string>;
+}
+
+const { locale, title, captions } = Astro.props;
+const tr = useTranslations(locale);
+const voices = beat('two-voices', 'voices');
+const together = beat('two-voices', 'together');
+const trick = beat('two-voices', 'trick');
+
+// The storyboard's still frame: the voices over the circle, as if the visitor had kept the promise.
+const still = stageAt(
+  KEY_POSE['two-voices'] ?? 0,
+  { promised: true, round: roundOf('cooperate'), chat: 'promise', decision: { phase: 'outcome', ...outcomeOf('roll', 4) } },
+  false,
+  true,
+);
+---
+
+<Chapter locale={locale} id="two-voices" labelledby="two-voices-title" still={still} stillLabel={tr('film.two-voices.still')}>
+  <Beat id={voices.id} screens={voices.screens} caption={captions.get(voices.id)}>
+    <h2 slot="top" id="two-voices-title" class="card__chapter">
+      <span>{fill(tr('film.chapter'), { n: chapter('two-voices').number })}</span>
+      <span aria-hidden="true">·</span>
+      <span>{title}</span>
+    </h2>
+  </Beat>
+
+  <Beat id={together.id} screens={together.screens} caption={captions.get(together.id)} />
+
+  <Beat id={trick.id} screens={trick.screens} caption={captions.get(trick.id)}>
+    <ul class="voices" role="list">
+      <li class="voice">
+        <svg class="voice__icon" viewBox="-100 -64 200 112" aria-hidden="true">
+          <path d="M-62 30 C-92 30 -92 -14 -60 -14 C-58 -46 -14 -54 0 -30 C14 -56 64 -44 58 -12 C90 -10 88 30 58 30 Z" fill={FILM['voice-expects']} stroke={FILM.ink} stroke-width="9" stroke-linejoin="round" />
+          <circle cx="-14" cy="-2" r="9" fill="#fff" /><circle cx="18" cy="-2" r="9" fill="#fff" />
+          <circle cx="-10" cy="0" r="5" fill={FILM.ink} /><circle cx="22" cy="0" r="5" fill={FILM.ink} />
+        </svg>
+        <p><b>{tr('film.voice.expects')}</b> <span>{fill(tr('film.quote'), { text: tr('film.two-voices.says.expects') })}</span></p>
+      </li>
+      <li class="voice">
+        <svg class="voice__icon" viewBox="-100 -64 200 140" aria-hidden="true">
+          <path d="M-70 -34 H70 A10 10 0 0 1 70 -14 V40 A10 10 0 0 0 70 60 H-70 A10 10 0 0 1 -70 40 V-14 A10 10 0 0 0 -70 -34 Z" fill={FILM['voice-word']} stroke={FILM.ink} stroke-width="9" stroke-linejoin="round" />
+          <circle cx="-22" cy="-4" r="9" fill="#fff" /><circle cx="22" cy="-4" r="9" fill="#fff" />
+          <circle cx="-22" cy="-2" r="5" fill={FILM.ink} /><circle cx="22" cy="-2" r="5" fill={FILM.ink} />
+          <circle cy="40" r="13" fill={FILM.thread} stroke={FILM['thread-edge']} stroke-width="4" />
+        </svg>
+        <p><b>{tr('film.voice.word')}</b> <span>{fill(tr('film.quote'), { text: tr('film.two-voices.says.word') })}</span></p>
+      </li>
+    </ul>
+  </Beat>
+</Chapter>
+
+<style>
+  .voices {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Each voice speaks in its own colour, with its own shape: the colour never goes alone. */
+  .voice {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .voice p {
+    margin: 0;
+    display: grid;
+    gap: 0.1rem;
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+
+  .voice b {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--film-card-muted);
+  }
+
+  .voice span {
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 800;
+  }
+
+  .voice__icon {
+    width: 3rem;
+    height: auto;
+  }
+</style>

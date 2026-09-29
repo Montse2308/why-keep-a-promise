@@ -49,11 +49,9 @@ const byAct = (locale: Locale, act: number) => actFiles.find((f) => f.locale ===
 const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
 
 /** The acts still on `/`, by number: the film tells the others now, and their prose is retired (ADR 0021). */
-const WRITTEN_ACTS = [3, 4, 5, 6] as const;
+const WRITTEN_ACTS = [5, 6] as const;
 /** Words per act and language. R4 shortened acts 1–4 and 6 (ADR 0019); act 5 keeps its F3.1 budget. */
 const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: boolean }> = {
-  3: { max: 110, tables: false }, // the predictions table comes on top of the budget
-  4: { max: 230, tables: true },
   5: { max: 420, tables: true },
   6: { max: 145, tables: true },
 };
@@ -66,7 +64,7 @@ describe('act files', () => {
     expect(ACTS.filter((act) => !act.film).map((act) => ACTS.indexOf(act) + 1)).toEqual([...WRITTEN_ACTS]);
     for (const locale of LOCALES) {
       const names = actFiles.filter((f) => f.locale === locale).map((f) => f.name).sort();
-      expect(names).toEqual(['03-two-reasons', '04-vanberg', '05-finding', '06-how-its-built']);
+      expect(names).toEqual(['05-finding', '06-how-its-built']);
     }
   });
 
@@ -233,12 +231,12 @@ describe('voice', () => {
     expect(bySubpage('es', 'dilemma')?.body.replace(/\s+/g, ' ')).toMatch(/«[^»]+» \(traducción propia\)/);
   });
 
-  it("ends act 4 at Vanberg's conclusion and opens act 5 with the transition", () => {
+  it("ends chapter 6 at Vanberg's conclusion, where act 4 ended, and act 5 opens with the transition", () => {
     const conclusion = { en: "a preference for keeping one's word in itself.", es: 'una preferencia por cumplir la palabra en sí.' };
     const transition = { en: "Vanberg's design separates", es: 'El diseño de Vanberg separa' };
     for (const locale of LOCALES) {
-      expect(byAct(locale, 4)?.body).not.toContain('TODO(');
-      expect(byAct(locale, 4)?.body.trim().replace(/\s+/g, ' ').endsWith(conclusion[locale])).toBe(true);
+      const sixth = Object.entries(captionSources).find(([path]) => path.endsWith(`/chapters/${locale}/06-real-people.md`))?.[1] ?? '';
+      expect(sixth.trim().replace(/\s+/g, ' ').endsWith(conclusion[locale])).toBe(true);
       expect(byAct(locale, 5)?.body.trim().startsWith(transition[locale])).toBe(true);
     }
   });
@@ -265,12 +263,6 @@ describe('voice', () => {
 });
 
 describe('the acts still to be replaced (R4, ADR 0019)', () => {
-  it.each(LOCALES)('%s: act 4 keeps its cited figures, without the steps', (locale) => {
-    const body = byAct(locale, 4)?.body ?? '';
-    expect(body).not.toMatch(/^\s*\d+\.\s/m);
-    for (const figure of ['192', '8', '73', '54', '70', '68']) expect(numbersIn(readable(body))).toContain(figure);
-  });
-
   it.each(LOCALES)('%s: act 6 is about the page only; the engine is in "The research"', (locale) => {
     expect(byAct(locale, 6)?.body ?? '').not.toMatch(/engine|motor|simulat|simulaci/i);
   });
@@ -297,7 +289,7 @@ describe('subpages only add to their act, or to the film that tells it now (rule
   });
 
   it('would catch a sentence copied from the act', () => {
-    const act = byAct('en', 4)?.body ?? '';
+    const act = byAct('en', 5)?.body ?? '';
     const copied = sentences(act)[2] ?? '';
     expect(copied.length).toBeGreaterThan(0);
     expect(new Set(sentences(act)).has(sentences(`Intro. ${copied}`)[1] ?? '')).toBe(true);

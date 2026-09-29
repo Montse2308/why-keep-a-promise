@@ -4,7 +4,6 @@ import Act from '../components/Act.astro';
 import HomeSection from '../components/HomeSection.astro';
 import Curve from '../components/curve/Curve.astro';
 import Film from '../components/film/Film.astro';
-import GameTable from '../components/table/GameTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { MANUSCRIPT_STATUS } from '../config';
 import { ACTS } from '../lib/acts';
@@ -62,7 +61,6 @@ const blocks = homeBlocks().map((block) => {
         </Act>
       ) : (
         <Act act={act} locale={locale} title={entry?.data.title} pending={!Content}>
-          {act.id === 'vanberg' && <GameTable locale={locale} id="table-vanberg" />}
           {Content && <Content />}
         </Act>
       );

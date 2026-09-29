@@ -134,3 +134,86 @@ describe('chapter 3, the matrix folds (rule (g))', () => {
     expect(decide.toLocaleLowerCase('und')).not.toMatch(/prisoner|prisionero/);
   });
 });
+
+describe('chapter 4, two voices (rule (k))', () => {
+  const names = {
+    en: ['what the other expects', 'guilt aversion', 'your word'],
+    es: ['lo que el otro espera', 'aversión a la culpa', 'tu palabra'],
+  } as const;
+
+  it.each(LOCALES)('%s: presents the two reasons with the guilt-aversion citations and Vanberg’s reading', (locale) => {
+    const text = readable(captionsOf(locale, 'two-voices')?.body ?? '');
+    for (const name of names[locale]) expect(text.replace(/\s+/g, ' ').toLocaleLowerCase('und')).toContain(name);
+    expect(citationsIn(text).sort()).toEqual(['Battigalli+Dufwenberg 2007', 'Charness+Dufwenberg 2006', 'Vanberg 2008']);
+  });
+
+  it.each(LOCALES)('%s: names the voices as the character sheet does, and gives each its prediction', (locale) => {
+    const d = dictionaries[locale];
+    expect([d['film.voice.expects'], d['film.voice.word']]).toEqual(locale === 'en' ? ['What the other expects', 'My word'] : ['Lo que el otro espera', 'Mi palabra']);
+    expect(d['film.two-voices.says.expects']).not.toBe(d['film.two-voices.says.word']);
+  });
+});
+
+describe('chapter 5, the blackout (rule (k))', () => {
+  const fixed = { en: /fixed (case|example)/, es: /(caso|ejemplo) fijo/ } as const;
+
+  it.each(LOCALES)('%s: says on screen that the switch is always the same fixed case', (locale) => {
+    const text = readable(captionsOf(locale, 'blackout')?.body ?? '').replace(/\s+/g, ' ').toLocaleLowerCase('und');
+    expect(text).toMatch(fixed[locale]);
+    // Once when the visitor decides, and again when the visitor receives.
+    expect(text.match(new RegExp(fixed[locale].source, 'g'))?.length).toBe(2);
+  });
+
+  it.each(LOCALES)('%s: cites Vanberg (2008) where it shows what the real recipients bet', (locale) => {
+    const reveal = (captionsOf(locale, 'blackout')?.body ?? '').split('<!-- beat:reveal -->')[1] ?? '';
+    expect(citationsIn(readable(reveal))).toContain('Vanberg 2008');
+    const d = dictionaries[locale];
+    expect(numbersIn(fill(`${d['film.reveal.same']} ${d['film.reveal.switched']}`, FILM_VALUES))).toEqual([
+      String(FILM_VALUES.expectsame),
+      String(FILM_VALUES.expectswitched),
+    ]);
+  });
+});
+
+describe('the experiment’s results only in chapters 5 and 6 (rule (k))', () => {
+  const RESULTS = ['73', '54', '70', '68'];
+  const THEIRS = new Set(['blackout', 'real-people']);
+
+  it.each(files.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s shows them only if it is chapter 5 or 6', (_name, file) => {
+    const shown = numbersIn(readable(filled(file))).filter((n) => RESULTS.includes(n));
+    if (!THEIRS.has(file.chapter)) expect(shown).toEqual([]);
+  });
+
+  it.each(LOCALES)('%s: the film’s UI strings show them only in chapters 5 and 6', (locale) => {
+    for (const [key, value] of filmKeys(locale)) {
+      let text = value;
+      try {
+        text = fill(value, FILM_VALUES);
+      } catch {
+        // A string with placeholders of its own is filled by its chapter, never with the results.
+      }
+      const shown = numbersIn(text).filter((n) => RESULTS.includes(n));
+      if (shown.length > 0) expect(key, key).toMatch(/^film\.(reveal|real-people)\./);
+    }
+  });
+});
+
+describe('chapter 6, the real people (rule (k))', () => {
+  it.each(LOCALES)('%s: tells what the people of the experiment did, with the figures of act 4 it replaces, and their citation', (locale) => {
+    const text = readable(filled(captionsOf(locale, 'real-people')));
+    for (const figure of ['192', '8', '73', '54', '70', '68']) expect(numbersIn(text)).toContain(figure);
+    expect(citationsIn(text)).toContain('Vanberg 2008');
+  });
+
+  it.each(LOCALES)('%s: counts rounds, not people, in the share that rolled', (locale) => {
+    const text = readable(captionsOf(locale, 'real-people')?.body ?? '').replace(/\s+/g, ' ').toLocaleLowerCase('und');
+    expect(text).toMatch(locale === 'en' ? /in the rounds where/ : /en las rondas en que/);
+  });
+
+  it.each(LOCALES)('%s: sets the guess beside the figure and says nothing about it', (locale) => {
+    const out = dictionaries[locale]['film.real-people.guess.out'];
+    expect(out).toContain('{real}');
+    expect(out).toContain('{guess}');
+    expect(out).not.toMatch(locale === 'en' ? /close|far|right|wrong|good|better/i : /cerca|lejos|acert|fall|bien|mejor/i);
+  });
+});

@@ -1,0 +1,86 @@
+---
+/**
+ * The two voices (ADR 0027): what the other expects, a lilac cloud with the other's face waiting in
+ * its globe; and my word, a paper scroll sealed with the golden thread. Drawn as paper cut-outs like
+ * the cast, at the places the stage gives them; the film's script turns their pupils towards what
+ * each one looks at and pops them in as they come. Parts carry `data-part`.
+ */
+import { FILM } from '../../lib/design/film';
+import type { StageView } from '../../lib/film/stage';
+import { GLOBE_AT, lookAt } from '../../lib/film/voices';
+import { voiceTransform } from '../../lib/film/parts';
+import Character from './Character.astro';
+
+interface Props {
+  voices: StageView['voices'];
+  shadow: string;
+  /** Prefix for this drawing's gradient ids. */
+  uid: string;
+}
+
+const { voices, shadow, uid } = Astro.props;
+const glow = `${uid}-glow`;
+const look = {
+  expects: lookAt(voices.at.expects, voices.look.expects),
+  word: lookAt(voices.at.word, voices.look.word),
+};
+const pupils = ([x, y]: readonly [number, number]) => `translate(${x.toFixed(1)} ${y.toFixed(1)})`;
+const cloud = 'M-62 30 C-92 30 -92 -14 -60 -14 C-58 -46 -14 -54 0 -30 C14 -56 64 -44 58 -12 C90 -10 88 30 58 30 Z';
+// A wax seal: a gold disc with a scalloped edge, the thread wound in its middle.
+const at = (r: number, turn: number) => `${(r * Math.cos(turn * 2 * Math.PI)).toFixed(1)} ${(r * Math.sin(turn * 2 * Math.PI)).toFixed(1)}`;
+const seal = `M${at(15, 0)} ${Array.from({ length: 10 }, (_, i) => `Q${at(21, (i + 0.5) / 10)} ${at(15, (i + 1) / 10)}`).join(' ')} Z`;
+const scroll = 'M-70 -34 H70 A10 10 0 0 1 70 -14 V40 A10 10 0 0 0 70 60 H-70 A10 10 0 0 1 -70 40 V-14 A10 10 0 0 0 -70 -34 Z';
+---
+
+<defs>
+  <radialGradient id={glow}>
+    <stop offset="0" stop-color={FILM.lamp} stop-opacity="0.95" />
+    <stop offset="0.55" stop-color={FILM.lamp} stop-opacity="0.45" />
+    <stop offset="1" stop-color={FILM.lamp} stop-opacity="0" />
+  </radialGradient>
+</defs>
+<g data-part="voices" opacity={voices.shown}>
+  <g data-part="voice-word" transform={voiceTransform(voices.at.word, voices.shown)}>
+    <circle r="120" fill={`url(#${glow})`} opacity={voices.glow} data-part="word-glow" />
+    <g filter={`url(#${shadow})`}>
+      <path d={scroll} fill={FILM.ink} stroke={FILM.ink} stroke-width="13" stroke-linejoin="round" />
+      <path d={scroll} fill={FILM['voice-word']} stroke={FILM.rim} stroke-width="7" stroke-linejoin="round" />
+    </g>
+    <path d="M-52 -14 H52 M-52 36 H52" stroke={FILM['thread-edge']} stroke-width="2" opacity="0.25" />
+    <ellipse cx="-22" cy="-6" rx="12" ry="14" fill="#fff" stroke={FILM.ink} stroke-width="2" />
+    <ellipse cx="22" cy="-6" rx="12" ry="14" fill="#fff" stroke={FILM.ink} stroke-width="2" />
+    <g data-part="word-pupils" transform={pupils(look.word)}>
+      <circle cx="-22" cy="-4" r="6" fill={FILM.ink} />
+      <circle cx="22" cy="-4" r="6" fill={FILM.ink} />
+    </g>
+    <path d="M-34 -28 L-12 -26 M34 -28 L12 -26" stroke={FILM.ink} stroke-width="4.5" stroke-linecap="round" />
+    <path d="M-12 18 L12 18" stroke={FILM.ink} stroke-width="4.5" stroke-linecap="round" />
+    <g transform="translate(0 44)">
+      <path d={seal} fill={FILM.thread} stroke={FILM['thread-edge']} stroke-width="3" stroke-linejoin="round" />
+      <circle r="8" fill="none" stroke={FILM['thread-edge']} stroke-width="2.5" />
+      <circle r="3" fill={FILM['thread-edge']} />
+    </g>
+  </g>
+
+  <g data-part="voice-expects" transform={voiceTransform(voices.at.expects, voices.shown)}>
+    <g transform={`translate(${GLOBE_AT[0]} ${GLOBE_AT[1]})`}>
+      <circle cx="-44" cy="40" r="6" fill={FILM.rim} stroke={FILM.ink} stroke-width="3.5" />
+      <circle cx="-30" cy="26" r="9" fill={FILM.rim} stroke={FILM.ink} stroke-width="3.5" />
+      <ellipse rx="34" ry="28" fill={FILM.rim} stroke={FILM.ink} stroke-width="3.5" />
+      <g transform="scale(0.24)" opacity={voices.globe === 'other' ? 1 : 0} data-part="globe-other"><Character kind="square" mood="happy" shadow={shadow} /></g>
+      <g transform="scale(0.24)" opacity={voices.globe === 'partner' ? 1 : 0} data-part="globe-partner"><Character kind="triangle" mood="happy" shadow={shadow} /></g>
+    </g>
+    <g filter={`url(#${shadow})`}>
+      <path d={cloud} fill={FILM.ink} stroke={FILM.ink} stroke-width="13" stroke-linejoin="round" />
+      <path d={cloud} fill={FILM['voice-expects']} stroke={FILM.rim} stroke-width="7" stroke-linejoin="round" />
+    </g>
+    <ellipse cx="-14" cy="-2" rx="12" ry="14" fill="#fff" />
+    <ellipse cx="18" cy="-2" rx="12" ry="14" fill="#fff" />
+    <g data-part="expects-pupils" transform={pupils(look.expects)}>
+      <circle cx="-14" cy="0" r="6" fill={FILM.ink} />
+      <circle cx="18" cy="0" r="6" fill={FILM.ink} />
+    </g>
+    <path d="M-26 -24 L-4 -30 M30 -24 L8 -30" stroke={FILM.ink} stroke-width="4.5" stroke-linecap="round" />
+    <path d="M-6 20 Q2 14 10 20" stroke={FILM.ink} stroke-width="4.5" fill="none" stroke-linecap="round" />
+  </g>
+</g>

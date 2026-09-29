@@ -1,0 +1,429 @@
+---
+/**
+ * Chapter 5, the blackout (ADR 0021, ADR 0023): the lights go out and someone else sits in the
+ * other's seat; only the one who decides knows. The new partner holds a promise from someone else,
+ * the fixed illustrative case, and the film says so (rule (k)). Then a short deck, a different person
+ * on every card, decided with tickets or by swiping; at the end, how many promises the visitor kept,
+ * never a sum of payoffs (rule (f)). Last, the visitor receives: they bet on the five-point scale,
+ * and the lights flicker to show the switch they could not see, with what real recipients bet.
+ * Every line a choice leads to is resolved here; ./film.ts only shows it.
+ */
+import { beat, chapter } from '../../../lib/chapters';
+import { FILM } from '../../../lib/design/film';
+import { BET_LABEL, BET_START, betAt, BETS } from '../../../lib/film/bet';
+import { DECK, tally } from '../../../lib/film/deck';
+import { betLine, deckLine, tallyLine } from '../../../lib/film/lines';
+import { KEY_POSE, stageAt } from '../../../lib/film/stage';
+import { FILM_VALUES } from '../../../lib/film/values';
+import { useTranslations, type Locale, type UiKey } from '../../../lib/i18n';
+import { roundOf } from '../../../lib/pd/round';
+import { outcomeOf } from '../../../lib/table/decision';
+import { CHOICES } from '../../../lib/table/game';
+import { fill } from '../../../lib/template';
+import Beat from '../Beat.astro';
+import Chapter from '../Chapter.astro';
+import Ticket from '../Ticket.astro';
+import Tickets from '../Tickets.astro';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  captions: ReadonlyMap<string, string>;
+}
+
+const { locale, title, captions } = Astro.props;
+const tr = useTranslations(locale);
+const values = (key: UiKey) => fill(tr(key), FILM_VALUES);
+const [blackout, newPartner, deck, receive, reveal] = (['blackout', 'new-partner', 'deck', 'receive', 'reveal'] as const).map((id) => beat('blackout', id));
+if (!blackout || !newPartner || !deck || !receive || !reveal) throw new Error('Chapter 5 is missing a beat');
+
+const cards = DECK.map((card, i) => ({
+  ...card,
+  count: fill(tr('film.deck.count'), { n: i + 1, total: DECK.length }),
+  // Keeping the money on the left and rolling on the right, as the card is swiped.
+  said: [...CHOICES].reverse().map((choice) => [choice, deckLine(tr, card, choice)] as const),
+}));
+/** The deck's last line, for every number of promises the visitor may have kept. */
+const made = tally({ choices: [] }).made;
+const tallies = JSON.stringify(Object.fromEntries(Array.from({ length: made + 1 }, (_, kept) => [kept, tallyLine(tr, { kept, made })])));
+const bets = JSON.stringify(Object.fromEntries(BETS.map((bet) => [bet, { label: tr(BET_LABEL[bet]), said: betLine(tr, bet), at: betAt(bet) }])));
+const TRIANGLE = 'M0 -9.5 L9.5 7.5 L-9.5 7.5 Z';
+const counts = { same: DECK.filter((c) => c.partner === 'same').length, switched: DECK.filter((c) => c.partner === 'switched').length };
+
+// The storyboard's still frame: the triangle in the seat, and the thread still tied to the square.
+const still = stageAt(
+  KEY_POSE.blackout ?? 0,
+  { promised: true, round: roundOf('cooperate'), chat: 'promise', decision: { phase: 'outcome', ...outcomeOf('roll', 4) } },
+  false,
+  true,
+);
+---
+
+<Chapter locale={locale} id="blackout" labelledby="blackout-title" still={still} stillLabel={tr('film.blackout.still')}>
+  <Beat id={blackout.id} screens={blackout.screens} caption={captions.get(blackout.id)}>
+    <h2 slot="top" id="blackout-title" class="card__chapter">
+      <span>{fill(tr('film.chapter'), { n: chapter('blackout').number })}</span>
+      <span aria-hidden="true">·</span>
+      <span>{title}</span>
+    </h2>
+  </Beat>
+
+  <Beat id={newPartner.id} screens={newPartner.screens} caption={captions.get(newPartner.id)} />
+
+  <Beat id={deck.id} screens={deck.screens} caption={captions.get(deck.id)}>
+    <ol class="deck" role="list" data-deck>
+      {
+        cards.map((card, i) => (
+          <li class="deck-card" data-card={i} data-partner={card.partner} hidden={i > 0}>
+            <p class="deck-card__top">
+              <span class="deck-card__who">
+                <svg viewBox="-30 -30 60 60" aria-hidden="true">
+                  {card.partner === 'same' ? (
+                    <rect x="-20" y="-20" width="40" height="40" rx="7" fill={FILM.other} stroke={FILM.ink} stroke-width="4" />
+                  ) : (
+                    <path d="M0 -24 L23 18 L-23 18 Z" fill={FILM.new} stroke={FILM.ink} stroke-width="4" stroke-linejoin="round" />
+                  )}
+                </svg>
+                {tr(card.partner === 'same' ? 'film.deck.who.same' : 'film.deck.who.switched')}
+              </span>
+              <span class="deck-card__count">{card.count}</span>
+            </p>
+            <p class="deck-card__message">
+              <span class="deck-card__said">{tr(card.partner === 'same' ? 'film.deck.said.same' : 'film.deck.said.switched')}</span>
+              {fill(tr('film.quote'), { text: tr(card.message) })}
+            </p>
+            <Tickets label={tr('film.deck.group')} class="deck-card__tickets">
+              {card.said.map(([choice, said]) =>
+                choice === 'roll' ? (
+                  <Ticket label={tr('film.ticket.roll')} detail={values('film.ticket.roll.detail')} data-deck-choice="roll" data-said={said}>
+                    <svg slot="icon" viewBox="-40 -40 80 80">
+                      <rect x="-26" y="-26" width="52" height="52" rx="11" fill={FILM.rim} stroke={FILM.ink} stroke-width="4.5" transform="rotate(-8)" />
+                      <circle cx="0" cy="0" r="5.5" fill={FILM.ink} />
+                    </svg>
+                  </Ticket>
+                ) : (
+                  <Ticket label={values('film.ticket.keep')} detail={values('film.ticket.keep.detail')} data-deck-choice="dont" data-said={said}>
+                    <svg slot="icon" viewBox="-40 -40 80 80">
+                      <path d="M-26 -8 C-34 18 -24 34 0 34 C24 34 34 18 26 -8 Z" fill={FILM['table-top']} stroke={FILM.ink} stroke-width="4.5" stroke-linejoin="round" />
+                      <path d="M-14 -8 C-18 -20 -8 -26 0 -18 C8 -26 18 -20 14 -8" fill={FILM['table-top']} stroke={FILM.ink} stroke-width="4.5" stroke-linejoin="round" />
+                      <text y="20" text-anchor="middle" class="card__coin" fill={FILM.ink}>{FILM_VALUES.dont}</text>
+                    </svg>
+                  </Ticket>
+                ),
+              )}
+            </Tickets>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="card__free deck__swipe">{tr('film.deck.swipe')}</p>
+    <p class="card__out" aria-live="polite" data-deck-out data-tally={tallies}></p>
+    <p class="card__noscript">{fill(tr('film.deck.noscript'), counts)}</p>
+  </Beat>
+
+  <Beat id={receive.id} screens={receive.screens} caption={captions.get(receive.id)}>
+    <p class="card__say">
+      <span class="card__who" aria-hidden="true"></span>
+      <span><span class="visually-hidden">{tr('film.receive.who')}: </span>{tr('film.receive.says')}</span>
+    </p>
+    <div class="bet" data-bet={bets}>
+      <label class="card__ask" for="bet-scale">{tr('film.bet.label')}</label>
+      <input id="bet-scale" class="bet__range" type="range" min="0" max="4" step="1" value={BET_START} aria-valuetext={tr(BET_LABEL[BET_START])} data-bet-range />
+      <p class="bet__ends" aria-hidden="true"><span>{tr(BET_LABEL[0])}</span><span>{tr(BET_LABEL[4])}</span></p>
+      <Tickets label={tr('film.bet.label')} data-bet-tickets="">
+        <Ticket label={tr('film.bet.place')} detail={tr(BET_LABEL[BET_START])} data-bet-place>
+          <svg slot="icon" viewBox="-24 -24 48 48">
+            <circle r="15" fill={FILM.you} stroke={FILM.ink} stroke-width="3" />
+            <path d="M-6 0 L-1 5 L7 -5" fill="none" stroke={FILM.rim} stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </Ticket>
+      </Tickets>
+      <p class="card__out" aria-live="polite" data-bet-out></p>
+    </div>
+    <p class="card__noscript">{tr('film.bet.noscript')}</p>
+  </Beat>
+
+  <Beat id={reveal.id} screens={reveal.screens} caption={captions.get(reveal.id)}>
+    <figure class="scale" aria-labelledby="reveal-scale">
+      <div class="scale__track" aria-hidden="true">
+        <svg class="scale__mark scale__mark--same" style={`--at: ${FILM_VALUES.expectsame}`} viewBox="-12 -12 24 24"><rect x="-8" y="-8" width="16" height="16" rx="3" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" /></svg>
+        <svg class="scale__mark scale__mark--switched" style={`--at: ${FILM_VALUES.expectswitched}`} viewBox="-12 -12 24 24"><path d={TRIANGLE} fill={FILM.new} stroke={FILM.ink} stroke-width="2.5" stroke-linejoin="round" /></svg>
+        <svg class="scale__mark scale__mark--yours" viewBox="-12 -12 24 24" data-scale-yours><circle r="8.5" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" /></svg>
+      </div>
+      <p class="bet__ends" aria-hidden="true"><span>{tr(BET_LABEL[0])}</span><span>{tr(BET_LABEL[4])}</span></p>
+      <figcaption id="reveal-scale">
+        <ul class="scale__legend" role="list">
+          <li><svg class="scale__key" viewBox="-12 -12 24 24" aria-hidden="true"><rect x="-8" y="-8" width="16" height="16" rx="3" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" /></svg>{values('film.reveal.same')}</li>
+          <li><svg class="scale__key" viewBox="-12 -12 24 24" aria-hidden="true"><path d={TRIANGLE} fill={FILM.new} stroke={FILM.ink} stroke-width="2.5" stroke-linejoin="round" /></svg>{values('film.reveal.switched')}</li>
+          <li data-scale-yours-label hidden><svg class="scale__key" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="8.5" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" /></svg><span>{tr('film.reveal.yours')}: <span data-scale-yours-text></span></span></li>
+        </ul>
+        <span class="visually-hidden">{values('film.reveal.scale')}</span>
+      </figcaption>
+    </figure>
+  </Beat>
+</Chapter>
+
+<style>
+  /* The deck: one card at a time, stacked on the ones still to come. Without JavaScript the storyboard tells it in words. */
+  .deck {
+    display: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  :global(html.js) .deck {
+    display: grid;
+  }
+
+  .deck-card {
+    grid-area: 1 / 1;
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border-radius: 12px;
+    background: var(--film-card);
+    box-shadow:
+      0 0 0 2px var(--film-ink),
+      4px 5px 0 0 var(--film-voice-word),
+      4px 5px 0 2px var(--film-ink);
+    touch-action: pan-y;
+    user-select: none;
+    transition:
+      transform 320ms var(--ease-standard),
+      opacity 320ms var(--ease-standard);
+  }
+
+  .deck-card[hidden] {
+    display: none;
+  }
+
+  .deck-card[data-arriving] {
+    animation: deck-arrive 360ms var(--ease-standard);
+  }
+
+  .deck-card[data-gone='roll'] {
+    transform: translateX(110%) rotate(8deg);
+    opacity: 0;
+  }
+
+  .deck-card[data-gone='dont'] {
+    transform: translateX(-110%) rotate(-8deg);
+    opacity: 0;
+  }
+
+  .deck-card[data-dragging] {
+    transition: none;
+  }
+
+  @keyframes deck-arrive {
+    from {
+      transform: translateY(12px) rotate(1.5deg);
+      opacity: 0;
+    }
+  }
+
+  .deck-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--film-card-muted);
+  }
+
+  .deck-card__who {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--film-ink);
+  }
+
+  .deck-card__who svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .deck-card__message {
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 800;
+    font-size: 1.1rem;
+    line-height: 1.25;
+  }
+
+  .deck-card__said {
+    display: block;
+    font-family: var(--font-body, system-ui, sans-serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--film-card-muted);
+  }
+
+  /* The two tickets side by side, as the card is swiped: keep on the left, roll on the right. */
+  .deck-card :global(.deck-card__tickets) {
+    flex-wrap: nowrap;
+    gap: var(--space-2);
+  }
+
+  .deck-card :global(.deck-card__tickets > *) {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .deck-card :global(.ticket__text) {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .deck-card :global(.ticket__text b) {
+    font-size: 0.95rem;
+  }
+
+  .deck-card :global(.ticket__text small) {
+    font-size: 0.78rem;
+    line-height: 1.25;
+  }
+
+  @media (max-width: 26rem) {
+    .deck-card :global(.ticket__icon) {
+      display: none;
+    }
+  }
+
+  .deck__swipe {
+    display: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--film-card-muted);
+  }
+
+  @media (pointer: coarse) {
+    :global(html.js) .deck__swipe {
+      display: block;
+    }
+  }
+
+  /* The bet: the recipients' five-point scale, as a paper slider. */
+  .bet {
+    display: none;
+    gap: var(--space-2);
+  }
+
+  :global(html.js) .bet {
+    display: grid;
+  }
+
+  .bet__range {
+    width: 100%;
+    height: 2.75rem;
+    margin: 0;
+    accent-color: var(--film-you);
+    cursor: pointer;
+  }
+
+  .bet__range:focus-visible {
+    outline: 3px solid var(--film-you);
+    outline-offset: 4px;
+  }
+
+  .bet__ends {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-top: calc(-1 * var(--space-2));
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--film-card-muted);
+  }
+
+  /* The reveal: where the real recipients' bets sit on the same scale, and the visitor's. */
+  .scale {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+  }
+
+  .scale__track {
+    position: relative;
+    height: 2.75rem;
+    margin-inline: 0.75rem;
+    background: linear-gradient(var(--film-ink), var(--film-ink)) center / 100% 3px no-repeat;
+  }
+
+  .scale__mark {
+    position: absolute;
+    left: calc(var(--at, 50) * 1%);
+    width: 1.5rem;
+    height: 1.5rem;
+    translate: -50% 0;
+  }
+
+  /* The square and the triangle sit one above and one below the line, so two close bets both show. */
+  .scale__mark--same {
+    top: -0.1rem;
+  }
+
+  .scale__mark--switched {
+    bottom: -0.1rem;
+  }
+
+  .scale__mark--yours {
+    top: 50%;
+    translate: -50% -50%;
+  }
+
+  /* The visitor's bet shows only once they have placed it. */
+  .scale__mark--yours:not([data-shown]) {
+    display: none;
+  }
+
+  .scale figcaption {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .scale__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    font-size: 0.95rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: 800;
+  }
+
+  .scale__legend li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .scale__legend li[hidden] {
+    display: none;
+  }
+
+  .scale__legend li[data-scale-yours-label] {
+    flex-basis: 100%;
+  }
+
+  .scale__key {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .deck-card,
+    .deck-card[data-arriving] {
+      transition: none;
+      animation: none;
+    }
+
+    .deck-card[data-gone] {
+      transform: none;
+    }
+  }
+</style>
