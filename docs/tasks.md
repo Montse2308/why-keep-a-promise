@@ -3,10 +3,12 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P1 (cimientos y capítulo 0). P0 cerrada: Montse la revisó y la mergeó.
+**Fase activa:** P2 (capítulos 1 a 3). P0 y P1 cerradas: Montse las revisó y las mergeó (PR #1 y
+PR #2).
 
-**Estado del código:** `src/` sigue siendo la versión anterior (los seis actos, la escena y la mesa).
-La película la reemplaza por capítulos desde P1 (ADR 0021).
+**Estado del código:** la película ya cuenta el capítulo 0; debajo sigue la versión anterior (los
+actos 2 a 6, la mesa del momento 2 y las secciones del home). La película la reemplaza por capítulos
+(ADR 0021).
 
 ## P0 · Documentos
 
@@ -59,7 +61,32 @@ La película la reemplaza por capítulos desde P1 (ADR 0021).
       entrada del cuaderno (ADR 0026).
 - Transición, a resolver en P2: el acto 2 dice «la mesa que jugaste arriba», y esa mesa volverá como
   capítulo 3. El archivo `01-question.md` del acto 1 ya no se muestra; sale con `acts.ts` en P4.
-- [ ] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS).
+- [x] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), con el PR #2.
+- [x] Revisión de P1 por Montse (PR #2, mergeado).
+
+## P2 · Capítulos 1 a 3
+
+- [ ] Los capítulos en tramos: cada capítulo es una serie de tarjetas en el flujo normal de la página,
+      cada una con su largo en pantallas, y la tarjeta se queda abajo mientras su tramo pasa. El
+      teclado recorre la película en orden y el scroll sigue siendo el nativo.
+- [ ] Capítulo 1, «Dos cuartos»: los cuartos, la pared y los focos; una ronda del dilema (el otro
+      traiciona siempre); las dos columnas con la mejor respuesta de `src/lib/pd/`; el tablero de 2×2
+      ilustrado y la trampa; el enlace a *The Evolution of Trust*.
+- [ ] Capítulo 2, «¿Y si pudieran hablar?»: el chat con tres mensajes escritos, la respuesta del otro
+      y el *cheap talk*. Sin segunda ronda del dilema.
+- [ ] Capítulo 3, «La matriz se dobla»: el tablero se dobla en el dado, «otro juego, la misma
+      tensión» (regla (g)), la decisión con `PAYOFFS`, el dado que gira y cae, las monedas y el hilo
+      que aguanta o se rompe.
+- [ ] Todo número de la película sale del código: las leyendas y las claves `film.*` no llevan
+      cifras escritas a mano, solo marcadores que se llenan con `src/lib/pd/` y `PAYOFFS`.
+- [ ] Sale la versión anterior de lo que estos capítulos reemplazan: el acto 2 (y el archivo del
+      acto 1, que ya no se mostraba) y la mesa del momento 1 con sus claves. `/dilemma` vuelve al
+      capítulo 1.
+- [ ] Tests: el dilema se juega una vez, las dos columnas muestran que traicionar paga más, los pagos
+      de la decisión salen de `PAYOFFS`, el capítulo 3 dice que es otro juego, las cifras de las
+      leyendas registradas, la coreografía de cada tramo y la luz del ADR 0027 en su capítulo.
+- [ ] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), jugando todas las
+      opciones.
 
 ## Preguntas abiertas
 
