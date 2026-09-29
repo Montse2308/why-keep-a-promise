@@ -1,0 +1,37 @@
+---
+/** A choice's tickets, as one labelled group. Hidden without JavaScript: the storyboard tells the result. */
+interface Props {
+  label: string;
+  class?: string;
+  hidden?: boolean;
+  [attribute: `data-${string}`]: string | undefined;
+}
+
+const { label, class: className, ...attributes } = Astro.props;
+---
+
+<div class:list={['tickets', className]} role="group" aria-label={label} {...attributes}>
+  <slot />
+</div>
+
+<style>
+  .tickets {
+    display: none;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  :global(html.js) .tickets {
+    display: flex;
+  }
+
+  :global(html.js) .tickets[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 30rem) {
+    .tickets > :global(*) {
+      flex: 1 1 100%;
+    }
+  }
+</style>

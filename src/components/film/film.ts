@@ -7,7 +7,8 @@
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
 import { castPositions, stageAt, threadPath, type Promised, type StageView } from '../../lib/film/stage';
-import { clamp, easeInOut, lerp } from '../../lib/film/track';
+import { scrollPosition } from '../../lib/film/timeline';
+import { clamp, easeInOut } from '../../lib/film/track';
 
 const DRAW_MS = 800;
 
@@ -57,7 +58,7 @@ export function start(): void {
   };
   const spool = film.querySelector<SVGElement>('[data-spool]');
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
-  const arrivalFrame = film.querySelector<HTMLElement>('#arrival .chapter__frame');
+  const title = film.querySelector<HTMLElement>('[data-title]');
 
   let promised: Promised = null;
   let drawStart = 0;
@@ -66,12 +67,8 @@ export function start(): void {
   let frameRequested = false;
 
   /** Scroll position through the whole film, from 0 to 1, of which the built chapters hold [from, to]. */
-  const position = (): number => {
-    const top = film.getBoundingClientRect().top + scrollY;
-    const run = chapters.offsetHeight - innerHeight;
-    const local = run > 0 ? clamp((scrollY - top) / run, 0, 1) : 0;
-    return lerp(from, to, local);
-  };
+  const position = (): number =>
+    scrollPosition(scrollY, chapters.getBoundingClientRect().top + scrollY, chapters.offsetHeight, { from, to });
 
   const render = (now: number): void => {
     frameRequested = false;
@@ -115,7 +112,7 @@ export function start(): void {
     }
     parts.thread?.setAttribute('opacity', view.thread.state === 'none' ? '0' : '1');
 
-    arrivalFrame?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
+    title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
     if (visible) request();
   };
 
@@ -141,7 +138,7 @@ export function start(): void {
   );
 
   // Chapter 0: promise or not. Nothing is stored or sent (ADR 0023).
-  const out = film.querySelector<HTMLElement>('#arrival .card__out');
+  const out = film.querySelector<HTMLElement>('#arrival [data-out]');
   film.querySelectorAll<HTMLButtonElement>('[data-promise]').forEach((button, _i, all) => {
     button.addEventListener('click', () => {
       promised = button.dataset.promise === 'yes';

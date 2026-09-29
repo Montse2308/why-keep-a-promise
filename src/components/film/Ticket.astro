@@ -1,0 +1,121 @@
+---
+/**
+ * A choice as a paper ticket (ADR 0027): the object on the left, and on the right what the visitor
+ * does and what happens, with its numbers. A native button, hidden without JavaScript (the
+ * storyboard tells the result instead); it sinks when pressed, and once a one-time choice is made it
+ * stays focusable but inert (`aria-disabled`), so focus is never lost.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button'> {
+  label: string;
+  detail?: string | undefined;
+}
+
+const { label, detail, class: className, ...attributes } = Astro.props;
+---
+
+<button type="button" class:list={['ticket', className]} aria-pressed="false" {...attributes}>
+  <span class="ticket__icon" aria-hidden="true"><slot name="icon" /></span>
+  <span class="ticket__text">
+    <b>{label}</b>
+    {detail && <small>{detail}</small>}
+  </span>
+</button>
+
+<style>
+  .ticket {
+    font: inherit;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: stretch;
+    min-height: 3.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: var(--film-card);
+    color: var(--film-ink);
+    text-align: left;
+    cursor: pointer;
+    box-shadow:
+      0 0 0 2px var(--film-ink),
+      0 4px 0 2px var(--film-ink);
+    transition:
+      transform 120ms var(--ease-standard),
+      box-shadow 120ms var(--ease-standard),
+      opacity 200ms var(--ease-standard);
+  }
+
+  .ticket:active:not([aria-disabled='true']) {
+    transform: translateY(3px);
+    box-shadow:
+      0 0 0 2px var(--film-ink),
+      0 1px 0 2px var(--film-ink);
+  }
+
+  .ticket[aria-pressed='true'] {
+    background: var(--film-ink);
+    color: var(--film-card);
+    transform: translateY(3px);
+    box-shadow:
+      0 0 0 2px var(--film-ink),
+      0 1px 0 2px var(--film-ink);
+  }
+
+  /* The chosen ticket inverts, but its drawing keeps its paper so the ink still shows. */
+  .ticket[aria-pressed='true'] .ticket__icon {
+    background: var(--film-card);
+    border-radius: 10px 0 0 10px;
+  }
+
+  .ticket[aria-disabled='true'] {
+    cursor: default;
+  }
+
+  .ticket[aria-disabled='true']:not([aria-pressed='true']) {
+    opacity: 0.55;
+  }
+
+  .ticket:focus-visible {
+    outline: 3px solid var(--film-you);
+    outline-offset: 4px;
+  }
+
+  .ticket__icon {
+    display: grid;
+    place-items: center;
+    padding: 0 var(--space-3);
+    border-right: 2px dashed currentColor;
+  }
+
+  .ticket__icon :global(svg) {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .ticket__text {
+    display: grid;
+    align-content: center;
+    padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3);
+  }
+
+  .ticket__text b {
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .ticket__text small {
+    font-size: 0.85rem;
+    font-weight: 700;
+    opacity: 0.8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticket,
+    .ticket:active:not([aria-disabled='true']),
+    .ticket[aria-pressed='true'] {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>

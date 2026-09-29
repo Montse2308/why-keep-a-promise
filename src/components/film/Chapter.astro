@@ -1,0 +1,56 @@
+---
+/**
+ * A chapter of the film (ADR 0021): a section with the chapter's id, its still frame for the
+ * storyboard and its beats. The still frame is the stage at the chapter's key pose; with
+ * JavaScript the live stage takes its place.
+ */
+import type { ChapterId } from '../../lib/chapters';
+import type { StageView } from '../../lib/film/stage';
+import World from './World.astro';
+
+interface Props {
+  id: ChapterId;
+  /** The id of the chapter's heading. */
+  labelledby: string;
+  still: StageView;
+  /** What the still frame shows, for a screen reader. */
+  stillLabel: string;
+}
+
+const { id, labelledby, still, stillLabel } = Astro.props;
+---
+
+<section id={id} class="chapter" data-chapter={id} aria-labelledby={labelledby}>
+  <div class="chapter__still">
+    <World uid={`still-${id}`} view={still} label={stillLabel} />
+  </div>
+  <slot />
+</section>
+
+<style>
+  /* Storyboard (no JavaScript): each chapter is a still frame and its cards, in order. */
+  .chapter {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-8) var(--gutter) var(--space-12);
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+
+  .chapter__still {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgb(40 30 60 / 0.2);
+  }
+
+  /* The film: the chapter is its beats, end to end; the live stage replaces the still. */
+  :global(html.js) .chapter {
+    display: block;
+    padding: 0;
+    max-width: none;
+  }
+
+  :global(html.js) .chapter__still {
+    display: none;
+  }
+</style>

@@ -4,13 +4,15 @@
  * samples it for the storyboard's still frames and the film's script samples it on every frame.
  *
  * Positions are world units in an SVG 1600 wide; the table's centre sits at x = 800, the floor at
- * y = 640. `p` is the scroll position through the whole film, from 0 to 1.
+ * y = 640. `p` is the scroll position through the whole film, from 0 to 1; the choreography is
+ * written in screens from the top of the film (src/lib/film/timeline.ts) and turned into `p` there.
  */
 import { CHAPTERS, type ChapterId } from '../chapters';
 import { LAMP_FROM, LIGHT, LIGHT_SURFACES, type LightSurface } from '../design/film';
 import type { Shot } from './camera';
 import type { Mood } from './faces';
 import { spans, type Span } from './spans';
+import { at, TOTAL_SCREENS } from './timeline';
 import { easeInOut, progress, sample, track } from './track';
 
 export const WORLD = { width: 1600, centre: 800, floor: 640, tableTop: 560 } as const;
@@ -47,26 +49,39 @@ export interface StageView {
   readonly titleGone: number;
 }
 
-const arrival = spanOf('arrival');
-const at = (share: number): number => arrival.from + share * (arrival.to - arrival.from);
+/**
+ * With reduced motion the stage cuts between still poses instead of moving (ADR 0027): from each
+ * cut's point on, everything that moves stands where it stands at the cut's pose. In screens.
+ */
+export const CUTS: readonly { readonly from: number; readonly pose: number }[] = [
+  { from: 0, pose: 0 },
+  { from: 0.9, pose: 1.8 },
+];
+
+/** The pose that stands for a point, in screens, when the stage cuts instead of moving. */
+export function poseAt(screens: number): number {
+  let pose = CUTS[0]?.pose ?? 0;
+  for (const cut of CUTS) if (screens >= cut.from) pose = cut.pose;
+  return pose;
+}
 
 /** The camera: wide on the title at the top, closing in on the table as the other asks. */
 const SHOTS = {
-  cx: track([{ at: 0, value: 800 }, { at: at(1), value: 800 }]),
-  cy: track([{ at: 0, value: 470 }, { at: at(0.6), value: 505 }]),
-  width: track([{ at: 0, value: 1500 }, { at: at(0.6), value: 1180 }]),
-  widthPortrait: track([{ at: 0, value: 660 }, { at: at(0.6), value: 600 }]),
+  cx: track([{ at: 0, value: 800 }, { at: at(3), value: 800 }]),
+  cy: track([{ at: 0, value: 470 }, { at: at(1.8), value: 505 }]),
+  width: track([{ at: 0, value: 1500 }, { at: at(1.8), value: 1180 }]),
+  widthPortrait: track([{ at: 0, value: 660 }, { at: at(1.8), value: 600 }]),
 };
 
 /** Half the distance between the two characters at the table, on landscape and portrait screens. */
 export const SPREAD = { landscape: 280, portrait: 190 } as const;
 
-/** The key pose of each built chapter: the storyboard draws its still frame there. */
-export const KEY_POSE: Partial<Record<ChapterId, number>> = { arrival: at(0.7) };
+/** The key pose of each built chapter, in `p`: the storyboard draws its still frame there. */
+export const KEY_POSE: Partial<Record<ChapterId, number>> = { arrival: at(2.1) };
 
 export function stageAt(p: number, state: StageState, portrait: boolean, reduced: boolean): StageView {
-  // With reduced motion the camera cuts between key shots instead of moving (ADR 0027).
-  const cameraAt = reduced ? (p < at(0.3) ? 0 : at(0.6)) : p;
+  const screens = p * TOTAL_SCREENS;
+  const cameraAt = reduced ? at(poseAt(screens)) : p;
   const shot: Shot = {
     cx: sample(SHOTS.cx, cameraAt),
     cy: sample(SHOTS.cy, cameraAt),
@@ -76,7 +91,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   const light = Object.fromEntries(LIGHT_SURFACES.map((s) => [s, sample(LIGHT[s], p)])) as Record<LightSurface, string>;
   const lamp = easeInOut(progress(p, LAMP_FROM, Math.min(1, LAMP_FROM + 0.05)));
 
-  const asked = progress(p, at(0.2), at(0.45));
+  const asked = progress(p, at(0.6), at(1.35));
   const other: Mood = state.promised === true ? 'happy' : state.promised === false ? 'sad' : asked > 0 ? 'worried' : 'neutral';
   const you: Mood = state.promised === true ? 'proud' : state.promised === false ? 'neutral' : asked > 0.5 ? 'tempted' : 'neutral';
   const thread =
@@ -89,10 +104,10 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     light,
     lamp,
     spread: portrait ? SPREAD.portrait : SPREAD.landscape,
-    die: { y: WORLD.tableTop - 90, opacity: 1, floating: p < at(0.5) },
+    die: { y: WORLD.tableTop - 90, opacity: 1, floating: p < at(1.5) },
     moods: { you, other },
     thread,
-    titleGone: easeInOut(progress(p, at(0.12), at(0.4))),
+    titleGone: easeInOut(progress(p, at(0.36), at(1.2))),
   };
 }
 
