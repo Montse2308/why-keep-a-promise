@@ -32,3 +32,10 @@ export const coinsTransform = (x: number): string => `translate(${x.toFixed(2)} 
 
 /** The number over a stack of `n` coins sits just above its top coin. */
 export const coinCountY = (n: number): number => -Math.max(n, 1) * COIN_STEP - 18;
+
+/** A speech bubble floats beside its speaker's head, on the wall's side, and pops as it appears. */
+export const bubbleTransform = (x: number, shown: number): string => {
+  const side = x < WORLD.centre ? 1 : -1;
+  const scale = 0.6 + 0.4 * shown;
+  return `translate(${(x + side * 104).toFixed(2)} 418) scale(${(side * scale).toFixed(3)} ${scale.toFixed(3)})`;
+};

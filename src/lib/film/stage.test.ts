@@ -194,3 +194,36 @@ describe('chapter 1, two rooms (ADR 0021, ADR 0023)', () => {
     expect(key).toBeLessThan(trap.to);
   });
 });
+
+describe('chapter 2, what if they could talk? (ADR 0021, ADR 0023)', () => {
+  const chat = beatRange('talk', 'chat');
+  const cheap = beatRange('talk', 'cheap');
+  const inside = (range: { from: number }) => at(range.from + 0.4);
+  const view = (p: number, state: StageState = { promised: true }) => stageAt(p, state, false, false);
+
+  it('talks in the same rooms, under the same board: the matrix does not change', () => {
+    const talking = view(inside(chat));
+    expect(talking).toMatchObject({ rooms: 1, table: 0 });
+    expect(talking.board.shown).toBe(1);
+    expect(talking.board.tags).toEqual(view(inside(beatRange('two-rooms', 'trap'))).board.tags);
+  });
+
+  it('lets the other speak first, and the visitor only once they write', () => {
+    expect(view(at(chat.from - 1)).bubbles).toEqual({ you: 0, other: 0 });
+    expect(view(inside(chat)).bubbles).toEqual({ you: 0, other: 1 });
+    expect(view(inside(chat), { promised: true, chat: 'trust' }).bubbles).toEqual({ you: 1, other: 1 });
+  });
+
+  it('shows how each message lands, then both tempted again: talk changes no payoff', () => {
+    expect(view(inside(chat)).moods).toEqual({ you: 'neutral', other: 'worried' });
+    expect(view(inside(chat), { promised: true, chat: 'promise' }).moods).toEqual({ you: 'happy', other: 'happy' });
+    expect(view(inside(chat), { promised: true, chat: 'nothing' }).moods.other).toBe('worried');
+    expect(view(inside(cheap), { promised: true, chat: 'promise' }).moods).toEqual({ you: 'tempted', other: 'tempted' });
+  });
+
+  it('draws its still frame in the chat', () => {
+    const key = (KEY_POSE.talk ?? 0) * TOTAL_SCREENS;
+    expect(key).toBeGreaterThan(chat.from);
+    expect(key).toBeLessThan(chat.to);
+  });
+});

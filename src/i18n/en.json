@@ -170,5 +170,20 @@
   "film.two-rooms.both": "{move} pays you more in both columns: {a} against {b}, and {c} against {d}.",
   "film.board.note.equilibrium": "where both end up",
   "film.board.note.better": "both better off",
-  "film.board.note.best": "pays you more"
+  "film.board.note.best": "pays you more",
+  "film.who.you": "You",
+  "film.who.other": "The other",
+  "film.talk.still": "Still in their rooms, the circle and the square talk over the wall in paper speech bubbles, under the prisoner’s dilemma board.",
+  "film.talk.opener": "Hey… what are you going to do?",
+  "film.talk.group": "Your message to the other",
+  "film.talk.says.promise": "I’ll cooperate. I promise.",
+  "film.talk.says.trust": "Trust me.",
+  "film.talk.says.nothing": "I promise nothing.",
+  "film.talk.answer.promise": "Me too. I promise.",
+  "film.talk.answer.trust": "All right. I’ll trust you.",
+  "film.talk.answer.nothing": "OK… we’ll see.",
+  "film.ticket.free": "Costs you nothing",
+  "film.talk.out": "The other answers: “{answer}”",
+  "film.talk.noscript": "Writing needs JavaScript. The story goes on as if you had promised, and the other had promised back.",
+  "film.quote": "“{text}”"
 }

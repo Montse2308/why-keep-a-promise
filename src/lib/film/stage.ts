@@ -16,6 +16,7 @@ import type { RoundState } from '../pd/round';
 import { BOARD } from './board';
 import type { Shot } from './camera';
 import type { Mood } from './faces';
+import { AFTER, type Chat } from './talk';
 import { spans, type Span } from './spans';
 import { at, beatAt, beatRange, TOTAL_SCREENS } from './timeline';
 import { easeInOut, progress, sample, track } from './track';
@@ -43,6 +44,8 @@ export interface StageState {
   readonly round?: RoundState;
   /** Chapter 1: the visitor's move against each of the other's, one column at a time. */
   readonly columns?: Picks;
+  /** Chapter 2: the message the visitor wrote. */
+  readonly chat?: Chat;
 }
 
 export interface StageView {
@@ -65,6 +68,8 @@ export interface StageView {
   readonly board: { readonly shown: number; readonly column: Move | null; readonly tags: Readonly<Record<CellKey, readonly Tag[]>> };
   /** The coins over each character, and how much they show, from 0 to 1. */
   readonly coins: { readonly you: number; readonly other: number; readonly shown: number };
+  /** Chapter 2's speech bubbles over the wall, from 0 (gone) to 1. */
+  readonly bubbles: { readonly you: number; readonly other: number };
   readonly moods: { readonly you: Mood; readonly other: Mood };
   readonly thread: { readonly state: ThreadState; readonly drawn: number };
   /** How far the chapter 0 title has gone, from 0 (fully shown) to 1 (gone). */
@@ -86,6 +91,7 @@ const eased = (screens: number, [from, to]: readonly [number, number]): number =
 const INTO_ROOMS = entering('two-rooms', 'rooms');
 const BOARD_DOWN = entering('two-rooms', 'columns');
 const TRAP = entering('two-rooms', 'trap');
+const CHAT = entering('talk', 'chat');
 /** The round's coins show while its card does, and go when the board comes down. */
 const ROUND_COINS = [beatRange('two-rooms', 'play').from - 0.4, BOARD_DOWN[0] + 0.1] as const;
 
@@ -95,6 +101,8 @@ const POSE_IN: Readonly<Record<string, number>> = {
   'two-rooms/play': 0.3,
   'two-rooms/columns': 0.4,
   'two-rooms/trap': 0.4,
+  'talk/chat': 0.4,
+  'talk/cheap': 0.3,
 };
 
 const poseOf = (chapter: ChapterId, beat: string): number => beatRange(chapter, beat).from + (POSE_IN[`${chapter}/${beat}`] ?? 0);
@@ -108,7 +116,16 @@ const poseOf = (chapter: ChapterId, beat: string): number => beatRange(chapter, 
 export const CUTS: readonly { readonly from: number; readonly pose: number }[] = [
   { from: 0, pose: 0 },
   { from: 0.9, pose: 1.8 },
-  ...(['rooms', 'play', 'columns', 'trap'] as const).map((b) => ({ from: beatRange('two-rooms', b).from - LEAD, pose: poseOf('two-rooms', b) })),
+  ...(
+    [
+      ['two-rooms', 'rooms'],
+      ['two-rooms', 'play'],
+      ['two-rooms', 'columns'],
+      ['two-rooms', 'trap'],
+      ['talk', 'chat'],
+      ['talk', 'cheap'],
+    ] as const
+  ).map(([chapter, b]) => ({ from: beatRange(chapter, b).from - LEAD, pose: poseOf(chapter, b) })),
 ];
 
 /** The pose that stands for a point, in screens, when the stage cuts instead of moving. */
@@ -122,6 +139,7 @@ export function poseAt(screens: number): number {
 export const KEY_POSE: Partial<Record<ChapterId, number>> = {
   arrival: at(2.1),
   'two-rooms': at(poseOf('two-rooms', 'trap')),
+  talk: at(poseOf('talk', 'chat')),
 };
 
 /** The camera: wide on the title, closing in on the table as the other asks, wide again for the rooms. */
@@ -178,6 +196,10 @@ function moodsAt(beat: { chapter: ChapterId; id: string }, state: StageState, as
       return round.you === 'cooperate' ? { you: 'sad', other: 'happy' } : { you: 'worried', other: 'worried' };
     case 'two-rooms/columns':
       return { you: 'tempted', other: 'tempted' };
+    case 'talk/chat':
+      return state.chat ? AFTER[state.chat] : { you: 'neutral', other: 'worried' };
+    case 'talk/cheap':
+      return { you: 'tempted', other: 'tempted' };
     default:
       return { you: 'worried', other: 'worried' };
   }
@@ -219,6 +241,10 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   const coinsShown = round === null ? 0 : eased(m, [ROUND_COINS[0], ROUND_COINS[0] + 0.2]) * (1 - eased(m, [ROUND_COINS[1] - 0.2, ROUND_COINS[1]]));
   const coins = { you: round?.payoff.you ?? 0, other: round?.payoff.other ?? 0, shown: coinsShown };
 
+  // The other speaks first, as the chat opens; the visitor's bubble comes with their message.
+  const talking = eased(m, CHAT);
+  const bubbles = { you: state.chat ? talking : 0, other: talking };
+
   const thread = state.promised === true ? { state: 'tied' as const, drawn: 1 } : { state: 'none' as const, drawn: 0 };
   const asked = progress(p, at(0.6), at(1.35));
 
@@ -234,6 +260,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     die: { y: WORLD.tableTop - 90, opacity: 1 - eased(m, [INTO_ROOMS[0], INTO_ROOMS[0] + 0.4]), floating: m < 1.5 },
     board,
     coins,
+    bubbles,
     moods: moodsAt({ chapter: beat.chapter, id: beat.beat.id }, state, asked),
     thread,
     titleGone: easeInOut(progress(p, at(0.36), at(1.2))),

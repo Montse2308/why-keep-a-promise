@@ -9,13 +9,14 @@
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
 import { noteFor } from '../../lib/film/board';
-import { bulbTransform, boardTransform, coinCountY, coinsTransform, wallTransform } from '../../lib/film/parts';
+import { bubbleTransform, bulbTransform, boardTransform, coinCountY, coinsTransform, wallTransform } from '../../lib/film/parts';
 import { castPositions, stageAt, threadPath, type StageState, type StageView } from '../../lib/film/stage';
 import { scrollPosition } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
 import { reduce as pick, START as NO_PICKS, isDone, type CellKey, type Tag } from '../../lib/pd/bestReply';
 import type { Move } from '../../lib/pd/game';
 import { playRound } from '../../lib/pd/round';
+import { write, type Message } from '../../lib/film/talk';
 
 const DRAW_MS = 800;
 const COUNT_MS = 450;
@@ -91,6 +92,8 @@ export function start(): void {
     board: part('board'),
     coinsYou: part('coins-you'),
     coinsOther: part('coins-other'),
+    bubbleYou: part('bubble-you'),
+    bubbleOther: part('bubble-other'),
   };
   const bands = [...world.querySelectorAll<SVGElement>('[data-band]')];
   const cells = [...world.querySelectorAll<SVGElement>('[data-cell]')];
@@ -98,7 +101,7 @@ export function start(): void {
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
   const title = film.querySelector<HTMLElement>('[data-title]');
 
-  let state: StageState = { promised: null, round: null, columns: NO_PICKS };
+  let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null };
   let drawStart = 0;
   let countStart = 0;
   let pointer: [number, number] = [0, 0];
@@ -185,6 +188,14 @@ export function start(): void {
     paintCoins(parts.coinsYou, cast.you[0], view.coins.you, view.coins.shown, counted);
     paintCoins(parts.coinsOther, cast.other[0], view.coins.other, view.coins.shown, counted);
 
+    for (const [bubble, x, shown] of [
+      [parts.bubbleYou, cast.you[0], view.bubbles.you],
+      [parts.bubbleOther, cast.other[0], view.bubbles.other],
+    ] as const) {
+      set(bubble, 'opacity', shown.toFixed(3));
+      set(bubble, 'transform', bubbleTransform(x, shown));
+    }
+
     const path = threadPath(view.spread);
     const drawn = view.thread.state === 'tied' ? (still ? 1 : easeInOut(clamp((now - drawStart) / DRAW_MS, 0, 1))) : 0;
     for (const line of [parts.threadEdge, parts.threadLine]) {
@@ -269,6 +280,31 @@ export function start(): void {
         }
         request();
       });
+    });
+  });
+
+  // Chapter 2: one message, already written; the other answers.
+  const chatTickets = film.querySelector('[data-chat-tickets]');
+  const chatOut = film.querySelector<HTMLElement>('[data-chat-out]');
+  const mine = film.querySelector<HTMLElement>('[data-chat-mine]');
+  const answer = film.querySelector<HTMLElement>('[data-chat-answer]');
+  film.querySelectorAll<HTMLButtonElement>('[data-message]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (settled(button) || state.chat) return;
+      state = { ...state, chat: write(state.chat ?? null, button.dataset.message as Message) };
+      settle(chatTickets, button);
+      // The chosen ticket stays, pressed and focused, as the message; the others go.
+      chatTickets?.querySelectorAll<HTMLButtonElement>('button').forEach((other) => (other.hidden = other !== button));
+      for (const [bubble, text] of [
+        [mine, button.dataset.says],
+        [answer, button.dataset.answer],
+      ] as const) {
+        if (!bubble) continue;
+        bubble.querySelector('[data-text]')?.replaceChildren(text ?? '');
+        bubble.dataset.shown = '';
+      }
+      if (chatOut) chatOut.textContent = button.dataset.said ?? '';
+      request();
     });
   });
 

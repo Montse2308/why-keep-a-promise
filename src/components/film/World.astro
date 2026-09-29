@@ -7,7 +7,7 @@
 import { FILM } from '../../lib/design/film';
 import { frame, viewBoxAttribute } from '../../lib/film/camera';
 import { castPositions, threadPath, WORLD, type StageView } from '../../lib/film/stage';
-import { bulbTransform, wallTransform } from '../../lib/film/parts';
+import { bubbleTransform, bulbTransform, wallTransform } from '../../lib/film/parts';
 import type { Locale } from '../../lib/i18n';
 import Board from './Board.astro';
 import Character from './Character.astro';
@@ -102,6 +102,17 @@ const lamp = `${uid}-lamp`;
   <g transform={`translate(${cast.other[0]} ${cast.other[1]})`} data-part="other">
     <Character kind="square" mood={view.moods.other} shadow={shadow} />
   </g>
+
+  {
+    (['you', 'other'] as const).map((who) => (
+      <g data-part={`bubble-${who}`} opacity={view.bubbles[who]} transform={bubbleTransform(cast[who][0], view.bubbles[who])}>
+        <path d="M-26 -29 H26 A22 22 0 0 1 48 -7 V7 A22 22 0 0 1 26 29 H-12 L-50 48 L-28 27 A22 22 0 0 1 -48 7 V-7 A22 22 0 0 1 -26 -29 Z" fill={FILM.card} stroke={FILM.ink} stroke-width="3.5" stroke-linejoin="round" filter={`url(#${shadow})`} />
+        <circle cx="-18" r="5.5" fill={FILM.ink} />
+        <circle cx="0" r="5.5" fill={FILM.ink} />
+        <circle cx="18" r="5.5" fill={FILM.ink} />
+      </g>
+    ))
+  }
 
   <g filter={`url(#${shadow})`} data-part="table" opacity={view.table}>
     <rect x="560" y="560" width="480" height="70" rx="10" fill={FILM['table-front']} />

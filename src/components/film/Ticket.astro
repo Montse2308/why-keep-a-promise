@@ -72,6 +72,10 @@ const { label, detail, class: className, ...attributes } = Astro.props;
     cursor: default;
   }
 
+  .ticket[hidden] {
+    display: none;
+  }
+
   .ticket[aria-disabled='true']:not([aria-pressed='true']) {
     opacity: 0.55;
   }
@@ -108,6 +112,42 @@ const { label, detail, class: className, ...attributes } = Astro.props;
     font-size: 0.85rem;
     font-weight: 700;
     opacity: 0.8;
+  }
+
+  /* A one-line ticket: a message to send, where every option costs the same. */
+  .ticket--line {
+    min-height: 2.75rem;
+  }
+
+  .ticket--line .ticket__icon :global(svg) {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .ticket--line .ticket__text {
+    padding-block: var(--space-1);
+  }
+
+  .ticket--line .ticket__text b {
+    font-size: 1rem;
+  }
+
+  @media (max-height: 40rem) {
+    .ticket {
+      min-height: 2.75rem;
+    }
+
+    .ticket__text {
+      padding-block: var(--space-1);
+    }
+
+    .ticket__text b {
+      font-size: 0.95rem;
+    }
+
+    .ticket__text small {
+      font-size: 0.8rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -74,14 +74,15 @@ const { id, screens, caption, opening = false } = Astro.props;
 
   /* What every chapter's card may carry besides its caption. */
   .card :global(.card__chapter) {
-    display: flex;
-    gap: var(--space-2);
-    align-items: baseline;
     font-size: 0.8rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--film-card-muted);
+  }
+
+  .card :global(.card__chapter [aria-hidden]) {
+    margin-inline: 0.4em;
   }
 
   .card :global(.card__say) {
@@ -199,6 +200,28 @@ const { id, screens, caption, opening = false } = Astro.props;
     position: sticky;
     bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
     pointer-events: auto;
+  }
+
+  /* A short screen (a small phone): tighter cards, so the stage still shows above them. */
+  @media (max-height: 40rem) {
+    .card {
+      gap: var(--space-2);
+      padding: var(--space-3);
+    }
+
+    .card__caption {
+      gap: var(--space-1);
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+
+    .card__caption :global(h3) {
+      font-size: 1.05rem;
+    }
+
+    .card :global(.card__say) {
+      font-size: 1.05rem;
+    }
   }
 
   @media (max-width: 30rem) {

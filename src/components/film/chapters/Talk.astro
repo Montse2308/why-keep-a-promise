@@ -1,0 +1,132 @@
+---
+/**
+ * Chapter 2, what if they could talk? (ADR 0021, ADR 0023): in the same rooms, the two can now send
+ * each other a message before choosing. The visitor picks one of three messages already written and
+ * the other answers; then the film says why that changes no payoff, and yet people keep their word.
+ * There is no second round of the dilemma (rule (f)).
+ */
+import { beat, chapter } from '../../../lib/chapters';
+import { FILM } from '../../../lib/design/film';
+import { KEY_POSE, stageAt } from '../../../lib/film/stage';
+import { AS_IF, LINES, MESSAGES, type Message } from '../../../lib/film/talk';
+import { useTranslations, type Locale } from '../../../lib/i18n';
+import { roundOf } from '../../../lib/pd/round';
+import { fill } from '../../../lib/template';
+import Beat from '../Beat.astro';
+import Chapter from '../Chapter.astro';
+import Ticket from '../Ticket.astro';
+import Tickets from '../Tickets.astro';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  captions: ReadonlyMap<string, string>;
+}
+
+const { locale, title, captions } = Astro.props;
+const tr = useTranslations(locale);
+const chat = beat('talk', 'chat');
+const cheap = beat('talk', 'cheap');
+const says = (message: Message) => tr(LINES[message].says);
+const answer = (message: Message) => tr(LINES[message].answer);
+const quoted = (text: string) => fill(tr('film.quote'), { text });
+
+// The storyboard's still frame: the chat, as if the visitor had promised.
+const still = stageAt(KEY_POSE.talk ?? 0, { promised: true, round: roundOf('cooperate'), chat: AS_IF }, false, true);
+---
+
+<Chapter locale={locale} id="talk" labelledby="talk-title" still={still} stillLabel={tr('film.talk.still')}>
+  <Beat id={chat.id} screens={chat.screens} caption={captions.get(chat.id)}>
+    <h2 slot="top" id="talk-title" class="card__chapter">
+      <span>{fill(tr('film.chapter'), { n: chapter('talk').number })}</span>
+      <span aria-hidden="true">·</span>
+      <span>{title}</span>
+    </h2>
+    <div class="chat">
+      <p class="bubble bubble--other"><span class="visually-hidden">{tr('film.who.other')}: </span>{tr('film.talk.opener')}</p>
+      <p class="bubble bubble--you chat__as-if" data-chat-mine><span class="visually-hidden">{tr('film.who.you')}: </span><span data-text>{says(AS_IF)}</span></p>
+      <p class="bubble bubble--other chat__as-if" data-chat-answer><span class="visually-hidden">{tr('film.who.other')}: </span><span data-text>{answer(AS_IF)}</span></p>
+    </div>
+    <Tickets label={tr('film.talk.group')} data-chat-tickets="">
+      {
+        MESSAGES.map((message) => (
+          <Ticket
+            class="ticket--line"
+            label={quoted(says(message))}
+            data-message={message}
+            data-says={says(message)}
+            data-answer={answer(message)}
+            data-said={fill(tr('film.talk.out'), { answer: answer(message) })}
+          >
+            <svg slot="icon" viewBox="-24 -24 48 48">
+              <path d="M-12 -14 H12 A8 8 0 0 1 20 -6 V2 A8 8 0 0 1 12 10 H-2 L-14 19 L-10 10 H-12 A8 8 0 0 1 -20 2 V-6 A8 8 0 0 1 -12 -14 Z" fill={FILM.card} stroke={FILM.ink} stroke-width="2.5" stroke-linejoin="round" />
+              {message === 'promise' ? (
+                <path d="M-11 -1 C-6 -9 6 -9 11 -1" fill="none" stroke={FILM.thread} stroke-width="3.5" stroke-linecap="round" />
+              ) : message === 'trust' ? (
+                <path d="M-8 -3 L-2 3 L9 -8" fill="none" stroke={FILM.ink} stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              ) : (
+                <g fill={FILM.ink}><circle cx="-7" cy="-2" r="2.2" /><circle cy="-2" r="2.2" /><circle cx="7" cy="-2" r="2.2" /></g>
+              )}
+            </svg>
+          </Ticket>
+        ))
+      }
+    </Tickets>
+    <p class="card__free">{tr('film.ticket.free')}</p>
+    <p class="card__out visually-hidden" aria-live="polite" data-chat-out></p>
+    <p class="card__noscript">{tr('film.talk.noscript')}</p>
+  </Beat>
+
+  <Beat id={cheap.id} screens={cheap.screens} caption={captions.get(cheap.id)} />
+</Chapter>
+
+<style>
+  .chat {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  /* Paper bubbles, ink on paper, edged in the speaker's colour: who speaks is also where it sits. */
+  .bubble {
+    max-width: 85%;
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.35;
+    background: var(--film-card);
+    color: var(--film-ink);
+  }
+
+  .bubble--other {
+    justify-self: start;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 0 0 3px var(--film-other);
+  }
+
+  .bubble--you {
+    justify-self: end;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 0 0 3px var(--film-you);
+  }
+
+  /*
+   * With JavaScript, the answer waits for the visitor's message, and the chosen ticket stands for
+   * the message itself; without it, the storyboard shows the chat as if the visitor had promised.
+   */
+  :global(html.js) .chat__as-if:not([data-shown]),
+  :global(html.js) .bubble--you {
+    display: none;
+  }
+
+  .card__free {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--film-card-muted);
+  }
+
+  :global(html:not(.js)) .card__free {
+    display: none;
+  }
+</style>

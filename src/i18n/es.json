@@ -170,5 +170,20 @@
   "film.two-rooms.both": "{move} te paga más en las dos columnas: {a} contra {b}, y {c} contra {d}.",
   "film.board.note.equilibrium": "aquí terminan los dos",
   "film.board.note.better": "los dos, mejor",
-  "film.board.note.best": "te paga más"
+  "film.board.note.best": "te paga más",
+  "film.who.you": "Tú",
+  "film.who.other": "El otro",
+  "film.talk.still": "Todavía en sus cuartos, el círculo y el cuadrado hablan por encima de la pared con globos de papel, bajo el tablero del dilema del prisionero.",
+  "film.talk.opener": "Oye… ¿qué vas a hacer?",
+  "film.talk.group": "Tu mensaje para el otro",
+  "film.talk.says.promise": "Voy a cooperar. Te lo prometo.",
+  "film.talk.says.trust": "Confía en mí.",
+  "film.talk.says.nothing": "No te prometo nada.",
+  "film.talk.answer.promise": "Yo también. Te lo prometo.",
+  "film.talk.answer.trust": "Va. Confío en ti.",
+  "film.talk.answer.nothing": "Ok… ya veremos.",
+  "film.ticket.free": "No te cuesta nada",
+  "film.talk.out": "El otro contesta: «{answer}»",
+  "film.talk.noscript": "Escribir necesita JavaScript. La historia sigue como si hubieras prometido, y el otro te hubiera prometido también.",
+  "film.quote": "«{text}»"
 }

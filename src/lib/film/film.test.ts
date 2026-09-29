@@ -91,6 +91,15 @@ describe('camera', () => {
     expect(box.y + box.height * ANCHOR.portrait).toBeCloseTo(500, 9);
   });
 
+  it('moves up to keep a shot’s top in view on a wide, short screen, and never down', () => {
+    const tall = frame({ ...shot, top: 100 }, { width: 1440, height: 900 });
+    expect(tall.y).toBeLessThanOrEqual(100);
+    const short = frame({ ...shot, top: 100 }, { width: 1440, height: 500 });
+    expect(short.y).toBe(100);
+    expect(frame({ ...shot, top: 100 }, { width: 1440, height: 500 }).height).toBe(frame(shot, { width: 1440, height: 500 }).height);
+    expect(frame({ ...shot, top: 5000 }, { width: 1440, height: 500 })).toEqual(frame(shot, { width: 1440, height: 500 }));
+  });
+
   it('refuses a screen without a size and prints a compact viewBox', () => {
     expect(() => frame(shot, { width: 0, height: 900 })).toThrow();
     expect(viewBoxAttribute({ x: 200, y: 155.00001, width: 1200, height: 750 })).toBe('200 155 1200 750');

@@ -18,6 +18,7 @@ import { FILM_VALUES } from '../../lib/film/values';
 import { fill } from '../../lib/template';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import Arrival from './chapters/Arrival.astro';
+import Talk from './chapters/Talk.astro';
 import TwoRooms from './chapters/TwoRooms.astro';
 import World from './World.astro';
 
@@ -74,6 +75,7 @@ const of = (id: ChapterId) => {
   <div class="film__chapters">
     <Arrival locale={locale} captions={of('arrival').captions} />
     <TwoRooms locale={locale} {...of('two-rooms')} />
+    <Talk locale={locale} {...of('talk')} />
   </div>
   <div class="film__fade" aria-hidden="true"></div>
 </section>

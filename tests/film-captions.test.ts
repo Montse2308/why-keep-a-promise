@@ -110,3 +110,9 @@ describe('chapter 1, two rooms (rule (f))', () => {
     expect(citationsIn(readable(body))).toContain('Case 2017');
   });
 });
+
+describe('chapter 2, what if they could talk? (ADR 0021)', () => {
+  it.each(LOCALES)('%s: names cheap talk, the economists’ term, in its own words', (locale) => {
+    expect(readable(captionsOf(locale, 'talk')?.body ?? '')).toContain('*cheap talk*');
+  });
+});
