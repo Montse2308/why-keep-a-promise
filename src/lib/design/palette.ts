@@ -1,8 +1,8 @@
 /**
  * Single source of the site's colour values (ADR 0018). `src/styles/tokens.css` must carry exactly
  * these values; `palette.test.ts` checks that, the WCAG contrast of every pair below, and that the
- * two roles, and the two main lines of the curve, stay apart under protanopia and deuteranopia, on
- * paper and on the stage.
+ * two roles, and the two main lines of the curve, stay apart under protanopia and deuteranopia. The
+ * film has its own colours, in ./film.ts.
  */
 
 export const THEMES = ['light', 'dark'] as const;
@@ -64,43 +64,6 @@ export const PALETTE: Record<Theme, Record<ColorToken, string>> = {
   },
 };
 
-/**
- * The stage (ADR 0018): the table, and act 1's scene, always dark in both themes and deeper than
- * the dark paper. Inside `.stage`, tokens.css redefines these tokens, so the table's own styles
- * pick them up unchanged. `spot` is the centre of the light over the table. The curve's colours
- * stay on paper and are not redefined here.
- */
-export const STAGE_TOKENS = [
-  'bg',
-  'spot',
-  'surface',
-  'surface-hover',
-  'fg',
-  'muted',
-  'border',
-  'control',
-  'focus',
-  'you',
-  'other',
-  'promise',
-] as const;
-export type StageToken = (typeof STAGE_TOKENS)[number];
-
-export const STAGE: Record<StageToken, string> = {
-  bg: '#0b0e14', // blue-black, deeper than the dark paper
-  spot: '#1c2333', // where the light falls
-  surface: '#161b25', // the table
-  'surface-hover': '#202735',
-  fg: '#f3efe7',
-  muted: '#aab1bf',
-  border: '#2b3242',
-  control: '#7b849a',
-  focus: '#f3efe7',
-  you: '#5c9dff', // blue, more saturated than on paper
-  other: '#ff7a45', // terracotta, more saturated than on paper
-  promise: '#dce4ee', // told apart from both roles by lightness, not by hue
-};
-
 /** WCAG 2.2: 4.5:1 for text (1.4.3), 3:1 for graphics and interface boundaries (1.4.11). */
 export const MIN_CONTRAST = { text: 4.5, graphic: 3 } as const;
 
@@ -138,33 +101,6 @@ export const CONTRAST_PAIRS: readonly ContrastPair[] = [
   { fg: 'series-2', bg: 'surface', kind: 'graphic', use: 'curve: partner-specific commitment line on the figure' },
   { fg: 'series-3', bg: 'bg', kind: 'graphic', use: 'curve: general guilt dotted line' },
   { fg: 'series-3', bg: 'surface', kind: 'graphic', use: 'curve: general guilt dotted line on the figure' },
-];
-
-/** Every pair on the stage: the table's pairs, plus what may sit straight under the light. */
-export const STAGE_CONTRAST_PAIRS: readonly ContrastPair<StageToken>[] = [
-  { fg: 'fg', bg: 'bg', kind: 'text', use: 'text on the stage' },
-  { fg: 'fg', bg: 'spot', kind: 'text', use: 'text under the light' },
-  { fg: 'fg', bg: 'surface', kind: 'text', use: 'text on the table and buttons' },
-  { fg: 'fg', bg: 'surface-hover', kind: 'text', use: 'button text on hover' },
-  { fg: 'muted', bg: 'bg', kind: 'text', use: 'secondary text on the stage' },
-  { fg: 'muted', bg: 'spot', kind: 'text', use: 'secondary text under the light' },
-  { fg: 'muted', bg: 'surface', kind: 'text', use: 'secondary text on the table' },
-  { fg: 'muted', bg: 'surface-hover', kind: 'text', use: 'option terms on a hovered button' },
-  { fg: 'you', bg: 'bg', kind: 'text', use: 'role "you" on the stage' },
-  { fg: 'you', bg: 'surface', kind: 'text', use: 'role "you" on the table' },
-  { fg: 'other', bg: 'bg', kind: 'text', use: 'role "other" on the stage' },
-  { fg: 'other', bg: 'surface', kind: 'text', use: 'role "other" on the table, meter fill' },
-  { fg: 'you', bg: 'surface-hover', kind: 'graphic', use: 'role marks in a hovered option' },
-  { fg: 'other', bg: 'surface-hover', kind: 'graphic', use: 'role marks in a hovered option' },
-  { fg: 'promise', bg: 'bg', kind: 'text', use: 'promise accent on the stage' },
-  { fg: 'promise', bg: 'surface', kind: 'text', use: 'promise accent on the table' },
-  { fg: 'control', bg: 'bg', kind: 'graphic', use: 'control outlines on the stage' },
-  { fg: 'control', bg: 'spot', kind: 'graphic', use: 'control outlines under the light' },
-  { fg: 'control', bg: 'surface', kind: 'graphic', use: 'die and meter strokes' },
-  { fg: 'focus', bg: 'bg', kind: 'graphic', use: 'focus ring on the stage' },
-  { fg: 'focus', bg: 'spot', kind: 'graphic', use: 'focus ring under the light' },
-  { fg: 'focus', bg: 'surface', kind: 'graphic', use: 'focus ring on the table' },
-  { fg: 'focus', bg: 'surface-hover', kind: 'graphic', use: 'focus ring on a hovered button' },
 ];
 
 /** Minimum CIE76 ΔE between two colours after simulating each colour-vision deficiency. */

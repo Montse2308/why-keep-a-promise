@@ -197,3 +197,23 @@ describe('the experiment’s results only in chapters 5 and 6 (rule (k))', () =>
     }
   });
 });
+
+describe('chapter 6, the real people (rule (k))', () => {
+  it.each(LOCALES)('%s: tells what the people of the experiment did, with the figures of act 4 it replaces, and their citation', (locale) => {
+    const text = readable(filled(captionsOf(locale, 'real-people')));
+    for (const figure of ['192', '8', '73', '54', '70', '68']) expect(numbersIn(text)).toContain(figure);
+    expect(citationsIn(text)).toContain('Vanberg 2008');
+  });
+
+  it.each(LOCALES)('%s: counts rounds, not people, in the share that rolled', (locale) => {
+    const text = readable(captionsOf(locale, 'real-people')?.body ?? '').replace(/\s+/g, ' ').toLocaleLowerCase('und');
+    expect(text).toMatch(locale === 'en' ? /in the rounds where/ : /en las rondas en que/);
+  });
+
+  it.each(LOCALES)('%s: sets the guess beside the figure and says nothing about it', (locale) => {
+    const out = dictionaries[locale]['film.real-people.guess.out'];
+    expect(out).toContain('{real}');
+    expect(out).toContain('{guess}');
+    expect(out).not.toMatch(locale === 'en' ? /close|far|right|wrong|good|better/i : /cerca|lejos|acert|fall|bien|mejor/i);
+  });
+});

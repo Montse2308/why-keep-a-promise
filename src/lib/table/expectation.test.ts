@@ -4,6 +4,13 @@ import { promisedExpectation, PROMISED_RECIPIENT_BELIEFS, RECIPIENT_BELIEFS, SCA
 import { ROLL_COUNTS } from './results';
 import { cell } from '../vanberg/cells';
 
+describe('what the recipients expected (docs/sources.md, `vanberg-beliefs`)', () => {
+  it('keeps the recipients’ bets exactly, by whether they received a promise: 415.5 / 603 and 79.75 / 165', () => {
+    expect(RECIPIENT_BELIEFS.promise).toEqual({ sum: fraction(831, 2), n: 603 });
+    expect(RECIPIENT_BELIEFS.none).toEqual({ sum: fraction(319, 4), n: 165 });
+  });
+});
+
 describe('what the promised recipients expected, by switch (docs/sources.md, `vanberg-beliefs`)', () => {
   it('reads 70 without a switch and 68 with one, from the means of the sources', () => {
     expect(outOf100(promisedExpectation('same'))).toBe(70);

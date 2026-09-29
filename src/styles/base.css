@@ -70,32 +70,6 @@ p {
   text-wrap: pretty;
 }
 
-/*
- * The stage (ADR 0018): always dark, full width, with a light falling on what sits on it. Its
- * colour tokens are redefined in tokens.css, so everything inside picks them up. The box-shadow
- * carries the background to both edges of the window without widening the page; clip-path keeps
- * it from spilling above and below.
- */
-.stage {
-  padding-block: var(--space-12);
-  color: var(--color-fg);
-  /* The light fades out before the band's sides, so it meets the box-shadow's colour without an edge. */
-  background: radial-gradient(ellipse 50% 65% at 50% 38%, var(--color-spot), var(--color-bg)) var(--color-bg);
-  box-shadow: 0 0 0 100vmax var(--color-bg);
-  clip-path: inset(0 -100vmax);
-}
-
-.column > .stage {
-  grid-column: wide;
-  margin-block: var(--space-8);
-}
-
-@media (min-width: 48rem) {
-  .stage {
-    padding-block: var(--space-16);
-  }
-}
-
 a {
   color: inherit;
   text-decoration-color: var(--color-control);

@@ -88,11 +88,16 @@ const BEATS: Partial<Record<ChapterId, readonly Beat[]>> = {
     { id: 'receive', screens: 1.2 },
     { id: 'reveal', screens: 1.6 },
   ],
+  'real-people': [
+    { id: 'guess-same', screens: 1.1 },
+    { id: 'guess-switched', screens: 1.1 },
+    { id: 'expected', screens: 0.8 },
+    { id: 'conclusion', screens: 1 },
+  ],
 };
 
 /** Screens of the chapters still to be built: a placeholder their phase replaces with beats. */
 const PLANNED_SCREENS: Partial<Record<ChapterId, number>> = {
-  'real-people': 4,
   'my-research': 4.25,
   closing: 3,
 };

@@ -8,6 +8,7 @@ import { FACES, MOODS, TRIANGLE_MOODS } from './faces';
 import { outcomeOf, type DecisionState } from '../table/decision';
 import { PAYOFFS, type Face } from '../table/game';
 import { DECK } from './deck';
+import { SIGN } from './signs';
 import {
   AWAY,
   BOARD_MARGIN,
@@ -21,6 +22,7 @@ import {
   ROOMS_SPREAD,
   SPANS,
   spanOf,
+  SIGNS_MARGIN,
   SPREAD,
   stageAt,
   threadBetween,
@@ -529,5 +531,70 @@ describe('chapter 5, the blackout (ADR 0021, ADR 0023, ADR 0027)', () => {
     const still = stageAt(KEY_POSE.blackout ?? 0, { promised: true }, false, true);
     expect(still.beat).toEqual({ chapter: 'blackout', id: 'new-partner' });
     expect(still.cast.partner.opacity).toBe(1);
+  });
+});
+
+describe('chapter 6, the real people (ADR 0021, ADR 0023)', () => {
+  const guessSame = beatRange('real-people', 'guess-same');
+  const guessSwitched = beatRange('real-people', 'guess-switched');
+  const expected = beatRange('real-people', 'expected');
+  const conclusion = beatRange('real-people', 'conclusion');
+  const inside = (range: { from: number }, by = 0.4) => at(range.from + by);
+  const view = (p: number, state: StageState = { promised: true }, portrait = false) => stageAt(p, state, portrait, false);
+
+  it('brings everyone back to the table as it was, and the visitor’s own thread with them', () => {
+    const v = view(inside(guessSame));
+    expect(v.cast.other).toEqual({ at: castPositions(SPREAD.landscape).other, scale: 1, opacity: 1 });
+    expect(v.cast.partner.opacity).toBe(0);
+    expect(v.thread).toEqual({ state: 'tied', drawn: 1, shown: 1 });
+    expect(view(inside(guessSame), { promised: false }).thread.state).toBe('none');
+  });
+
+  it('lowers two signs over the table, each figure a question mark until it is guessed or reached', () => {
+    expect(view(at(guessSame.from - 1)).signs.shown).toBe(0);
+    const asking = view(inside(guessSame));
+    expect(asking.signs).toMatchObject({ shown: 1, same: 0, switched: 0, expected: 0 });
+    expect(view(inside(guessSame), { promised: true, guesses: { same: 60 } }).signs).toMatchObject({ same: 1, switched: 0 });
+    expect(view(inside(guessSwitched), { promised: true, guesses: { same: 60, switched: 30 } }).signs).toMatchObject({ same: 1, switched: 1 });
+    // Without guessing, the film shows both figures, and what was expected, when it reaches them.
+    expect(view(inside(expected, 0.1)).signs).toMatchObject({ shown: 1, same: 1, switched: 1, expected: 1 });
+  });
+
+  it('hangs the signs over the table, clear of the voices, and keeps them in view on any screen', () => {
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 1440, height: 640 },
+      { width: 360, height: 740 },
+      { width: 320, height: 568 },
+    ]) {
+      const portrait = isPortrait(viewport);
+      const v = view(inside(guessSame), { promised: true }, portrait);
+      const box = frame(v.shot, viewport);
+      expect(box.y).toBeLessThanOrEqual(SIGN.top - SIGNS_MARGIN + 1e-9);
+      for (const x of [v.signs.x.same, v.signs.x.switched]) {
+        expect(x - SIGN.width / 2).toBeGreaterThan(box.x);
+        expect(x + SIGN.width / 2).toBeLessThan(box.x + box.width);
+      }
+      expect(v.signs.x.switched - v.signs.x.same).toBeGreaterThanOrEqual(SIGN.width);
+      // The signs end above the voices' tops, the cloud's globe included.
+      const globeTop = v.voices.at.expects[1] + (GLOBE_AT[1] - 30) * VOICE_SCALE;
+      expect(SIGN.top + SIGN.height).toBeLessThan(Math.min(globeTop, v.voices.at.word[1] - 36 * VOICE_SCALE));
+    }
+  });
+
+  it('lights my word at Vanberg’s conclusion, and only there', () => {
+    expect(view(inside(expected, 0.1)).voices.glow).toBe(0);
+    expect(view(inside(conclusion)).voices.glow).toBe(1);
+  });
+
+  it('gives the figures their faces: surprise at the gap, and the other glad at the end', () => {
+    expect(view(inside(expected, 0.1)).moods.you).toBe('shock');
+    expect(view(inside(conclusion)).moods).toEqual({ you: 'neutral', other: 'happy', partner: 'neutral' });
+  });
+
+  it('draws its still frame with both figures and what was expected', () => {
+    const still = stageAt(KEY_POSE['real-people'] ?? 0, { promised: true }, false, true);
+    expect(still.beat).toEqual({ chapter: 'real-people', id: 'expected' });
+    expect(still.signs).toMatchObject({ shown: 1, same: 1, switched: 1, expected: 1 });
   });
 });

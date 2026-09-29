@@ -89,8 +89,3 @@ function draw(rng: Rng): number {
 export function throwDie(rng: Rng): Face {
   return DIE_FACES[Math.floor(draw(rng) * DIE_FACES.length)] as Face;
 }
-
-/** True with exactly the given probability. */
-export function drawWith(probability: Fraction, rng: Rng): boolean {
-  return draw(rng) * probability.den < probability.num;
-}

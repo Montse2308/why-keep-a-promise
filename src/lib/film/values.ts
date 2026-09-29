@@ -11,6 +11,8 @@ import { PAYOFFS as PD } from '../pd/game';
 import { promisedExpectation, scaleValue } from '../table/expectation';
 import { outOf100, toNumber } from '../table/fraction';
 import { expectedPayoffs, PAYOFFS as TABLE } from '../table/game';
+import { rollShare } from '../table/results';
+import { SWITCH_DESIGN } from '../vanberg/cells';
 
 const roll = expectedPayoffs('roll');
 const [failface] = TABLE.roll.failureFaces;
@@ -42,4 +44,13 @@ export const FILM_VALUES = {
   expectswitched: outOf100(promisedExpectation('switched')),
   scalebottom: outOf100(scaleValue(0)),
   scaletop: outOf100(scaleValue(4)),
+  /**
+   * How often the die was rolled in the rounds where the one deciding had promised, with the same
+   * partner and with a new partner promised by someone else, out of 100 (`vanberg-rates`); and how
+   * many people played, over how many rounds (`vanberg-design`).
+   */
+  rolledsame: outOf100(rollShare('promised-same')),
+  rolledswitched: outOf100(rollShare('promised-switched')),
+  people: SWITCH_DESIGN.people,
+  rounds: SWITCH_DESIGN.rounds,
 } as const satisfies Readonly<Record<string, number>>;

@@ -58,31 +58,23 @@
   --space-24: 6rem;
   --gutter: 1rem;
 
-  /* Shape: hairlines and small radii for controls; volume and larger radii for the table's objects. */
+  /* Shape: hairlines and small radii for controls, larger radii for figures. */
   --radius-sm: 3px;
   --radius-md: 6px;
   --radius-lg: 12px;
   --border-width: 1px;
   --focus-width: 2px;
-  /* Objects on the stage: a faint top light and a soft drop. Prose never carries a shadow. */
-  --shadow-object: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 2px rgb(0 0 0 / 0.5), 0 12px 28px -12px rgb(0 0 0 / 0.75);
-  --shadow-table: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 2px 4px rgb(0 0 0 / 0.4), 0 32px 64px -24px rgb(0 0 0 / 0.9);
-  --shadow-die: drop-shadow(0 6px 8px rgb(0 0 0 / 0.55));
 
   /* Layout */
   --content-max: 72rem;
   --table-max: 56rem;
   --target-min: 2.75rem; /* 44 px touch target */
 
-  /*
-   * Motion: transform, opacity and clip-path only. A transition that does not follow the scroll
-   * lasts 600 ms at most; the scene's die follows the scroll, and 900 ms is its cap.
-   */
+  /* Motion: transform, opacity and clip-path only. A transition lasts 600 ms at most. */
   --duration-fast: 120ms;
   --duration-base: 240ms;
   --duration-slow: 400ms;
   --duration-max: 600ms;
-  --duration-die: 900ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-settle: cubic-bezier(0.22, 1.2, 0.36, 1);
 }
@@ -119,23 +111,6 @@
     --duration-base: 0ms;
     --duration-slow: 0ms;
     --duration-max: 0ms;
-    --duration-die: 0ms;
   }
 }
 
-/* The stage: always dark, in both themes, deeper than the dark paper. It redefines the tokens it uses. */
-.stage {
-  color-scheme: dark;
-  --color-bg: #0b0e14;
-  --color-spot: #1c2333;
-  --color-surface: #161b25;
-  --color-surface-hover: #202735;
-  --color-fg: #f3efe7;
-  --color-muted: #aab1bf;
-  --color-border: #2b3242;
-  --color-control: #7b849a;
-  --color-focus: #f3efe7;
-  --color-you: #5c9dff;
-  --color-other: #ff7a45;
-  --color-promise: #dce4ee;
-}

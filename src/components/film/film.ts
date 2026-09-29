@@ -24,6 +24,7 @@ import {
   wallTransform,
   type Pip,
 } from '../../lib/film/parts';
+import { signTransform } from '../../lib/film/signs';
 import { lookAt } from '../../lib/film/voices';
 import { brokenBetween, stageAt, threadBetween, type Place, type StageState, type StageView } from '../../lib/film/stage';
 import { scrollPosition } from '../../lib/film/timeline';
@@ -34,6 +35,8 @@ import { playRound } from '../../lib/pd/round';
 import { write, type Message } from '../../lib/film/talk';
 import { BET_START, isBet, type Bet } from '../../lib/film/bet';
 import { current as waiting, DEALT, decide as decideCard, tally, type DeckState } from '../../lib/film/deck';
+import { guessOf, type GuessId } from '../../lib/film/guess';
+import { fill } from '../../lib/template';
 import { decide, UNDECIDED, type DecisionState } from '../../lib/table/decision';
 import { DIE_FACES, type Choice, type Face } from '../../lib/table/game';
 
@@ -135,7 +138,16 @@ export function start(): void {
     wordGlow: part('word-glow'),
     globeOther: part('globe-other'),
     globePartner: part('globe-partner'),
+    signs: part('signs'),
   };
+  /** Each of chapter 6's signs: the sign, its figure, its question mark and the expectation under it. */
+  const signParts = (['same', 'switched'] as const).map((id) => ({
+    id,
+    sign: part(`sign-${id}`),
+    figure: part(`sign-${id}-figure`),
+    question: part(`sign-${id}-question`),
+    expected: part(`sign-${id}-expected`),
+  }));
   const bands = [...world.querySelectorAll<SVGElement>('[data-band]')];
   const pips = [...world.querySelectorAll<SVGElement>('[data-pip]')];
   const cells = [...world.querySelectorAll<SVGElement>('[data-cell]')];
@@ -143,7 +155,7 @@ export function start(): void {
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
   const title = film.querySelector<HTMLElement>('[data-title]');
 
-  let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null };
+  let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null, guesses: {} };
   let drawStart = 0;
   let rollStart = 0;
   let countStart = 0;
@@ -299,6 +311,19 @@ export function start(): void {
       set(parts.wordGlow, 'opacity', voices.glow.toFixed(3));
       set(parts.globeOther, 'opacity', voices.globe === 'other' ? '1' : '0');
       set(parts.globePartner, 'opacity', voices.globe === 'partner' ? '1' : '0');
+    }
+
+    // Chapter 6: the signs come down on their strings, swaying a little, and each figure turns on.
+    const { signs } = view;
+    set(parts.signs, 'opacity', signs.shown > 0.01 ? '1' : '0');
+    if (signs.shown > 0) {
+      for (const { id, sign, figure, question, expected } of signParts) {
+        const sway = still ? 0 : Math.sin(now / (id === 'same' ? 1300 : 1100)) * 3;
+        set(sign, 'transform', `${signTransform(signs.x[id], signs.shown)} rotate(${(sway * 0.4).toFixed(2)})`);
+        set(figure, 'opacity', signs[id].toFixed(3));
+        set(question, 'opacity', (1 - signs[id]).toFixed(3));
+        set(expected, 'opacity', signs.expected.toFixed(3));
+      }
     }
 
     title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
@@ -570,6 +595,31 @@ export function start(): void {
     const text = film.querySelector('[data-scale-yours-text]');
     if (text) text.textContent = bet?.label ?? '';
     request();
+  });
+
+  // Chapter 6: guess before seeing. The bar is the visitor's; the figure is set beside it, and the
+  // sign over the table turns it on. Nothing judges the guess (ADR 0023).
+  film.querySelectorAll<HTMLElement>('[data-guess]').forEach((box) => {
+    const id = box.dataset.guess as GuessId;
+    const range = box.querySelector<HTMLInputElement>('[data-guess-range]');
+    const see = box.querySelector<HTMLButtonElement>('[data-guess-see]');
+    const yours = see?.querySelector('small');
+    const out = box.querySelector<HTMLElement>('[data-guess-out]');
+    const value = (): number => guessOf(Number(range?.value));
+    range?.addEventListener('input', () => {
+      range.setAttribute('aria-valuetext', fill(range.dataset.percent ?? '{n}%', { n: value() }));
+      if (yours) yours.textContent = fill(see?.dataset.yours ?? '{n}', { n: value() });
+    });
+    see?.addEventListener('click', () => {
+      if (settled(see)) return;
+      const guess = value();
+      state = { ...state, guesses: { ...state.guesses, [id]: guess } };
+      settle(box.querySelector('[data-guess-tickets]'), see);
+      if (range) range.disabled = true;
+      box.dataset.seen = '';
+      if (out) out.textContent = (out.dataset.said ?? '').replace('{guess}', String(guess));
+      request();
+    });
   });
 
   request();

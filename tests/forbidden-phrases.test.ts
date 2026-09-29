@@ -29,7 +29,7 @@ const normalize = (text: string) => text.normalize('NFC').toLocaleLowerCase('und
 describe('forbidden phrases', () => {
   it('scans the site sources', () => {
     expect(Object.keys(files).length).toBeGreaterThan(20);
-    expect(Object.keys(files)).toContain('../src/content/acts/en/04-vanberg.md');
+    expect(Object.keys(files)).toContain('../src/content/chapters/en/06-real-people.md');
   });
 
   it.each(Object.entries(files))('%s contains none', (_path, text) => {

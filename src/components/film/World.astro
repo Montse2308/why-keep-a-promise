@@ -12,6 +12,7 @@ import type { Locale } from '../../lib/i18n';
 import Board from './Board.astro';
 import Character from './Character.astro';
 import Coins from './Coins.astro';
+import Signs from './Signs.astro';
 import Voices from './Voices.astro';
 
 interface Props {
@@ -149,6 +150,7 @@ const lamp = `${uid}-lamp`;
   </g>
 
   <Board locale={locale} board={view.board} shadow={shadow} />
+  <Signs locale={locale} signs={view.signs} shadow={shadow} />
   <Coins part="coins-you" x={youX} n={view.coins.you} shown={view.coins.shown} />
   <Coins part="coins-other" x={otherX} n={view.coins.other} shown={view.coins.shown} />
 

@@ -1,8 +1,8 @@
 ---
 /**
  * The best-reply exercise on /dilemma (ADR 0017): the prisoner's dilemma matrix of act 2, where the
- * visitor picks a move against each column. It is not the table (docs/content-rules.md, rule (g));
- * it only borrows the table's look, from the same tokens. Logic in src/lib/pd/; ./controller.ts
+ * visitor picks a move against each column. It is not Vanberg's game (docs/content-rules.md, rule
+ * (g)); it is a figure on paper, from the notebook's tokens. Logic in src/lib/pd/; ./controller.ts
  * drives it. Without JavaScript, the static matrix shows instead.
  */
 import { useTranslations, type Locale } from '../../lib/i18n';
@@ -84,7 +84,7 @@ const cell = (you: (typeof MOVES)[number], other: (typeof MOVES)[number]) => fil
 </script>
 
 <style>
-  /* The table's frame, labels and buttons (src/components/table/GameTable.astro), from the same tokens. */
+  /* A figure on paper: frame, labels and buttons from the notebook's tokens. */
   .best-reply {
     display: grid;
     gap: var(--space-6);

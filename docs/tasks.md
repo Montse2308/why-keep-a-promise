@@ -6,9 +6,8 @@ Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, 
 **Fase activa:** P3 (capítulos 4 a 6). P0, P1 y P2 cerradas: Montse las revisó y las mergeó (PR #1,
 PR #2 y PR #3).
 
-**Estado del código:** la película cuenta los capítulos 0 a 3; debajo sigue la versión anterior (los
-actos 3 a 6, la mesa del momento 2 y las secciones del home). La película la reemplaza por capítulos
-(ADR 0021).
+**Estado del código:** la película cuenta los capítulos 0 a 6; debajo sigue la versión anterior (los
+actos 5 y 6 y las secciones del home). La película la reemplaza por capítulos (ADR 0021).
 
 ## P0 · Documentos
 
@@ -107,29 +106,54 @@ actos 3 a 6, la mesa del momento 2 y las secciones del home). La película la re
 
 ## P3 · Capítulos 4 a 6
 
-- [ ] Capítulo 4, «Dos voces»: la nube (lo que el otro espera) y el pergamino (mi palabra) llegan
-      junto al círculo; las dos razones, con las citas de la aversión a la culpa; casi siempre dicen
-      lo mismo; el truco de Vanberg (2008), cambiar a la persona, con lo que predice cada voz.
-- [ ] Capítulo 5, «El apagón»: se va la luz y en el asiento hay otra persona, el triángulo; el hilo
-      sigue atado a quien se fue (ADR 0027); el caso fijo ilustrativo, dicho en pantalla (regla (k));
-      el mazo, cada carta con una persona distinta y su mensaje, con boletos o deslizando, y al final
-      cuántas promesas cumplió el visitante, sin puntaje de pagos; después, como quien recibe, la
-      apuesta en la escala de cinco puntos, el cambio que descubre y lo que apostaron los receptores
-      reales (70 contra 68).
-- [ ] Capítulo 6, «La gente real»: adivinar antes de ver (73 % y 54 %, `ROLL_COUNTS`), lo que
-      esperaban (70 contra 68) y la conclusión de Vanberg (2008).
-- [ ] Todo número de la película sale del código, como en P2.
-- [ ] Sale la versión anterior de lo que estos capítulos reemplazan: la mesa del momento 2 (su
-      componente, su script, `moment2.ts` y sus claves) y los actos 3 y 4. `/vanberg` vuelve a la
-      película. `docs/sources.md` dice dónde se usa cada cifra.
-- [ ] Tests: la regla (f) sobre el mazo (una persona distinta por carta, sin puntaje de pagos
-      acumulado); la regla (k) (las cifras del experimento solo en los capítulos 5 y 6 y con su cita,
-      el caso fijo dicho en pantalla, las voces con sus citas, y ninguna línea que siga a una elección
-      del visitante le nombra una razón); el registro de cifras, sin cifras nuevas sin su entrada; la
-      coreografía de cada tramo, también con movimiento reducido.
+- [x] Capítulo 4, «Dos voces»: la nube (lo que el otro espera, con la cara de quien espera en su
+      globo) y el pergamino (mi palabra, con el sello del hilo) llegan sobre el círculo
+      (`src/lib/film/voices.ts`, `Voices.astro`); las dos razones, con las citas de la aversión a
+      la culpa; casi siempre dicen lo mismo; el truco de Vanberg (2008), cambiar a la persona, con lo
+      que predice cada voz. Las voces miran al otro, y en el truco se miran entre ellas.
+- [x] Capítulo 5, «El apagón»: se va la luz y a oscuras solo se ven los ojos; el cuadrado se va a
+      otra mesa, todavía atado por el hilo, y el triángulo se sienta sin hilo (ADR 0027). El caso
+      fijo ilustrativo se dice en pantalla dos veces (regla (k)). La nube mira a quien se sienta y el
+      pergamino al cuadrado a quien se le dio la palabra. El mazo (`src/lib/film/deck.ts`): seis
+      cartas, una persona distinta en cada una, con su mensaje; boletos o deslizar (quedarse a la
+      izquierda, tirar a la derecha); la persona de cada carta se sienta en el escenario; al final,
+      cuántas promesas cumplió, sin puntaje de pagos. Después, como quien recibe, la apuesta en la
+      escala de cinco puntos (`src/lib/film/bet.ts`), la luz que parpadea para mostrar el cambio y
+      la escala con lo que apostaron los receptores reales, 70 contra 68
+      (`PROMISED_RECIPIENT_BELIEFS`).
+- [x] Capítulo 6, «La gente real»: adivinar antes de ver con una barra (`src/lib/film/guess.ts`), dos
+      letreros de papel que bajan sobre la mesa con 73 % y 54 % (`ROLL_COUNTS`) y, en su nube, 70 y 68;
+      las 192 personas y las 8 rondas (`SWITCH_DESIGN`, con test contra las celdas); la conclusión de
+      Vanberg (2008), con el pergamino encendido.
+- [x] Todo número de la película sale del código, como en P2 (`src/lib/film/values.ts`).
+- [x] Sale la versión anterior de lo que estos capítulos reemplazan: la mesa del momento 2 (su
+      componente, su script, `RoleMark`, `moment2.ts`, `strings.ts`, `drawWith` y 40 claves
+      `table.*`; quedan las 6 que usa la tabla de `/vanberg`), el escenario oscuro que la envolvía
+      (`.stage` en `tokens.css` y `base.css`, `STAGE` en `palette.ts` y sus tests) y los actos 3
+      y 4. `/vanberg` vuelve al capítulo 6. `docs/sources.md` dice dónde se usa cada cifra, y cuáles
+      ya no se muestran (1/2, el chat, el medidor 69/48).
+- [x] Largo: una tarjeta se queda abajo solo lo que dura su tramo menos su hueco y su alto, así que las
+      tarjetas altas piden tramos largos. El capítulo 5 mide 7 pantallas y la película 36.25; cada
+      punto de luz sigue en su capítulo, y un test deja la lámpara justo donde empieza el capítulo 7
+      (antes, un test fijaba 35 pantallas). El capítulo 7 queda planeado en 4.25.
+- [x] La película recorta su desborde horizontal: una carta que sale volando ya no aleja la vista en
+      el celular.
+- [x] Tests: la regla (f) sobre el mazo (una persona distinta por carta, una decisión por carta y
+      nada más, y un conteo de promesas, nunca de pagos); la regla (k) (las cifras del experimento
+      solo en los capítulos 5 y 6 y con su cita, el caso fijo dicho en pantalla, las voces con sus
+      citas, y ninguna línea que siga a una elección del visitante le nombra una razón ni juzga lo
+      que adivinó); el registro de cifras; la coreografía de cada tramo, también con movimiento
+      reducido; cada cuadro quieto y cada corte en su propio tramo.
 - [ ] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), con el recorrido de
       los capítulos 4 a 6.
 - [ ] Revisión de P3 por Montse.
+- PENDIENTE(datos): el código guarda las sumas exactas de 70 y 68 (215 / 309 y 200.5 / 294), que
+  salen de las medias verificadas y del total verificado; falta cotejarlas contra `switch.dat`
+  (`docs/sources.md`, `vanberg-beliefs`).
+- Transición, hasta P4: el acto 6 del home todavía dice que el navegador corre «el código de la mesa,
+  en sus tres momentos». Sale con el acto en P4.
+- Transición, hasta P5: la prosa de `/vanberg` todavía habla de «la mesa» («lo que la mesa deja
+  fuera»). La reescribe el cuaderno (ADR 0024).
 
 ## Preguntas abiertas
 

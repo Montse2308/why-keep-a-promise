@@ -43,7 +43,7 @@ export const FIGURES: readonly Figure[] = [
   { value: '5', source: 'axelrod-1984', what: 'T, defect on a cooperator' },
   { value: '1', source: 'axelrod-1984', what: 'P, both defect' },
   { value: '0', source: 'axelrod-1984', what: 'S, cooperate with a defector' },
-  // Vanberg's game: chapter 3, the table of moment 2.
+  // Vanberg's game: chapters 3 and 5.
   { value: '10', source: 'vanberg-payoffs', what: 'dictator after Roll; recipient expected after Roll' },
   { value: '14', source: 'vanberg-payoffs', what: "dictator after Don't Roll" },
   { value: '12', source: 'vanberg-payoffs', what: 'recipient after Roll, faces 2–6' },

@@ -19,6 +19,8 @@ import { betMood, type Bet } from './bet';
 import { BOARD } from './board';
 import type { Shot } from './camera';
 import { DECK } from './deck';
+import type { Guesses } from './guess';
+import { SIGN, SIGN_X } from './signs';
 import type { Mood } from './faces';
 import { AFTER, type Chat } from './talk';
 import { spans, type Span } from './spans';
@@ -64,6 +66,8 @@ export interface StageState {
   readonly deck?: { readonly choices: readonly Choice[]; readonly at: number };
   /** Chapter 5: the visitor's bet, once they receive. */
   readonly bet?: Bet | null;
+  /** Chapter 6: the visitor's guesses, by figure; a figure shows once it is guessed. */
+  readonly guesses?: Guesses;
 }
 
 export interface StageView {
@@ -94,6 +98,17 @@ export interface StageView {
   };
   /** The blackout of chapter 5, from 0 (the day's light) to 1 (dark, but for the cast's eyes). */
   readonly dark: number;
+  /**
+   * Chapter 6's two signs over the table: how far they have come down, where each hangs, how much
+   * each figure shows (a question mark until then), and how much the recipients' expectations show.
+   */
+  readonly signs: {
+    readonly shown: number;
+    readonly x: { readonly same: number; readonly switched: number };
+    readonly same: number;
+    readonly switched: number;
+    readonly expected: number;
+  };
   /** 0 at the table; 1 in two rooms, with the wall up between them. */
   readonly rooms: number;
   /** How far the rooms' bulbs hang down, from 0 (out of sight) to 1. */
@@ -162,6 +177,13 @@ const FLICKER_OUT = [REVEAL - 0.75, REVEAL - 0.55] as const;
 const FLICKER_ON = [REVEAL - 0.25, REVEAL + 0.05] as const;
 const REVEAL_SWAP = [FLICKER_OUT[1], FLICKER_ON[0]] as const;
 /**
+ * Chapter 6. Back at the table as it was, two signs come down over it; each figure shows when the
+ * visitor guesses it, and both do when the film reaches them. At the conclusion, my word glows.
+ */
+const REAL_IN = entering('real-people', 'guess-same');
+const EXPECTED = entering('real-people', 'expected');
+const CONCLUSION = entering('real-people', 'conclusion');
+/**
  * Once the table is back, the board folds flat while "another game" is on screen, and the die it
  * folds into drops onto the table.
  */
@@ -188,6 +210,10 @@ const POSE_IN: Readonly<Record<string, number>> = {
   'blackout/deck': 0.5,
   'blackout/receive': 0.3,
   'blackout/reveal': 0.3,
+  'real-people/guess-same': 0.3,
+  'real-people/guess-switched': 0.3,
+  'real-people/expected': 0.1,
+  'real-people/conclusion': 0.3,
 };
 
 const poseOf = (chapter: ChapterId, beat: string): number => beatRange(chapter, beat).from + (POSE_IN[`${chapter}/${beat}`] ?? 0);
@@ -219,6 +245,10 @@ export const CUTS: readonly { readonly from: number; readonly pose: number }[] =
       ['blackout', 'deck'],
       ['blackout', 'receive'],
       ['blackout', 'reveal'],
+      ['real-people', 'guess-same'],
+      ['real-people', 'guess-switched'],
+      ['real-people', 'expected'],
+      ['real-people', 'conclusion'],
     ] as const
   ).map(([chapter, b]) => ({ from: beatRange(chapter, b).from - LEAD, pose: poseOf(chapter, b) })),
 ];
@@ -238,6 +268,7 @@ export const KEY_POSE: Partial<Record<ChapterId, number>> = {
   fold: at(poseOf('fold', 'decide')),
   'two-voices': at(poseOf('two-voices', 'together')),
   blackout: at(poseOf('blackout', 'new-partner')),
+  'real-people': at(poseOf('real-people', 'expected')),
 };
 
 /**
@@ -258,6 +289,8 @@ const SHOTS = {
     { at: at(VOICES_IN[1]), value: 495 },
     { at: at(WIDER[0]), value: 495 },
     { at: at(WIDER[1]), value: 520 },
+    { at: at(REAL_IN[0]), value: 520 },
+    { at: at(REAL_IN[1]), value: 490 },
   ]),
   width: track([
     { at: 0, value: 1500 },
@@ -270,6 +303,8 @@ const SHOTS = {
     { at: at(VOICES_IN[1]), value: 1300 },
     { at: at(WIDER[0]), value: 1300 },
     { at: at(WIDER[1]), value: 1500 },
+    { at: at(REAL_IN[0]), value: 1500 },
+    { at: at(REAL_IN[1]), value: 1320 },
   ]),
   widthPortrait: track([
     { at: 0, value: 660 },
@@ -282,6 +317,8 @@ const SHOTS = {
     { at: at(VOICES_IN[1]), value: 640 },
     { at: at(WIDER[0]), value: 640 },
     { at: at(WIDER[1]), value: 660 },
+    { at: at(REAL_IN[0]), value: 660 },
+    { at: at(REAL_IN[1]), value: 640 },
   ]),
 };
 
@@ -332,6 +369,9 @@ export const RESTING_FACE: Face = 5;
 /** Room the view leaves over the board, in world units: the spool sits in the corner above it. */
 export const BOARD_MARGIN = 90;
 
+/** Room the view leaves over chapter 6's signs, and their strings' knots. */
+export const SIGNS_MARGIN = 60;
+
 /** Half the distance between the two characters, at the table and in the rooms, by screen shape. */
 export const SPREAD = { landscape: 280, portrait: 190 } as const;
 export const ROOMS_SPREAD = { landscape: 390, portrait: 205 } as const;
@@ -356,6 +396,14 @@ function moodsAt(beat: { chapter: ChapterId; id: string }, state: StageState, as
       return { you: betMood(state.bet ?? null), other: 'happy', partner: 'neutral' };
     case 'blackout/reveal':
       return { you: 'shock', other: 'neutral', partner: 'neutral' };
+    case 'real-people/guess-same':
+      return { you: 'neutral', other: 'neutral', partner: 'neutral' };
+    case 'real-people/guess-switched':
+      return { you: 'worried', other: 'neutral', partner: 'neutral' };
+    case 'real-people/expected':
+      return { you: 'shock', other: 'neutral', partner: 'neutral' };
+    case 'real-people/conclusion':
+      return { you: 'neutral', other: 'happy', partner: 'neutral' };
     default:
       return { ...pairMoods(beat, state, asked), partner: 'neutral' };
   }
@@ -464,7 +512,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     widthPortrait: sample(SHOTS.widthPortrait, at(m)),
     // While the board is down, the view keeps it clear of the spool in the corner; hidden, the
     // constraint is far away.
-    top: BOARD.card.y - BOARD_MARGIN + (1 - boardSeen) * 2000,
+    top: Math.min(BOARD.card.y - BOARD_MARGIN + (1 - boardSeen) * 2000, SIGN.top - SIGNS_MARGIN + (1 - eased(m, REAL_IN)) * 2000),
   };
 
   const columns = state.columns ?? NO_PICKS;
@@ -526,6 +574,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     [onCard, eased(m, DECK_IN)],
     [asAtTable, eased(m, RECEIVE_IN)],
     [asSwitched, eased(m, REVEAL_SWAP)],
+    [asAtTable, eased(m, REAL_IN)],
   ].reduce<Layout>((from, [to, t]) => mixLayout(from, to as Layout, t as number), asAtTable);
   const cast = { you: seats.you, ...layout };
 
@@ -536,8 +585,18 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   const thread = {
     state: onDeck ? (card?.partner === 'same' && cardChoice === 'dont' ? 'broken' : 'tied') : threadState(state),
     drawn: onDeck || state.promised === true ? 1 : 0,
-    shown: 1 - eased(m, RECEIVE_IN),
+    shown: Math.min(1, 1 - eased(m, RECEIVE_IN) + eased(m, REAL_IN)),
   } as const;
+
+  const shown = eased(m, REAL_IN);
+  const figures = eased(m, EXPECTED);
+  const signs = {
+    shown,
+    x: SIGN_X[portrait ? 'portrait' : 'landscape'],
+    same: state.guesses?.same === undefined ? figures : 1,
+    switched: state.guesses?.switched === undefined ? figures : 1,
+    expected: figures,
+  };
 
   // The lights go out once for the blackout and flicker for the reveal.
   const dark = Math.max(
@@ -556,7 +615,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     shown: eased(m, VOICES_IN),
     at: voiceAt,
     look: arguing ? { expects: voiceAt.word, word: voiceAt.expects } : { expects: seated, word: receiving ? seated : cast.other.at },
-    glow: 0,
+    glow: eased(m, CONCLUSION),
     globe: cast.partner.opacity > 0.5 ? ('partner' as const) : ('other' as const),
   };
 
@@ -569,6 +628,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     cast,
     voices,
     dark,
+    signs,
     rooms,
     bulbs: rooms * (1 - boardShown),
     table: 1 - rooms,

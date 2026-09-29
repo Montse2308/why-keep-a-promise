@@ -4,7 +4,6 @@ import {
   branches,
   CHOICES,
   DIE_FACES,
-  drawWith,
   expectedPayoffs,
   PAYOFFS,
   realizedPayoffs,
@@ -58,11 +57,5 @@ describe('random draws', () => {
     for (const bad of [1, -0.1, Number.NaN]) {
       expect(() => throwDie(sequence(bad))).toThrow(RangeError);
     }
-  });
-
-  it('draws true with exactly the given probability', () => {
-    expect(drawWith(fraction(1, 2), sequence(0))).toBe(true);
-    expect(drawWith(fraction(1, 2), sequence(0.4999))).toBe(true);
-    expect(drawWith(fraction(1, 2), sequence(0.5))).toBe(false);
   });
 });

@@ -1,0 +1,79 @@
+---
+/**
+ * Chapter 6's two paper signs over the table (src/lib/film/signs.ts): how often the die was rolled
+ * after a promise, with the same partner (the square's sign) and with a new partner (the
+ * triangle's), from the exact counts (`ROLL_COUNTS`); under each, on a little cloud, what the
+ * recipients expected. A question mark stands for each figure until it shows. The film's script
+ * lowers them and turns each figure on; the numbers are the build's, never the script's.
+ */
+import { FILM } from '../../lib/design/film';
+import type { StageView } from '../../lib/film/stage';
+import { SIGN, signTransform } from '../../lib/film/signs';
+import { FILM_VALUES } from '../../lib/film/values';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+  signs: StageView['signs'];
+  shadow: string;
+}
+
+const { locale, signs, shadow } = Astro.props;
+const tr = useTranslations(locale);
+const percent = (n: number) => fill(tr('film.real-people.percent'), { n });
+const board = [
+  { id: 'same', label: tr('film.real-people.sign.same'), figure: percent(FILM_VALUES.rolledsame), expected: FILM_VALUES.expectsame, shown: signs.same },
+  { id: 'switched', label: tr('film.real-people.sign.switched'), figure: percent(FILM_VALUES.rolledswitched), expected: FILM_VALUES.expectswitched, shown: signs.switched },
+] as const;
+const { width, height, top } = SIGN;
+---
+
+<g data-part="signs" opacity={signs.shown > 0.01 ? 1 : 0}>
+  {
+    board.map((sign) => (
+      <g data-part={`sign-${sign.id}`} transform={signTransform(signs.x[sign.id], signs.shown)}>
+        <line x1={-width / 3} y1="-1600" x2={-width / 3} y2={top + 6} stroke={FILM.ink} stroke-width="3" />
+        <line x1={width / 3} y1="-1600" x2={width / 3} y2={top + 6} stroke={FILM.ink} stroke-width="3" />
+        <g filter={`url(#${shadow})`}>
+          <rect x={-width / 2} y={top} width={width} height={height} rx="12" fill={FILM.card} stroke={FILM.ink} stroke-width="4" />
+        </g>
+        <circle cx={-width / 3} cy={top + 6} r="4" fill={FILM.ink} />
+        <circle cx={width / 3} cy={top + 6} r="4" fill={FILM.ink} />
+        {sign.id === 'same' ? (
+          <rect x={-width / 2 + 16} y={top + 16} width="20" height="20" rx="4" fill={FILM.other} stroke={FILM.ink} stroke-width="3" />
+        ) : (
+          <path d={`M${-width / 2 + 26} ${top + 14} L${-width / 2 + 38} ${top + 36} L${-width / 2 + 14} ${top + 36} Z`} fill={FILM.new} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
+        )}
+        <text x={-width / 2 + 46} y={top + 33} class="sign__label" fill={FILM.ink}>{sign.label}</text>
+        <text x="-42" y={top + 86} text-anchor="middle" class="sign__figure" fill={FILM.ink} opacity={sign.shown} data-part={`sign-${sign.id}-figure`}>{sign.figure}</text>
+        <text x="-42" y={top + 86} text-anchor="middle" class="sign__figure" fill={FILM['card-muted']} opacity={1 - sign.shown} data-part={`sign-${sign.id}-question`}>?</text>
+        <g transform={`translate(62 ${top + 70}) scale(0.82)`} opacity={signs.expected} data-part={`sign-${sign.id}-expected`}>
+          <path d="M-40 14 C-56 14 -56 -8 -38 -8 C-36 -24 -10 -28 0 -16 C10 -30 38 -24 36 -8 C54 -8 54 14 38 14 Z" fill={FILM['voice-expects']} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
+          <text x="0" y="11" text-anchor="middle" class="sign__expected" fill={FILM.ink}>{sign.expected}</text>
+        </g>
+      </g>
+    ))
+  }
+</g>
+
+<style>
+  .sign__label {
+    font-family: var(--font-body, system-ui, sans-serif);
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: 0.02em;
+  }
+
+  .sign__figure {
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 900;
+    font-size: 50px;
+  }
+
+  .sign__expected {
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 900;
+    font-size: 27px;
+  }
+</style>
