@@ -4,7 +4,7 @@
  * from 0 (its top) to 1 (its end). Screens are what a reader feels and what the chapters declare, so
  * the stage's choreography is written in them and turned into `p` with `at()`.
  */
-import { BUILT, chapter, CHAPTERS, type Beat, type ChapterId } from '../chapters';
+import { BUILT, CHAPTERS, type Beat, type ChapterId } from '../chapters';
 import { totalScreens } from './spans';
 import { clamp, lerp } from './track';
 
@@ -62,19 +62,9 @@ export function scrollPosition(scrollTop: number, top: number, height: number, s
   return lerp(span.from, span.to, clamp((scrollTop - top) / height, 0, 1));
 }
 
-/** How far a point (in screens) has gone through a beat, from 0 to 1. */
-export function through(range: BeatRange, screens: number): number {
-  return clamp((screens - range.from) / (range.to - range.from), 0, 1);
-}
-
 /** The beat under the top of the screen at a point, in screens; the last built one past the end. */
 export function beatAt(screens: number): BeatRange {
   const found = BEATS.find((range) => screens < range.to) ?? BEATS.at(-1);
   if (!found) throw new Error('The film has no built beat');
   return found;
-}
-
-/** Guard for code that names a chapter's beats: the chapter must be built. */
-export function isBuilt(id: ChapterId): boolean {
-  return chapter(id).beats.length > 0;
 }

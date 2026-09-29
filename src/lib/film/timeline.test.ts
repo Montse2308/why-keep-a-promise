@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BUILT, CHAPTERS } from '../chapters';
 import { splitBeats } from './captions';
-import { at, beatAt, beatRange, BEATS, BUILT_SCREENS, BUILT_SPAN, chapterStart, scrollPosition, through, TOTAL_SCREENS } from './timeline';
+import { at, beatAt, beatRange, BEATS, BUILT_SCREENS, BUILT_SPAN, chapterStart, scrollPosition, TOTAL_SCREENS } from './timeline';
 import { spanOf } from './stage';
 
 describe('the timeline, in screens', () => {
@@ -19,15 +19,12 @@ describe('the timeline, in screens', () => {
     expect(BUILT_SPAN.to).toBeCloseTo(at(BUILT_SCREENS), 12);
   });
 
-  it('finds the beat under the top of the screen, and how far into it', () => {
+  it('finds the beat under the top of the screen', () => {
     const first = BEATS[0];
     if (!first) throw new Error('no beats');
     expect(beatAt(0)).toBe(first);
     expect(beatAt(first.to - 0.01)).toBe(first);
     expect(beatAt(BUILT_SCREENS + 10)).toBe(BEATS.at(-1));
-    expect(through(first, first.from)).toBe(0);
-    expect(through(first, (first.from + first.to) / 2)).toBeCloseTo(0.5, 12);
-    expect(through(first, first.to + 1)).toBe(1);
     expect(beatRange('arrival', 'ask')).toBe(first);
     expect(() => beatRange('closing', 'nope')).toThrow();
   });

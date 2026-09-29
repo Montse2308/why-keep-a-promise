@@ -33,5 +33,3 @@ export const FILM_VALUES = {
   cost: TABLE.dont.you - TABLE.roll.you,
   expected: toNumber(roll.other),
 } as const satisfies Readonly<Record<string, number>>;
-
-export type FilmValue = keyof typeof FILM_VALUES;
