@@ -1,10 +1,11 @@
 /**
  * The film's script (ADR 0025): turns the storyboard into the film. It reads the native scroll,
  * never captures it, and applies what src/lib/film/stage.ts says the stage shows at that point: the
- * camera, the day's light, the cast and their moods, the rooms, the board, the coins, the die and
- * the golden thread. It also handles the chapters' choices, which are plain buttons: every line a
- * choice leads to was resolved at build time, so the script only shows it. Nothing is stored or sent
- * (ADR 0023).
+ * camera, the day's light, the cast and their moods, the rooms, the board, the coins, the die, the
+ * golden thread, the two voices, the blackout and chapter 6's signs. It also handles the chapters'
+ * choices, which are plain buttons, sliders and, on the deck, a swipe that stands for a button:
+ * every line a choice leads to was resolved at build time, so the script only shows it. Nothing is
+ * stored or sent (ADR 0023).
  */
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
