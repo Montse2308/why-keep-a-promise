@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { expectationFor, recipientAfterDraw, RECIPIENT_BELIEFS, SWITCHED_PARTNER_RECEIVED_PROMISE, type Partner } from './expectation';
 import { fraction, multiply, outOf100 } from './fraction';
-import { outcomeOf } from './moment1';
+import { outcomeOf } from './decision';
 import { moment2, MOMENT2_START, SWITCH_PROBABILITY, type Moment2Event, type Moment2State } from './moment2';
 import { noRng, sequence } from './testing';
 

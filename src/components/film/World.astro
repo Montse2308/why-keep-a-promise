@@ -6,8 +6,8 @@
  */
 import { FILM } from '../../lib/design/film';
 import { frame, viewBoxAttribute } from '../../lib/film/camera';
-import { castPositions, threadPath, WORLD, type StageView } from '../../lib/film/stage';
-import { bubbleTransform, bulbTransform, wallTransform } from '../../lib/film/parts';
+import { brokenThreadPaths, castPositions, threadPath, WORLD, type StageView } from '../../lib/film/stage';
+import { bubbleTransform, bulbTransform, PIP_AT, PIPS, wallTransform, type Pip } from '../../lib/film/parts';
 import type { Locale } from '../../lib/i18n';
 import Board from './Board.astro';
 import Character from './Character.astro';
@@ -91,9 +91,18 @@ const lamp = `${uid}-lamp`;
   <ellipse cx={cast.you[0]} cy={WORLD.floor + 12} rx="70" ry="12" fill="#140f28" opacity="0.2" data-part="shadow-you" />
   <ellipse cx={cast.other[0]} cy={WORLD.floor + 12} rx="76" ry="12" fill="#140f28" opacity="0.2" data-part="shadow-other" />
 
-  <g data-part="thread" opacity={view.thread.state === 'none' ? 0 : 1}>
+  <g data-part="thread" opacity={view.thread.state === 'tied' ? 1 : 0}>
     <path d={threadPath(view.spread)} fill="none" stroke={FILM['thread-edge']} stroke-width="11" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset={1 - view.thread.drawn} data-part="thread-edge" />
     <path d={threadPath(view.spread)} fill="none" stroke={FILM.thread} stroke-width="6" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset={1 - view.thread.drawn} data-part="thread-line" />
+  </g>
+
+  <g data-part="thread-broken" opacity={view.thread.state === 'broken' ? 1 : 0}>
+    {brokenThreadPaths(view.spread).map((d, i) => (
+      <>
+        <path d={d} fill="none" stroke={FILM['thread-edge']} stroke-width="11" stroke-linecap="round" data-part={`broken-edge-${i}`} />
+        <path d={d} fill="none" stroke={FILM.thread} stroke-width="6" stroke-linecap="round" data-part={`broken-line-${i}`} />
+      </>
+    ))}
   </g>
 
   <g transform={`translate(${cast.you[0]} ${cast.you[1]})`} data-part="you">
@@ -124,11 +133,9 @@ const lamp = `${uid}-lamp`;
   <g transform={`translate(${WORLD.centre} ${view.die.y})`} opacity={view.die.opacity} data-part="die">
     <g data-part="die-spin" filter={`url(#${shadow})`}>
       <rect x="-34" y="-34" width="68" height="68" rx="14" fill="#fffaf0" stroke={FILM.ink} stroke-width="4.5" />
-      <circle cx="-14" cy="-14" r="6.5" fill={FILM.ink} />
-      <circle cx="14" cy="-14" r="6.5" fill={FILM.ink} />
-      <circle cx="0" cy="0" r="6.5" fill={FILM.ink} />
-      <circle cx="-14" cy="14" r="6.5" fill={FILM.ink} />
-      <circle cx="14" cy="14" r="6.5" fill={FILM.ink} />
+      {(Object.keys(PIP_AT) as Pip[]).map((pip) => (
+        <circle cx={PIP_AT[pip][0]} cy={PIP_AT[pip][1]} r="6.5" fill={FILM.ink} data-pip={pip} visibility={PIPS[view.die.face].includes(pip) ? 'visible' : 'hidden'} />
+      ))}
     </g>
   </g>
 

@@ -24,7 +24,8 @@ const title = t(locale, 'site.title');
 const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
 const status = t(locale, statusKey(MANUSCRIPT_STATUS));
 
-// Act prose from src/content/acts/<locale>/; an act without a file shows its TODO.
+// Act prose from src/content/acts/<locale>/; an act without a file shows its TODO. The acts the
+// film tells have no prose left.
 const entries = await getCollection('acts', (entry) => entry.id.startsWith(`${locale}/`));
 const acts = new Map(
   await Promise.all(
@@ -50,8 +51,10 @@ const blocks = homeBlocks().map((block) => {
     blocks.map((block) => {
       if (block.kind === 'section') return <HomeSection section={block.section} locale={locale} />;
       const { act, locked, entry, Content } = block;
-      // The film replaces act 1 (ADR 0021); the acts still to be replaced follow it (docs/phases.md).
-      if (act.id === 'question') return <Film locale={locale} />;
+      // The film tells the acts it replaced (ADR 0021): it stands where the first of them stood, and
+      // the acts still to be replaced follow it (docs/phases.md).
+      if (act.film === 'arrival') return <Film locale={locale} />;
+      if (act.film) return null;
       return act.id === 'finding' ? (
         <Act act={act} locale={locale} title={entry?.data.title} pending={!locked && !Content} status={status} lockedContent={!locked} deeper={!locked}>
           {Content && <Content />}
@@ -59,7 +62,7 @@ const blocks = homeBlocks().map((block) => {
         </Act>
       ) : (
         <Act act={act} locale={locale} title={entry?.data.title} pending={!Content}>
-          {act.id === 'vanberg' && <GameTable mode="moment2" locale={locale} id="table-vanberg" />}
+          {act.id === 'vanberg' && <GameTable locale={locale} id="table-vanberg" />}
           {Content && <Content />}
         </Act>
       );

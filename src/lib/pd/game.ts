@@ -1,5 +1,5 @@
 /**
- * The one-shot prisoner's dilemma of act 2 and /dilemma, with the payoffs of Axelrod (1984):
+ * The one-shot prisoner's dilemma of chapter 1 and /dilemma, with the payoffs of Axelrod (1984):
  * T = 5, R = 3, P = 1, S = 0 (docs/sources.md, `axelrod-1984`). It is not the table: the table is
  * Vanberg's game (docs/content-rules.md, rule (g)). Pure and deterministic; nothing here draws at random.
  */

@@ -116,3 +116,21 @@ describe('chapter 2, what if they could talk? (ADR 0021)', () => {
     expect(readable(captionsOf(locale, 'talk')?.body ?? '')).toContain('*cheap talk*');
   });
 });
+
+describe('chapter 3, the matrix folds (rule (g))', () => {
+  const says = {
+    en: ['another game, the same tension', "it is not the prisoner's dilemma"],
+    es: ['otro juego, la misma tensión', 'no es el dilema del prisionero'],
+  } as const;
+
+  it.each(LOCALES)('%s: says on screen that Vanberg’s game is another game with the same tension', (locale) => {
+    const text = readable(captionsOf(locale, 'fold')?.body ?? '').replace(/\s+/g, ' ').toLocaleLowerCase('und');
+    for (const phrase of says[locale]) expect(text).toContain(phrase);
+    expect(citationsIn(readable(captionsOf(locale, 'fold')?.body ?? ''))).toContain('Vanberg 2008');
+  });
+
+  it.each(LOCALES)('%s: never calls the table the prisoner’s dilemma in the decision', (locale) => {
+    const decide = (captionsOf(locale, 'fold')?.body ?? '').split('<!-- beat:decide -->')[1] ?? '';
+    expect(decide.toLocaleLowerCase('und')).not.toMatch(/prisoner|prisionero/);
+  });
+});

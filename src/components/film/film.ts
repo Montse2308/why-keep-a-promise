@@ -9,17 +9,21 @@
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
 import { noteFor } from '../../lib/film/board';
-import { bubbleTransform, bulbTransform, boardTransform, coinCountY, coinsTransform, wallTransform } from '../../lib/film/parts';
-import { castPositions, stageAt, threadPath, type StageState, type StageView } from '../../lib/film/stage';
+import { boardOpacity, bubbleTransform, bulbTransform, boardTransform, coinCountY, coinsTransform, PIPS, wallTransform, type Pip } from '../../lib/film/parts';
+import { brokenThreadPaths, castPositions, stageAt, threadPath, type StageState, type StageView } from '../../lib/film/stage';
 import { scrollPosition } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
 import { reduce as pick, START as NO_PICKS, isDone, type CellKey, type Tag } from '../../lib/pd/bestReply';
 import type { Move } from '../../lib/pd/game';
 import { playRound } from '../../lib/pd/round';
 import { write, type Message } from '../../lib/film/talk';
+import { decide, UNDECIDED, type DecisionState } from '../../lib/table/decision';
+import { DIE_FACES, type Choice, type Face } from '../../lib/table/game';
 
 const DRAW_MS = 800;
 const COUNT_MS = 450;
+/** How long the die spins in the air before it lands. */
+const ROLL_MS = 1000;
 
 /** Sets an attribute only when it changes, so a still frame costs the page nothing. */
 const cache = new WeakMap<Element, Map<string, string>>();
@@ -86,6 +90,9 @@ export function start(): void {
     thread: part('thread'),
     threadEdge: part('thread-edge'),
     threadLine: part('thread-line'),
+    threadBroken: part('thread-broken'),
+    brokenEdges: [part('broken-edge-0'), part('broken-edge-1')],
+    brokenLines: [part('broken-line-0'), part('broken-line-1')],
     table: part('table'),
     die: part('die'),
     dieSpin: part('die-spin'),
@@ -96,13 +103,15 @@ export function start(): void {
     bubbleOther: part('bubble-other'),
   };
   const bands = [...world.querySelectorAll<SVGElement>('[data-band]')];
+  const pips = [...world.querySelectorAll<SVGElement>('[data-pip]')];
   const cells = [...world.querySelectorAll<SVGElement>('[data-cell]')];
   const spool = film.querySelector<SVGElement>('[data-spool]');
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
   const title = film.querySelector<HTMLElement>('[data-title]');
 
-  let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null };
+  let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED };
   let drawStart = 0;
+  let rollStart = 0;
   let countStart = 0;
   let pointer: [number, number] = [0, 0];
   let visible = true;
@@ -126,8 +135,8 @@ export function start(): void {
   }
 
   function paintBoard(board: StageView['board']): void {
-    set(parts.board, 'opacity', board.shown.toFixed(3));
-    set(parts.board, 'transform', boardTransform(board.shown));
+    set(parts.board, 'opacity', boardOpacity(board.shown, board.folded).toFixed(3));
+    set(parts.board, 'transform', boardTransform(board.shown, board.folded));
     for (const band of bands) set(band, 'opacity', band.dataset.band === board.column ? '0.1' : '0');
     for (const cell of cells) {
       const tags: readonly Tag[] = board.tags[cell.dataset.cell as CellKey] ?? [];
@@ -178,10 +187,17 @@ export function start(): void {
     set(parts.bulbOther, 'opacity', view.bulbs > 0.01 ? '1' : '0');
     set(parts.table, 'opacity', view.table.toFixed(3));
 
+    // The die floats in chapter 0; in chapter 3 it jumps and spins while it rolls, faces flashing,
+    // then lands on the face the decision drew.
     const float = view.die.floating && !still ? Math.sin(now / 520) * 7 : 0;
-    set(parts.die, 'transform', `translate(800 ${(view.die.y + float).toFixed(2)})`);
+    const spun = view.die.rolling && !still ? clamp((now - rollStart) / ROLL_MS, 0, 1) : 0;
+    const jump = view.die.rolling && !still ? -110 * Math.sin(Math.PI * spun) : 0;
+    const turn = view.die.rolling && !still ? 720 * (1 - (1 - spun) ** 3) : view.die.floating && !still ? Math.sin(now / 900) * 12 : 0;
+    set(parts.die, 'transform', `translate(800 ${(view.die.y + float + jump).toFixed(2)})`);
     set(parts.die, 'opacity', view.die.opacity.toFixed(3));
-    set(parts.dieSpin, 'transform', `rotate(${view.die.floating && !still ? (Math.sin(now / 900) * 12).toFixed(2) : 0})`);
+    set(parts.dieSpin, 'transform', `rotate(${turn.toFixed(2)})`);
+    const face: Face = view.die.rolling && !still ? (DIE_FACES[Math.floor(now / 90) % DIE_FACES.length] ?? view.die.face) : view.die.face;
+    for (const pip of pips) set(pip, 'visibility', PIPS[face].includes(pip.dataset.pip as Pip) ? 'visible' : 'hidden');
 
     paintBoard(view.board);
     const counted = still ? 1 : easeInOut(clamp((now - countStart) / COUNT_MS, 0, 1));
@@ -202,7 +218,12 @@ export function start(): void {
       set(line, 'd', path);
       set(line, 'stroke-dashoffset', (1 - drawn).toFixed(3));
     }
-    set(parts.thread, 'opacity', view.thread.state === 'none' ? '0' : '1');
+    set(parts.thread, 'opacity', view.thread.state === 'tied' ? '1' : '0');
+    set(parts.threadBroken, 'opacity', view.thread.state === 'broken' ? '1' : '0');
+    brokenThreadPaths(view.spread).forEach((d, i) => {
+      set(parts.brokenEdges[i], 'd', d);
+      set(parts.brokenLines[i], 'd', d);
+    });
 
     title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
     if (visible) request();
@@ -229,7 +250,24 @@ export function start(): void {
     { passive: true },
   );
 
-  // Chapter 0: promise or not.
+  /** The spool in the corner: the thread's state, in words too. */
+  function spoolAs(thread: 'tied' | 'kept' | 'broken' | 'none'): void {
+    spool?.setAttribute('data-spool', thread === 'kept' ? 'tied' : thread);
+    const label = { tied: film?.dataset.threadTied, kept: film?.dataset.threadKept, broken: film?.dataset.threadBroken, none: film?.dataset.threadNone }[thread];
+    if (spoolLabel) spoolLabel.textContent = label ?? '';
+  }
+
+  // Chapter 3 reminds the visitor what they answered in chapter 0.
+  const promiseLine = film.querySelector<HTMLElement>('[data-promise-line]');
+  const remind = (): void => {
+    if (!promiseLine) return;
+    const said = state.promised === true ? promiseLine.dataset.yes : state.promised === false ? promiseLine.dataset.no : promiseLine.dataset.none;
+    promiseLine.textContent = said ?? '';
+  };
+  remind();
+
+  // Chapter 0: promise or not. The answer can change until the decision of chapter 3.
+  const promiseTickets = film.querySelector('#arrival .tickets');
   const promiseOut = film.querySelector<HTMLElement>('#arrival [data-out]');
   film.querySelectorAll<HTMLButtonElement>('[data-promise]').forEach((button, _i, all) => {
     button.addEventListener('click', () => {
@@ -239,8 +277,8 @@ export function start(): void {
       drawStart = performance.now();
       all.forEach((other) => other.setAttribute('aria-pressed', String(other === button)));
       if (promiseOut) promiseOut.textContent = (promised ? promiseOut.dataset.outYes : promiseOut.dataset.outNo) ?? '';
-      spool?.setAttribute('data-spool', promised ? 'tied' : 'none');
-      if (spoolLabel) spoolLabel.textContent = (promised ? film.dataset.threadTied : film.dataset.threadNone) ?? '';
+      spoolAs(promised ? 'tied' : 'none');
+      remind();
       request();
     });
   });
@@ -304,6 +342,40 @@ export function start(): void {
         bubble.dataset.shown = '';
       }
       if (chatOut) chatOut.textContent = button.dataset.said ?? '';
+      request();
+    });
+  });
+
+  // Chapter 3: keep the money or roll the die, once. The promise of chapter 0 is settled with it.
+  const decisionTickets = film.querySelector('[data-decision-tickets]');
+  const decisionOut = film.querySelector<HTMLElement>('[data-decision-out]');
+  film.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (settled(button) || state.decision?.phase !== 'idle') return;
+      const choice = button.dataset.choice as Choice;
+      const chosen = decide(UNDECIDED, { type: 'choose', choice }, Math.random);
+      state = { ...state, decision: choice === 'roll' ? decide(chosen, { type: 'throw' }, Math.random) : chosen };
+      settle(decisionTickets, button);
+      promiseTickets?.querySelectorAll('button').forEach((ticket) => ticket.setAttribute('aria-disabled', 'true'));
+
+      const land = (): void => {
+        const decision: DecisionState = decide(state.decision ?? UNDECIDED, { type: 'settle' }, Math.random);
+        state = { ...state, decision };
+        countStart = performance.now();
+        if (decision.phase === 'outcome') {
+          const said = decision.face === null ? button.dataset.said : (JSON.parse(button.dataset.said ?? '{}') as Record<string, string>)[decision.face];
+          const thread = state.promised === true ? (decision.choice === 'dont' ? decisionOut?.dataset.broken : decisionOut?.dataset.kept) : undefined;
+          if (decisionOut) decisionOut.textContent = [said, thread].filter(Boolean).join(' ');
+          if (state.promised === true) spoolAs(decision.choice === 'dont' ? 'broken' : 'kept');
+        }
+        request();
+      };
+      if (choice === 'roll' && !reduced.matches) {
+        rollStart = performance.now();
+        setTimeout(land, ROLL_MS);
+      } else {
+        land();
+      }
       request();
     });
   });

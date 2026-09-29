@@ -5,8 +5,27 @@ import { OTHER_MOVE, roundOf } from '../pd/round';
 import { BOARD } from './board';
 import { frame, isPortrait } from './camera';
 import { FACES, MOODS, TRIANGLE_MOODS } from './faces';
-import { BOARD_MARGIN, castPositions, CUTS, KEY_POSE, ROOMS_SPREAD, SPANS, spanOf, SPREAD, stageAt, threadPath, type StageState } from './stage';
-import { at, beatRange, TOTAL_SCREENS } from './timeline';
+import { outcomeOf, type DecisionState } from '../table/decision';
+import { PAYOFFS, type Face } from '../table/game';
+import {
+  BOARD_MARGIN,
+  brokenThreadPaths,
+  castPositions,
+  CUTS,
+  DIE,
+  KEY_POSE,
+  RESTING_FACE,
+  ROOMS_SPREAD,
+  SPANS,
+  spanOf,
+  SPREAD,
+  stageAt,
+  threadPath,
+  threadState,
+  WORLD,
+  type StageState,
+} from './stage';
+import { at, beatRange, BUILT_SCREENS, TOTAL_SCREENS } from './timeline';
 
 const arrival = spanOf('arrival');
 const inArrival = (share: number) => arrival.from + share * (arrival.to - arrival.from);
@@ -174,14 +193,15 @@ describe('chapter 1, two rooms (ADR 0021, ADR 0023)', () => {
     }
   });
 
-  it('cuts between still poses with reduced motion: nothing moves between two cuts', () => {
-    const cuts = CUTS.filter((cut) => cut.from < trap.to);
+  it('cuts between still poses with reduced motion across the film: nothing moves between two cuts', () => {
+    const cuts = CUTS.filter((cut) => cut.from < BUILT_SCREENS);
+    expect(cuts.length).toBeGreaterThan(8);
     cuts.forEach((cut, i) => {
-      const end = cuts[i + 1]?.from ?? trap.to;
+      const end = cuts[i + 1]?.from ?? BUILT_SCREENS;
       const poses = new Set(
         Array.from({ length: 12 }, (_, k) => cut.from + ((end - cut.from) * (k + 0.5)) / 12).map((screens) => {
           const still = stageAt(at(screens), { promised: true }, false, true);
-          return JSON.stringify([still.shot, still.spread, still.rooms, still.board.shown, still.bulbs]);
+          return JSON.stringify([still.shot, still.spread, still.rooms, still.board.shown, still.board.folded, still.bulbs, still.die.y, still.die.opacity]);
         }),
       );
       expect(poses.size, `cut at ${cut.from}`).toBe(1);
@@ -225,5 +245,79 @@ describe('chapter 2, what if they could talk? (ADR 0021, ADR 0023)', () => {
     const key = (KEY_POSE.talk ?? 0) * TOTAL_SCREENS;
     expect(key).toBeGreaterThan(chat.from);
     expect(key).toBeLessThan(chat.to);
+  });
+});
+
+describe('chapter 3, the matrix folds (ADR 0021, ADR 0023)', () => {
+  const fold = beatRange('fold', 'fold');
+  const decide = beatRange('fold', 'decide');
+  const inside = (range: { from: number }, by = 0.4) => at(range.from + by);
+  const view = (p: number, state: StageState = { promised: true }) => stageAt(p, state, false, false);
+  const rolled = (face: Face): DecisionState => ({ phase: 'outcome', ...outcomeOf('roll', face) });
+  const kept: DecisionState = { phase: 'outcome', ...outcomeOf('dont', null) };
+
+  it('brings the two back to the table, and the talk is over', () => {
+    const back = view(inside(decide));
+    expect(back).toMatchObject({ rooms: 0, table: 1, bulbs: 0, spread: SPREAD.landscape });
+    expect(back.bubbles).toEqual({ you: 0, other: 0 });
+  });
+
+  it('folds the board into the die, which drops onto the table and rests there', () => {
+    const before = view(at(fold.from - 1));
+    expect(before.board.folded).toBe(0);
+    expect(before.die.opacity).toBe(0);
+    const after = view(inside(decide));
+    expect(after.board.folded).toBe(1);
+    expect(after.die).toMatchObject({ y: DIE.rests, opacity: 1, floating: false, rolling: false, face: RESTING_FACE });
+    // With the board folded, the camera no longer keeps its top in view.
+    expect(after.shot.top ?? 0).toBeGreaterThan(1000);
+  });
+
+  it('shows the decision’s coins only once it is made, as PAYOFFS pays them', () => {
+    expect(view(inside(decide)).coins.shown).toBe(0);
+    expect(view(inside(decide), { promised: true, decision: kept }).coins).toEqual({ you: PAYOFFS.dont.you, other: PAYOFFS.dont.other, shown: 1 });
+    expect(view(inside(decide), { promised: true, decision: rolled(3) }).coins).toEqual({ you: PAYOFFS.roll.you, other: PAYOFFS.roll.other.success, shown: 1 });
+    expect(view(inside(decide), { promised: true, decision: rolled(1) }).coins).toEqual({ you: PAYOFFS.roll.you, other: PAYOFFS.roll.other.failure, shown: 1 });
+  });
+
+  it('rolls the die while it is in the air, and shows the face it landed on, never as a payoff', () => {
+    const rolling = view(inside(decide), { promised: true, decision: { phase: 'die', choice: 'roll', face: 4 } });
+    expect(rolling.die.rolling).toBe(true);
+    expect(rolling.coins.shown).toBe(0);
+    for (const face of [1, 2, 3, 4, 5, 6] as const) expect(view(inside(decide), { promised: true, decision: rolled(face) }).die).toMatchObject({ rolling: false, face });
+  });
+
+  it('holds the golden thread when a promise is kept, snaps it when it is broken, and has none without one', () => {
+    expect(view(inside(decide), { promised: true, decision: rolled(1) }).thread.state).toBe('tied');
+    expect(view(inside(decide), { promised: true, decision: kept }).thread.state).toBe('broken');
+    expect(view(inside(decide), { promised: false, decision: kept }).thread.state).toBe('none');
+    expect(view(inside(decide), { promised: null, decision: rolled(4) }).thread.state).toBe('none');
+    expect(threadState({ promised: true })).toBe('tied');
+  });
+
+  it('gives the decision its faces: tempted and hoping, then kept or betrayed', () => {
+    expect(view(inside(fold)).moods).toEqual({ you: 'shock', other: 'shock' });
+    expect(view(inside(decide)).moods).toEqual({ you: 'tempted', other: 'happy' });
+    expect(view(inside(decide), { promised: false }).moods).toEqual({ you: 'tempted', other: 'worried' });
+    expect(view(inside(decide), { promised: true, decision: rolled(4) }).moods).toEqual({ you: 'proud', other: 'happy' });
+    expect(view(inside(decide), { promised: false, decision: rolled(1) }).moods).toEqual({ you: 'happy', other: 'shock' });
+    expect(view(inside(decide), { promised: true, decision: kept }).moods).toEqual({ you: 'neutral', other: 'sad' });
+  });
+
+  it('draws the broken thread as two ends, each still tied to its character', () => {
+    for (const spread of [SPREAD.portrait, SPREAD.landscape]) {
+      const cast = castPositions(spread);
+      const [left, right] = brokenThreadPaths(spread).map((d) => d.match(/-?\d+(\.\d+)?/g)?.map(Number) ?? []);
+      expect(left?.[0]).toBeGreaterThan(cast.you[0]);
+      expect(left?.[0]).toBeLessThan(WORLD.centre);
+      expect(right?.[0]).toBeLessThan(cast.other[0]);
+      expect(right?.[0]).toBeGreaterThan(WORLD.centre);
+    }
+  });
+
+  it('draws its still frame at the decision', () => {
+    const key = (KEY_POSE.fold ?? 0) * TOTAL_SCREENS;
+    expect(key).toBeGreaterThan(decide.from);
+    expect(key).toBeLessThan(decide.to);
   });
 });

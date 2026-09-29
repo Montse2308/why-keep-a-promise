@@ -8,7 +8,7 @@
  */
 import { FILM } from '../../lib/design/film';
 import { BOARD, cellBox, noteFor, NOTES } from '../../lib/film/board';
-import { boardTransform } from '../../lib/film/parts';
+import { boardOpacity, boardTransform } from '../../lib/film/parts';
 import type { StageView } from '../../lib/film/stage';
 import { cellKey, type CellKey } from '../../lib/pd/bestReply';
 import { MOVES, payoff, type Move } from '../../lib/pd/game';
@@ -31,7 +31,7 @@ const { card } = BOARD;
 const columnX = (other: Move) => cellBox('cooperate', other).x;
 ---
 
-<g data-part="board" opacity={board.shown} transform={boardTransform(board.shown)}>
+<g data-part="board" opacity={boardOpacity(board.shown, board.folded)} transform={boardTransform(board.shown, board.folded)}>
   <rect x={card.x} y={card.y} width={card.width} height={card.height} rx="18" fill={FILM.card} stroke={FILM.ink} stroke-width="4" filter={`url(#${shadow})`} />
   {
     MOVES.map((other) => (

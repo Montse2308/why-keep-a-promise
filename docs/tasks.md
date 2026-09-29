@@ -6,8 +6,8 @@ Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, 
 **Fase activa:** P2 (capítulos 1 a 3). P0 y P1 cerradas: Montse las revisó y las mergeó (PR #1 y
 PR #2).
 
-**Estado del código:** la película ya cuenta el capítulo 0; debajo sigue la versión anterior (los
-actos 2 a 6, la mesa del momento 2 y las secciones del home). La película la reemplaza por capítulos
+**Estado del código:** la película cuenta los capítulos 0 a 3; debajo sigue la versión anterior (los
+actos 3 a 6, la mesa del momento 2 y las secciones del home). La película la reemplaza por capítulos
 (ADR 0021).
 
 ## P0 · Documentos
@@ -59,34 +59,47 @@ actos 2 a 6, la mesa del momento 2 y las secciones del home). La película la re
 - [x] `verify:dist`, durante la transición: la frase de estado sale una vez en el home (acto 5), porque
       el sello se fue con la primera pantalla. En P4 vuelven a ser dos: el sello del capítulo 7 y la
       entrada del cuaderno (ADR 0026).
-- Transición, a resolver en P2: el acto 2 dice «la mesa que jugaste arriba», y esa mesa volverá como
-  capítulo 3. El archivo `01-question.md` del acto 1 ya no se muestra; sale con `acts.ts` en P4.
+- Transición, resuelta en P2: el acto 2 y su «mesa que jugaste arriba» salieron con los capítulos 1
+  a 3, y el archivo `01-question.md` del acto 1 salió con ellos (antes de lo previsto: ya no se
+  mostraba). `acts.ts` sigue hasta P4, con el capítulo que cuenta cada acto retirado.
 - [x] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), con el PR #2.
 - [x] Revisión de P1 por Montse (PR #2, mergeado).
 
 ## P2 · Capítulos 1 a 3
 
-- [ ] Los capítulos en tramos: cada capítulo es una serie de tarjetas en el flujo normal de la página,
-      cada una con su largo en pantallas, y la tarjeta se queda abajo mientras su tramo pasa. El
-      teclado recorre la película en orden y el scroll sigue siendo el nativo.
-- [ ] Capítulo 1, «Dos cuartos»: los cuartos, la pared y los focos; una ronda del dilema (el otro
-      traiciona siempre); las dos columnas con la mejor respuesta de `src/lib/pd/`; el tablero de 2×2
-      ilustrado y la trampa; el enlace a *The Evolution of Trust*.
-- [ ] Capítulo 2, «¿Y si pudieran hablar?»: el chat con tres mensajes escritos, la respuesta del otro
-      y el *cheap talk*. Sin segunda ronda del dilema.
-- [ ] Capítulo 3, «La matriz se dobla»: el tablero se dobla en el dado, «otro juego, la misma
-      tensión» (regla (g)), la decisión con `PAYOFFS`, el dado que gira y cae, las monedas y el hilo
-      que aguanta o se rompe.
-- [ ] Todo número de la película sale del código: las leyendas y las claves `film.*` no llevan
-      cifras escritas a mano, solo marcadores que se llenan con `src/lib/pd/` y `PAYOFFS`.
-- [ ] Sale la versión anterior de lo que estos capítulos reemplazan: el acto 2 (y el archivo del
-      acto 1, que ya no se mostraba) y la mesa del momento 1 con sus claves. `/dilemma` vuelve al
-      capítulo 1.
-- [ ] Tests: el dilema se juega una vez, las dos columnas muestran que traicionar paga más, los pagos
-      de la decisión salen de `PAYOFFS`, el capítulo 3 dice que es otro juego, las cifras de las
-      leyendas registradas, la coreografía de cada tramo y la luz del ADR 0027 en su capítulo.
+- [x] Los capítulos en tramos (`src/lib/chapters.ts`, `src/lib/film/timeline.ts`): cada capítulo es
+      una serie de tarjetas en el flujo normal de la página, cada una con su largo en pantallas, y la
+      tarjeta se queda abajo mientras su tramo pasa. El teclado recorre la película en orden y el
+      scroll sigue siendo el nativo. La película sigue midiendo 35 pantallas, así que cada punto de
+      luz cae en el capítulo que le da el ADR 0027 (test).
+- [x] Capítulo 1, «Dos cuartos»: los cuartos, la pared y los focos; una ronda del dilema (el otro
+      traiciona siempre, `src/lib/pd/round.ts`); las dos columnas con la mejor respuesta de
+      `src/lib/pd/bestReply.ts`; el tablero de 2×2 ilustrado, con una nota en cada celda marcada; la
+      trampa; el enlace a *The Evolution of Trust*.
+- [x] Capítulo 2, «¿Y si pudieran hablar?»: el chat con tres mensajes escritos
+      (`src/lib/film/talk.ts`), la respuesta del otro, los globos sobre la pared y el *cheap talk*.
+      Sin segunda ronda del dilema.
+- [x] Capítulo 3, «La matriz se dobla»: el tablero se dobla en el dado, «otro juego, la misma
+      tensión» (regla (g)), la decisión con `PAYOFFS` (`src/lib/table/decision.ts`, antes el
+      momento 1), el dado que gira y cae en su cara, las monedas, y el hilo que aguanta o se rompe
+      (con el carrete de la esquina). Decidir cierra la respuesta del capítulo 0.
+- [x] Todo número de la película sale del código: las leyendas y las claves `film.*` no llevan
+      cifras escritas a mano, solo marcadores que se llenan con `src/lib/film/values.ts` (`src/lib/pd/`
+      y `PAYOFFS`). Cada resultado posible se resuelve en el build (`src/lib/film/lines.ts`).
+- [x] Sale la versión anterior de lo que estos capítulos reemplazan: el acto 2, el archivo del acto 1
+      y el modo del momento 1 de la mesa, con su clave. El enlace de vuelta de `/dilemma` lleva al
+      capítulo 1. `docs/sources.md` dice dónde se usa cada cifra ahora.
+- [x] Tests: el dilema se juega una vez, las dos columnas muestran que traicionar paga más, los pagos
+      de la decisión salen de `PAYOFFS`, el capítulo 3 dice que es otro juego, las cifras y citas de
+      las leyendas registradas y en paridad, la regla (h) de `/dilemma` contra las leyendas, la
+      coreografía de cada tramo (también con movimiento reducido) y la luz del ADR 0027.
 - [ ] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), jugando todas las
       opciones.
+- Transición, hasta P5: `/dilemma` conserva su ejercicio de mejor respuesta (`BestResponse`). Pasa
+  al capítulo 1 (ADR 0023), pero quitarlo de `/dilemma` pide reescribir su prosa con la matriz
+  estática, que es trabajo del cuaderno (P5, ADR 0024).
+- Transición, hasta P3: el acto 3 abre con «Dos razones podrían explicar por qué», que ahora sigue
+  al capítulo 3. El capítulo 4 lo reemplaza.
 
 ## Preguntas abiertas
 

@@ -5,9 +5,11 @@ import es from '../src/i18n/es.json';
 import { CITATIONS, FIGURES, SOURCE_KEYS } from '../src/content/figures';
 import { ACTS } from '../src/lib/acts';
 import { LOCALES, type Locale } from '../src/lib/locales';
+import { FILM_VALUES } from '../src/lib/film/values';
 import { SUBPAGES, type Subpage } from '../src/lib/routes';
 import { SECTIONS } from '../src/lib/sections';
 import { slotsIn, splitSubpage } from '../src/lib/subpages';
+import { fill } from '../src/lib/template';
 import { MARKERS, findMarks } from '../scripts/verify-dist.mjs';
 import { citationsIn, numbersIn, readable, sentences, wordCount } from './prose';
 
@@ -15,6 +17,7 @@ type Raw = Record<string, string>;
 const actSources = import.meta.glob('../src/content/acts/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
 const subpageSources = import.meta.glob('../src/content/subpages/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
 const sectionSources = import.meta.glob('../src/content/sections/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
+const captionSources = import.meta.glob('../src/content/chapters/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
 
 interface ProseFile {
   locale: Locale;
@@ -45,11 +48,10 @@ const sectionFiles = parse(sectionSources, 'sections');
 const byAct = (locale: Locale, act: number) => actFiles.find((f) => f.locale === locale && Number(f.data.act) === act);
 const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
 
-const WRITTEN_ACTS = [1, 2, 3, 4, 5, 6] as const;
+/** The acts still on `/`, by number: the film tells the others now, and their prose is retired (ADR 0021). */
+const WRITTEN_ACTS = [3, 4, 5, 6] as const;
 /** Words per act and language. R4 shortened acts 1–4 and 6 (ADR 0019); act 5 keeps its F3.1 budget. */
 const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: boolean }> = {
-  1: { max: 30, tables: true }, // a minimal entry: the scene sets up the situation
-  2: { max: 210, tables: true },
   3: { max: 110, tables: false }, // the predictions table comes on top of the budget
   4: { max: 230, tables: true },
   5: { max: 420, tables: true },
@@ -60,10 +62,11 @@ const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: 
 const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 700, 'how-its-built': 600 };
 
 describe('act files', () => {
-  it('exist for every act in every locale, with the same file names', () => {
+  it('exist for every act the film does not tell yet, in every locale, with the same file names', () => {
+    expect(ACTS.filter((act) => !act.film).map((act) => ACTS.indexOf(act) + 1)).toEqual([...WRITTEN_ACTS]);
     for (const locale of LOCALES) {
       const names = actFiles.filter((f) => f.locale === locale).map((f) => f.name).sort();
-      expect(names).toEqual(['01-question', '02-dilemma', '03-two-reasons', '04-vanberg', '05-finding', '06-how-its-built']);
+      expect(names).toEqual(['03-two-reasons', '04-vanberg', '05-finding', '06-how-its-built']);
     }
   });
 
@@ -74,7 +77,8 @@ describe('act files', () => {
     expect(file.name).toBe(`${String(index + 1).padStart(2, '0')}-${act?.id}`);
     expect(file.data.deeper).toBe(act?.deeper ?? 'null');
     const dictionary = file.locale === 'en' ? en : es;
-    expect(file.data.title).toBe(act?.id === 'question' ? dictionary['site.title'] : act && dictionary[act.titleKey]);
+    expect(act?.film).toBeNull();
+    expect(file.data.title).toBe(act && dictionary[act.titleKey]);
   });
 });
 
@@ -215,10 +219,6 @@ describe('voice', () => {
     },
   );
 
-  it('links the iterated dilemma to The Evolution of Trust in act 2, in both languages', () => {
-    for (const locale of LOCALES) expect(byAct(locale, 2)?.body).toContain('(https://ncase.me/trust/)');
-  });
-
   it("ends /dilemma's paragraph on the repeated dilemma with the link to The Evolution of Trust", () => {
     for (const locale of LOCALES) {
       const paragraph = (bySubpage(locale, 'dilemma')?.body ?? '').split(/\n\s*\n/).find((p) => p.includes('Tit-for-Tat')) ?? '';
@@ -276,18 +276,28 @@ describe('the acts still to be replaced (R4, ADR 0019)', () => {
   });
 });
 
-describe('subpages only add to their act (rule (h))', () => {
+describe('subpages only add to their act, or to the film that tells it now (rule (h))', () => {
+  /** The film's captions in a locale, as the visitor reads them: placeholders filled from the code. */
+  const film = (locale: Locale) =>
+    Object.entries(captionSources)
+      .filter(([path]) => path.includes(`/chapters/${locale}/`))
+      .map(([, raw]) => fill(raw.replace(/^---[\s\S]*?---/, ''), FILM_VALUES))
+      .join('\n\n');
+
   it('splits prose into whole sentences', () => {
     expect(sentences('## A title\n\nOne *sentence*. Another "one"!\n\n- A list item.')).toEqual(['a title.', 'one sentence.', 'another one!', 'a list item.']);
   });
 
-  it.each(subpageFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s shares no whole sentence with its act', (_name, file) => {
-    const act = new Set(sentences(byAct(file.locale, Number(file.data.act))?.body ?? ''));
-    expect(sentences(file.body).filter((sentence) => act.has(sentence))).toEqual([]);
+  it.each(subpageFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s shares no whole sentence with its act or the film', (_name, file) => {
+    const act = ACTS[Number(file.data.act) - 1];
+    const told = act?.film ? film(file.locale) : (byAct(file.locale, Number(file.data.act))?.body ?? '');
+    expect(told.trim().length).toBeGreaterThan(0);
+    const theirs = new Set(sentences(told));
+    expect(sentences(file.body).filter((sentence) => theirs.has(sentence))).toEqual([]);
   });
 
   it('would catch a sentence copied from the act', () => {
-    const act = byAct('en', 2)?.body ?? '';
+    const act = byAct('en', 4)?.body ?? '';
     const copied = sentences(act)[2] ?? '';
     expect(copied.length).toBeGreaterThan(0);
     expect(new Set(sentences(act)).has(sentences(`Intro. ${copied}`)[1] ?? '')).toBe(true);

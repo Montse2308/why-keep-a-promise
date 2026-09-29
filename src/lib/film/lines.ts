@@ -1,13 +1,18 @@
 /**
- * What the film says after each choice, from the pure modules: the payoffs of src/lib/pd/ and the
- * best-reply exercise of src/lib/pd/bestReply.ts. The build resolves every line a choice can lead
- * to, so the film's script only shows them and never computes a payoff (ADR 0023).
+ * What the film says after each choice, from the pure modules: the payoffs of src/lib/pd/, the
+ * best-reply exercise of src/lib/pd/bestReply.ts and the decision at the table (`PAYOFFS`). The
+ * build resolves every line a choice can lead to, so the film's script only shows them and never
+ * computes a payoff (ADR 0023).
  */
 import type { UiKey } from '../i18n';
 import type { Conclusion, Pick } from '../pd/bestReply';
 import { otherMove, type Move } from '../pd/game';
 import type { Round } from '../pd/round';
+import type { Outcome } from '../table/decision';
+import { toNumber } from '../table/fraction';
+import { PAYOFFS } from '../table/game';
 import { fill } from '../template';
+import { FILM_VALUES } from './values';
 
 /** Looks up a UI string. */
 export type Strings = (key: UiKey) => string;
@@ -47,3 +52,17 @@ export function conclusionLine(tr: Strings, conclusion: Conclusion): string {
 
 /** The question asked about a column of the matrix. */
 export const askLine = (tr: Strings, other: Move): string => tr(ASK[other]);
+
+/**
+ * The decision's result (chapter 3): what each one got and, after a roll, what the die showed. The
+ * face is named as a face, never as a payoff (rule (k)); rolling also says what it cost and what it
+ * gives the other on average.
+ */
+export function decisionLine(tr: Strings, outcome: Outcome): string {
+  const { you, other } = outcome.realized;
+  if (outcome.choice === 'dont' || outcome.face === null) return fill(tr('film.fold.out.keep'), { you, other });
+  const failed = (PAYOFFS.roll.failureFaces as readonly number[]).includes(outcome.face);
+  const shown = fill(tr(failed ? 'film.fold.out.fail' : 'film.fold.out.roll'), { face: outcome.face, you, other });
+  const cost = fill(tr('film.fold.out.cost'), { cost: FILM_VALUES.cost, expected: toNumber(outcome.expected.other) });
+  return `${shown} ${cost}`;
+}

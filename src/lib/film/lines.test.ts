@@ -6,7 +6,10 @@ import { COLUMNS, conclusion, reduce, START } from '../pd/bestReply';
 import { MOVES, PAYOFFS, payoff } from '../pd/game';
 import { roundOf } from '../pd/round';
 import { cellBox, noteFor, STACK_MAX } from './board';
-import { askLine, conclusionLine, pickLine, roundLine } from './lines';
+import { outcomeOf } from '../table/decision';
+import { DIE_FACES, PAYOFFS as TABLE } from '../table/game';
+import { fill } from '../template';
+import { askLine, conclusionLine, decisionLine, pickLine, roundLine } from './lines';
 import { FILM_VALUES } from './values';
 
 const dictionaries = { en, es } as const;
@@ -68,5 +71,40 @@ describe('the board and the coins', () => {
 
   it('fills the film’s numbers from the dilemma’s payoffs', () => {
     expect(FILM_VALUES).toMatchObject(PAYOFFS);
+  });
+});
+
+describe('the decision of chapter 3, from PAYOFFS (rule (k))', () => {
+  const T = TABLE;
+
+  it('fills the film’s numbers for the decision from Vanberg’s payoffs', () => {
+    expect(FILM_VALUES).toMatchObject({
+      dont: T.dont.you,
+      dontother: T.dont.other,
+      roll: T.roll.you,
+      rollother: T.roll.other.success,
+      failface: T.roll.failureFaces[0],
+      failother: T.roll.other.failure,
+      cost: T.dont.you - T.roll.you,
+      expected: 10,
+    });
+  });
+
+  it.each(['en', 'es'] as const)('%s: the tickets say what each choice pays, in PAYOFFS order', (locale) => {
+    const d = dictionaries[locale];
+    expect(numbers(fill(d['film.ticket.roll.detail'], FILM_VALUES))).toEqual([T.roll.you, T.roll.other.success, ...T.roll.failureFaces]);
+    expect(numbers(fill(d['film.ticket.keep'], FILM_VALUES))).toEqual([T.dont.you]);
+    expect(numbers(fill(d['film.ticket.keep.detail'], FILM_VALUES))).toEqual([T.dont.you, T.dont.other]);
+  });
+
+  it.each(['en', 'es'] as const)('%s: each face of the die leads to its own line, naming the face apart from the payoffs', (locale) => {
+    for (const face of DIE_FACES) {
+      const outcome = outcomeOf('roll', face);
+      const line = decisionLine(tr(locale), outcome);
+      const failed = (T.roll.failureFaces as readonly number[]).includes(face);
+      const expected = failed ? [face, outcome.realized.you] : [face, outcome.realized.other, outcome.realized.you];
+      expect(numbers(line)).toEqual([...expected, FILM_VALUES.cost, FILM_VALUES.expected]);
+    }
+    expect(numbers(decisionLine(tr(locale), outcomeOf('dont', null)))).toEqual([T.dont.you, T.dont.other]);
   });
 });

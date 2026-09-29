@@ -1,3 +1,4 @@
+import type { ChapterId } from './chapters';
 import type { UiKey } from './i18n';
 import type { Subpage } from './routes';
 
@@ -11,15 +12,20 @@ export interface Act {
   readonly deeper: Subpage | null;
   /** Phase in which the act's content is written. */
   readonly contentPhase: Phase;
+  /**
+   * The film's chapter that tells this act now (ADR 0021), if any: the act no longer shows on `/`,
+   * its prose is retired, and links back to it lead to the chapter.
+   */
+  readonly film: ChapterId | null;
 }
 
 export const ACTS: readonly Act[] = [
-  { id: 'question', titleKey: 'act.question.title', deeper: null, contentPhase: 'F2' },
-  { id: 'dilemma', titleKey: 'act.dilemma.title', deeper: 'dilemma', contentPhase: 'F2' },
-  { id: 'two-reasons', titleKey: 'act.two-reasons.title', deeper: null, contentPhase: 'F2' },
-  { id: 'vanberg', titleKey: 'act.vanberg.title', deeper: 'vanberg', contentPhase: 'F2' },
-  { id: 'finding', titleKey: 'act.finding.title', deeper: 'finding', contentPhase: 'F3' },
-  { id: 'how-its-built', titleKey: 'act.how-its-built.title', deeper: 'how-its-built', contentPhase: 'F2' },
+  { id: 'question', titleKey: 'act.question.title', deeper: null, contentPhase: 'F2', film: 'arrival' },
+  { id: 'dilemma', titleKey: 'act.dilemma.title', deeper: 'dilemma', contentPhase: 'F2', film: 'two-rooms' },
+  { id: 'two-reasons', titleKey: 'act.two-reasons.title', deeper: null, contentPhase: 'F2', film: null },
+  { id: 'vanberg', titleKey: 'act.vanberg.title', deeper: 'vanberg', contentPhase: 'F2', film: null },
+  { id: 'finding', titleKey: 'act.finding.title', deeper: 'finding', contentPhase: 'F3', film: null },
+  { id: 'how-its-built', titleKey: 'act.how-its-built.title', deeper: 'how-its-built', contentPhase: 'F2', film: null },
 ];
 
 export function actForSubpage(subpage: Subpage): Act {

@@ -38,12 +38,12 @@ export interface Figure {
 }
 
 export const FIGURES: readonly Figure[] = [
-  // Prisoner's dilemma payoffs: chapter 1, act 2.
+  // Prisoner's dilemma payoffs: chapter 1, /dilemma.
   { value: '3', source: 'axelrod-1984', what: 'R, both cooperate' },
   { value: '5', source: 'axelrod-1984', what: 'T, defect on a cooperator' },
   { value: '1', source: 'axelrod-1984', what: 'P, both defect' },
   { value: '0', source: 'axelrod-1984', what: 'S, cooperate with a defector' },
-  // The table: Vanberg's game.
+  // Vanberg's game: chapter 3, the table of moment 2.
   { value: '10', source: 'vanberg-payoffs', what: 'dictator after Roll; recipient expected after Roll' },
   { value: '14', source: 'vanberg-payoffs', what: "dictator after Don't Roll" },
   { value: '12', source: 'vanberg-payoffs', what: 'recipient after Roll, faces 2–6' },

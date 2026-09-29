@@ -18,6 +18,7 @@ import { FILM_VALUES } from '../../lib/film/values';
 import { fill } from '../../lib/template';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import Arrival from './chapters/Arrival.astro';
+import Fold from './chapters/Fold.astro';
 import Talk from './chapters/Talk.astro';
 import TwoRooms from './chapters/TwoRooms.astro';
 import World from './World.astro';
@@ -54,6 +55,8 @@ const of = (id: ChapterId) => {
   data-from={BUILT_SPAN.from}
   data-to={BUILT_SPAN.to}
   data-thread-tied={tr('film.thread.tied')}
+  data-thread-kept={tr('film.thread.kept')}
+  data-thread-broken={tr('film.thread.broken')}
   data-thread-none={tr('film.thread.none')}
 >
   <div class="film__stage">
@@ -67,6 +70,8 @@ const of = (id: ChapterId) => {
           <rect x="-10" y="-12" width="20" height="24" fill={FILM.thread} stroke={FILM.ink} stroke-width="2.5" />
           <path d="M-10 -6 H10 M-10 0 H10 M-10 6 H10" stroke={FILM['thread-edge']} stroke-width="1.5" />
         </g>
+        <path class="film__spool-cut" d="M-14 3 L14 -3" stroke={FILM.rim} stroke-width="5" />
+        <path class="film__spool-cut" d="M-14 3 L14 -3" stroke={FILM.ink} stroke-width="1.5" stroke-dasharray="3 3" />
       </svg>
       <span data-spool-label>{tr('film.thread.none')}</span>
     </p>
@@ -76,6 +81,7 @@ const of = (id: ChapterId) => {
     <Arrival locale={locale} captions={of('arrival').captions} />
     <TwoRooms locale={locale} {...of('two-rooms')} />
     <Talk locale={locale} {...of('talk')} />
+    <Fold locale={locale} {...of('fold')} />
   </div>
   <div class="film__fade" aria-hidden="true"></div>
 </section>
@@ -153,5 +159,14 @@ const of = (id: ChapterId) => {
 
   .film__spool svg[data-spool='none'] .film__spool-thread {
     opacity: 0;
+  }
+
+  /* A broken promise: the spool keeps its thread, cut through the middle. */
+  .film__spool-cut {
+    display: none;
+  }
+
+  .film__spool svg[data-spool='broken'] .film__spool-cut {
+    display: inline;
   }
 </style>

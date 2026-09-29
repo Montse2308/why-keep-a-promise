@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import faviconSvg from '../../../public/favicon.svg?raw';
 import filmCss from '../../styles/film.css?raw';
-import { CHAPTERS } from '../chapters';
+import { CHAPTERS, type ChapterId } from '../chapters';
 import { sample, steepestColourRate } from '../film/track';
-import { totalScreens } from '../film/spans';
+import { spanAt, spans, totalScreens } from '../film/spans';
 import { contrastRatio, deltaE, parseHex, simulate, type Deficiency } from './color';
 import { FILM, FILM_DISTANCE, FILM_TOKENS, LAMP_FROM, LIGHT, LIGHT_POINTS, LIGHT_SURFACES, MAX_LIGHT_CHANGE_PER_SCREEN, MIN_SKY_COLOUR } from './film';
 import { MIN_CONTRAST } from './palette';
@@ -71,6 +71,24 @@ describe('the day’s light (ADR 0027)', () => {
         expect(Math.max(r, g, b) - Math.min(r, g, b), `${surface} at ${p}`).toBeGreaterThanOrEqual(MIN_SKY_COLOUR[surface]);
       }
     }
+  });
+
+  it('keeps each point of light in the chapter ADR 0027 gives it, and the lamp for chapters 7 and 8', () => {
+    const chapterOf = (p: number) => spanAt(spans(CHAPTERS), p).id;
+    const ADR_0027: Record<string, readonly ChapterId[]> = {
+      dawn: ['arrival'],
+      sunrise: ['arrival', 'two-rooms'],
+      morning: ['two-rooms'],
+      noon: ['fold'],
+      afternoon: ['blackout'],
+      sunset: ['real-people'],
+      nightfall: ['my-research', 'closing'],
+    };
+    expect(LIGHT_POINTS.map((point) => point.name)).toEqual(Object.keys(ADR_0027));
+    for (const point of LIGHT_POINTS) expect(ADR_0027[point.name], point.name).toContain(chapterOf(point.at));
+    const seventh = spans(CHAPTERS).find((span) => span.id === 'my-research');
+    expect(LAMP_FROM).toBeGreaterThanOrEqual((seventh?.from ?? 1) - 1e-9);
+    expect(chapterOf(LAMP_FROM + 1e-9)).toBe('my-research');
   });
 
   it.each(LIGHT_SURFACES)('never cuts: %s changes at most a few ΔE per screen of scroll', (surface) => {
