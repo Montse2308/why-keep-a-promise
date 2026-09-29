@@ -93,8 +93,12 @@ actos 3 a 6, la mesa del momento 2 y las secciones del home). La película la re
       de la decisión salen de `PAYOFFS`, el capítulo 3 dice que es otro juego, las cifras y citas de
       las leyendas registradas y en paridad, la regla (h) de `/dilemma` contra las leyendas, la
       coreografía de cada tramo (también con movimiento reducido) y la luz del ADR 0027.
-- [ ] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), jugando todas las
-      opciones.
+- [x] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), jugando todas las
+      opciones en tres recorridos: compu en inglés (promete, coopera, promete en el chat, tira el
+      dado), celular en español (no promete, traiciona, «no te prometo nada», se queda los 14) y
+      celular en inglés (promete, no juega la ronda, «confía en mí», se queda los 14 y el hilo se
+      rompe). En `scratch/p2-review/` (local, no se versiona).
+- [ ] Revisión de P2 por Montse.
 - Transición, hasta P5: `/dilemma` conserva su ejercicio de mejor respuesta (`BestResponse`). Pasa
   al capítulo 1 (ADR 0023), pero quitarlo de `/dilemma` pide reescribir su prosa con la matriz
   estática, que es trabajo del cuaderno (P5, ADR 0024).
