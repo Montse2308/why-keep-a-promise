@@ -3,8 +3,8 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P2 (capítulos 1 a 3). P0 y P1 cerradas: Montse las revisó y las mergeó (PR #1 y
-PR #2).
+**Fase activa:** P3 (capítulos 4 a 6). P0, P1 y P2 cerradas: Montse las revisó y las mergeó (PR #1,
+PR #2 y PR #3).
 
 **Estado del código:** la película cuenta los capítulos 0 a 3; debajo sigue la versión anterior (los
 actos 3 a 6, la mesa del momento 2 y las secciones del home). La película la reemplaza por capítulos
@@ -98,12 +98,38 @@ actos 3 a 6, la mesa del momento 2 y las secciones del home). La película la re
       dado), celular en español (no promete, traiciona, «no te prometo nada», se queda los 14) y
       celular en inglés (promete, no juega la ronda, «confía en mí», se queda los 14 y el hilo se
       rompe). En `scratch/p2-review/` (local, no se versiona).
-- [ ] Revisión de P2 por Montse.
+- [x] Revisión de P2 por Montse (PR #3, mergeado).
 - Transición, hasta P5: `/dilemma` conserva su ejercicio de mejor respuesta (`BestResponse`). Pasa
   al capítulo 1 (ADR 0023), pero quitarlo de `/dilemma` pide reescribir su prosa con la matriz
   estática, que es trabajo del cuaderno (P5, ADR 0024).
 - Transición, hasta P3: el acto 3 abre con «Dos razones podrían explicar por qué», que ahora sigue
   al capítulo 3. El capítulo 4 lo reemplaza.
+
+## P3 · Capítulos 4 a 6
+
+- [ ] Capítulo 4, «Dos voces»: la nube (lo que el otro espera) y el pergamino (mi palabra) llegan
+      junto al círculo; las dos razones, con las citas de la aversión a la culpa; casi siempre dicen
+      lo mismo; el truco de Vanberg (2008), cambiar a la persona, con lo que predice cada voz.
+- [ ] Capítulo 5, «El apagón»: se va la luz y en el asiento hay otra persona, el triángulo; el hilo
+      sigue atado a quien se fue (ADR 0027); el caso fijo ilustrativo, dicho en pantalla (regla (k));
+      el mazo, cada carta con una persona distinta y su mensaje, con boletos o deslizando, y al final
+      cuántas promesas cumplió el visitante, sin puntaje de pagos; después, como quien recibe, la
+      apuesta en la escala de cinco puntos, el cambio que descubre y lo que apostaron los receptores
+      reales (70 contra 68).
+- [ ] Capítulo 6, «La gente real»: adivinar antes de ver (73 % y 54 %, `ROLL_COUNTS`), lo que
+      esperaban (70 contra 68) y la conclusión de Vanberg (2008).
+- [ ] Todo número de la película sale del código, como en P2.
+- [ ] Sale la versión anterior de lo que estos capítulos reemplazan: la mesa del momento 2 (su
+      componente, su script, `moment2.ts` y sus claves) y los actos 3 y 4. `/vanberg` vuelve a la
+      película. `docs/sources.md` dice dónde se usa cada cifra.
+- [ ] Tests: la regla (f) sobre el mazo (una persona distinta por carta, sin puntaje de pagos
+      acumulado); la regla (k) (las cifras del experimento solo en los capítulos 5 y 6 y con su cita,
+      el caso fijo dicho en pantalla, las voces con sus citas, y ninguna línea que siga a una elección
+      del visitante le nombra una razón); el registro de cifras, sin cifras nuevas sin su entrada; la
+      coreografía de cada tramo, también con movimiento reducido.
+- [ ] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), con el recorrido de
+      los capítulos 4 a 6.
+- [ ] Revisión de P3 por Montse.
 
 ## Preguntas abiertas
 
