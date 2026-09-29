@@ -148,7 +148,9 @@ const guiltTicks = [
     <p class="visually-hidden" role="status" aria-live="polite" data-slot="status"></p>
   </div>
 
-  <table class="visually-hidden">
+  {/* A table ignores width and overflow, so the div does the hiding and keeps the page from scrolling sideways. */}
+  <div class="visually-hidden">
+  <table>
     <caption>{tr('curve.table.caption')}</caption>
     <thead>
       <tr>
@@ -167,6 +169,7 @@ const guiltTicks = [
       }
     </tbody>
   </table>
+  </div>
 
   <figcaption class="cv-caption" id={`${id}-caption`}>{tr('curve.caption')}</figcaption>
 </figure>
