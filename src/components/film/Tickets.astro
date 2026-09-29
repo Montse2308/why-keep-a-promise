@@ -29,6 +29,10 @@ const { label, class: className, ...attributes } = Astro.props;
     display: none;
   }
 
+  .tickets > :global(*) {
+    flex: 1 1 15rem;
+  }
+
   @media (max-width: 30rem) {
     .tickets > :global(*) {
       flex: 1 1 100%;

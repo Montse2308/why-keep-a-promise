@@ -5,10 +5,12 @@
  * JavaScript the live stage takes its place.
  */
 import type { ChapterId } from '../../lib/chapters';
+import type { Locale } from '../../lib/i18n';
 import type { StageView } from '../../lib/film/stage';
 import World from './World.astro';
 
 interface Props {
+  locale: Locale;
   id: ChapterId;
   /** The id of the chapter's heading. */
   labelledby: string;
@@ -17,12 +19,12 @@ interface Props {
   stillLabel: string;
 }
 
-const { id, labelledby, still, stillLabel } = Astro.props;
+const { locale, id, labelledby, still, stillLabel } = Astro.props;
 ---
 
 <section id={id} class="chapter" data-chapter={id} aria-labelledby={labelledby}>
   <div class="chapter__still">
-    <World uid={`still-${id}`} view={still} label={stillLabel} />
+    <World locale={locale} uid={`still-${id}`} view={still} label={stillLabel} />
   </div>
   <slot />
 </section>

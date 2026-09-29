@@ -6,12 +6,16 @@ import { SUBPAGES } from './lib/routes';
 
 /**
  * The film's captions (ADR 0021): one Markdown file per chapter and locale,
- * src/content/chapters/{en,es}/<nn>-<id>.md. Short text only; dialogue and ticket labels are UI keys.
+ * src/content/chapters/{en,es}/<nn>-<id>.md, split into beats by `<!-- beat:<id> -->` marks
+ * (src/lib/film/captions.ts). Short text only; dialogue and ticket labels are UI keys. A number is a
+ * `{name}` placeholder the build fills from the code (src/lib/film/values.ts), never a figure.
  */
 const chapters = defineCollection({
   loader: glob({ pattern: '{en,es}/*.md', base: './src/content/chapters' }),
   schema: z.object({
     chapter: z.enum(CHAPTER_IDS),
+    /** The chapter's heading; chapter 0's is the site's title. */
+    title: z.string().min(1),
   }),
 });
 

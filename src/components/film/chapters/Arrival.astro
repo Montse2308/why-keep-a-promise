@@ -22,7 +22,7 @@ const tr = useTranslations(locale);
 const ask = beat('arrival', 'ask');
 ---
 
-<Chapter id="arrival" labelledby="arrival-title" still={stageAt(KEY_POSE.arrival ?? 0, { promised: true }, false, true)} stillLabel={tr('film.arrival.still')}>
+<Chapter locale={locale} id="arrival" labelledby="arrival-title" still={stageAt(KEY_POSE.arrival ?? 0, { promised: true }, false, true)} stillLabel={tr('film.arrival.still')}>
   <Beat id={ask.id} screens={ask.screens} caption={captions.get(ask.id)} opening>
     <h1 slot="above" id="arrival-title" class="arrival__title" data-title>{tr('site.title')}</h1>
     <Fragment slot="top">

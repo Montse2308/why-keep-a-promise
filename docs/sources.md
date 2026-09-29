@@ -214,7 +214,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 
 - **Referencia (por verificar):** Axelrod, R. (1984). *The Evolution of Cooperation*. Basic Books.
 - **Clave:** `axelrod-1984`.
-- **Uso:** matriz del dilema del prisionero (acto 2); contexto del dilema iterado (`/dilemma`).
+- **Uso:** matriz del dilema del prisionero (capítulo 1 y acto 2); contexto del dilema iterado
+  (`/dilemma`).
 - **Verificada:** no.
 - **Cifras:**
 
@@ -222,8 +223,10 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   y S = 0 (T > R > P > S).
   Clave: `axelrod-1984`.
   Fuente: Axelrod (1984), página por verificar. **Por verificar; bloquea el lanzamiento.**
-  Usada en: acto 2 (`src/content/acts/{en,es}/02-dilemma.md`); `/dilemma` (la mejor respuesta,
-  `src/lib/pd/game.ts`, `PAYOFFS`, y la prosa).
+  Usada en: capítulo 1 (`src/lib/pd/game.ts`, `PAYOFFS`, a través de `src/lib/film/values.ts`: el
+  tablero, los boletos, las leyendas y los resultados de la ronda y de las dos columnas); acto 2
+  (`src/content/acts/{en,es}/02-dilemma.md`); `/dilemma` (la mejor respuesta, `PAYOFFS`, y la
+  prosa).
 - Cifra: la condición 2R > T + S, leída por ronda como "3 > 2.5": cooperar siempre deja más que
   turnarse para traicionar ((T + S) / 2 = 2.5). El "2" es el de 2R.
   Clave: `axelrod-1984`.
@@ -260,7 +263,7 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 - **Referencia (verificada):** Case, N. (2017). *The Evolution of Trust*.
   <https://ncase.me/trust/>
 - **Clave:** `case-2017`.
-- **Uso:** enlace para el dilema iterado (regla (f) de `content-rules.md`), acto 2.
+- **Uso:** enlace para el dilema iterado (regla (f) de `content-rules.md`): capítulo 1 y acto 2.
 - **Verificada:** sí. El enlace responde (HTTP 200, título "The Evolution of Trust", comprobado en
   F2); confirmada por Montse en F2.1.
 - **Cifras:** —

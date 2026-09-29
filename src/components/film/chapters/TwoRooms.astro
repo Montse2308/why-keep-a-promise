@@ -1,0 +1,138 @@
+---
+/**
+ * Chapter 1, two rooms (ADR 0021, ADR 0023): the prisoner's dilemma from scratch. The visitor plays
+ * one round (the other always defects), then tries both columns of the matrix and sees that
+ * defecting pays more in each, and the trap closes: both defect. Every line a choice can lead to is
+ * resolved here, from src/lib/pd/; ./film.ts only shows the one the visitor reached.
+ */
+import { beat, chapter } from '../../../lib/chapters';
+import { FILM } from '../../../lib/design/film';
+import { conclusionLine, askLine, pickLine, roundLine } from '../../../lib/film/lines';
+import { KEY_POSE, stageAt } from '../../../lib/film/stage';
+import { FILM_VALUES } from '../../../lib/film/values';
+import { useTranslations, type Locale } from '../../../lib/i18n';
+import { COLUMNS, conclusion, reduce, START } from '../../../lib/pd/bestReply';
+import { MOVES, payoff, type Move } from '../../../lib/pd/game';
+import { roundOf } from '../../../lib/pd/round';
+import { fill } from '../../../lib/template';
+import Beat from '../Beat.astro';
+import Chapter from '../Chapter.astro';
+import Ticket from '../Ticket.astro';
+import Tickets from '../Tickets.astro';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  captions: ReadonlyMap<string, string>;
+}
+
+const { locale, title, captions } = Astro.props;
+const tr = useTranslations(locale);
+const values = (key: Parameters<typeof tr>[0]) => fill(tr(key), FILM_VALUES);
+const rooms = beat('two-rooms', 'rooms');
+const play = beat('two-rooms', 'play');
+const columns = beat('two-rooms', 'columns');
+const trap = beat('two-rooms', 'trap');
+const caption = (id: string) => captions.get(id);
+
+const TICKET = {
+  cooperate: { label: tr('film.ticket.cooperate'), detail: values('film.ticket.cooperate.detail') },
+  defect: { label: tr('film.ticket.defect'), detail: values('film.ticket.defect.detail') },
+} as const;
+
+/** What the visitor's move in a column leads to. A pick's line depends only on its own column. */
+const pickOutcome = (column: number, you: Move) => {
+  const before = COLUMNS.slice(0, column).reduce((state) => reduce(state, { type: 'pick', move: you }), START);
+  const pick = reduce(before, { type: 'pick', move: you }).picks[column];
+  if (!pick) throw new Error('A pick must record its column');
+  return pickLine(tr, pick);
+};
+// Once both columns are picked, whatever the picks, the conclusion is the same.
+const done = conclusion(COLUMNS.reduce((state) => reduce(state, { type: 'pick', move: 'defect' }), START));
+if (!done) throw new Error('Both columns picked must reach a conclusion');
+const both = conclusionLine(tr, done);
+
+// The storyboard's still frame: the trap, as if the visitor had played along.
+const still = stageAt(KEY_POSE['two-rooms'] ?? 0, { promised: true, round: roundOf('cooperate') }, false, true);
+---
+
+<Chapter locale={locale} id="two-rooms" labelledby="two-rooms-title" still={still} stillLabel={values('film.two-rooms.still')}>
+  <Beat id={rooms.id} screens={rooms.screens} caption={caption(rooms.id)}>
+    <h2 slot="top" id="two-rooms-title" class="card__chapter">
+      <span>{fill(tr('film.chapter'), { n: chapter('two-rooms').number })}</span>
+      <span aria-hidden="true">·</span>
+      <span>{title}</span>
+    </h2>
+  </Beat>
+
+  <Beat id={play.id} screens={play.screens} caption={caption(play.id)}>
+    <Tickets label={tr('film.two-rooms.play')} data-round-tickets="">
+      {
+        MOVES.map((move) => (
+          <Ticket label={TICKET[move].label} detail={TICKET[move].detail} data-round={move} data-said={roundLine(tr, roundOf(move))}>
+            <svg slot="icon" viewBox="-24 -24 48 48">
+              {move === 'cooperate' ? (
+                <g stroke={FILM['thread-edge']} stroke-width="2" fill={FILM.thread}>
+                  <ellipse cx="-9" cy="12" rx="8" ry="3.5" /><ellipse cx="-9" cy="6" rx="8" ry="3.5" /><ellipse cx="-9" cy="0" rx="8" ry="3.5" />
+                  <ellipse cx="9" cy="12" rx="8" ry="3.5" /><ellipse cx="9" cy="6" rx="8" ry="3.5" /><ellipse cx="9" cy="0" rx="8" ry="3.5" />
+                </g>
+              ) : (
+                <g>
+                  <g stroke={FILM['thread-edge']} stroke-width="2" fill={FILM.thread}>
+                    <ellipse cx="-9" cy="14" rx="8" ry="3.5" /><ellipse cx="-9" cy="8" rx="8" ry="3.5" /><ellipse cx="-9" cy="2" rx="8" ry="3.5" /><ellipse cx="-9" cy="-4" rx="8" ry="3.5" /><ellipse cx="-9" cy="-10" rx="8" ry="3.5" />
+                  </g>
+                  <ellipse cx="10" cy="14" rx="8" ry="3.5" fill="none" stroke={FILM.ink} stroke-width="2" stroke-dasharray="3 3" />
+                </g>
+              )}
+            </svg>
+          </Ticket>
+        ))
+      }
+    </Tickets>
+    <p class="card__out" aria-live="polite" data-round-out></p>
+    <p class="card__noscript">{values('film.two-rooms.noscript')}</p>
+    <table class="card__table card__noscript">
+      <caption>{tr('pd.matrix.caption')}</caption>
+      <thead>
+        <tr>
+          <td></td>
+          {MOVES.map((other) => <th scope="col">{tr(other === 'cooperate' ? 'pd.col.cooperate' : 'pd.col.defect')}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          MOVES.map((you) => (
+            <tr>
+              <th scope="row">{tr(you === 'cooperate' ? 'pd.row.cooperate' : 'pd.row.defect')}</th>
+              {MOVES.map((other) => <td>{fill(tr('pd.cell'), { ...payoff(you, other) })}</td>)}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </Beat>
+
+  <Beat id={columns.id} screens={columns.screens} caption={caption(columns.id)}>
+    {
+      COLUMNS.map((other, i) => (
+        <div class="card__step" data-column={other} hidden={i > 0}>
+          <p class="card__ask">{askLine(tr, other)}</p>
+          <Tickets label={askLine(tr, other)}>
+            {MOVES.map((you) => (
+              <Ticket label={TICKET[you].label} detail={fill(tr('film.ticket.you-get'), { n: payoff(you, other).you })} data-pick={you} data-said={pickOutcome(i, you)}>
+                <svg slot="icon" viewBox="-24 -24 48 48">
+                  <circle r="17" fill={FILM.thread} stroke={FILM['thread-edge']} stroke-width="3" />
+                  <text y="7" text-anchor="middle" class="card__coin" fill={FILM.ink}>{payoff(you, other).you}</text>
+                </svg>
+              </Ticket>
+            ))}
+          </Tickets>
+        </div>
+      ))
+    }
+    <p class="card__out" aria-live="polite" data-columns-out data-both={both}></p>
+    <p class="card__noscript">{both}</p>
+  </Beat>
+
+  <Beat id={trap.id} screens={trap.screens} caption={caption(trap.id)} />
+</Chapter>

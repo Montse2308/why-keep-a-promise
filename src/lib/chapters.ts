@@ -60,11 +60,16 @@ const PHASE: Record<ChapterId, BuildPhase> = {
  */
 const BEATS: Partial<Record<ChapterId, readonly Beat[]>> = {
   arrival: [{ id: 'ask', screens: 3 }],
+  'two-rooms': [
+    { id: 'rooms', screens: 1.2 },
+    { id: 'play', screens: 1.4 },
+    { id: 'columns', screens: 1.5 },
+    { id: 'trap', screens: 1.4 },
+  ],
 };
 
 /** Screens of the chapters still to be built: a placeholder their phase replaces with beats. */
 const PLANNED_SCREENS: Partial<Record<ChapterId, number>> = {
-  'two-rooms': 5.5,
   talk: 2.5,
   fold: 4,
   'two-voices': 3,

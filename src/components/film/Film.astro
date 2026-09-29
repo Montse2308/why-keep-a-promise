@@ -14,8 +14,11 @@ import { FILM } from '../../lib/design/film';
 import { splitBeats } from '../../lib/film/captions';
 import { stageAt } from '../../lib/film/stage';
 import { BUILT_SPAN } from '../../lib/film/timeline';
+import { FILM_VALUES } from '../../lib/film/values';
+import { fill } from '../../lib/template';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import Arrival from './chapters/Arrival.astro';
+import TwoRooms from './chapters/TwoRooms.astro';
 import World from './World.astro';
 
 interface Props {
@@ -27,15 +30,17 @@ const tr = useTranslations(locale);
 
 // Each built chapter's captions, from src/content/chapters/<locale>/, split by beat.
 const entries = await getCollection('chapters', (entry) => entry.id.startsWith(`${locale}/`));
-const captions = new Map<ChapterId, ReadonlyMap<string, string>>(
+// Numbers in the captions are placeholders, filled from the code (src/lib/film/values.ts).
+const chapters = new Map(
   BUILT.map((c) => {
     const entry = entries.find((candidate) => candidate.data.chapter === c.id);
     if (!entry?.rendered) throw new Error(`No captions for chapter "${c.id}" in ${locale}`);
-    return [c.id, splitBeats(entry.rendered.html, c.beats.map((b) => b.id))];
+    const beats = splitBeats(fill(entry.rendered.html, FILM_VALUES), c.beats.map((b) => b.id));
+    return [c.id, { title: entry.data.title, captions: beats }] as const;
   }),
 );
-const captionsOf = (id: ChapterId) => {
-  const found = captions.get(id);
+const of = (id: ChapterId) => {
+  const found = chapters.get(id);
   if (!found) throw new Error(`Chapter "${id}" is not built`);
   return found;
 };
@@ -51,7 +56,7 @@ const captionsOf = (id: ChapterId) => {
   data-thread-none={tr('film.thread.none')}
 >
   <div class="film__stage">
-    <World uid="live" view={stageAt(0, { promised: null }, false, false)} live />
+    <World locale={locale} uid="live" view={stageAt(0, { promised: null }, false, false)} live />
     <p class="film__spool" aria-live="polite">
       <svg viewBox="-24 -24 48 48" aria-hidden="true" data-spool="none">
         <rect x="-15" y="-19" width="30" height="7" rx="3" fill={FILM['table-front']} stroke={FILM.ink} stroke-width="2.5" />
@@ -67,7 +72,8 @@ const captionsOf = (id: ChapterId) => {
   </div>
 
   <div class="film__chapters">
-    <Arrival locale={locale} captions={captionsOf('arrival')} />
+    <Arrival locale={locale} captions={of('arrival').captions} />
+    <TwoRooms locale={locale} {...of('two-rooms')} />
   </div>
   <div class="film__fade" aria-hidden="true"></div>
 </section>

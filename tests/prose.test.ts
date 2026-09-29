@@ -9,6 +9,7 @@ import { SUBPAGES, type Subpage } from '../src/lib/routes';
 import { SECTIONS } from '../src/lib/sections';
 import { slotsIn, splitSubpage } from '../src/lib/subpages';
 import { MARKERS, findMarks } from '../scripts/verify-dist.mjs';
+import { citationsIn, numbersIn, readable, sentences, wordCount } from './prose';
 
 type Raw = Record<string, string>;
 const actSources = import.meta.glob('../src/content/acts/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
@@ -43,50 +44,6 @@ const sectionFiles = parse(sectionSources, 'sections');
 
 const byAct = (locale: Locale, act: number) => actFiles.find((f) => f.locale === locale && Number(f.data.act) === act);
 const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
-
-/**
- * The prose a reader sees: no TODO markers, no HTML comments (a subpage's slot and lock markers),
- * no code blocks, no link targets, no list numbers, no table rules.
- */
-function readable(body: string, { tables = true } = {}): string {
-  return body
-    .replace(/<(span|p) class="todo">[\s\S]*?<\/\1>/g, ' ')
-    .replace(/<!--[\s\S]*?-->/g, ' ')
-    .replace(/^```[\s\S]*?^```/gm, ' ')
-    .replace(/\]\([^)]*\)/g, ']')
-    .replace(/^\s*\d+\.\s/gm, ' ')
-    .split('\n')
-    .filter((line) => !/^\s*\|?\s*:?-{3,}/.test(line))
-    .filter((line) => tables || !line.trim().startsWith('|'))
-    .join('\n');
-}
-
-/** "Author (year)", or "Author (year, §3.2(ii))" with a section. */
-const CITATION = /(\p{Lu}[\p{L}'-]+(?:\s+(?:and|y)\s+\p{Lu}[\p{L}'-]+)*)\s+\((\d{4})(?:,\s*§\d+(?:\.\d+)*(?:\([ivx]+\))?)?\)/gu;
-const NUMBER = /\d+(?:[/.,]\d+)*/g;
-
-function citationsIn(text: string): string[] {
-  return [...text.matchAll(CITATION)].map((m) => `${(m[1] ?? '').split(/\s+(?:and|y)\s+/).join('+')} ${m[2]}`);
-}
-
-function numbersIn(text: string): string[] {
-  return [...text.replace(CITATION, ' ').matchAll(NUMBER)].map((m) => m[0]);
-}
-
-function wordCount(text: string): number {
-  return text.split(/\s+/).filter((word) => /[\p{L}\p{N}]/u.test(word)).length;
-}
-
-/** Whole sentences as a reader meets them: no Markdown marks, quotes or case, one space between words. */
-function sentences(body: string): string[] {
-  return readable(body, { tables: false })
-    .replace(/^#+\s*(.*)$/gm, '$1.')
-    .replace(/^\s*[-*]\s+/gm, ' ')
-    .replace(/[*_`"«»“”]/g, '')
-    .split(/(?<=[.!?])\s+/)
-    .map((sentence) => sentence.replace(/\s+/g, ' ').trim().toLocaleLowerCase('und'))
-    .filter((sentence) => /\p{L}/u.test(sentence));
-}
 
 const WRITTEN_ACTS = [1, 2, 3, 4, 5, 6] as const;
 /** Words per act and language. R4 shortened acts 1–4 and 6 (ADR 0019); act 5 keeps its F3.1 budget. */

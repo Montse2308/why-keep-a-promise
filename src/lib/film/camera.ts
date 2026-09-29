@@ -11,6 +11,11 @@ export interface Shot {
   readonly width: number;
   /** World width in view on a portrait screen (a phone), where the set is shown closer. */
   readonly widthPortrait: number;
+  /**
+   * The highest world point the shot must keep in view, if any. On a screen wider and shorter than
+   * the shot expects, the view moves up to keep it, and shows less floor instead.
+   */
+  readonly top?: number;
 }
 
 export interface Viewport {
@@ -49,7 +54,8 @@ export function frame(shot: Shot, viewport: Viewport): ViewBox {
   const width = portrait ? shot.widthPortrait : shot.width;
   const height = (width * viewport.height) / viewport.width;
   const anchor = portrait ? ANCHOR.portrait : ANCHOR.landscape;
-  return { x: shot.cx - width / 2, y: shot.cy - height * anchor, width, height };
+  const y = shot.cy - height * anchor;
+  return { x: shot.cx - width / 2, y: shot.top === undefined ? y : Math.min(y, shot.top), width, height };
 }
 
 export const viewBoxAttribute = (box: ViewBox): string =>

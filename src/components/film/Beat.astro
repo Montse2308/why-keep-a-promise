@@ -124,6 +124,55 @@ const { id, screens, caption, opening = false } = Astro.props;
     display: none;
   }
 
+  /* A step of a choice made in turns; it shows only with JavaScript, one step after another. */
+  .card :global(.card__step) {
+    display: none;
+    gap: var(--space-2);
+  }
+
+  :global(html.js) .card :global(.card__step) {
+    display: grid;
+  }
+
+  :global(html.js) .card :global(.card__step[hidden]) {
+    display: none;
+  }
+
+  .card :global(.card__ask) {
+    font-weight: 800;
+  }
+
+  .card :global(.card__coin) {
+    font-family: var(--font-display, Georgia, serif);
+    font-weight: 800;
+    font-size: 20px;
+  }
+
+  /* The payoffs, as a table, for the storyboard. */
+  .card :global(.card__table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    color: var(--film-ink);
+  }
+
+  .card :global(.card__table caption) {
+    text-align: left;
+    font-weight: 800;
+    padding-bottom: var(--space-2);
+  }
+
+  .card :global(.card__table th),
+  .card :global(.card__table td) {
+    padding: var(--space-1) var(--space-2);
+    border: 1.5px solid var(--film-ink);
+    text-align: center;
+  }
+
+  .card :global(.card__table th[scope='row']) {
+    text-align: left;
+  }
+
   /*
    * The film: each beat is as tall as its screens. Its card is pushed to the bottom and held at the
    * bottom of the screen while the beat scrolls past (a flex item, so it may stick across the whole
