@@ -7,7 +7,9 @@ import { frame, isPortrait } from './camera';
 import { FACES, MOODS, TRIANGLE_MOODS } from './faces';
 import { outcomeOf, type DecisionState } from '../table/decision';
 import { PAYOFFS, type Face } from '../table/game';
+import { DECK } from './deck';
 import {
+  AWAY,
   BOARD_MARGIN,
   brokenThreadPaths,
   castPositions,
@@ -21,6 +23,7 @@ import {
   spanOf,
   SPREAD,
   stageAt,
+  threadBetween,
   threadPath,
   threadState,
   WORLD,
@@ -57,15 +60,15 @@ describe('chapter 0, the arrival (ADR 0021)', () => {
 
   it('starts calm, then the other worries while the circle is tempted, until the visitor answers', () => {
     const calm = stageAt(0, { promised: null }, false, false);
-    expect(calm.moods).toEqual({ you: 'neutral', other: 'neutral' });
+    expect(calm.moods).toEqual({ you: 'neutral', other: 'neutral', partner: 'neutral' });
     const asked = stageAt(inArrival(0.5), { promised: null }, false, false);
-    expect(asked.moods).toEqual({ you: 'tempted', other: 'worried' });
+    expect(asked.moods).toEqual({ you: 'tempted', other: 'worried', partner: 'neutral' });
   });
 
   it('ties the golden thread only when the visitor promises', () => {
     const yes = stageAt(inArrival(0.5), { promised: true }, false, false);
-    expect(yes.thread).toEqual({ state: 'tied', drawn: 1 });
-    expect(yes.moods).toEqual({ you: 'proud', other: 'happy' });
+    expect(yes.thread).toEqual({ state: 'tied', drawn: 1, shown: 1 });
+    expect(yes.moods).toEqual({ you: 'proud', other: 'happy', partner: 'neutral' });
     const no = stageAt(inArrival(0.5), { promised: false }, false, false);
     expect(no.thread.state).toBe('none');
     expect(no.moods.other).toBe('sad');
@@ -181,11 +184,11 @@ describe('chapter 1, two rooms (ADR 0021, ADR 0023)', () => {
   });
 
   it('gives each beat its faces: worried apart, betrayed after cooperating, tempted by the columns', () => {
-    expect(view(inside(rooms)).moods).toEqual({ you: 'worried', other: 'worried' });
-    expect(view(inside(play), { promised: true, round: roundOf('cooperate') }).moods).toEqual({ you: 'sad', other: 'happy' });
-    expect(view(inside(play), { promised: true, round: roundOf('defect') }).moods).toEqual({ you: 'worried', other: 'worried' });
-    expect(view(inside(columns)).moods).toEqual({ you: 'tempted', other: 'tempted' });
-    expect(view(inside(trap)).moods).toEqual({ you: 'worried', other: 'worried' });
+    expect(view(inside(rooms)).moods).toEqual({ you: 'worried', other: 'worried', partner: 'neutral' });
+    expect(view(inside(play), { promised: true, round: roundOf('cooperate') }).moods).toEqual({ you: 'sad', other: 'happy', partner: 'neutral' });
+    expect(view(inside(play), { promised: true, round: roundOf('defect') }).moods).toEqual({ you: 'worried', other: 'worried', partner: 'neutral' });
+    expect(view(inside(columns)).moods).toEqual({ you: 'tempted', other: 'tempted', partner: 'neutral' });
+    expect(view(inside(trap)).moods).toEqual({ you: 'worried', other: 'worried', partner: 'neutral' });
   });
 
   it('keeps the golden thread tied across the rooms, and none without a promise', () => {
@@ -237,10 +240,10 @@ describe('chapter 2, what if they could talk? (ADR 0021, ADR 0023)', () => {
   });
 
   it('shows how each message lands, then both tempted again: talk changes no payoff', () => {
-    expect(view(inside(chat)).moods).toEqual({ you: 'neutral', other: 'worried' });
-    expect(view(inside(chat), { promised: true, chat: 'promise' }).moods).toEqual({ you: 'happy', other: 'happy' });
+    expect(view(inside(chat)).moods).toEqual({ you: 'neutral', other: 'worried', partner: 'neutral' });
+    expect(view(inside(chat), { promised: true, chat: 'promise' }).moods).toEqual({ you: 'happy', other: 'happy', partner: 'neutral' });
     expect(view(inside(chat), { promised: true, chat: 'nothing' }).moods.other).toBe('worried');
-    expect(view(inside(cheap), { promised: true, chat: 'promise' }).moods).toEqual({ you: 'tempted', other: 'tempted' });
+    expect(view(inside(cheap), { promised: true, chat: 'promise' }).moods).toEqual({ you: 'tempted', other: 'tempted', partner: 'neutral' });
   });
 
   it('draws its still frame in the chat', () => {
@@ -298,12 +301,12 @@ describe('chapter 3, the matrix folds (ADR 0021, ADR 0023)', () => {
   });
 
   it('gives the decision its faces: tempted and hoping, then kept or betrayed', () => {
-    expect(view(inside(fold)).moods).toEqual({ you: 'shock', other: 'shock' });
-    expect(view(inside(decide)).moods).toEqual({ you: 'tempted', other: 'happy' });
-    expect(view(inside(decide), { promised: false }).moods).toEqual({ you: 'tempted', other: 'worried' });
-    expect(view(inside(decide), { promised: true, decision: rolled(4) }).moods).toEqual({ you: 'proud', other: 'happy' });
-    expect(view(inside(decide), { promised: false, decision: rolled(1) }).moods).toEqual({ you: 'happy', other: 'shock' });
-    expect(view(inside(decide), { promised: true, decision: kept }).moods).toEqual({ you: 'neutral', other: 'sad' });
+    expect(view(inside(fold)).moods).toEqual({ you: 'shock', other: 'shock', partner: 'neutral' });
+    expect(view(inside(decide)).moods).toEqual({ you: 'tempted', other: 'happy', partner: 'neutral' });
+    expect(view(inside(decide), { promised: false }).moods).toEqual({ you: 'tempted', other: 'worried', partner: 'neutral' });
+    expect(view(inside(decide), { promised: true, decision: rolled(4) }).moods).toEqual({ you: 'proud', other: 'happy', partner: 'neutral' });
+    expect(view(inside(decide), { promised: false, decision: rolled(1) }).moods).toEqual({ you: 'happy', other: 'shock', partner: 'neutral' });
+    expect(view(inside(decide), { promised: true, decision: kept }).moods).toEqual({ you: 'neutral', other: 'sad', partner: 'neutral' });
   });
 
   it('draws the broken thread as two ends, each still tied to its character', () => {
@@ -381,9 +384,9 @@ describe('chapter 4, two voices (ADR 0021, ADR 0027)', () => {
   });
 
   it('leaves the other as the decision left them, and surprises the circle with the trick', () => {
-    expect(view(inside(voices), { promised: true, decision: kept }).moods).toEqual({ you: 'worried', other: 'happy' });
+    expect(view(inside(voices), { promised: true, decision: kept }).moods).toEqual({ you: 'worried', other: 'happy', partner: 'neutral' });
     expect(view(inside(voices), { promised: true, decision: broken }).moods.other).toBe('sad');
-    expect(view(inside(together, 0.1)).moods).toEqual({ you: 'happy', other: 'neutral' });
+    expect(view(inside(together, 0.1)).moods).toEqual({ you: 'happy', other: 'neutral', partner: 'neutral' });
     expect(view(inside(trick)).moods.you).toBe('shock');
   });
 
@@ -407,5 +410,124 @@ describe('the storyboard’s still frames (ADR 0025)', () => {
       const cutBeat = stageAt(at(cut.from + LEAD + 0.01), { promised: true }, false, true).beat;
       expect(stageAt(at(cut.pose), { promised: true }, false, true).beat, `cut at ${cut.from}`).toEqual(cutBeat);
     }
+  });
+});
+
+describe('chapter 5, the blackout (ADR 0021, ADR 0023, ADR 0027)', () => {
+  const blackout = beatRange('blackout', 'blackout');
+  const newPartner = beatRange('blackout', 'new-partner');
+  const deck = beatRange('blackout', 'deck');
+  const receive = beatRange('blackout', 'receive');
+  const reveal = beatRange('blackout', 'reveal');
+  const inside = (range: { from: number }, by = 0.4) => at(range.from + by);
+  const view = (p: number, state: StageState = { promised: true }, portrait = false) => stageAt(p, state, portrait, false);
+  const onDeck = (card: number, choices: readonly ('roll' | 'dont')[] = []): StageState => ({ promised: true, deck: { choices, at: card } });
+  const seat = (portrait = false) => castPositions(portrait ? SPREAD.portrait : SPREAD.landscape).other;
+  const switchedCard = DECK.findIndex((card) => card.partner === 'switched');
+  const sameCard = DECK.findIndex((card) => card.partner === 'same');
+  const all = (choice: 'roll' | 'dont', upTo: number) => DECK.slice(0, upTo + 1).map(() => choice);
+
+  it('puts the lights out as its card comes up, and brings them back', () => {
+    expect(view(at(blackout.from - 1.2)).dark).toBe(0);
+    expect(view(at(blackout.from - 0.1)).dark).toBeGreaterThan(0.9);
+    expect(view(inside(blackout, 0.6)).dark).toBe(0);
+    expect(view(inside(newPartner)).dark).toBe(0);
+  });
+
+  it('sits the triangle in the square’s seat in the dark, and sends the square to another table', () => {
+    const before = view(at(blackout.from - 1.2));
+    expect(before.cast.other).toEqual({ at: seat(), scale: 1, opacity: 1 });
+    expect(before.cast.partner.opacity).toBe(0);
+    for (const portrait of [false, true]) {
+      const after = view(inside(newPartner), { promised: true }, portrait);
+      expect(after.cast.partner).toEqual({ at: seat(portrait), scale: 1, opacity: 1 });
+      expect(after.cast.other).toEqual({ ...AWAY[portrait ? 'portrait' : 'landscape'], opacity: 1 });
+    }
+  });
+
+  it('keeps the golden thread tied to the one who left, and the new partner has none (ADR 0027)', () => {
+    const after = view(inside(newPartner));
+    expect(after.thread).toEqual({ state: 'tied', drawn: 1, shown: 1 });
+    const numbers = threadBetween(after.cast.you, after.cast.other).match(/-?\d+(\.\d+)?/g)?.map(Number) ?? [];
+    expect(numbers.at(-2)).toBeCloseTo(after.cast.other.at[0] - 50 * after.cast.other.scale, 6);
+    expect(view(inside(newPartner), { promised: false }).thread.state).toBe('none');
+    expect(view(inside(newPartner), { promised: true, decision: { phase: 'outcome', ...outcomeOf('dont', null) } }).thread.state).toBe('broken');
+  });
+
+  it('keeps the square at its other table in view on any screen', () => {
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 1440, height: 640 },
+      { width: 360, height: 740 },
+      { width: 320, height: 568 },
+    ]) {
+      const v = view(inside(newPartner), { promised: true }, isPortrait(viewport));
+      const box = frame(v.shot, viewport);
+      const [x, y] = v.cast.other.at;
+      const half = 70 * v.cast.other.scale;
+      expect(x + half).toBeLessThan(box.x + box.width);
+      expect(y - half).toBeGreaterThan(box.y);
+    }
+  });
+
+  it('has what the other expects watch the new partner, and my word the square it was given to', () => {
+    const v = view(inside(newPartner));
+    expect(v.voices.look.expects).toEqual(v.cast.partner.at);
+    expect(v.voices.look.word).toEqual(v.cast.other.at);
+    expect(v.voices.globe).toBe('partner');
+    expect(view(at(blackout.from - 1.2)).voices.globe).toBe('other');
+  });
+
+  it('shows on stage the person of the card in play: a new partner, or the one the visitor promised', () => {
+    const switched = view(inside(deck), onDeck(switchedCard));
+    expect(switched.cast.partner.opacity).toBe(1);
+    expect(switched.cast.other.scale).toBeLessThan(1);
+    const same = view(inside(deck), onDeck(sameCard));
+    expect(same.cast.other).toEqual({ at: seat(), scale: 1, opacity: 1 });
+    expect(same.cast.partner.opacity).toBe(0);
+    expect(same.voices.globe).toBe('other');
+  });
+
+  it('ties each card’s promise, and snaps it only when the visitor keeps the money from the one they promised', () => {
+    expect(view(inside(deck), onDeck(sameCard)).thread.state).toBe('tied');
+    expect(view(inside(deck), onDeck(sameCard, all('dont', sameCard))).thread.state).toBe('broken');
+    expect(view(inside(deck), onDeck(switchedCard, all('dont', switchedCard))).thread.state).toBe('tied');
+    // Every card carries its own promise, whatever the visitor answered in chapter 0.
+    expect(view(inside(deck), { promised: false, deck: { choices: [], at: sameCard } }).thread.state).toBe('tied');
+  });
+
+  it('gives the deck its faces: tempted, and whoever sits across hoping, until the visitor decides', () => {
+    expect(view(inside(deck), onDeck(switchedCard)).moods).toEqual({ you: 'tempted', other: 'neutral', partner: 'happy' });
+    expect(view(inside(deck), onDeck(switchedCard, all('roll', switchedCard))).moods).toEqual({ you: 'happy', other: 'neutral', partner: 'happy' });
+    expect(view(inside(deck), onDeck(sameCard, all('dont', sameCard))).moods).toEqual({ you: 'neutral', other: 'sad', partner: 'neutral' });
+    expect(view(inside(deck), onDeck(sameCard, all('roll', sameCard))).moods.you).toBe('proud');
+  });
+
+  it('seats the visitor as the one who receives at the table as it was, with the other’s promise and no thread', () => {
+    const v = view(inside(receive), onDeck(switchedCard));
+    expect(v.cast.other).toEqual({ at: seat(), scale: 1, opacity: 1 });
+    expect(v.cast.partner.opacity).toBe(0);
+    expect(v.thread.shown).toBe(0);
+    expect(v.bubbles.other).toBe(1);
+    expect(v.moods.you).toBe('worried');
+    expect(view(inside(receive), { promised: true, bet: 4 }).moods.you).toBe('happy');
+    expect(view(inside(receive), { promised: true, bet: 0 }).moods.you).toBe('worried');
+  });
+
+  it('flickers the lights for the reveal: the one who promised is gone, and a new partner decides', () => {
+    expect(view(at(reveal.from - 0.4)).dark).toBeGreaterThan(0.8);
+    const v = view(inside(reveal));
+    expect(v.dark).toBe(0);
+    expect(v.cast.partner.opacity).toBe(1);
+    expect(v.cast.other.scale).toBeLessThan(1);
+    expect(v.bubbles.other).toBe(0);
+    expect(v.moods.you).toBe('shock');
+    expect(v.voices.look).toEqual({ expects: v.cast.partner.at, word: v.cast.partner.at });
+  });
+
+  it('draws its still frame with the new partner in the seat', () => {
+    const still = stageAt(KEY_POSE.blackout ?? 0, { promised: true }, false, true);
+    expect(still.beat).toEqual({ chapter: 'blackout', id: 'new-partner' });
+    expect(still.cast.partner.opacity).toBe(1);
   });
 });

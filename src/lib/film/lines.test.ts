@@ -7,9 +7,11 @@ import { MOVES, PAYOFFS, payoff } from '../pd/game';
 import { roundOf } from '../pd/round';
 import { cellBox, noteFor, STACK_MAX } from './board';
 import { outcomeOf } from '../table/decision';
-import { DIE_FACES, PAYOFFS as TABLE } from '../table/game';
+import { CHOICES, DIE_FACES, PAYOFFS as TABLE } from '../table/game';
 import { fill } from '../template';
-import { askLine, conclusionLine, decisionLine, pickLine, roundLine } from './lines';
+import { BET_LABEL, BETS } from './bet';
+import { DECK } from './deck';
+import { askLine, betLine, conclusionLine, decisionLine, deckLine, pickLine, roundLine, tallyLine } from './lines';
 import { FILM_VALUES } from './values';
 
 const dictionaries = { en, es } as const;
@@ -106,5 +108,38 @@ describe('the decision of chapter 3, from PAYOFFS (rule (k))', () => {
       expect(numbers(line)).toEqual([...expected, FILM_VALUES.cost, FILM_VALUES.expected]);
     }
     expect(numbers(decisionLine(tr(locale), outcomeOf('dont', null)))).toEqual([T.dont.you, T.dont.other]);
+  });
+});
+
+describe('the lines of chapter 5 (rule (f), rule (k), ADR 0023)', () => {
+  const same = DECK.find((card) => card.partner === 'same');
+  const switched = DECK.find((card) => card.partner === 'switched');
+  if (!same || !switched) throw new Error('The deck needs both cases');
+  /** Words that would tell the visitor which reason moves them. */
+  const REASONS = { en: /expect|guilt|\bword\b|reason/i, es: /espera|culpa|palabra|raz[oó]n/i } as const;
+
+  it.each(['en', 'es'] as const)('%s: a card’s line says what happened, and keeps or breaks a promise only with the one promised', (locale) => {
+    const lines = CHOICES.flatMap((choice) => [deckLine(tr(locale), same, choice), deckLine(tr(locale), switched, choice)]);
+    expect(new Set(lines).size).toBe(4);
+    expect(deckLine(tr(locale), same, 'dont')).toContain(String(TABLE.dont.you));
+    expect(deckLine(tr(locale), switched, 'dont')).toContain(String(TABLE.dont.you));
+  });
+
+  it.each(['en', 'es'] as const)('%s: the deck ends counting promises kept, with no payoff added up', (locale) => {
+    const line = tallyLine(tr(locale), { kept: 2, made: 3 });
+    expect(numbers(line)).toEqual([2, 3]);
+  });
+
+  it.each(['en', 'es'] as const)('%s: the bet is told in the scale’s own words', (locale) => {
+    for (const bet of BETS) expect(betLine(tr(locale), bet)).toContain(dictionaries[locale][BET_LABEL[bet]]);
+  });
+
+  it.each(['en', 'es'] as const)('%s: no line after a choice names a reason, or tells the visitor what moves them', (locale) => {
+    const lines = [
+      ...DECK.flatMap((card) => CHOICES.map((choice) => deckLine(tr(locale), card, choice))),
+      tallyLine(tr(locale), { kept: 0, made: 3 }),
+      ...BETS.map((bet) => betLine(tr(locale), bet)),
+    ];
+    for (const line of lines) expect(line).not.toMatch(REASONS[locale]);
   });
 });

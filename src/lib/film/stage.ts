@@ -14,9 +14,11 @@ import { cellTags, COLUMNS, currentColumn, reduce as pick, START as NO_PICKS, ty
 import { bestReply, type Move } from '../pd/game';
 import type { RoundState } from '../pd/round';
 import type { DecisionState } from '../table/decision';
-import type { Face } from '../table/game';
+import type { Choice, Face } from '../table/game';
+import { betMood, type Bet } from './bet';
 import { BOARD } from './board';
 import type { Shot } from './camera';
+import { DECK } from './deck';
 import type { Mood } from './faces';
 import { AFTER, type Chat } from './talk';
 import { spans, type Span } from './spans';
@@ -58,6 +60,10 @@ export interface StageState {
   readonly chat?: Chat;
   /** Chapter 3: keep the money or roll the die. */
   readonly decision?: DecisionState;
+  /** Chapter 5: the decisions on the deck, one per card, and the card the stage shows. */
+  readonly deck?: { readonly choices: readonly Choice[]; readonly at: number };
+  /** Chapter 5: the visitor's bet, once they receive. */
+  readonly bet?: Bet | null;
 }
 
 export interface StageView {
@@ -69,8 +75,11 @@ export interface StageView {
   readonly beat: { readonly chapter: ChapterId; readonly id: string };
   /** Half the distance between the circle and the square's seat at the table. */
   readonly spread: number;
-  /** Where the circle stands, and the square. */
-  readonly cast: { readonly you: Point; readonly other: Place };
+  /**
+   * Where the circle stands, the square (at its seat, or away at another table after the lights go
+   * out) and the triangle, the new partner, who sits in the square's seat after a switch.
+   */
+  readonly cast: { readonly you: Point; readonly other: Place; readonly partner: Place };
   /**
    * The two voices (chapter 4 on): how much they show, the point each one looks at, how much the
    * scroll glows, and whose face waits in the cloud's globe.
@@ -80,7 +89,11 @@ export interface StageView {
     readonly at: { readonly expects: Point; readonly word: Point };
     readonly look: { readonly expects: Point; readonly word: Point };
     readonly glow: number;
+    /** Whose face waits in the cloud's globe: whoever sits across the table. */
+    readonly globe: 'other' | 'partner';
   };
+  /** The blackout of chapter 5, from 0 (the day's light) to 1 (dark, but for the cast's eyes). */
+  readonly dark: number;
   /** 0 at the table; 1 in two rooms, with the wall up between them. */
   readonly rooms: number;
   /** How far the rooms' bulbs hang down, from 0 (out of sight) to 1. */
@@ -106,8 +119,9 @@ export interface StageView {
   readonly coins: { readonly you: number; readonly other: number; readonly shown: number };
   /** Chapter 2's speech bubbles over the wall, from 0 (gone) to 1. */
   readonly bubbles: { readonly you: number; readonly other: number };
-  readonly moods: { readonly you: Mood; readonly other: Mood };
-  readonly thread: { readonly state: ThreadState; readonly drawn: number };
+  readonly moods: { readonly you: Mood; readonly other: Mood; readonly partner: Mood };
+  /** The golden thread, from the circle to the square wherever it stands, and how much of it shows. */
+  readonly thread: { readonly state: ThreadState; readonly drawn: number; readonly shown: number };
   /** How far the chapter 0 title has gone, from 0 (fully shown) to 1 (gone). */
   readonly titleGone: number;
 }
@@ -132,6 +146,22 @@ const OUT_OF_ROOMS = entering('fold', 'fold');
 const DECIDE = entering('fold', 'decide');
 const VOICES_IN = entering('two-voices', 'voices');
 /**
+ * Chapter 5. The lights go out as the blackout's card comes up; in the dark the square leaves its
+ * seat for another table and the triangle sits down; then the lights come back.
+ */
+const BLACKOUT = beatRange('blackout', 'blackout').from;
+const LIGHTS_OUT = [BLACKOUT - 0.8, BLACKOUT - 0.4] as const;
+const LIGHTS_ON = [BLACKOUT + 0.05, BLACKOUT + 0.45] as const;
+const SWAP = [LIGHTS_OUT[1], LIGHTS_ON[0]] as const;
+const WIDER = [BLACKOUT - 0.9, BLACKOUT - 0.4] as const;
+const DECK_IN = entering('blackout', 'deck');
+/** The visitor receives at the table as it was; then the lights flicker and the seats change again. */
+const RECEIVE_IN = entering('blackout', 'receive');
+const REVEAL = beatRange('blackout', 'reveal').from;
+const FLICKER_OUT = [REVEAL - 0.75, REVEAL - 0.55] as const;
+const FLICKER_ON = [REVEAL - 0.25, REVEAL + 0.05] as const;
+const REVEAL_SWAP = [FLICKER_OUT[1], FLICKER_ON[0]] as const;
+/**
  * Once the table is back, the board folds flat while "another game" is on screen, and the die it
  * folds into drops onto the table.
  */
@@ -153,6 +183,11 @@ const POSE_IN: Readonly<Record<string, number>> = {
   'two-voices/voices': 0.5,
   'two-voices/together': 0.1,
   'two-voices/trick': 0.3,
+  'blackout/blackout': 0.6,
+  'blackout/new-partner': 0.2,
+  'blackout/deck': 0.5,
+  'blackout/receive': 0.3,
+  'blackout/reveal': 0.3,
 };
 
 const poseOf = (chapter: ChapterId, beat: string): number => beatRange(chapter, beat).from + (POSE_IN[`${chapter}/${beat}`] ?? 0);
@@ -179,6 +214,11 @@ export const CUTS: readonly { readonly from: number; readonly pose: number }[] =
       ['two-voices', 'voices'],
       ['two-voices', 'together'],
       ['two-voices', 'trick'],
+      ['blackout', 'blackout'],
+      ['blackout', 'new-partner'],
+      ['blackout', 'deck'],
+      ['blackout', 'receive'],
+      ['blackout', 'reveal'],
     ] as const
   ).map(([chapter, b]) => ({ from: beatRange(chapter, b).from - LEAD, pose: poseOf(chapter, b) })),
 ];
@@ -197,12 +237,13 @@ export const KEY_POSE: Partial<Record<ChapterId, number>> = {
   talk: at(poseOf('talk', 'chat')),
   fold: at(poseOf('fold', 'decide')),
   'two-voices': at(poseOf('two-voices', 'together')),
+  blackout: at(poseOf('blackout', 'new-partner')),
 };
 
 /**
  * The camera: wide on the title, closing in on the table as the other asks, wide again for the
- * rooms and the fold, close on the table for the decision, and a little wider and higher when the
- * two voices come to float over the circle.
+ * rooms and the fold, close on the table for the decision, a little wider and higher when the two
+ * voices come to float over the circle, and wider still once the square has gone to another table.
  */
 const SHOTS = {
   cx: track([{ at: 0, value: 800 }, { at: at(3), value: 800 }]),
@@ -214,7 +255,9 @@ const SHOTS = {
     { at: at(DECIDE[0]), value: 480 },
     { at: at(DECIDE[1]), value: 505 },
     { at: at(VOICES_IN[0]), value: 505 },
-    { at: at(VOICES_IN[1]), value: 470 },
+    { at: at(VOICES_IN[1]), value: 495 },
+    { at: at(WIDER[0]), value: 495 },
+    { at: at(WIDER[1]), value: 520 },
   ]),
   width: track([
     { at: 0, value: 1500 },
@@ -225,6 +268,8 @@ const SHOTS = {
     { at: at(DECIDE[1]), value: 1180 },
     { at: at(VOICES_IN[0]), value: 1180 },
     { at: at(VOICES_IN[1]), value: 1300 },
+    { at: at(WIDER[0]), value: 1300 },
+    { at: at(WIDER[1]), value: 1500 },
   ]),
   widthPortrait: track([
     { at: 0, value: 660 },
@@ -235,8 +280,48 @@ const SHOTS = {
     { at: at(DECIDE[1]), value: 600 },
     { at: at(VOICES_IN[0]), value: 600 },
     { at: at(VOICES_IN[1]), value: 640 },
+    { at: at(WIDER[0]), value: 640 },
+    { at: at(WIDER[1]), value: 660 },
   ]),
 };
+
+/**
+ * Where the square goes when the lights go out: to another table, farther off, still holding the
+ * golden thread (ADR 0027). On a phone, up behind the seat, so it stays in view.
+ */
+export const AWAY = {
+  landscape: { at: [1330, 402], scale: 0.55 },
+  portrait: { at: [1062, 352], scale: 0.45 },
+} as const satisfies Record<string, { at: Point; scale: number }>;
+
+/** How far past the seat the triangle waits, out of sight, before it sits down. */
+export const OFFSTAGE = 260;
+
+/** Where the square and the triangle stand. */
+interface Layout {
+  readonly other: Place;
+  readonly partner: Place;
+}
+
+/** The table as it was: the square in its seat, the triangle out of sight. */
+const tableLayout = (seat: Point): Layout => ({
+  other: { at: seat, scale: 1, opacity: 1 },
+  partner: { at: [seat[0] + OFFSTAGE, seat[1]], scale: 1, opacity: 0 },
+});
+
+/** After a switch: the square at another table, the triangle in its seat. */
+const switchedLayout = (seat: Point, portrait: boolean): Layout => {
+  const away = AWAY[portrait ? 'portrait' : 'landscape'];
+  return { other: { at: away.at, scale: away.scale, opacity: 1 }, partner: { at: seat, scale: 1, opacity: 1 } };
+};
+
+const mixPlace = (a: Place, b: Place, t: number): Place => ({
+  at: [a.at[0] + (b.at[0] - a.at[0]) * t, a.at[1] + (b.at[1] - a.at[1]) * t],
+  scale: a.scale + (b.scale - a.scale) * t,
+  opacity: a.opacity + (b.opacity - a.opacity) * t,
+});
+const mixLayout = (a: Layout, b: Layout, t: number): Layout =>
+  t <= 0 ? a : t >= 1 ? b : { other: mixPlace(a.other, b.other, t), partner: mixPlace(a.partner, b.partner, t) };
 
 /** Where the die floats in chapter 0, where the board's fold drops it from, and where it rests. */
 export const DIE = { floats: WORLD.tableTop - 90, folds: 236, rests: WORLD.tableTop - 44 } as const;
@@ -260,6 +345,36 @@ const TRAP_TAGS = Object.fromEntries(
 ) as Record<CellKey, Tag[]>;
 
 function moodsAt(beat: { chapter: ChapterId; id: string }, state: StageState, asked: number): StageView['moods'] {
+  switch (`${beat.chapter}/${beat.id}`) {
+    case 'blackout/blackout':
+      return { you: 'shock', other: 'worried', partner: 'neutral' };
+    case 'blackout/new-partner':
+      return { you: 'worried', other: 'neutral', partner: 'happy' };
+    case 'blackout/deck':
+      return deckMoods(state);
+    case 'blackout/receive':
+      return { you: betMood(state.bet ?? null), other: 'happy', partner: 'neutral' };
+    case 'blackout/reveal':
+      return { you: 'shock', other: 'neutral', partner: 'neutral' };
+    default:
+      return { ...pairMoods(beat, state, asked), partner: 'neutral' };
+  }
+}
+
+/**
+ * The deck's faces, for the card on stage: tempted, and whoever sits across hoping, until the
+ * visitor decides; then each reacts to what happened, never to why (ADR 0023).
+ */
+function deckMoods(state: StageState): StageView['moods'] {
+  const at = state.deck?.at ?? 0;
+  const card = DECK[at];
+  const choice = state.deck?.choices[at];
+  const seated: Mood = choice === undefined ? 'happy' : choice === 'roll' ? 'happy' : 'sad';
+  const you: Mood = choice === undefined ? 'tempted' : choice === 'dont' ? 'neutral' : card?.partner === 'same' ? 'proud' : 'happy';
+  return card?.partner === 'switched' ? { you, other: 'neutral', partner: seated } : { you, other: seated, partner: 'neutral' };
+}
+
+function pairMoods(beat: { chapter: ChapterId; id: string }, state: StageState, asked: number): { readonly you: Mood; readonly other: Mood } {
   const round = state.round ?? null;
   switch (`${beat.chapter}/${beat.id}`) {
     case 'arrival/ask':
@@ -307,7 +422,7 @@ function aftermath(state: StageState): Mood {
  * Then each reacts to what happened, never to why (ADR 0023): keeping a promise is the "kept" face,
  * and breaking one leaves the other betrayed.
  */
-function decisionMoods(state: StageState): StageView['moods'] {
+function decisionMoods(state: StageState): { readonly you: Mood; readonly other: Mood } {
   const decision = state.decision ?? { phase: 'idle' };
   const hoping: Mood = state.promised === true ? 'happy' : 'worried';
   if (decision.phase === 'idle') return { you: 'tempted', other: hoping };
@@ -379,11 +494,11 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
           shown: outcome === null ? 0 : eased(m, [DECIDE[0], DECIDE[0] + 0.2]) * (1 - eased(m, [VOICES_IN[0], VOICES_IN[0] + 0.4])),
         };
 
-  // The other speaks first, as the chat opens; the visitor's bubble comes with their message.
+  // The other speaks first, as the chat opens; the visitor's bubble comes with their message. When
+  // the visitor receives (chapter 5), the other speaks again: the promise it makes them.
   const talking = eased(m, CHAT) * (1 - eased(m, [OUT_OF_ROOMS[0], OUT_OF_ROOMS[0] + 0.5]));
-  const bubbles = { you: state.chat ? talking : 0, other: talking };
-
-  const thread = { state: threadState(state), drawn: state.promised === true ? 1 : 0 };
+  const promising = eased(m, RECEIVE_IN) * (1 - eased(m, REVEAL_SWAP));
+  const bubbles = { you: state.chat ? talking : 0, other: Math.max(talking, promising) };
   // The die floats over the table in chapter 0 and leaves with the rooms; it comes back out of the
   // board's fold and rests on the table for the decision.
   const reborn = m >= (INTO_ROOMS[1] + FOLD[0]) / 2;
@@ -398,17 +513,51 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
 
   const spread = table + (apart - table) * rooms;
   const seats = castPositions(spread);
-  const cast = { you: seats.you, other: { at: seats.other, scale: 1, opacity: 1 } };
 
-  // The voices float over the circle from chapter 4 on. Each looks at the other, except while they
-  // disagree about the trick: then they look at each other.
+  // Chapter 5: the square leaves for another table in the dark and the triangle sits down; on the
+  // deck, whoever the card on stage says; the table as it was to receive; and the switch again.
+  const deckAt = state.deck?.at ?? 0;
+  const card = DECK[deckAt] ?? DECK[0];
+  const asAtTable = tableLayout(seats.other);
+  const asSwitched = switchedLayout(seats.other, portrait);
+  const onCard = card?.partner === 'same' ? asAtTable : asSwitched;
+  const layout = [
+    [asSwitched, eased(m, SWAP)],
+    [onCard, eased(m, DECK_IN)],
+    [asAtTable, eased(m, RECEIVE_IN)],
+    [asSwitched, eased(m, REVEAL_SWAP)],
+  ].reduce<Layout>((from, [to, t]) => mixLayout(from, to as Layout, t as number), asAtTable);
+  const cast = { you: seats.you, ...layout };
+
+  // The golden thread: the visitor's own promise, from the circle to the square wherever it stands;
+  // on the deck, each card's promise; none while the visitor receives.
+  const onDeck = m >= DECK_IN[1] - 0.3 && m < RECEIVE_IN[0];
+  const cardChoice = state.deck?.choices[deckAt];
+  const thread = {
+    state: onDeck ? (card?.partner === 'same' && cardChoice === 'dont' ? 'broken' : 'tied') : threadState(state),
+    drawn: onDeck || state.promised === true ? 1 : 0,
+    shown: 1 - eased(m, RECEIVE_IN),
+  } as const;
+
+  // The lights go out once for the blackout and flicker for the reveal.
+  const dark = Math.max(
+    0.92 * eased(m, LIGHTS_OUT) * (1 - eased(m, LIGHTS_ON)),
+    0.85 * eased(m, FLICKER_OUT) * (1 - eased(m, FLICKER_ON)),
+  );
+
+  // The voices float over the circle from chapter 4 on. What the other expects looks at whoever
+  // sits across; my word, at the square it was given to, wherever it went. While they disagree about
+  // the trick they look at each other, and while the visitor receives both watch the seat.
   const voiceAt = voicePlaces(cast.you, portrait);
+  const seated = cast.partner.opacity > 0.5 ? cast.partner.at : cast.other.at;
+  const receiving = beat.chapter === 'blackout' && (beat.beat.id === 'receive' || beat.beat.id === 'reveal');
   const arguing = beat.chapter === 'two-voices' && beat.beat.id === 'trick';
   const voices = {
     shown: eased(m, VOICES_IN),
     at: voiceAt,
-    look: arguing ? { expects: voiceAt.word, word: voiceAt.expects } : { expects: cast.other.at, word: cast.other.at },
+    look: arguing ? { expects: voiceAt.word, word: voiceAt.expects } : { expects: seated, word: receiving ? seated : cast.other.at },
     glow: 0,
+    globe: cast.partner.opacity > 0.5 ? ('partner' as const) : ('other' as const),
   };
 
   return {
@@ -419,6 +568,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     spread,
     cast,
     voices,
+    dark,
     rooms,
     bulbs: rooms * (1 - boardShown),
     table: 1 - rooms,
@@ -437,27 +587,53 @@ export function castPositions(spread: number): { readonly you: readonly [number,
   return { you: [WORLD.centre - spread, 500], other: [WORLD.centre + spread, 496] };
 }
 
-/** The broken thread: each end still tied to its character, curling where it snapped (ADR 0027). */
-export function brokenThreadPaths(spread: number): readonly [string, string] {
-  const from = WORLD.centre - spread + 50;
-  const to = WORLD.centre + spread - 50;
-  const y = 486;
-  const reach = Math.min(90, (to - from) * 0.3);
-  const curl = (x: number, side: 1 | -1): string =>
-    [
-      `M${x} ${y}`,
-      `C${x + side * reach * 0.5} ${y - 40} ${x + side * reach} ${y - 10} ${x + side * reach * 0.8} ${y + 22}`,
-      `C${x + side * reach * 0.65} ${y + 40} ${x + side * reach * 0.35} ${y + 28} ${x + side * reach * 0.5} ${y + 12}`,
-    ].join(' ');
-  return [curl(from, 1), curl(to, -1)];
+/** Where the thread leaves the circle, and where it reaches the square at a place. */
+function threadEnds(you: Point, other: Place): { readonly from: Point; readonly to: Point } {
+  return { from: [you[0] + 50, you[1] - 14], to: [other.at[0] - 50 * other.scale, other.at[1] - 14 * other.scale] };
 }
 
-/** The golden thread between the circle and the square: it leaves each side and sags upwards. */
+/**
+ * The broken thread: each end still tied to its character, curling where it snapped (ADR 0027). A
+ * square farther off holds a shorter end.
+ */
+export function brokenBetween(you: Point, other: Place): readonly [string, string] {
+  const { from, to } = threadEnds(you, other);
+  const reach = Math.min(90, (to[0] - from[0]) * 0.3);
+  const curl = ([x, y]: Point, side: 1 | -1, size: number): string => {
+    const r = reach * size;
+    return [
+      `M${x} ${y}`,
+      `C${x + side * r * 0.5} ${y - 40 * size} ${x + side * r} ${y - 10 * size} ${x + side * r * 0.8} ${y + 22 * size}`,
+      `C${x + side * r * 0.65} ${y + 40 * size} ${x + side * r * 0.35} ${y + 28 * size} ${x + side * r * 0.5} ${y + 12 * size}`,
+    ].join(' ');
+  };
+  return [curl(from, 1, 1), curl(to, -1, other.scale)];
+}
+
+/**
+ * The golden thread between the circle and the square: it leaves each side and sags upwards. To a
+ * square gone to another table it rises higher, over whoever now sits in its seat.
+ */
+export function threadBetween(you: Point, other: Place): string {
+  const { from, to } = threadEnds(you, other);
+  const lift = Math.min(96, (to[0] - from[0] + 100) * 0.18) + (1 - other.scale) * 120;
+  const pull = (to[0] - from[0]) * 0.3;
+  return `M${from[0]} ${from[1]} C${from[0] + pull} ${from[1] - lift} ${to[0] - pull} ${to[1] - lift} ${to[0]} ${to[1]}`;
+}
+
+const atSeat = (spread: number): { readonly you: Point; readonly other: Place } => {
+  const { you, other } = castPositions(spread);
+  return { you, other: { at: other, scale: 1, opacity: 1 } };
+};
+
+/** The broken thread between the circle and the square at their seats. */
+export function brokenThreadPaths(spread: number): readonly [string, string] {
+  const { you, other } = atSeat(spread);
+  return brokenBetween(you, other);
+}
+
+/** The golden thread between the circle and the square at their seats. */
 export function threadPath(spread: number): string {
-  const from = WORLD.centre - spread + 50;
-  const to = WORLD.centre + spread - 50;
-  const y = 486;
-  const lift = Math.min(96, spread * 0.36);
-  const pull = (to - from) * 0.3;
-  return `M${from} ${y} C${from + pull} ${y - lift} ${to - pull} ${y - lift} ${to} ${y}`;
+  const { you, other } = atSeat(spread);
+  return threadBetween(you, other);
 }

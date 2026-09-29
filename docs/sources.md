@@ -49,8 +49,9 @@ mueve una cifra a un capítulo, en el mismo commit.
   Clave: `vanberg-payoffs`.
   Fuente: Suppl. A, p. 2, tabla "Payoffs From the Decision". **Verificada (suplementos).**
   Usada en: capítulo 3 (`src/lib/table/game.ts`, `PAYOFFS`, a través de `src/lib/film/values.ts`:
-  los boletos, las monedas, el resultado de cada cara del dado y la tabla del storyboard); la mesa
-  del momento 2 (`src/lib/table/moment2.ts`) y su tabla `<noscript>` en `GameTable.astro`.
+  los boletos, las monedas, el resultado de cada cara del dado y la tabla del storyboard); capítulo 5
+  (los boletos de cada carta del mazo, `src/lib/film/deck.ts`); la mesa del momento 2
+  (`src/lib/table/moment2.ts`) y su tabla `<noscript>` en `GameTable.astro`.
 - Cifra: Don't Roll: A recibe 14 y B recibe 0.
   Clave: `vanberg-payoffs`.
   Fuente: Suppl. A, p. 2, tabla "Payoffs From the Decision". **Verificada (suplementos).**
@@ -98,7 +99,18 @@ mueve una cifra a un capítulo, en el mismo commit.
   Clave: `vanberg-beliefs`.
   Fuente: `switch.dat` con el método de `promises.do`; escala en Suppl. B, pp. 2–3, Screen 5B.
   **Verificada (suplementos).**
-  Usada en: acto 4.
+  Usada en: acto 4; capítulo 5, la escala del final (`src/lib/table/expectation.ts`,
+  `PROMISED_RECIPIENT_BELIEFS`, a través de `src/lib/film/values.ts`; claves `film.reveal.*`), con
+  la cita en la leyenda de ese tramo.
+  El código guarda las sumas exactas: 215 / 309 sin cambio y 200.5 / 294 con cambio. Salen de las
+  medias verificadas (0.696 y 0.682), de la escala en cuartos, en la que ninguna otra suma da esas
+  medias, y del total verificado de arriba (415.5 / 603), que suman exactamente
+  (`src/lib/table/expectation.test.ts`). Los n coinciden con las celdas de los dictadores: 309, y
+  238 + 56 = 294.
+  PENDIENTE(datos): que Montse coteje las dos sumas contra `switch.dat`.
+  La apuesta del visitante en el capítulo 5 usa la misma escala de cinco puntos. Sus extremos son los
+  de la pantalla; los tres puntos de en medio («probablemente tira», «puede que sí, puede que no»,
+  «probablemente no tira») son palabras de la página, no citas.
 - Cifra: lo que hicieron los dictadores reales, tasa de Roll por celda (la página redondea a
   entero; el código guarda las cuentas exactas). Se cuentan rondas, no personas: cada decisión de un
   dictador en una ronda es una observación. El acto 4 lo dice así ("in the rounds where…" / "en las

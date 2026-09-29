@@ -4,10 +4,12 @@
  * the build fills them from here. A test fails on a digit written by hand in either.
  *
  * The dilemma's payoffs come from src/lib/pd/ (Axelrod, 1984; docs/sources.md, `axelrod-1984`);
- * the decision's, from Vanberg's game, `PAYOFFS` in src/lib/table/game.ts (`vanberg-payoffs`).
+ * the decision's, from Vanberg's game, `PAYOFFS` in src/lib/table/game.ts (`vanberg-payoffs`); the
+ * experiment's results, from the exact counts in src/lib/table/ (`vanberg-rates`, `vanberg-beliefs`).
  */
 import { PAYOFFS as PD } from '../pd/game';
-import { toNumber } from '../table/fraction';
+import { promisedExpectation, scaleValue } from '../table/expectation';
+import { outOf100, toNumber } from '../table/fraction';
 import { expectedPayoffs, PAYOFFS as TABLE } from '../table/game';
 
 const roll = expectedPayoffs('roll');
@@ -32,4 +34,12 @@ export const FILM_VALUES = {
   /** What rolling costs the one who decides, and what it gives the other on average. */
   cost: TABLE.dont.you - TABLE.roll.you,
   expected: toNumber(roll.other),
+  /**
+   * What the recipients who had been promised bet, read from 0 to 100, without a switch and with
+   * one (Vanberg, 2008; `vanberg-beliefs`), and the ends of that reading.
+   */
+  expectsame: outOf100(promisedExpectation('same')),
+  expectswitched: outOf100(promisedExpectation('switched')),
+  scalebottom: outOf100(scaleValue(0)),
+  scaletop: outOf100(scaleValue(4)),
 } as const satisfies Readonly<Record<string, number>>;

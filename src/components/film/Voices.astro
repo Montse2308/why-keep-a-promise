@@ -67,7 +67,8 @@ const scroll = 'M-70 -34 H70 A10 10 0 0 1 70 -14 V40 A10 10 0 0 0 70 60 H-70 A10
       <circle cx="-44" cy="40" r="6" fill={FILM.rim} stroke={FILM.ink} stroke-width="3.5" />
       <circle cx="-30" cy="26" r="9" fill={FILM.rim} stroke={FILM.ink} stroke-width="3.5" />
       <ellipse rx="34" ry="28" fill={FILM.rim} stroke={FILM.ink} stroke-width="3.5" />
-      <g transform="scale(0.24)"><Character kind="square" mood="happy" shadow={shadow} /></g>
+      <g transform="scale(0.24)" opacity={voices.globe === 'other' ? 1 : 0} data-part="globe-other"><Character kind="square" mood="happy" shadow={shadow} /></g>
+      <g transform="scale(0.24)" opacity={voices.globe === 'partner' ? 1 : 0} data-part="globe-partner"><Character kind="triangle" mood="happy" shadow={shadow} /></g>
     </g>
     <g filter={`url(#${shadow})`}>
       <path d={cloud} fill={FILM.ink} stroke={FILM.ink} stroke-width="13" stroke-linejoin="round" />

@@ -54,9 +54,11 @@ const PHASE: Record<ChapterId, BuildPhase> = {
 };
 
 /**
- * Beats of the built chapters, tuned against the video review of each phase. The whole film stays
- * at 35 screens, so each point of the day's light still falls in the chapter ADR 0027 gives it
- * (src/lib/design/film.test.ts).
+ * Beats of the built chapters, tuned against the video review of each phase. A beat holds its card
+ * at the bottom of the screen for its length, less the gap before the card and the card's own
+ * height, so a tall card needs a long beat. The light of ADR 0027 is set in shares of the whole
+ * film, so the lengths keep each point of it in its chapter and the lamp exactly where chapter 7
+ * starts (src/lib/design/film.test.ts, ./chapters.test.ts).
  */
 const BEATS: Partial<Record<ChapterId, readonly Beat[]>> = {
   arrival: [{ id: 'ask', screens: 3 }],
@@ -79,13 +81,19 @@ const BEATS: Partial<Record<ChapterId, readonly Beat[]>> = {
     { id: 'together', screens: 0.8 },
     { id: 'trick', screens: 1 },
   ],
+  blackout: [
+    { id: 'blackout', screens: 1.2 },
+    { id: 'new-partner', screens: 1 },
+    { id: 'deck', screens: 2 },
+    { id: 'receive', screens: 1.2 },
+    { id: 'reveal', screens: 1.6 },
+  ],
 };
 
 /** Screens of the chapters still to be built: a placeholder their phase replaces with beats. */
 const PLANNED_SCREENS: Partial<Record<ChapterId, number>> = {
-  blackout: 6,
   'real-people': 4,
-  'my-research': 4,
+  'my-research': 4.25,
   closing: 3,
 };
 

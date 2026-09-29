@@ -153,3 +153,47 @@ describe('chapter 4, two voices (rule (k))', () => {
     expect(d['film.two-voices.says.expects']).not.toBe(d['film.two-voices.says.word']);
   });
 });
+
+describe('chapter 5, the blackout (rule (k))', () => {
+  const fixed = { en: /fixed (case|example)/, es: /(caso|ejemplo) fijo/ } as const;
+
+  it.each(LOCALES)('%s: says on screen that the switch is always the same fixed case', (locale) => {
+    const text = readable(captionsOf(locale, 'blackout')?.body ?? '').replace(/\s+/g, ' ').toLocaleLowerCase('und');
+    expect(text).toMatch(fixed[locale]);
+    // Once when the visitor decides, and again when the visitor receives.
+    expect(text.match(new RegExp(fixed[locale].source, 'g'))?.length).toBe(2);
+  });
+
+  it.each(LOCALES)('%s: cites Vanberg (2008) where it shows what the real recipients bet', (locale) => {
+    const reveal = (captionsOf(locale, 'blackout')?.body ?? '').split('<!-- beat:reveal -->')[1] ?? '';
+    expect(citationsIn(readable(reveal))).toContain('Vanberg 2008');
+    const d = dictionaries[locale];
+    expect(numbersIn(fill(`${d['film.reveal.same']} ${d['film.reveal.switched']}`, FILM_VALUES))).toEqual([
+      String(FILM_VALUES.expectsame),
+      String(FILM_VALUES.expectswitched),
+    ]);
+  });
+});
+
+describe('the experiment’s results only in chapters 5 and 6 (rule (k))', () => {
+  const RESULTS = ['73', '54', '70', '68'];
+  const THEIRS = new Set(['blackout', 'real-people']);
+
+  it.each(files.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s shows them only if it is chapter 5 or 6', (_name, file) => {
+    const shown = numbersIn(readable(filled(file))).filter((n) => RESULTS.includes(n));
+    if (!THEIRS.has(file.chapter)) expect(shown).toEqual([]);
+  });
+
+  it.each(LOCALES)('%s: the film’s UI strings show them only in chapters 5 and 6', (locale) => {
+    for (const [key, value] of filmKeys(locale)) {
+      let text = value;
+      try {
+        text = fill(value, FILM_VALUES);
+      } catch {
+        // A string with placeholders of its own is filled by its chapter, never with the results.
+      }
+      const shown = numbersIn(text).filter((n) => RESULTS.includes(n));
+      if (shown.length > 0) expect(key, key).toMatch(/^film\.(reveal|real-people)\./);
+    }
+  });
+});

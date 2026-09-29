@@ -9,15 +9,31 @@
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
 import { noteFor } from '../../lib/film/board';
-import { boardOpacity, bubbleTransform, bulbTransform, boardTransform, coinCountY, coinsTransform, PIPS, voiceTransform, wallTransform, type Pip } from '../../lib/film/parts';
+import {
+  boardOpacity,
+  boardTransform,
+  bubbleTransform,
+  bulbTransform,
+  coinCountY,
+  coinsTransform,
+  eyesTransform,
+  PIPS,
+  placeTransform,
+  shadowTransform,
+  voiceTransform,
+  wallTransform,
+  type Pip,
+} from '../../lib/film/parts';
 import { lookAt } from '../../lib/film/voices';
-import { brokenThreadPaths, castPositions, stageAt, threadPath, type StageState, type StageView } from '../../lib/film/stage';
+import { brokenBetween, stageAt, threadBetween, type Place, type StageState, type StageView } from '../../lib/film/stage';
 import { scrollPosition } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
 import { reduce as pick, START as NO_PICKS, isDone, type CellKey, type Tag } from '../../lib/pd/bestReply';
 import type { Move } from '../../lib/pd/game';
 import { playRound } from '../../lib/pd/round';
 import { write, type Message } from '../../lib/film/talk';
+import { BET_START, isBet, type Bet } from '../../lib/film/bet';
+import { current as waiting, DEALT, decide as decideCard, tally, type DeckState } from '../../lib/film/deck';
 import { decide, UNDECIDED, type DecisionState } from '../../lib/table/decision';
 import { DIE_FACES, type Choice, type Face } from '../../lib/table/game';
 
@@ -25,6 +41,9 @@ const DRAW_MS = 800;
 const COUNT_MS = 450;
 /** How long the die spins in the air before it lands. */
 const ROLL_MS = 1000;
+/** How long a card's person takes to slide into the seat, and how long a decided card stays. */
+const SLIDE_MS = 520;
+const CARD_MS = 1100;
 
 /** Sets an attribute only when it changes, so a still frame costs the page nothing. */
 const cache = new WeakMap<Element, Map<string, string>>();
@@ -86,8 +105,14 @@ export function start(): void {
     bulbOther: part('bulb-other'),
     you: part('you'),
     other: part('other'),
+    partner: part('partner'),
     shadowYou: part('shadow-you'),
     shadowOther: part('shadow-other'),
+    shadowPartner: part('shadow-partner'),
+    dark: part('dark'),
+    eyesYou: part('eyes-you'),
+    eyesOther: part('eyes-other'),
+    eyesPartner: part('eyes-partner'),
     thread: part('thread'),
     threadEdge: part('thread-edge'),
     threadLine: part('thread-line'),
@@ -108,6 +133,8 @@ export function start(): void {
     wordPupils: part('word-pupils'),
     expectsPupils: part('expects-pupils'),
     wordGlow: part('word-glow'),
+    globeOther: part('globe-other'),
+    globePartner: part('globe-partner'),
   };
   const bands = [...world.querySelectorAll<SVGElement>('[data-band]')];
   const pips = [...world.querySelectorAll<SVGElement>('[data-pip]')];
@@ -116,10 +143,11 @@ export function start(): void {
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
   const title = film.querySelector<HTMLElement>('[data-title]');
 
-  let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED };
+  let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null };
   let drawStart = 0;
   let rollStart = 0;
   let countStart = 0;
+  let turnStart = -Infinity;
   let pointer: [number, number] = [0, 0];
   let visible = true;
   let frameRequested = false;
@@ -177,14 +205,39 @@ export function start(): void {
     set(parts.far, 'transform', `translate(${drift.toFixed(2)} ${((box.y - 200) * 0.3).toFixed(2)})`);
     set(parts.near, 'transform', `translate(${(drift * 0.4).toFixed(2)} 0)`);
 
-    const cast = castPositions(view.spread);
+    // On the deck, each new card's person slides into the seat.
+    const arriving = still || view.beat.id !== 'deck' ? 1 : easeInOut(clamp((now - turnStart) / SLIDE_MS, 0, 1));
+    const seated = (place: Place): Place =>
+      arriving >= 1 || place.opacity < 0.5 ? place : { ...place, at: [place.at[0] + (1 - arriving) * 240, place.at[1]], opacity: place.opacity * arriving };
+    const you: Place = { at: view.cast.you, scale: 1, opacity: 1 };
+    const other = view.cast.other.scale < 1 ? view.cast.other : seated(view.cast.other);
+    const partner = seated(view.cast.partner);
     const bob = still ? 0 : Math.sin(now / 650) * 3;
-    set(parts.you, 'transform', `translate(${cast.you[0].toFixed(2)} ${(cast.you[1] + bob).toFixed(2)})`);
-    set(parts.other, 'transform', `translate(${cast.other[0].toFixed(2)} ${(cast.other[1] - bob).toFixed(2)})`);
-    set(parts.shadowYou, 'cx', cast.you[0].toFixed(2));
-    set(parts.shadowOther, 'cx', cast.other[0].toFixed(2));
+    set(parts.you, 'transform', placeTransform(you, -bob));
+    set(parts.other, 'transform', placeTransform(other, bob));
+    set(parts.other, 'opacity', other.opacity.toFixed(3));
+    set(parts.partner, 'transform', placeTransform(partner, -bob));
+    set(parts.partner, 'opacity', partner.opacity.toFixed(3));
+    set(parts.shadowYou, 'transform', shadowTransform(you));
+    set(parts.shadowOther, 'transform', shadowTransform(other));
+    set(parts.shadowOther, 'opacity', (0.2 * other.opacity).toFixed(3));
+    set(parts.shadowPartner, 'transform', shadowTransform(partner));
+    set(parts.shadowPartner, 'opacity', (0.2 * partner.opacity).toFixed(3));
     applyMood(parts.you, view.moods.you, pointer);
     applyMood(parts.other, view.moods.other, pointer);
+    applyMood(parts.partner, view.moods.partner, pointer);
+    const cast = { you: view.cast.you, other: other.at };
+
+    // The blackout: the stage goes dark, and only the cast's eyes show where each one is.
+    set(parts.dark, 'opacity', view.dark.toFixed(3));
+    for (const [eyes, place, kind] of [
+      [parts.eyesYou, you, 'circle'],
+      [parts.eyesOther, other, 'square'],
+      [parts.eyesPartner, partner, 'triangle'],
+    ] as const) {
+      set(eyes, 'opacity', (view.dark * place.opacity).toFixed(3));
+      if (view.dark > 0) set(eyes, 'transform', eyesTransform(place, kind, kind === 'square' ? bob : -bob));
+    }
 
     set(parts.wall, 'transform', wallTransform(view.rooms));
     set(parts.wall, 'opacity', view.rooms > 0.01 ? '1' : '0');
@@ -219,15 +272,15 @@ export function start(): void {
       set(bubble, 'transform', bubbleTransform(x, shown));
     }
 
-    const path = threadPath(view.spread);
+    const path = threadBetween(view.cast.you, other);
     const drawn = view.thread.state === 'tied' ? (still ? 1 : easeInOut(clamp((now - drawStart) / DRAW_MS, 0, 1))) : 0;
     for (const line of [parts.threadEdge, parts.threadLine]) {
       set(line, 'd', path);
       set(line, 'stroke-dashoffset', (1 - drawn).toFixed(3));
     }
-    set(parts.thread, 'opacity', view.thread.state === 'tied' ? '1' : '0');
-    set(parts.threadBroken, 'opacity', view.thread.state === 'broken' ? '1' : '0');
-    brokenThreadPaths(view.spread).forEach((d, i) => {
+    set(parts.thread, 'opacity', view.thread.state === 'tied' ? view.thread.shown.toFixed(3) : '0');
+    set(parts.threadBroken, 'opacity', view.thread.state === 'broken' ? view.thread.shown.toFixed(3) : '0');
+    brokenBetween(view.cast.you, other).forEach((d, i) => {
       set(parts.brokenEdges[i], 'd', d);
       set(parts.brokenLines[i], 'd', d);
     });
@@ -244,6 +297,8 @@ export function start(): void {
       set(parts.wordPupils, 'transform', `translate(${wx.toFixed(1)} ${wy.toFixed(1)})`);
       set(parts.expectsPupils, 'transform', `translate(${ex.toFixed(1)} ${ey.toFixed(1)})`);
       set(parts.wordGlow, 'opacity', voices.glow.toFixed(3));
+      set(parts.globeOther, 'opacity', voices.globe === 'other' ? '1' : '0');
+      set(parts.globePartner, 'opacity', voices.globe === 'partner' ? '1' : '0');
     }
 
     title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
@@ -399,6 +454,122 @@ export function start(): void {
       }
       request();
     });
+  });
+
+  // Chapter 5: the deck, one card at a time, each a different person, each decided once. The card
+  // flies off, the stage shows what the decision did, and the next person slides into the seat.
+  // Swiping the card is a shortcut for its tickets; a vertical drag still scrolls the page.
+  const cards = [...film.querySelectorAll<HTMLElement>('[data-card]')];
+  const deckOut = film.querySelector<HTMLElement>('[data-deck-out]');
+  const tallies = JSON.parse(deckOut?.dataset.tally ?? '{}') as Record<string, string>;
+  let deck: DeckState = DEALT;
+  const onCard = (i: number, choice: Choice): void => {
+    const card = cards[i];
+    if (!card || waiting(deck) !== i) return;
+    deck = decideCard(deck, choice);
+    const button = card.querySelector<HTMLButtonElement>(`[data-deck-choice="${choice}"]`);
+    if (button) settle(card, button);
+    state = { ...state, deck: { choices: deck.choices, at: i } };
+    const said = button?.dataset.said ?? '';
+    const next = cards[i + 1];
+    if (deckOut) deckOut.textContent = next ? said : `${said} ${tallies[String(tally(deck).kept)] ?? ''}`;
+    request();
+    // The last card stays, decided, with the tally under it.
+    if (!next) return;
+    card.dataset.gone = choice;
+    setTimeout(
+      () => {
+        card.hidden = true;
+        next.hidden = false;
+        next.dataset.arriving = '';
+        state = { ...state, deck: { choices: deck.choices, at: i + 1 } };
+        turnStart = performance.now();
+        next.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
+        request();
+      },
+      reduced.matches ? CARD_MS / 2 : CARD_MS,
+    );
+  };
+  cards.forEach((card, i) => {
+    card.querySelectorAll<HTMLButtonElement>('[data-deck-choice]').forEach((button) => {
+      button.addEventListener('click', () => {
+        if (!settled(button)) onCard(i, button.dataset.deckChoice as Choice);
+      });
+    });
+    let pointerId: number | null = null;
+    let start: [number, number] = [0, 0];
+    let dx = 0;
+    let dragging = false;
+    card.addEventListener('pointerdown', (event) => {
+      if (waiting(deck) !== i || (event.pointerType === 'mouse' && event.button !== 0)) return;
+      pointerId = event.pointerId;
+      start = [event.clientX, event.clientY];
+      dx = 0;
+      dragging = false;
+    });
+    card.addEventListener('pointermove', (event) => {
+      if (event.pointerId !== pointerId) return;
+      const x = event.clientX - start[0];
+      const y = event.clientY - start[1];
+      if (!dragging) {
+        // A mostly vertical move is the page scrolling: let it go.
+        if (Math.abs(y) > 12 && Math.abs(y) > Math.abs(x)) pointerId = null;
+        if (Math.abs(x) < 12 || Math.abs(x) < Math.abs(y)) return;
+        dragging = true;
+        card.setPointerCapture(event.pointerId);
+        card.dataset.dragging = '';
+      }
+      dx = x;
+      card.style.transform = `translateX(${dx.toFixed(1)}px) rotate(${(dx / 28).toFixed(2)}deg)`;
+    });
+    const release = (event: PointerEvent): void => {
+      if (event.pointerId !== pointerId) return;
+      pointerId = null;
+      if (!dragging) return;
+      dragging = false;
+      delete card.dataset.dragging;
+      card.style.transform = '';
+      if (Math.abs(dx) > Math.min(110, card.offsetWidth * 0.3)) onCard(i, dx > 0 ? 'roll' : 'dont');
+    };
+    card.addEventListener('pointerup', release);
+    card.addEventListener('pointercancel', release);
+  });
+
+  // Chapter 5: as the one who receives, the visitor bets on the recipients' five-point scale.
+  const betBox = film.querySelector<HTMLElement>('[data-bet]');
+  const bets = JSON.parse(betBox?.dataset.bet ?? '{}') as Record<string, { label: string; said: string; at: number }>;
+  const range = film.querySelector<HTMLInputElement>('[data-bet-range]');
+  const betOut = film.querySelector<HTMLElement>('[data-bet-out]');
+  const place = film.querySelector<HTMLButtonElement>('[data-bet-place]');
+  const betNow = place?.querySelector('small');
+  const betAt = (): Bet => {
+    const value = Number(range?.value ?? BET_START);
+    return isBet(value) ? value : BET_START;
+  };
+  range?.addEventListener('input', () => {
+    const bet = bets[String(betAt())];
+    if (!bet) return;
+    range.setAttribute('aria-valuetext', bet.label);
+    if (betNow) betNow.textContent = bet.label;
+    state = { ...state, bet: null };
+  });
+  place?.addEventListener('click', () => {
+    if (settled(place)) return;
+    const value = betAt();
+    const bet = bets[String(value)];
+    state = { ...state, bet: value };
+    settle(film.querySelector('[data-bet-tickets]'), place);
+    if (range) range.disabled = true;
+    if (betOut) betOut.textContent = bet?.said ?? '';
+    // The reveal's scale shows the bet next to the real recipients' bets.
+    const yours = film.querySelector<SVGElement>('[data-scale-yours]');
+    yours?.style.setProperty('--at', String(bet?.at ?? 50));
+    yours?.setAttribute('data-shown', '');
+    const label = film.querySelector<HTMLElement>('[data-scale-yours-label]');
+    if (label) label.hidden = false;
+    const text = film.querySelector('[data-scale-yours-text]');
+    if (text) text.textContent = bet?.label ?? '';
+    request();
   });
 
   request();

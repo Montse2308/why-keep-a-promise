@@ -24,6 +24,32 @@ export const RECIPIENT_BELIEFS = {
 } as const;
 
 /**
+ * The same bets of the recipients who received a promise, split by whether their dictator was
+ * switched, which they never knew: 0.696 without a switch (n = 309) and 0.682 with one (n = 294),
+ * the "70" and "68" of docs/sources.md (`vanberg-beliefs`). On a scale coded in quarters, those
+ * means leave one sum each, and the two add up to the recipients' total above.
+ */
+export const PROMISED_RECIPIENT_BELIEFS: Record<Partner, { readonly sum: Fraction; readonly n: number }> = {
+  same: { sum: fraction(215), n: 309 },
+  switched: { sum: fraction(401, 2), n: 294 },
+};
+
+/** What the promised recipients bet on average, by whether their dictator was switched. */
+export function promisedExpectation(partner: Partner): Fraction {
+  const { sum, n } = PROMISED_RECIPIENT_BELIEFS[partner];
+  return multiply(sum, fraction(1, n));
+}
+
+/**
+ * The recipient's five-point scale (Suppl. B, pp. 2–3, Screen 5B), from "certainly doesn't roll"
+ * to "certainly rolls", coded in quarters from 0 to 1.
+ */
+export const SCALE_POINTS = [0, 1, 2, 3, 4] as const;
+export type ScalePoint = (typeof SCALE_POINTS)[number];
+
+export const scaleValue = (point: ScalePoint): Fraction => fraction(point, 4);
+
+/**
  * The fixed illustrative case for a switched partner, which the interface states outright:
  * "your new partner received a promise from another dictator".
  */

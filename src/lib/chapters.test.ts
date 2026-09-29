@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { beat, BUILT, builtBy, chapter, CHAPTER_IDS, CHAPTERS } from './chapters';
+import { LAMP_FROM } from './design/film';
 import { spans } from './film/spans';
 
 describe('the film’s chapters (ADR 0021)', () => {
@@ -56,8 +57,10 @@ describe('beats (the cards of a chapter)', () => {
     expect(builtBy(order[reached] as 'P1').length).toBeGreaterThanOrEqual(BUILT.length);
   });
 
-  it('keep the whole film at 35 screens, the length ADR 0027 sets the day’s light on', () => {
-    expect(CHAPTERS.reduce((sum, c) => sum + c.screens, 0)).toBeCloseTo(35, 9);
+  it('light the lamp exactly where chapter 7 starts, as ADR 0027 turns it on for chapters 7 and 8', () => {
+    const total = CHAPTERS.reduce((sum, c) => sum + c.screens, 0);
+    const seventh = CHAPTERS.slice(0, chapter('my-research').number).reduce((sum, c) => sum + c.screens, 0);
+    expect(LAMP_FROM * total).toBeCloseTo(seventh, 9);
   });
 
   it('are found by id, and an unknown one fails', () => {
