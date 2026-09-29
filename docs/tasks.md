@@ -133,9 +133,9 @@ actos 5 y 6 y las secciones del home). La película la reemplaza por capítulos 
       y 4. `/vanberg` vuelve al capítulo 6. `docs/sources.md` dice dónde se usa cada cifra, y cuáles
       ya no se muestran (1/2, el chat, el medidor 69/48).
 - [x] Largo: una tarjeta se queda abajo solo lo que dura su tramo menos su hueco y su alto, así que las
-      tarjetas altas piden tramos largos. El capítulo 5 mide 7 pantallas y la película 36.25; cada
-      punto de luz sigue en su capítulo, y un test deja la lámpara justo donde empieza el capítulo 7
-      (antes, un test fijaba 35 pantallas). El capítulo 7 queda planeado en 4.25.
+      tarjetas altas piden tramos largos. El capítulo 5 mide 7 pantallas, el 6 mide 4.4 y la película
+      36.75; cada punto de luz sigue en su capítulo, y un test deja la lámpara justo donde empieza el
+      capítulo 7 (antes, un test fijaba 35 pantallas). El capítulo 7 queda planeado en 4.35.
 - [x] La película recorta su desborde horizontal: una carta que sale volando ya no aleja la vista en
       el celular.
 - [x] Tests: la regla (f) sobre el mazo (una persona distinta por carta, una decisión por carta y
@@ -144,8 +144,12 @@ actos 5 y 6 y las secciones del home). La película la reemplaza por capítulos 
       citas, y ninguna línea que siga a una elección del visitante le nombra una razón ni juzga lo
       que adivinó); el registro de cifras; la coreografía de cada tramo, también con movimiento
       reducido; cada cuadro quieto y cada corte en su propio tramo.
-- [ ] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), con el recorrido de
-      los capítulos 4 a 6.
+- [x] Video y capturas para Montse (360 y 1440 px, movimiento reducido, sin JS), con el recorrido de
+      los capítulos 4 a 6 en dos caminos: compu en inglés (promete, tira el dado; en el mazo tira,
+      tira, se queda, se queda, tira, tira; apuesta «probablemente tira»; adivina 60 y 45) y celular
+      en español (no promete, se queda los 14; en el mazo se queda, se queda, tira, tira, se queda,
+      se queda; apuesta «probablemente no tira»; adivina 85 y 80). En `scratch/p3-review/` (local,
+      no se versiona).
 - [ ] Revisión de P3 por Montse.
 - PENDIENTE(datos): el código guarda las sumas exactas de 70 y 68 (215 / 309 y 200.5 / 294), que
   salen de las medias verificadas y del total verificado; falta cotejarlas contra `switch.dat`
