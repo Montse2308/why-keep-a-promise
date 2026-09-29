@@ -205,5 +205,10 @@
   "film.fold.noscript": "Decidir necesita JavaScript. Estos son los pagos de la decisión.",
   "film.fold.table.caption": "Pagos de la decisión",
   "film.fold.table.choice": "Decisión",
-  "film.fold.table.rollother": "{rollother}, o {failother} si sale {failface}"
+  "film.fold.table.rollother": "{rollother}, o {failother} si sale {failface}",
+  "film.two-voices.still": "Al empezar la tarde, de vuelta en la mesa, dos voces flotan sobre el círculo: una nube lila que no deja de mirar al otro, con la cara del otro en su globo, y un pergamino de papel sellado con el hilo dorado.",
+  "film.voice.expects": "Lo que el otro espera",
+  "film.voice.word": "Mi palabra",
+  "film.two-voices.says.expects": "Tira igual: la pareja nueva espera lo mismo, y no sabe del cambio.",
+  "film.two-voices.says.word": "Tira menos: a esta persona no le prometiste nada."
 }

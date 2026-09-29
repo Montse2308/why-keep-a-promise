@@ -49,10 +49,9 @@ const byAct = (locale: Locale, act: number) => actFiles.find((f) => f.locale ===
 const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
 
 /** The acts still on `/`, by number: the film tells the others now, and their prose is retired (ADR 0021). */
-const WRITTEN_ACTS = [3, 4, 5, 6] as const;
+const WRITTEN_ACTS = [4, 5, 6] as const;
 /** Words per act and language. R4 shortened acts 1–4 and 6 (ADR 0019); act 5 keeps its F3.1 budget. */
 const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: boolean }> = {
-  3: { max: 110, tables: false }, // the predictions table comes on top of the budget
   4: { max: 230, tables: true },
   5: { max: 420, tables: true },
   6: { max: 145, tables: true },
@@ -66,7 +65,7 @@ describe('act files', () => {
     expect(ACTS.filter((act) => !act.film).map((act) => ACTS.indexOf(act) + 1)).toEqual([...WRITTEN_ACTS]);
     for (const locale of LOCALES) {
       const names = actFiles.filter((f) => f.locale === locale).map((f) => f.name).sort();
-      expect(names).toEqual(['03-two-reasons', '04-vanberg', '05-finding', '06-how-its-built']);
+      expect(names).toEqual(['04-vanberg', '05-finding', '06-how-its-built']);
     }
   });
 

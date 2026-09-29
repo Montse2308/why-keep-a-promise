@@ -205,5 +205,10 @@
   "film.fold.noscript": "Deciding needs JavaScript. These are the payoffs of the decision.",
   "film.fold.table.caption": "Payoffs of the decision",
   "film.fold.table.choice": "Decision",
-  "film.fold.table.rollother": "{rollother}, or {failother} if a {failface} comes up"
+  "film.fold.table.rollother": "{rollother}, or {failother} if a {failface} comes up",
+  "film.two-voices.still": "In the early afternoon, back at the table, two voices float over the circle: a lilac cloud that keeps looking at the other, with the other’s face in its thought bubble, and a paper scroll sealed with the golden thread.",
+  "film.voice.expects": "What the other expects",
+  "film.voice.word": "My word",
+  "film.two-voices.says.expects": "Roll just the same: the new partner expects the same, and doesn’t know about the switch.",
+  "film.two-voices.says.word": "Roll less: you promised this person nothing."
 }

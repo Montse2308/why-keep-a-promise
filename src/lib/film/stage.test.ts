@@ -14,6 +14,7 @@ import {
   CUTS,
   DIE,
   KEY_POSE,
+  LEAD,
   RESTING_FACE,
   ROOMS_SPREAD,
   SPANS,
@@ -26,6 +27,7 @@ import {
   type StageState,
 } from './stage';
 import { at, beatRange, BUILT_SCREENS, TOTAL_SCREENS } from './timeline';
+import { GLOBE_AT, VOICE_SCALE } from './voices';
 
 const arrival = spanOf('arrival');
 const inArrival = (share: number) => arrival.from + share * (arrival.to - arrival.from);
@@ -319,5 +321,91 @@ describe('chapter 3, the matrix folds (ADR 0021, ADR 0023)', () => {
     const key = (KEY_POSE.fold ?? 0) * TOTAL_SCREENS;
     expect(key).toBeGreaterThan(decide.from);
     expect(key).toBeLessThan(decide.to);
+  });
+});
+
+describe('chapter 4, two voices (ADR 0021, ADR 0027)', () => {
+  const voices = beatRange('two-voices', 'voices');
+  const together = beatRange('two-voices', 'together');
+  const trick = beatRange('two-voices', 'trick');
+  const inside = (range: { from: number }, by = 0.4) => at(range.from + by);
+  const view = (p: number, state: StageState = { promised: true }, portrait = false) => stageAt(p, state, portrait, false);
+  const kept: DecisionState = { phase: 'outcome', ...outcomeOf('roll', 4) };
+  const broken: DecisionState = { phase: 'outcome', ...outcomeOf('dont', null) };
+
+  it('brings the two voices in over the circle, and keeps them', () => {
+    expect(view(at(voices.from - 1)).voices.shown).toBe(0);
+    for (const range of [voices, together, trick]) expect(view(inside(range)).voices.shown).toBe(1);
+    for (const portrait of [false, true]) {
+      const { cast, voices: v } = view(inside(voices), { promised: true }, portrait);
+      // One on each side of the circle, above its head, and both short of the other.
+      expect(v.at.word[0]).toBeLessThan(cast.you[0]);
+      expect(v.at.expects[0]).toBeGreaterThan(cast.you[0]);
+      expect(v.at.expects[0]).toBeLessThan(cast.other.at[0] - 100);
+      for (const at of [v.at.word, v.at.expects]) expect(at[1]).toBeLessThan(cast.you[1] - 120);
+    }
+  });
+
+  it('keeps both voices in view on any screen, clear of the spool’s corner', () => {
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 1440, height: 640 },
+      { width: 360, height: 740 },
+      { width: 320, height: 568 },
+    ]) {
+      const v = view(inside(together, 0.1), { promised: true }, isPortrait(viewport));
+      const box = frame(v.shot, viewport);
+      // Their outlines, and the cloud's globe up towards the other, at the voices' scale.
+      const [wx, wy] = v.voices.at.word;
+      const [ex, ey] = v.voices.at.expects;
+      expect(wx - 80 * VOICE_SCALE).toBeGreaterThan(box.x);
+      expect(ex + (GLOBE_AT[0] + 36) * VOICE_SCALE).toBeLessThan(box.x + box.width);
+      expect(Math.min(wy - 36 * VOICE_SCALE, ey + (GLOBE_AT[1] - 30) * VOICE_SCALE)).toBeGreaterThan(box.y);
+    }
+  });
+
+  it('has both voices look at the other while they agree, and at each other over the trick', () => {
+    for (const point of [inside(voices), inside(together, 0.1)]) {
+      const v = view(point);
+      expect(v.voices.look).toEqual({ expects: v.cast.other.at, word: v.cast.other.at });
+    }
+    const arguing = view(inside(trick));
+    expect(arguing.voices.look).toEqual({ expects: arguing.voices.at.word, word: arguing.voices.at.expects });
+  });
+
+  it('clears the decision’s coins as the voices come, and keeps the thread as chapter 3 left it', () => {
+    expect(view(inside(voices), { promised: true, decision: kept }).coins.shown).toBe(0);
+    expect(view(inside(voices), { promised: true, decision: kept }).thread.state).toBe('tied');
+    expect(view(inside(voices), { promised: true, decision: broken }).thread.state).toBe('broken');
+    expect(view(inside(voices), { promised: false, decision: broken }).thread.state).toBe('none');
+  });
+
+  it('leaves the other as the decision left them, and surprises the circle with the trick', () => {
+    expect(view(inside(voices), { promised: true, decision: kept }).moods).toEqual({ you: 'worried', other: 'happy' });
+    expect(view(inside(voices), { promised: true, decision: broken }).moods.other).toBe('sad');
+    expect(view(inside(together, 0.1)).moods).toEqual({ you: 'happy', other: 'neutral' });
+    expect(view(inside(trick)).moods.you).toBe('shock');
+  });
+
+  it('draws its still frame while the voices agree', () => {
+    const key = (KEY_POSE['two-voices'] ?? 0) * TOTAL_SCREENS;
+    expect(key).toBeGreaterThan(together.from);
+    expect(key).toBeLessThan(together.to);
+    expect(stageAt(KEY_POSE['two-voices'] ?? 0, { promised: true }, false, true).beat).toEqual({ chapter: 'two-voices', id: 'together' });
+  });
+});
+
+describe('the storyboard’s still frames (ADR 0025)', () => {
+  it('draw each chapter in one of its own beats, with that beat’s faces', () => {
+    for (const [chapter, key] of Object.entries(KEY_POSE)) {
+      expect(stageAt(key ?? 0, { promised: true }, false, true).beat.chapter, chapter).toBe(chapter);
+    }
+  });
+
+  it('cut, with reduced motion, to a pose that each beat’s card already has the stage for', () => {
+    for (const cut of CUTS.slice(2)) {
+      const cutBeat = stageAt(at(cut.from + LEAD + 0.01), { promised: true }, false, true).beat;
+      expect(stageAt(at(cut.pose), { promised: true }, false, true).beat, `cut at ${cut.from}`).toEqual(cutBeat);
+    }
   });
 });

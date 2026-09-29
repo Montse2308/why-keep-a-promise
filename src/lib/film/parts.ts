@@ -6,6 +6,7 @@
 import type { Face } from '../table/game';
 import { BOARD, COIN_STEP } from './board';
 import { WORLD } from './stage';
+import { VOICE_SCALE, type Point } from './voices';
 
 /** Where the bottom coin of each stack sits: just over the characters' heads. */
 export const COINS_Y = 404;
@@ -49,6 +50,10 @@ export const bubbleTransform = (x: number, shown: number): string => {
   const scale = 0.6 + 0.4 * shown;
   return `translate(${(x + side * 104).toFixed(2)} 418) scale(${(side * scale).toFixed(3)} ${scale.toFixed(3)})`;
 };
+
+/** A voice floats at its place, drawn at the voices' scale, and pops up from a little smaller as it comes. */
+export const voiceTransform = ([x, y]: Point, shown: number): string =>
+  `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${(VOICE_SCALE * (0.7 + 0.3 * shown)).toFixed(4)})`;
 
 /** The pips of a die face, on a 68-unit die: corners, middles and centre. */
 export const PIP_AT = {

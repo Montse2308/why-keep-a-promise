@@ -12,6 +12,7 @@ import type { Locale } from '../../lib/i18n';
 import Board from './Board.astro';
 import Character from './Character.astro';
 import Coins from './Coins.astro';
+import Voices from './Voices.astro';
 
 interface Props {
   locale: Locale;
@@ -111,6 +112,8 @@ const lamp = `${uid}-lamp`;
   <g transform={`translate(${cast.other[0]} ${cast.other[1]})`} data-part="other">
     <Character kind="square" mood={view.moods.other} shadow={shadow} />
   </g>
+
+  <Voices voices={view.voices} shadow={shadow} uid={uid} />
 
   {
     (['you', 'other'] as const).map((who) => (

@@ -22,6 +22,7 @@ import { AFTER, type Chat } from './talk';
 import { spans, type Span } from './spans';
 import { at, beatAt, beatRange, TOTAL_SCREENS } from './timeline';
 import { easeInOut, progress, sample, track } from './track';
+import { voicePlaces, type Point } from './voices';
 
 export const WORLD = { width: 1600, centre: 800, floor: 640, tableTop: 560 } as const;
 
@@ -38,6 +39,13 @@ export function spanOf(id: ChapterId): Span<ChapterId> {
 export type Promised = boolean | null;
 
 export type ThreadState = 'tied' | 'broken' | 'none';
+
+/** Where one of the cast stands: its centre, its size (1 at the table) and how much of it shows. */
+export interface Place {
+  readonly at: Point;
+  readonly scale: number;
+  readonly opacity: number;
+}
 
 /** What the visitor has done so far. Every choice is optional: the film goes on without it. */
 export interface StageState {
@@ -59,8 +67,20 @@ export interface StageView {
   readonly lamp: number;
   /** The beat whose card has the stage. */
   readonly beat: { readonly chapter: ChapterId; readonly id: string };
-  /** Half the distance between the circle and the square. */
+  /** Half the distance between the circle and the square's seat at the table. */
   readonly spread: number;
+  /** Where the circle stands, and the square. */
+  readonly cast: { readonly you: Point; readonly other: Place };
+  /**
+   * The two voices (chapter 4 on): how much they show, the point each one looks at, how much the
+   * scroll glows, and whose face waits in the cloud's globe.
+   */
+  readonly voices: {
+    readonly shown: number;
+    readonly at: { readonly expects: Point; readonly word: Point };
+    readonly look: { readonly expects: Point; readonly word: Point };
+    readonly glow: number;
+  };
   /** 0 at the table; 1 in two rooms, with the wall up between them. */
   readonly rooms: number;
   /** How far the rooms' bulbs hang down, from 0 (out of sight) to 1. */
@@ -110,6 +130,7 @@ const TRAP = entering('two-rooms', 'trap');
 const CHAT = entering('talk', 'chat');
 const OUT_OF_ROOMS = entering('fold', 'fold');
 const DECIDE = entering('fold', 'decide');
+const VOICES_IN = entering('two-voices', 'voices');
 /**
  * Once the table is back, the board folds flat while "another game" is on screen, and the die it
  * folds into drops onto the table.
@@ -129,6 +150,9 @@ const POSE_IN: Readonly<Record<string, number>> = {
   'talk/cheap': 0.3,
   'fold/fold': 1,
   'fold/decide': 0.5,
+  'two-voices/voices': 0.5,
+  'two-voices/together': 0.1,
+  'two-voices/trick': 0.3,
 };
 
 const poseOf = (chapter: ChapterId, beat: string): number => beatRange(chapter, beat).from + (POSE_IN[`${chapter}/${beat}`] ?? 0);
@@ -152,6 +176,9 @@ export const CUTS: readonly { readonly from: number; readonly pose: number }[] =
       ['talk', 'cheap'],
       ['fold', 'fold'],
       ['fold', 'decide'],
+      ['two-voices', 'voices'],
+      ['two-voices', 'together'],
+      ['two-voices', 'trick'],
     ] as const
   ).map(([chapter, b]) => ({ from: beatRange(chapter, b).from - LEAD, pose: poseOf(chapter, b) })),
 ];
@@ -169,11 +196,13 @@ export const KEY_POSE: Partial<Record<ChapterId, number>> = {
   'two-rooms': at(poseOf('two-rooms', 'trap')),
   talk: at(poseOf('talk', 'chat')),
   fold: at(poseOf('fold', 'decide')),
+  'two-voices': at(poseOf('two-voices', 'together')),
 };
 
 /**
  * The camera: wide on the title, closing in on the table as the other asks, wide again for the
- * rooms and the fold, and close on the table for the decision.
+ * rooms and the fold, close on the table for the decision, and a little wider and higher when the
+ * two voices come to float over the circle.
  */
 const SHOTS = {
   cx: track([{ at: 0, value: 800 }, { at: at(3), value: 800 }]),
@@ -184,6 +213,8 @@ const SHOTS = {
     { at: at(INTO_ROOMS[1]), value: 480 },
     { at: at(DECIDE[0]), value: 480 },
     { at: at(DECIDE[1]), value: 505 },
+    { at: at(VOICES_IN[0]), value: 505 },
+    { at: at(VOICES_IN[1]), value: 470 },
   ]),
   width: track([
     { at: 0, value: 1500 },
@@ -192,6 +223,8 @@ const SHOTS = {
     { at: at(INTO_ROOMS[1]), value: 1450 },
     { at: at(DECIDE[0]), value: 1450 },
     { at: at(DECIDE[1]), value: 1180 },
+    { at: at(VOICES_IN[0]), value: 1180 },
+    { at: at(VOICES_IN[1]), value: 1300 },
   ]),
   widthPortrait: track([
     { at: 0, value: 660 },
@@ -200,6 +233,8 @@ const SHOTS = {
     { at: at(INTO_ROOMS[1]), value: 620 },
     { at: at(DECIDE[0]), value: 620 },
     { at: at(DECIDE[1]), value: 600 },
+    { at: at(VOICES_IN[0]), value: 600 },
+    { at: at(VOICES_IN[1]), value: 640 },
   ]),
 };
 
@@ -248,9 +283,23 @@ function moodsAt(beat: { chapter: ChapterId; id: string }, state: StageState, as
       return { you: 'shock', other: 'shock' };
     case 'fold/decide':
       return decisionMoods(state);
+    case 'two-voices/voices':
+      return { you: 'worried', other: aftermath(state) };
+    case 'two-voices/together':
+      return { you: 'happy', other: aftermath(state) };
+    case 'two-voices/trick':
+      return { you: 'shock', other: 'neutral' };
     default:
       return { you: 'worried', other: 'worried' };
   }
+}
+
+/** How the other is left by the decision of chapter 3, once the film has moved on. */
+function aftermath(state: StageState): Mood {
+  const decision = state.decision;
+  if (decision?.phase !== 'outcome') return 'neutral';
+  if (decision.choice === 'dont') return state.promised === true ? 'sad' : 'worried';
+  return decision.realized.other > 0 ? 'happy' : 'worried';
 }
 
 /**
@@ -323,7 +372,12 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
           other: round?.payoff.other ?? 0,
           shown: round === null ? 0 : eased(m, [ROUND_COINS[0], ROUND_COINS[0] + 0.2]) * (1 - eased(m, [ROUND_COINS[1] - 0.2, ROUND_COINS[1]])),
         }
-      : { you: outcome?.realized.you ?? 0, other: outcome?.realized.other ?? 0, shown: outcome === null ? 0 : eased(m, [DECIDE[0], DECIDE[0] + 0.2]) };
+      : {
+          you: outcome?.realized.you ?? 0,
+          other: outcome?.realized.other ?? 0,
+          // The decision's coins stay until the voices come.
+          shown: outcome === null ? 0 : eased(m, [DECIDE[0], DECIDE[0] + 0.2]) * (1 - eased(m, [VOICES_IN[0], VOICES_IN[0] + 0.4])),
+        };
 
   // The other speaks first, as the chat opens; the visitor's bubble comes with their message.
   const talking = eased(m, CHAT) * (1 - eased(m, [OUT_OF_ROOMS[0], OUT_OF_ROOMS[0] + 0.5]));
@@ -342,12 +396,29 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   };
   const asked = progress(p, at(0.6), at(1.35));
 
+  const spread = table + (apart - table) * rooms;
+  const seats = castPositions(spread);
+  const cast = { you: seats.you, other: { at: seats.other, scale: 1, opacity: 1 } };
+
+  // The voices float over the circle from chapter 4 on. Each looks at the other, except while they
+  // disagree about the trick: then they look at each other.
+  const voiceAt = voicePlaces(cast.you, portrait);
+  const arguing = beat.chapter === 'two-voices' && beat.beat.id === 'trick';
+  const voices = {
+    shown: eased(m, VOICES_IN),
+    at: voiceAt,
+    look: arguing ? { expects: voiceAt.word, word: voiceAt.expects } : { expects: cast.other.at, word: cast.other.at },
+    glow: 0,
+  };
+
   return {
     shot,
     light,
     lamp,
     beat: { chapter: beat.chapter, id: beat.beat.id },
-    spread: table + (apart - table) * rooms,
+    spread,
+    cast,
+    voices,
     rooms,
     bulbs: rooms * (1 - boardShown),
     table: 1 - rooms,

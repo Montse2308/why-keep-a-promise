@@ -244,7 +244,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   *Econometrica*, 74(6), 1579–1601. RePEc:
   <https://ideas.repec.org/a/ecm/emetrp/v74y2006i6p1579-1601.html>
 - **Clave:** `charness-dufwenberg-2006`.
-- **Uso:** aversión a la culpa (acto 3).
+- **Uso:** aversión a la culpa: la voz de lo que el otro espera, en el capítulo 4
+  (`src/content/chapters/{en,es}/04-two-voices.md`).
 - **Verificada:** sí (Montse, F2.1).
 - **Cifras:** —
 
@@ -254,7 +255,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   Economic Review*, 97(2), 170–176. RePEc:
   <https://ideas.repec.org/a/aea/aecrev/v97y2007i2p170-176.html>
 - **Clave:** `battigalli-dufwenberg-2007`.
-- **Uso:** aversión a la culpa (acto 3).
+- **Uso:** aversión a la culpa: la voz de lo que el otro espera, en el capítulo 4
+  (`src/content/chapters/{en,es}/04-two-voices.md`).
 - **Verificada:** sí (Montse, F2.1).
 - **Cifras:** —
 

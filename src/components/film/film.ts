@@ -9,7 +9,8 @@
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
 import { noteFor } from '../../lib/film/board';
-import { boardOpacity, bubbleTransform, bulbTransform, boardTransform, coinCountY, coinsTransform, PIPS, wallTransform, type Pip } from '../../lib/film/parts';
+import { boardOpacity, bubbleTransform, bulbTransform, boardTransform, coinCountY, coinsTransform, PIPS, voiceTransform, wallTransform, type Pip } from '../../lib/film/parts';
+import { lookAt } from '../../lib/film/voices';
 import { brokenThreadPaths, castPositions, stageAt, threadPath, type StageState, type StageView } from '../../lib/film/stage';
 import { scrollPosition } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
@@ -101,6 +102,12 @@ export function start(): void {
     coinsOther: part('coins-other'),
     bubbleYou: part('bubble-you'),
     bubbleOther: part('bubble-other'),
+    voices: part('voices'),
+    voiceWord: part('voice-word'),
+    voiceExpects: part('voice-expects'),
+    wordPupils: part('word-pupils'),
+    expectsPupils: part('expects-pupils'),
+    wordGlow: part('word-glow'),
   };
   const bands = [...world.querySelectorAll<SVGElement>('[data-band]')];
   const pips = [...world.querySelectorAll<SVGElement>('[data-pip]')];
@@ -224,6 +231,20 @@ export function start(): void {
       set(parts.brokenEdges[i], 'd', d);
       set(parts.brokenLines[i], 'd', d);
     });
+
+    // The voices float, each at its own pace, and look at what the stage says they look at.
+    const { voices } = view;
+    set(parts.voices, 'opacity', voices.shown.toFixed(3));
+    if (voices.shown > 0) {
+      const drift = (speed: number): number => (still ? 0 : Math.sin(now / speed) * 4);
+      set(parts.voiceWord, 'transform', voiceTransform([voices.at.word[0], voices.at.word[1] + drift(700)], voices.shown));
+      set(parts.voiceExpects, 'transform', voiceTransform([voices.at.expects[0], voices.at.expects[1] + drift(560)], voices.shown));
+      const [wx, wy] = lookAt(voices.at.word, voices.look.word);
+      const [ex, ey] = lookAt(voices.at.expects, voices.look.expects);
+      set(parts.wordPupils, 'transform', `translate(${wx.toFixed(1)} ${wy.toFixed(1)})`);
+      set(parts.expectsPupils, 'transform', `translate(${ex.toFixed(1)} ${ey.toFixed(1)})`);
+      set(parts.wordGlow, 'opacity', voices.glow.toFixed(3));
+    }
 
     title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
     if (visible) request();

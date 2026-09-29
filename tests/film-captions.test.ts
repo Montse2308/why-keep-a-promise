@@ -134,3 +134,22 @@ describe('chapter 3, the matrix folds (rule (g))', () => {
     expect(decide.toLocaleLowerCase('und')).not.toMatch(/prisoner|prisionero/);
   });
 });
+
+describe('chapter 4, two voices (rule (k))', () => {
+  const names = {
+    en: ['what the other expects', 'guilt aversion', 'your word'],
+    es: ['lo que el otro espera', 'aversión a la culpa', 'tu palabra'],
+  } as const;
+
+  it.each(LOCALES)('%s: presents the two reasons with the guilt-aversion citations and Vanberg’s reading', (locale) => {
+    const text = readable(captionsOf(locale, 'two-voices')?.body ?? '');
+    for (const name of names[locale]) expect(text.replace(/\s+/g, ' ').toLocaleLowerCase('und')).toContain(name);
+    expect(citationsIn(text).sort()).toEqual(['Battigalli+Dufwenberg 2007', 'Charness+Dufwenberg 2006', 'Vanberg 2008']);
+  });
+
+  it.each(LOCALES)('%s: names the voices as the character sheet does, and gives each its prediction', (locale) => {
+    const d = dictionaries[locale];
+    expect([d['film.voice.expects'], d['film.voice.word']]).toEqual(locale === 'en' ? ['What the other expects', 'My word'] : ['Lo que el otro espera', 'Mi palabra']);
+    expect(d['film.two-voices.says.expects']).not.toBe(d['film.two-voices.says.word']);
+  });
+});
