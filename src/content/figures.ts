@@ -1,9 +1,9 @@
 /**
- * Every figure the prose of the acts, the subpages and the film's captions may contain, each with the
- * key of its entry in docs/sources.md ("Clave: `<key>`"). tests/prose.test.ts fails on any number in
- * src/content/acts/ or src/content/subpages/ that is not listed here, and on any year that is not a
- * citation in "Author (year)" form; tests/film-captions.test.ts does the same for the captions, once
- * their placeholders are filled from the code. Code blocks are not prose and are not checked.
+ * Every figure the prose of the subpages and the film's captions may contain, each with the key of
+ * its entry in docs/sources.md ("Clave: `<key>`"). tests/prose.test.ts fails on any number in
+ * src/content/subpages/ that is not listed here, and on any year that is not a citation in
+ * "Author (year)" form; tests/film-captions.test.ts does the same for the captions, once their
+ * placeholders are filled from the code. Code blocks are not prose and are not checked.
  */
 
 export const SOURCE_KEYS = [

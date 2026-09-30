@@ -3,13 +3,13 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P4 (capítulos 7 y 8, y el candado). P0 a P3 cerradas: Montse las revisó y las
-mergeó (PR #1 a PR #4). El capítulo 7 de P4, mergeado (PR #5). En esta sesión, solo el capítulo 8,
-sin el video (así lo pidió).
+**Fase activa:** ninguna; la siguiente es P5 (el cuaderno), cuando Montse la abra. P0 a P4
+cerradas: Montse las revisó (PR #1 a PR #7). P4 se cerró sin videos, como ella lo pidió: dio por
+hecho el de la película entera.
 
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
-capítulo 8; debajo sigue la versión anterior (el acto 6 y «Quién es»). La película la reemplaza por
-capítulos (ADR 0021).
+capítulo 8: el home es solo la película, y después el pie. De la versión anterior quedan las
+subpáginas y el pie hasta el cuaderno (P5, ADR 0024).
 
 ## P0 · Documentos
 
@@ -156,8 +156,8 @@ capítulos (ADR 0021).
 - PENDIENTE(datos): el código guarda las sumas exactas de 70 y 68 (215 / 309 y 200.5 / 294), que
   salen de las medias verificadas y del total verificado; falta cotejarlas contra `switch.dat`
   (`docs/sources.md`, `vanberg-beliefs`).
-- Transición, hasta P4: el acto 6 del home todavía dice que el navegador corre «el código de la mesa,
-  en sus tres momentos». Sale con el acto en P4.
+- Transición, resuelta en P4: el acto 6 del home decía que el navegador corre «el código de la mesa,
+  en sus tres momentos». Salió con el acto.
 - Transición, hasta P5: la prosa de `/vanberg` todavía habla de «la mesa» («lo que la mesa deja
   fuera»). La reescribe el cuaderno (ADR 0024).
 
@@ -240,19 +240,41 @@ capítulos (ADR 0021).
       español, con el candado cerrado (el build) y abierto (el servidor de desarrollo), con
       movimiento reducido y sin JS, y 320 px sin scroll horizontal. En `scratch/p4-review/ch8/`
       (local, no se versiona).
-- [ ] Sale el acto 6 y «Quién es» del home.
-- [ ] La película entera en un video.
-- [ ] Revisión de P4 por Montse.
-- Transición, hasta que salgan el acto 6 y «Quién es»: debajo de «Fin» todavía siguen los dos, con
-  la versión anterior de su texto.
+- [x] La frase de estado, exactamente dos veces en `/` y en `/es/` (criterio de salida de P4): el
+      sello del capítulo 7 y la entrada «El hallazgo» del cuaderno, que se adelanta al pie de la
+      versión anterior hasta que llegue el panel (así lo decidió Montse en esta sesión). Con el
+      candado cerrado, la entrada muestra su título y la frase, sin enlace (ADR 0024); abierto,
+      enlaza a `/finding` y dice «El manuscrito está en revisión.» (ADR 0026). `STATUS_ON_HOME = 2`.
+- [x] `verify:dist`: con el candado cerrado, también falla si alguna página enlaza a `/finding`
+      (salvo el cambio de idioma de la propia `/finding`), porque los enlaces al hallazgo son parte
+      del candado. Verde en los dos estados (probado con `under-review` en local, sin commit).
+      Tests: la entrada del pie (la frase sola en su elemento, el enlace solo con el candado
+      abierto), el conteo de dos y los enlaces a `/finding`.
+- [x] Sale el acto 6 y «Quién es» del home: su prosa, sus colecciones (`acts` y `sections`), `Act`,
+      `HomeSection`, `SectionSegments`, `sections.ts`, la ranura `author-links`, sus claves
+      (`section.about.*`, `deeper.link`, `author.github`, `author.linkedin`) y sus tests. Cada acto
+      nombra el capítulo que lo representa (`film` en `src/lib/acts.ts`): `/how-its-built` vuelve al
+      capítulo 8, cuyos créditos lo enlazan. La regla (h) compara cada página del cuaderno con la
+      película entera. `AUTHOR` sigue en `src/config.ts` para `/about` (P5).
+- [x] Capturas para Montse, sin video (así lo pidió): el final del home a 1440 px en inglés y a
+      360 px en español, con el candado cerrado y abierto (build local con `under-review`), y
+      `/finding` cerrado; a 320 px, sin scroll horizontal en los dos estados. En
+      `scratch/p4-review/lock/` (local, no se versiona).
+- [x] La película entera en un video: Montse lo dio por hecho al revisar P4, sin grabarlo (así lo
+      pidió).
+- [x] Revisión de P4 por Montse (PR #5, PR #6 y PR #7).
+- Transición, resuelta en P4: debajo de «Fin» seguían el acto 6 y «Quién es»; salieron.
+- Transición, resuelta en P4: el pie de la versión anterior enlazaba a `/finding` también con el
+  candado cerrado; ahora su entrada no enlaza, y `verify:dist` lo comprueba.
 - Transición, hasta P5: los créditos enlazan a las páginas del cuaderno que ya existen (`/dilemma`,
   `/vanberg`, `/how-its-built` y, con el candado abierto, `/finding`), con los títulos de los actos.
   `/sources` y `/about` se suman con el panel (`TODO(P5)` en `Closing.astro`).
-- Transición, hasta P5: la frase de estado sale una vez en el home, en el sello del capítulo 7
-  (`STATUS_ON_HOME = 1`). La segunda es la entrada «El hallazgo» del panel del cuaderno, que el
-  ADR 0024 construye en P5; el criterio de salida de P4 pide dos.
-- Transición, hasta P5: el pie de la versión anterior enlaza a `/finding` también con el candado
-  cerrado (`/finding` muestra entonces solo su título y la frase de estado). Sale con el pie.
+- Transición, hasta P5: la entrada «El hallazgo» vive en el pie de la versión anterior
+  (`SiteFooter.astro`), así que sale en todas las páginas; en `/finding` cerrado la frase se lee dos
+  veces (la página y el pie). En P5 pasa al panel, y el pie nuevo del cuaderno no la repite en el
+  home, para que siga saliendo dos veces.
+- Transición, hasta P5: GitHub y LinkedIn no están en el sitio; salieron con «Quién es» y vuelven
+  con `/about` (ADR 0024).
 
 ## Preguntas abiertas
 
@@ -261,11 +283,11 @@ capítulos (ADR 0021).
   verificar» en `docs/sources.md`.
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
-- **Dos frases de estado en P4:** `docs/phases.md` pide que la frase salga dos veces en `/` al cerrar
-  P4 (el sello y la entrada del cuaderno), pero el panel del cuaderno es de P5 (ADR 0024). ¿Se
-  adelanta la entrada del cuaderno a P4, o el criterio de P4 se lee «una, hasta P5»?
-- **Los pendientes de la versión anterior** (en `docs/archivo/tareas-anteriores.md`, sección F5)
-  desaparecen con el código que reemplaza la película. Si alguno sobrevive a P4, vuelve aquí.
+- **Un pendiente de la versión anterior sobrevive a P4** (de `docs/archivo/tareas-anteriores.md`,
+  sección F5): con el candado abierto, `/finding` carga el script de `Curve.astro`, que busca un
+  control (`[data-curve]`) que la gráfica de culpa no tiene y no hace nada. Se ve en F5 o con el
+  cuaderno. Los otros dos ya no existen: la tabla oculta del acto 5 salió con el acto (a 320 px, sin
+  scroll horizontal con el candado abierto) y `src/components/table/` salió en P3.
 
 ## Preguntas cerradas
 
@@ -275,3 +297,6 @@ capítulos (ADR 0021).
 - ~~Dirección de arte.~~ Papel (ADR 0022, hoy en el ADR 0027).
 - ~~«Quién es».~~ Solo nombre, GitHub y LinkedIn, en `/about` (ADR 0024).
 - ~~«Cómo está hecho».~~ Sale del home y se queda como caso de estudio en el cuaderno (ADR 0024).
+- ~~¿Dos frases de estado en P4?~~ Sí: la entrada «El hallazgo» del cuaderno se adelanta al pie de
+  la versión anterior, con su título y la frase, y enlaza a `/finding` solo con el candado abierto;
+  en P5 pasa al panel (decisión de Montse, P4).

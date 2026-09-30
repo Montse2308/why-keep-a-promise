@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ACTS, actForSubpage } from './acts';
+import { CHAPTER_IDS } from './chapters';
 import { SUBPAGES } from './routes';
 
 describe('acts', () => {
@@ -19,5 +20,11 @@ describe('acts', () => {
       expect(ACTS.filter((act) => act.deeper === subpage)).toHaveLength(1);
       expect(actForSubpage(subpage).deeper).toBe(subpage);
     }
+  });
+
+  it('gives every act the chapter that stands for it now, in the film’s order; act 6, the credits', () => {
+    expect(ACTS.map((act) => act.film)).toEqual(['arrival', 'two-rooms', 'two-voices', 'real-people', 'my-research', 'closing']);
+    const order = ACTS.map((act) => CHAPTER_IDS.indexOf(act.film));
+    expect(order).toEqual([...order].sort((a, b) => a - b));
   });
 });

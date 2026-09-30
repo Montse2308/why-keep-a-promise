@@ -1,7 +1,15 @@
 ---
+/**
+ * The previous version's footer, until the notebook's panel replaces it (ADR 0024, P5). Its entry for
+ * the finding is the notebook's entry, early: its title and the status sentence, and a link to
+ * /finding only behind the lock (ADR 0026). On `/` that sentence is the second one, after chapter 7's
+ * stamp.
+ */
 import LanguageSwitch from './LanguageSwitch.astro';
+import { MANUSCRIPT_STATUS } from '../config';
 import { actForSubpage } from '../lib/acts';
 import { useTranslations, type Locale } from '../lib/i18n';
+import { findingUnlocked, statusKey } from '../lib/lock';
 import { href, SUBPAGES, type Route } from '../lib/routes';
 
 interface Props {
@@ -11,6 +19,8 @@ interface Props {
 
 const { locale, route } = Astro.props;
 const tr = useTranslations(locale);
+const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
+const status = tr(statusKey(MANUSCRIPT_STATUS));
 const links: { route: Route; label: string }[] = [
   { route: 'home', label: tr('footer.home') },
   ...SUBPAGES.map((subpage) => ({ route: subpage, label: tr(actForSubpage(subpage).titleKey) })),
@@ -22,13 +32,25 @@ const links: { route: Route; label: string }[] = [
     <nav aria-label={tr('footer.label')}>
       <ul class="footer__links">
         {
-          links.map((link) => (
-            <li>
+          links.map((link) => {
+            const anchor = (
               <a href={href(locale, link.route)} aria-current={link.route === route ? 'page' : undefined}>
                 {link.label}
               </a>
-            </li>
-          ))
+            );
+            if (link.route !== 'finding') return <li>{anchor}</li>;
+            const title = (
+              <span class="footer__title" aria-current={route === 'finding' ? 'page' : undefined}>
+                {link.label}
+              </span>
+            );
+            return (
+              <li class="footer__entry">
+                {unlocked ? anchor : title}
+                <span class="footer__status">{status}</span>
+              </li>
+            );
+          })
         }
       </ul>
     </nav>
@@ -53,7 +75,8 @@ const links: { route: Route; label: string }[] = [
     gap: var(--space-4) var(--space-8);
   }
 
-  .footer__links a {
+  .footer__links a,
+  .footer__title {
     display: inline-flex;
     align-items: center;
     min-width: var(--target-min);
@@ -67,6 +90,21 @@ const links: { route: Route; label: string }[] = [
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  .footer__entry {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer__title {
+    color: var(--color-fg);
+  }
+
+  .footer__status {
+    margin-top: calc(-1 * var(--space-2));
+    font-style: italic;
+    color: var(--color-muted);
   }
 
   [aria-current='page'] {
