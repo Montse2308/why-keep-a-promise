@@ -3,11 +3,11 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P3 (capítulos 4 a 6). P0, P1 y P2 cerradas: Montse las revisó y las mergeó (PR #1,
-PR #2 y PR #3).
+**Fase activa:** P4 (capítulos 7 y 8, y el candado). P0 a P3 cerradas: Montse las revisó y las
+mergeó (PR #1 a PR #4). En esta sesión, solo el capítulo 7, sin el video final.
 
-**Estado del código:** la película cuenta los capítulos 0 a 6; debajo sigue la versión anterior (los
-actos 5 y 6 y las secciones del home). La película la reemplaza por capítulos (ADR 0021).
+**Estado del código:** la película cuenta los capítulos 0 a 7; debajo sigue la versión anterior (el
+acto 6 y «Quién es»). La película la reemplaza por capítulos (ADR 0021).
 
 ## P0 · Documentos
 
@@ -150,7 +150,7 @@ actos 5 y 6 y las secciones del home). La película la reemplaza por capítulos 
       en español (no promete, se queda los 14; en el mazo se queda, se queda, tira, tira, se queda,
       se queda; apuesta «probablemente no tira»; adivina 85 y 80). En `scratch/p3-review/` (local,
       no se versiona).
-- [ ] Revisión de P3 por Montse.
+- [x] Revisión de P3 por Montse (PR #4, mergeado).
 - PENDIENTE(datos): el código guarda las sumas exactas de 70 y 68 (215 / 309 y 200.5 / 294), que
   salen de las medias verificadas y del total verificado; falta cotejarlas contra `switch.dat`
   (`docs/sources.md`, `vanberg-beliefs`).
@@ -159,6 +159,62 @@ actos 5 y 6 y las secciones del home). La película la reemplaza por capítulos 
 - Transición, hasta P5: la prosa de `/vanberg` todavía habla de «la mesa» («lo que la mesa deja
   fuera»). La reescribe el cuaderno (ADR 0024).
 
+## P4 · Capítulos 7 y 8, y el candado
+
+- [x] Capítulo 7, «Aquí entro yo», la parte abierta (regla (j)): cae la noche, los letreros del
+      capítulo 6 suben, la lámpara de la hoja de personajes baja sobre la mesa y salen las estrellas.
+      La pregunta de la página como la pregunta de la investigación de Montse, con su nombre en
+      primera persona (`author.name`); el motor de simulación en TypeScript, un motorcito de papel
+      con dos engranes que giran con el scroll y que toma el lugar del dado; y el sobre sellado: la
+      tarjeta misma es el sobre, con el sello del hilo y la frase de estado estampada, sin nada más
+      (ADR 0026).
+- [x] Capítulo 7, el hallazgo detrás del candado: el contenido del acto 5, repartido en siete
+      leyendas sin ampliarse (la tercera razón, por qué el laboratorio no la distingue, la confianza de
+      fondo, pesa más en el medio, un mundo para cada valor, lo que gana cada razón con la curva y su
+      control, y la comparación entre mundos de la regla (e)), el enlace a `/finding` y el
+      `TODO(launch)` del repo del motor. Con el candado abierto, el sobre se abre antes del hallazgo.
+      Sus cifras salen de `src/data/curve.json` y de las celdas de Vanberg
+      (`src/lib/curve/values.ts`), nunca de las leyendas.
+- [x] La curva, rehecha sobre la paleta de la película (ADR 0027): la culpa personal en tinta, el
+      compromiso en el oro del hilo y el control en el lila de la voz de lo que el otro espera, con
+      casco de tinta en las líneas claras (`src/lib/curve/film.ts`, con tests de contraste y
+      daltonismo). La gráfica de culpa de `/finding` sigue en la paleta del cuaderno hasta P5.
+- [x] El candado, fuera del build: el plugin `lockFinding` cambia por su stub la curva, el componente
+      del hallazgo (`Finding.astro`) y los tiempos de sus tarjetas (`src/lib/film/finding.ts`), así
+      que una película cerrada ni siquiera sabe que hay tarjetas después del sobre.
+- [x] La luz, igual en los dos estados: el hallazgo alarga el capítulo 7 solo con el candado abierto,
+      así que la luz del día lleva el reloj de la película abierta (`lightAt` en
+      `src/lib/film/timeline.ts`) y se queda quieta durante el hallazgo, que empieza después del
+      anochecer. La película abierta sigue midiendo 36.75 pantallas: el capítulo 7 mide 3.4 abierto
+      (13.4 con el hallazgo) y el capítulo 8 queda planeado en 3.95, así que la lámpara sigue justo
+      donde empieza el capítulo 7 (test).
+- [x] `verify:dist` en la estructura nueva, verde en los dos estados (probado con `under-review` en
+      local, sin commit): marcas del hallazgo (`data-finding` y el id de su primera tarjeta, que solo
+      nombra un reloj abierto), páginas desbloqueadas y el sello del capítulo 7. Tests: cada marca está
+      en las fuentes bloqueadas, ninguna en la parte abierta (leyendas, componentes y claves), y el
+      plugin cambia justo esos tres módulos por stubs vacíos.
+- [x] Sale lo que el capítulo 7 reemplaza: el acto 5 y «La investigación» del home, con sus archivos,
+      su ranura `research-links` y sus claves `section.research.*`. `/finding` vuelve al capítulo 7.
+      `docs/sources.md` dice dónde se usa cada cifra de la curva.
+- [x] Tests de la regla (j) sobre el capítulo 7: la parte abierta dice la pregunta como la de la
+      investigación de Montse y el motor en TypeScript, y nada más (ni pruebas, semilla, generaciones,
+      imitación o procedencia, ni el hallazgo, la curva, cifras o marcas del candado); la autora en
+      primera persona; el sobre sin leyenda; el hallazgo, su cita y el `TODO(launch)` solo detrás del
+      candado; la regla (e) dicha en pantalla. También la coreografía del capítulo (con movimiento
+      reducido) y la luz quieta durante el hallazgo.
+- [x] Capturas para Montse, sin video (así lo pidió): 1440 y 360 px, EN y ES, con el candado cerrado
+      (el build) y abierto (el servidor de desarrollo), con movimiento reducido y sin JS. En
+      `scratch/p4-review/` (local, no se versiona).
+- [ ] Capítulo 8, «Cierre»: la promesa cobrada, «¿Cumplí?» y los créditos.
+- [ ] Sale el acto 6 y «Quién es» del home.
+- [ ] La película entera en un video.
+- [ ] Revisión de P4 por Montse.
+- Transición, hasta P5: la frase de estado sale una vez en el home, en el sello del capítulo 7
+  (`STATUS_ON_HOME = 1`). La segunda es la entrada «El hallazgo» del panel del cuaderno, que el
+  ADR 0024 construye en P5; el criterio de salida de P4 pide dos.
+- Transición, hasta P5: el pie de la versión anterior enlaza a `/finding` también con el candado
+  cerrado (`/finding` muestra entonces solo su título y la frase de estado). Sale con el pie.
+
 ## Preguntas abiertas
 
 - **Axelrod (1984):** verificar antes del lanzamiento la página de los pagos del dilema, de la
@@ -166,6 +222,9 @@ actos 5 y 6 y las secciones del home). La película la reemplaza por capítulos 
   verificar» en `docs/sources.md`.
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
+- **Dos frases de estado en P4:** `docs/phases.md` pide que la frase salga dos veces en `/` al cerrar
+  P4 (el sello y la entrada del cuaderno), pero el panel del cuaderno es de P5 (ADR 0024). ¿Se
+  adelanta la entrada del cuaderno a P4, o el criterio de P4 se lee «una, hasta P5»?
 - **Los pendientes de la versión anterior** (en `docs/archivo/tareas-anteriores.md`, sección F5)
   desaparecen con el código que reemplaza la película. Si alguno sobrevive a P4, vuelve aquí.
 
