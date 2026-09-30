@@ -7,14 +7,10 @@ import { ACTS } from '../src/lib/acts';
 import { LOCALES, type Locale } from '../src/lib/locales';
 import { splitAtLock } from '../src/lib/film/captions';
 import { SUBPAGES, type Subpage } from '../src/lib/routes';
-import { SECTIONS } from '../src/lib/sections';
-import { slotsIn, splitSubpage } from '../src/lib/subpages';
 import { citationsIn, filledCaptions, numbersIn, readable, sentences, wordCount } from './prose';
 
 type Raw = Record<string, string>;
-const actSources = import.meta.glob('../src/content/acts/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
 const subpageSources = import.meta.glob('../src/content/subpages/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
-const sectionSources = import.meta.glob('../src/content/sections/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
 const captionSources = import.meta.glob('../src/content/chapters/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
 
 interface ProseFile {
@@ -24,9 +20,9 @@ interface ProseFile {
   body: string;
 }
 
-function parse(files: Raw, collection: 'acts' | 'subpages' | 'sections'): ProseFile[] {
+function parse(files: Raw): ProseFile[] {
   return Object.entries(files).map(([path, raw]) => {
-    const match = new RegExp(`/${collection}/(\\w+)/([^/]+)\\.md$`).exec(path);
+    const match = /\/subpages\/(\w+)\/([^/]+)\.md$/.exec(path);
     const parts = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(raw.replace(/\r\n/g, '\n'));
     if (!match || !parts) throw new Error(`Unreadable prose file ${path}`);
     const data = Object.fromEntries(
@@ -39,19 +35,9 @@ function parse(files: Raw, collection: 'acts' | 'subpages' | 'sections'): ProseF
   });
 }
 
-const actFiles = parse(actSources, 'acts');
-const subpageFiles = parse(subpageSources, 'subpages');
-const sectionFiles = parse(sectionSources, 'sections');
+const subpageFiles = parse(subpageSources);
 
-const byAct = (locale: Locale, act: number) => actFiles.find((f) => f.locale === locale && Number(f.data.act) === act);
 const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
-
-/** The acts still on `/`, by number: the film tells the others now, and their prose is retired (ADR 0021). */
-const WRITTEN_ACTS = [6] as const;
-/** Words per act and language. R4 shortened acts 1–4 and 6 (ADR 0019). */
-const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: boolean }> = {
-  6: { max: 145, tables: true },
-};
 
 /** Chapter 7's captions in a locale, split at its lock mark (ADR 0026). */
 const seventh = (locale: Locale) =>
@@ -59,27 +45,6 @@ const seventh = (locale: Locale) =>
 
 /** Words per subpage and language, tables not counted (the F4 session's budget). */
 const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 700, 'how-its-built': 600 };
-
-describe('act files', () => {
-  it('exist for every act the film does not tell yet, in every locale, with the same file names', () => {
-    expect(ACTS.filter((act) => !act.film).map((act) => ACTS.indexOf(act) + 1)).toEqual([...WRITTEN_ACTS]);
-    for (const locale of LOCALES) {
-      const names = actFiles.filter((f) => f.locale === locale).map((f) => f.name).sort();
-      expect(names).toEqual(['06-how-its-built']);
-    }
-  });
-
-  it.each(actFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s matches its act', (_name, file) => {
-    const index = Number(file.data.act) - 1;
-    const act = ACTS[index];
-    expect(act).toBeDefined();
-    expect(file.name).toBe(`${String(index + 1).padStart(2, '0')}-${act?.id}`);
-    expect(file.data.deeper).toBe(act?.deeper ?? 'null');
-    const dictionary = file.locale === 'en' ? en : es;
-    expect(act?.film).toBeNull();
-    expect(file.data.title).toBe(act && dictionary[act.titleKey]);
-  });
-});
 
 describe('subpage files', () => {
   it('exist for every subpage in every locale, named by its slug', () => {
@@ -96,37 +61,9 @@ describe('subpage files', () => {
   });
 });
 
-describe('home section files (ADR 0019)', () => {
-  it('exist for every section in every locale, named by its id', () => {
-    for (const locale of LOCALES) {
-      expect(sectionFiles.filter((f) => f.locale === locale).map((f) => f.name).sort()).toEqual(SECTIONS.map((s) => s.id).sort());
-    }
-  });
-
-  it.each(sectionFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s carries its section title and only its own slots', (_name, file) => {
-    const section = SECTIONS.find((candidate) => candidate.id === file.name);
-    const dictionary = file.locale === 'en' ? en : es;
-    expect(file.data.title).toBe(section && dictionary[section.titleKey]);
-    const { open, locked } = splitSubpage(file.body);
-    expect(slotsIn([...open, ...locked])).toEqual(section?.slots);
-  });
-
-  it('keeps "About" to the facts Montse gave: the author links, and a TODO for the rest', () => {
-    for (const locale of LOCALES) {
-      const body = sectionFiles.find((f) => f.locale === locale && f.name === 'about')?.body ?? '';
-      expect(readable(body).trim()).toBe('');
-      expect([...body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1])).toEqual(['F5']);
-    }
-  });
-});
-
 describe('figures in the prose', () => {
   const allowed = new Set(FIGURES.map((f) => f.value));
-  const proseFiles = [
-    ...actFiles,
-    ...subpageFiles.map((f) => ({ ...f, name: `subpage ${f.name}` })),
-    ...sectionFiles.map((f) => ({ ...f, name: `section ${f.name}` })),
-  ];
+  const proseFiles = subpageFiles.map((f) => ({ ...f, name: `subpage ${f.name}` }));
 
   it.each(proseFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s uses only registered figures', (_name, file) => {
     expect(numbersIn(readable(file.body)).filter((n) => !allowed.has(n))).toEqual([]);
@@ -139,12 +76,6 @@ describe('figures in the prose', () => {
       expect(citationsIn(readable(file.body)).filter((c) => !registered.has(c))).toEqual([]);
     },
   );
-
-  it.each(WRITTEN_ACTS)('act %i says the same figures and citations in both languages', (act) => {
-    const [a, b] = LOCALES.map((locale) => readable(byAct(locale, act)?.body ?? ''));
-    expect(numbersIn(b ?? '').sort()).toEqual(numbersIn(a ?? '').sort());
-    expect(citationsIn(b ?? '').sort()).toEqual(citationsIn(a ?? '').sort());
-  });
 
   it.each(SUBPAGES)('subpage %s says the same figures and citations in both languages', (subpage) => {
     const [a, b] = LOCALES.map((locale) => readable(bySubpage(locale, subpage)?.body ?? ''));
@@ -175,14 +106,6 @@ describe('figures in the prose', () => {
 });
 
 describe('voice', () => {
-  it.each(LOCALES.flatMap((locale) => WRITTEN_ACTS.map((act) => [locale, act] as const)))(
-    '%s act %i stays within its word budget',
-    (locale, act) => {
-      const { max, tables } = WORD_BUDGET[act];
-      expect(wordCount(readable(byAct(locale, act)?.body ?? '', { tables }))).toBeLessThanOrEqual(max);
-    },
-  );
-
   it.each(LOCALES.flatMap((locale) => SUBPAGES.map((subpage) => [locale, subpage] as const)))(
     '%s subpage %s stays within its word budget, tables not counted',
     (locale, subpage) => {
@@ -236,13 +159,7 @@ describe('voice', () => {
   });
 });
 
-describe('the acts still to be replaced (R4, ADR 0019)', () => {
-  it.each(LOCALES)('%s: act 6 is about the page only; the engine is in chapter 7', (locale) => {
-    expect(byAct(locale, 6)?.body ?? '').not.toMatch(/engine|motor|simulat|simulaci/i);
-  });
-});
-
-describe('subpages only add to their act, or to the film that tells it now (rule (h))', () => {
+describe('subpages only add to the film, which tells their act now (rule (h))', () => {
   /** The film's captions in a locale, as the visitor reads them: placeholders filled from the code. */
   const film = (locale: Locale) =>
     Object.entries(captionSources)
@@ -254,18 +171,17 @@ describe('subpages only add to their act, or to the film that tells it now (rule
     expect(sentences('## A title\n\nOne *sentence*. Another "one"!\n\n- A list item.')).toEqual(['a title.', 'one sentence.', 'another one!', 'a list item.']);
   });
 
-  it.each(subpageFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s shares no whole sentence with its act or the film', (_name, file) => {
-    const act = ACTS[Number(file.data.act) - 1];
-    const told = act?.film ? film(file.locale) : (byAct(file.locale, Number(file.data.act))?.body ?? '');
+  it.each(subpageFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s shares no whole sentence with the film', (_name, file) => {
+    const told = film(file.locale);
     expect(told.trim().length).toBeGreaterThan(0);
     const theirs = new Set(sentences(told));
     expect(sentences(file.body).filter((sentence) => theirs.has(sentence))).toEqual([]);
   });
 
-  it('would catch a sentence copied from the act', () => {
-    const act = byAct('en', 6)?.body ?? '';
-    const copied = sentences(act)[2] ?? '';
+  it('would catch a sentence copied from the film', () => {
+    const told = film('en');
+    const copied = sentences(told)[2] ?? '';
     expect(copied.length).toBeGreaterThan(0);
-    expect(new Set(sentences(act)).has(sentences(`Intro. ${copied}`)[1] ?? '')).toBe(true);
+    expect(new Set(sentences(told)).has(sentences(`Intro. ${copied}`)[1] ?? '')).toBe(true);
   });
 });

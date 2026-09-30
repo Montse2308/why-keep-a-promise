@@ -1,12 +1,11 @@
 ---
-import { getCollection, render } from 'astro:content';
-import Act from '../components/Act.astro';
-import HomeSection from '../components/HomeSection.astro';
+/**
+ * The home is the film (ADR 0021): it tells every act of the previous version, and ends in chapter
+ * 8's credits.
+ */
 import Film from '../components/film/Film.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { ACTS } from '../lib/acts';
 import { t, type Locale } from '../lib/i18n';
-import { homeBlocks } from '../lib/sections';
 
 interface Props {
   locale: Locale;
@@ -14,42 +13,8 @@ interface Props {
 
 const { locale } = Astro.props;
 const title = t(locale, 'site.title');
-
-// Act prose from src/content/acts/<locale>/; an act without a file shows its TODO. The acts the
-// film tells have no prose left: chapter 7 tells act 5 now, with its lock (ADR 0026).
-const entries = await getCollection('acts', (entry) => entry.id.startsWith(`${locale}/`));
-const acts = new Map(
-  await Promise.all(
-    ACTS.map(async (act, index) => {
-      const entry = act.film ? undefined : entries.find((candidate) => candidate.data.act === index + 1);
-      return [act.id, { entry, Content: entry ? (await render(entry)).Content : null }] as const;
-    }),
-  ),
-);
-
-// What the film does not tell yet: act 6, and "About" last (ADR 0019).
-const blocks = homeBlocks().map((block) => {
-  if (block.kind === 'section') return block;
-  const prose = acts.get(block.act.id);
-  if (!prose) throw new Error(`No prose state for act ${block.act.id}`);
-  return { ...block, ...prose };
-});
 ---
 
 <BaseLayout locale={locale} route="home" title={title} film>
-  {
-    blocks.map((block) => {
-      if (block.kind === 'section') return <HomeSection section={block.section} locale={locale} />;
-      const { act, entry, Content } = block;
-      // The film tells the acts it replaced (ADR 0021): it stands where the first of them stood, and
-      // the acts still to be replaced follow it (docs/phases.md).
-      if (act.film === 'arrival') return <Film locale={locale} />;
-      if (act.film) return null;
-      return (
-        <Act act={act} locale={locale} title={entry?.data.title} pending={!Content}>
-          {Content && <Content />}
-        </Act>
-      );
-    })
-  }
+  <Film locale={locale} />
 </BaseLayout>

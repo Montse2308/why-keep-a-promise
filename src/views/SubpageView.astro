@@ -1,7 +1,7 @@
 ---
 /**
  * A subpage: the prose of src/content/subpages/<locale>/<slug>.md, with the components its slots
- * name, and a link back to the act it deepens, or to the film's chapter that now tells that act.
+ * name, and a link back to the film's chapter that stands for the act it deepens (src/lib/acts.ts).
  * What follows the prose's lock marker renders only behind the lock (ADR 0026); /finding is locked
  * whole, so a locked build shows its title and the status sentence and nothing else.
  */
@@ -15,7 +15,7 @@ import { actForSubpage } from '../lib/acts';
 import { t, type Locale } from '../lib/i18n';
 import { findingUnlocked, statusKey } from '../lib/lock';
 import { href, type Subpage } from '../lib/routes';
-import { focusableCode, slotsIn, splitSubpage, type Segment, type SlotName } from '../lib/subpages';
+import { focusableCode, splitSubpage, type Segment } from '../lib/subpages';
 import { fill } from '../lib/template';
 
 interface Props {
@@ -37,17 +37,10 @@ const hasLocked = parts.locked.length > 0;
 const lockedWhole = !unlocked && parts.open.length === 0;
 const showStatus = subpage === 'finding';
 const status = t(locale, statusKey(MANUSCRIPT_STATUS));
-// Back to the act, or to the chapter of the film that tells it now (ADR 0021).
-const chapterEntry = act.film
-  ? (await getCollection('chapters', (candidate) => candidate.id.startsWith(`${locale}/`) && candidate.data.chapter === act.film))[0]
-  : undefined;
-if (act.film && !chapterEntry) throw new Error(`No chapter "${act.film}" for subpage ${subpage} in ${locale}`);
-const backTo = act.film ?? act.id;
-const back = fill(t(locale, 'subpage.back'), { title: chapterEntry?.data.title ?? t(locale, act.titleKey) });
-// The home sections' slots (ADR 0019) have no place on a subpage.
-const SUBPAGE_SLOTS: readonly SlotName[] = ['best-response', 'switch-table', 'guilt-chart'];
-const stray = slotsIn([...parts.open, ...parts.locked]).filter((slot) => !SUBPAGE_SLOTS.includes(slot));
-if (stray.length > 0) throw new Error(`Subpage ${subpage} uses slots that are not a subpage's: ${stray.join(', ')}`);
+// Back to the chapter of the film that stands for the act (ADR 0021).
+const chapterEntry = (await getCollection('chapters', (candidate) => candidate.id.startsWith(`${locale}/`) && candidate.data.chapter === act.film))[0];
+if (!chapterEntry) throw new Error(`No chapter "${act.film}" for subpage ${subpage} in ${locale}`);
+const back = fill(t(locale, 'subpage.back'), { title: chapterEntry.data.title });
 ---
 
 <BaseLayout locale={locale} route={subpage} title={`${heading} · ${t(locale, 'site.title')}`} codeFont={subpage === 'how-its-built'}>
@@ -70,7 +63,7 @@ if (stray.length > 0) throw new Error(`Subpage ${subpage} uses slots that are no
     {
       !lockedWhole && (
         <p class="subpage__back">
-          <a href={href(locale, 'home', backTo)}>{back}</a>
+          <a href={href(locale, 'home', act.film)}>{back}</a>
         </p>
       )
     }
@@ -86,7 +79,7 @@ if (stray.length > 0) throw new Error(`Subpage ${subpage} uses slots that are no
     margin-block: var(--space-12) var(--space-4);
   }
 
-  /* The status sentence, set apart; the back link like "Go deeper →" (src/components/Act.astro). */
+  /* The status sentence, set apart; the back link in the interface font, a full-size target. */
   .subpage__status {
     font-style: italic;
     color: var(--color-muted);

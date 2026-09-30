@@ -17,7 +17,6 @@ import es from '../src/i18n/es.json';
 import findingBeats from '../src/lib/film/finding.ts?raw';
 import findingStub from '../src/lib/film/finding.locked.ts?raw';
 import { FINDING_BEATS as STUBBED } from '../src/lib/film/finding.locked';
-import homeSection from '../src/components/HomeSection.astro?raw';
 import homeView from '../src/views/HomeView.astro?raw';
 import siteFooter from '../src/components/SiteFooter.astro?raw';
 import subpageView from '../src/views/SubpageView.astro?raw';
@@ -40,10 +39,9 @@ import {
 } from '../scripts/verify-dist.mjs';
 
 const subpages = import.meta.glob('../src/content/subpages/*/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
-const sections = import.meta.glob('../src/content/sections/*/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 
-/** Each subpage's and home section's Markdown, split at its lock marker (src/lib/subpages.ts). */
-const parts = Object.entries({ ...subpages, ...sections }).map(([path, raw]) => {
+/** Each subpage's Markdown, split at its lock marker (src/lib/subpages.ts). */
+const parts = Object.entries(subpages).map(([path, raw]) => {
   const { open, locked } = splitSubpage(raw.replace(/^---[\s\S]*?---/, ''));
   const text = (segments: typeof open) => segments.map((segment) => (segment.kind === 'html' ? segment.html : '')).join('\n');
   return { path, open: text(open), locked: text(locked) };
@@ -85,7 +83,6 @@ const openSources = {
   'Engine.astro': engineComponent,
   'Closing.astro': closingComponent,
   'HomeView.astro': homeView,
-  'HomeSection.astro': homeSection,
   'SiteFooter.astro': siteFooter,
   'the open UI strings (en)': keys(en, false),
   'the open UI strings (es)': keys(es, false),
@@ -118,7 +115,7 @@ describe('verify:dist (ADR 0026)', () => {
     for (const part of parts) {
       if (part.path.endsWith('/finding.md')) expect(part.open.trim()).toBe('');
       if (part.path.endsWith('/how-its-built.md')) expect(findMarks(part.locked).length).toBeGreaterThan(0);
-      if (/\/(dilemma|vanberg|about)\.md$/.test(part.path)) expect(part.locked).toBe('');
+      if (/\/(dilemma|vanberg)\.md$/.test(part.path)) expect(part.locked).toBe('');
     }
   });
 
