@@ -39,9 +39,14 @@ const links: { route: Route; label: string }[] = [
               </a>
             );
             if (link.route !== 'finding') return <li>{anchor}</li>;
+            const title = (
+              <span class="footer__title" aria-current={route === 'finding' ? 'page' : undefined}>
+                {link.label}
+              </span>
+            );
             return (
               <li class="footer__entry">
-                {unlocked ? anchor : <span class="footer__title">{link.label}</span>}
+                {unlocked ? anchor : title}
                 <span class="footer__status">{status}</span>
               </li>
             );

@@ -196,7 +196,8 @@ describe('verify:dist (ADR 0026)', () => {
       expect(siteFooter.match(/\{status\}/g)).toHaveLength(1);
       expect(siteFooter).toContain('const status = tr(statusKey(MANUSCRIPT_STATUS));');
       // The entry links to /finding only behind the lock; closed, its title is plain text.
-      expect(siteFooter).toContain('{unlocked ? anchor : <span class="footer__title">{link.label}</span>}');
+      expect(siteFooter).toContain('{unlocked ? anchor : title}');
+      expect(siteFooter).toMatch(/const title = \(\s*<span class="footer__title"/);
       expect(siteFooter).toContain('const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);');
     });
 
