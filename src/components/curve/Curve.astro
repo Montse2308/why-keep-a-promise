@@ -1,21 +1,26 @@
 ---
 /**
- * Act 5's curve and moment 3 of the table. A step chart built at build time from
+ * Chapter 7's curve and its control (ADR 0023, interaction 9). A step chart built at build time from
  * src/data/curve.json (ADR 0010), readable without JavaScript, plus a visually hidden table of every
  * row. With JavaScript, a slider moves a cursor over the grid rows (./controller.ts).
  *
- * `variant="guilt"` is /finding's second chart (ADR 0017): the guilt available at each grid row,
+ * `film` sets it on a paper card of the film, in the film's colours (src/lib/curve/film.ts, ADR 0027):
+ * the lines in a light colour wear an ink casing.
+ *
+ * `variant="guilt"` is /finding's chart: the guilt available at each grid row,
  * with the threshold above which personal guilt rolls and its peak. Same frame and style, static,
  * no slider, from src/lib/curve/finding.ts.
  *
- * Render this only inside act 5's lock (src/lib/lock.ts, ADR 0015). While the lock is closed, a build
+ * Render this only inside the lock (src/lib/lock.ts, ADR 0026). While the lock is closed, a build
  * resolves this file to ./Locked.astro (astro.config.mjs), so its markup, style, script and data
  * never reach dist/; `npm run verify:dist` checks that.
  */
+import { FILM } from '../../lib/design/film';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import { stepLine, xPercent, yPixel, type Frame, type Segment } from '../../lib/curve/chart';
 import { payoffLevels, pullWindow, REASONS, type Reason } from '../../lib/curve/curve';
 import { CURVE, FINDING } from '../../lib/curve/data';
+import { CASED, FILM_SERIES } from '../../lib/curve/film';
 import { guiltPeak, hundredths } from '../../lib/curve/finding';
 import { indexOf, pullsText, valueText } from '../../lib/curve/moment3';
 import { curveStrings } from '../../lib/curve/strings';
@@ -25,11 +30,18 @@ interface Props {
   locale: Locale;
   /** Unique on the page; prefixes every id inside the figure. */
   id: string;
-  /** `payoff`: act 5's chart and moment 3. `guilt`: /finding's chart of the guilt available. */
+  /** `payoff`: chapter 7's chart and its control. `guilt`: /finding's chart of the guilt available. */
   variant?: 'payoff' | 'guilt';
+  /** On a card of the film: the film's paper and colours. */
+  film?: boolean;
 }
 
-const { locale, id, variant = 'payoff' } = Astro.props;
+const { locale, id, variant = 'payoff', film = false } = Astro.props;
+/** On the film, the series take the film's colours through the chart's own custom properties. */
+const filmStyle = film
+  ? `--color-series-1: ${FILM[FILM_SERIES.personal]}; --color-series-2: ${FILM[FILM_SERIES.partner]}; --color-series-3: ${FILM[FILM_SERIES.general]};`
+  : undefined;
+const cased = (reason: Reason) => film && CASED.includes(reason);
 const tr = useTranslations(locale);
 const strings = curveStrings(tr);
 const { rows, axis, peak } = CURVE;
@@ -87,7 +99,7 @@ const guiltTicks = [
 ---
 
 {variant === 'payoff' ? (
-<figure class="curve wide" id={id} data-locked-content data-curve data-rows={clientRows} data-axis={JSON.stringify(axis)} data-frame={JSON.stringify(frame)} data-start={start} data-strings={JSON.stringify(strings)} aria-labelledby={`${id}-caption`}>
+<figure class:list={['curve', { wide: !film, 'curve--film': film }]} style={filmStyle} id={id} data-locked-content data-curve data-rows={clientRows} data-axis={JSON.stringify(axis)} data-frame={JSON.stringify(frame)} data-start={start} data-strings={JSON.stringify(strings)} aria-labelledby={`${id}-caption`}>
   <p class="cv-axis-title" aria-hidden="true">{tr('curve.axis.y')}</p>
   <div class="cv-plot">
     <svg class="cv-svg" width="100%" height="248" role="img" aria-label={summary}>
@@ -106,10 +118,21 @@ const guiltTicks = [
       <line class="cv-peak" x1={x(peak)} x2={x(peak)} y1={y(high) + 6} y2={Y_ZERO} />
       <text class="cv-tick" x={x(peak)} y={Y_ZERO + 40} text-anchor="middle">{tr('curve.peak')}</text>
 
-      {lines.map(({ reason, segments }) => segments.map((segment) => <line class={`cv-line cv-line--${reason}`} {...key(segment)} />))}
+      {
+        lines.map(({ reason, segments }) =>
+          segments.map((segment) => (
+            <>
+              {cased(reason) && <line class={`cv-case cv-case--${reason}`} {...key(segment)} />}
+              <line class={`cv-line cv-line--${reason}`} {...key(segment)} />
+            </>
+          )),
+        )
+      }
 
+      {cased('partner') && <line class="cv-case cv-case--partner" x1="0" x2="20" y1="24" y2="24" />}
       <line class="cv-key cv-line--partner" x1="0" x2="20" y1="24" y2="24" />
       <text class="cv-label" x="28" y="28">{name.partner}</text>
+      {cased('general') && <line class="cv-case cv-case--general" x1="2" x2="20" y1="46" y2="46" />}
       <line class="cv-key cv-line--general" x1="2" x2="20" y1="46" y2="46" />
       <text class="cv-label" x="28" y="50">{tr('curve.label.general')}</text>
       <line class="cv-key cv-line--personal" x1="0" x2="20" y1={y(low) + 20} y2={y(low) + 20} />
@@ -135,6 +158,7 @@ const guiltTicks = [
           <div class="cv-readout__item">
             <dt>
               <svg class="cv-swatch" viewBox="0 0 20 8" aria-hidden="true" focusable="false">
+                {cased(reason) && <line class={`cv-case cv-case--${reason}`} x1={reason === 'general' ? 2 : 0} x2="20" y1="4" y2="4" />}
                 <line class={`cv-key cv-line--${reason}`} x1={reason === 'general' ? 2 : 0} x2="20" y1="4" y2="4" />
               </svg>
               {name[reason]}
@@ -471,6 +495,65 @@ const guiltTicks = [
     stroke: var(--color-fg);
     stroke-width: 1.5;
     stroke-dasharray: 6 4;
+  }
+
+  /*
+   * On a card of the film (chapter 7): the card is the paper, so the figure drops its own frame, and
+   * the chart's tokens take the film's ink and paper. Light lines are cased in ink, as the cast is.
+   */
+  .curve--film {
+    --color-surface: var(--film-card);
+    --color-fg: var(--film-ink);
+    --color-muted: var(--film-card-muted);
+    --color-border: rgb(29 27 58 / 0.16);
+    --color-control: var(--film-card-muted);
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    font-family: var(--font-body, system-ui, sans-serif);
+  }
+
+  .curve--film .cv-live {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+  }
+
+  .curve--film .cv-slider {
+    accent-color: var(--film-ink);
+  }
+
+  .curve--film .cv-caption {
+    margin-top: var(--space-3);
+    font-size: 0.85rem;
+  }
+
+  .cv-case {
+    fill: none;
+    stroke: var(--film-ink);
+  }
+
+  .curve--film .cv-line--partner {
+    stroke-width: 3.5;
+  }
+
+  .cv-case--partner {
+    stroke-width: 6.5;
+    stroke-linecap: square;
+  }
+
+  /* The control's lilac beads, spaced so the gold line they share shows between them. */
+  .curve--film .cv-line--general {
+    stroke-width: 3.5;
+    stroke-dasharray: 0 10;
+  }
+
+  /* Ink rings under the beads: the same dash, only wider. */
+  .cv-case--general {
+    stroke-width: 6.5;
+    stroke-linecap: round;
+    stroke-dasharray: 0 10;
   }
 
 </style>

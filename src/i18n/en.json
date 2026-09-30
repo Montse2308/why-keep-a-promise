@@ -13,10 +13,6 @@
   "act.vanberg.title": "Vanberg's experiment",
   "act.finding.title": "The finding",
   "act.how-its-built.title": "How it's built",
-  "section.research.title": "The research",
-  "section.research.links": "Where it leads",
-  "section.research.to-act": "{title}, just below",
-  "section.research.to-subpage": "{title}, in depth",
   "section.about.title": "About",
   "section.about.links": "Profiles",
   "deeper.link": "Go deeper →",
@@ -214,5 +210,8 @@
   "film.real-people.guess.see": "See the real figure",
   "film.real-people.guess.yours": "Your guess: {n}%",
   "film.real-people.guess.out": "In the experiment: {real}%. You guessed {guess}%.",
-  "film.real-people.guess.noscript": "Guessing needs JavaScript. The figure: {real}%."
+  "film.real-people.guess.noscript": "Guessing needs JavaScript. The figure: {real}%.",
+  "film.my-research.still": "At nightfall, under a paper lamp, a little paper engine with two gears sits on the table between the circle and the square, and the two voices look at it. Stars are out over the hills.",
+  "film.my-research.me": "I’m {name}.",
+  "film.finding.deeper": "{title}, in depth"
 }

@@ -4,7 +4,7 @@
  * from 0 (its top) to 1 (its end). Screens are what a reader feels and what the chapters declare, so
  * the stage's choreography is written in them and turned into `p` with `at()`.
  */
-import { BUILT, CHAPTERS, type Beat, type ChapterId } from '../chapters';
+import { BUILT, chapter, CHAPTERS, LOCKED_BEATS, OPEN_CHAPTERS, type Beat, type ChapterId } from '../chapters';
 import { totalScreens } from './spans';
 import { clamp, lerp } from './track';
 
@@ -18,6 +18,29 @@ export const at = (screens: number): number => screens / TOTAL_SCREENS;
 export function chapterStart(id: ChapterId): number {
   const index = CHAPTERS.findIndex((c) => c.id === id);
   return totalScreens(CHAPTERS.slice(0, index));
+}
+
+/** The film without chapter 7's finding, in screens: the clock of the day's light. */
+export const OPEN_SCREENS = totalScreens(OPEN_CHAPTERS);
+
+/**
+ * Chapter 7's finding, in screens from the top of the film: the end of the chapter, after the sealed
+ * envelope. Empty while the lock is closed (ADR 0026).
+ */
+export const LOCKED_STRETCH = (() => {
+  const to = chapterStart('my-research') + chapter('my-research').screens;
+  return { from: to - totalScreens(LOCKED_BEATS), to } as const;
+})();
+
+/**
+ * Where the day's light stands at a point of the film, in screens (ADR 0027): as a share of the open
+ * film. The finding's stretch holds the light where the envelope left it, well into nightfall, so a
+ * build with the lock open lights every other beat exactly as a locked one does.
+ */
+export function lightAt(screens: number): number {
+  const { from, to } = LOCKED_STRETCH;
+  const open = screens <= from ? screens : screens >= to ? screens - (to - from) : from;
+  return open / OPEN_SCREENS;
 }
 
 export interface BeatRange {

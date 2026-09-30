@@ -1,5 +1,5 @@
 /**
- * Geometry of act 5's step chart, in data units (background trust out of 100, payoff). The
+ * Geometry of chapter 7's step chart, in data units (background trust out of 100, payoff). The
  * component maps it to SVG; nothing here interpolates between grid rows.
  */
 import type { Curve, CurveRow, Reason } from './curve';

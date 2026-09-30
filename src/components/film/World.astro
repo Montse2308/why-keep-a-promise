@@ -7,11 +7,12 @@
 import { FILM } from '../../lib/design/film';
 import { frame, viewBoxAttribute } from '../../lib/film/camera';
 import { brokenBetween, threadBetween, WORLD, type StageView } from '../../lib/film/stage';
-import { bubbleTransform, bulbTransform, eyesTransform, PIP_AT, PIPS, placeTransform, shadowTransform, wallTransform, type Pip } from '../../lib/film/parts';
+import { bubbleTransform, bulbTransform, eyesTransform, PIP_AT, PIPS, placeTransform, shadeTransform, shadowTransform, wallTransform, type Pip } from '../../lib/film/parts';
 import type { Locale } from '../../lib/i18n';
 import Board from './Board.astro';
 import Character from './Character.astro';
 import Coins from './Coins.astro';
+import Engine from './Engine.astro';
 import Signs from './Signs.astro';
 import Voices from './Voices.astro';
 
@@ -34,6 +35,20 @@ const otherX = cast.other.at[0];
 const shadow = `${uid}-shadow`;
 const sky = `${uid}-sky`;
 const lamp = `${uid}-lamp`;
+/** The night's stars (chapter 7 on), clear of the clouds and the moon, several within a phone's view. */
+const STARS = [
+  [140, 92, 1],
+  [250, 262, 0.7],
+  [470, 70, 0.9],
+  [560, 228, 0.75],
+  [690, 116, 1],
+  [890, 62, 0.8],
+  [930, 212, 0.7],
+  [1140, 176, 0.9],
+  [1420, 108, 1],
+  [1490, 262, 0.75],
+] as const;
+const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
 ---
 
 <svg
@@ -70,6 +85,9 @@ const lamp = `${uid}-lamp`;
       <ellipse cx="1000" cy="104" rx="80" ry="26" />
       <ellipse cx="1052" cy="90" rx="50" ry="30" />
     </g>
+    <g data-part="stars" opacity={view.stars}>
+      {STARS.map(([x, y, size]) => <path d={star} transform={`translate(${x} ${y}) scale(${size})`} fill="#fff4c2" />)}
+    </g>
     <path d="M-2000 640 C -600 420, 200 520, 700 470 S 1700 380, 3600 560 L 3600 3000 L -2000 3000 Z" fill={view.light['hill-far']} filter={`url(#${shadow})`} data-part="hill-far" />
   </g>
   <g data-part="near">
@@ -77,6 +95,15 @@ const lamp = `${uid}-lamp`;
   </g>
   <rect x="-4000" y={WORLD.floor} width="9600" height="5000" fill={view.light.floor} data-part="floor" />
   <rect x="200" y="200" width="1200" height="700" fill={`url(#${lamp})`} opacity={view.lamp} data-part="lamp" />
+  <!-- The night lamp of the character sheet: a paper shade over the table, from chapter 7 on. -->
+  <g data-part="shade" transform={shadeTransform(view.shade)} opacity={view.shade > 0.01 ? 1 : 0}>
+    <line x1="0" y1="-1600" x2="0" y2="-22" stroke={FILM.ink} stroke-width="3" />
+    <circle cy="22" r="24" fill={FILM.lamp} opacity="0.3" />
+    <g filter={`url(#${shadow})`}>
+      <path d="M-50 14 L-26 -22 H26 L50 14 Z" fill={FILM.rim} stroke={FILM.ink} stroke-width="4" stroke-linejoin="round" />
+    </g>
+    <circle cy="22" r="12" fill={FILM.lamp} stroke={FILM.ink} stroke-width="3" />
+  </g>
 
   <g data-part="wall" opacity={view.rooms > 0.01 ? 1 : 0} transform={wallTransform(view.rooms)}>
     <rect x={WORLD.centre - 11} y="420" width="22" height="228" rx="4" fill={FILM.rim} stroke={FILM.ink} stroke-width="4" filter={`url(#${shadow})`} />
@@ -149,6 +176,7 @@ const lamp = `${uid}-lamp`;
     </g>
   </g>
 
+  <Engine engine={view.engine} shadow={shadow} />
   <Board locale={locale} board={view.board} shadow={shadow} />
   <Signs locale={locale} signs={view.signs} shadow={shadow} />
   <Coins part="coins-you" x={youX} n={view.coins.you} shown={view.coins.shown} />

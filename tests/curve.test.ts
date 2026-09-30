@@ -1,14 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import raw from '../src/data/curve.json';
-import actEn from '../src/content/acts/en/05-finding.md?raw';
-import actEs from '../src/content/acts/es/05-finding.md?raw';
+import chapterEn from '../src/content/chapters/en/07-my-research.md?raw';
+import chapterEs from '../src/content/chapters/es/07-my-research.md?raw';
 import { CURVE_FIGURES } from '../src/content/figures';
 import en from '../src/i18n/en.json';
 import es from '../src/i18n/es.json';
 import { payoffLevels, pullWindow, readCurve } from '../src/lib/curve/curve';
+import { beliefWithoutSwitch, CURVE_VALUES, windowStep } from '../src/lib/curve/values';
+import { splitAtLock } from '../src/lib/film/captions';
+import { filledCaptions } from './prose';
 
 const curve = readCurve(raw);
-const acts = { en: actEn, es: actEs };
+/** Chapter 7's finding, the part of its captions after the lock mark, as the visitor reads it. */
+const findings = { en: filledCaptions(`<!-- lock -->${splitAtLock(chapterEn).locked}`), es: filledCaptions(`<!-- lock -->${splitAtLock(chapterEs).locked}`) };
 const numbers = (text: string) => new Set(text.replace(/\(\d{4}\)/g, ' ').match(/\d+/g) ?? []);
 
 /** A figure is stated in prose as a whole word: "15" must not be found inside "150". */
@@ -73,11 +77,31 @@ describe("the curve's figures, checked against src/data/curve.json", () => {
   });
 });
 
-describe('act 5 states those figures and no others', () => {
+describe("chapter 7's finding takes its numbers from the code, and they are those figures", () => {
+  it('fills its placeholders from the curve and from Vanberg’s cells, never by hand', () => {
+    expect(CURVE_VALUES).toEqual({
+      min: CURVE_FIGURES.axis.min,
+      max: CURVE_FIGURES.axis.max,
+      outof: 100,
+      peak: CURVE_FIGURES.peak,
+      from: CURVE_FIGURES.window.from,
+      to: CURVE_FIGURES.window.to,
+      step: CURVE_FIGURES.step,
+      low: CURVE_FIGURES.payoffs.low,
+      high: CURVE_FIGURES.payoffs.high,
+      belief: CURVE_FIGURES.beliefAfterPromise,
+    });
+    expect(windowStep(curve)).toBe(CURVE_FIGURES.step);
+    // What Vanberg's dictators believed their partner expected, without a switch (vanberg-second-order).
+    expect(beliefWithoutSwitch()).toBe(CURVE_FIGURES.beliefAfterPromise);
+  });
+});
+
+describe("chapter 7's finding states those figures and no others", () => {
   const allowed = new Set(['100', ...Object.values(CURVE_FIGURES).flatMap((v) => (typeof v === 'number' ? [v] : Object.values(v))).map(String)]);
 
-  it.each(['en', 'es'] as const)('%s prose', (locale) => {
-    const text = acts[locale];
+  it.each(['en', 'es'] as const)('%s captions', (locale) => {
+    const text = findings[locale];
     for (const value of [...Object.values(CURVE_FIGURES.axis), ...Object.values(CURVE_FIGURES.window), ...Object.values(CURVE_FIGURES.payoffs), CURVE_FIGURES.peak, CURVE_FIGURES.step]) {
       expect(states(text, value), `${value}`).toBe(true);
     }

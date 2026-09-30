@@ -5,7 +5,7 @@
  */
 import type { Face } from '../table/game';
 import { BOARD, COIN_STEP } from './board';
-import { WORLD, type Place } from './stage';
+import { ENGINE_AT, SHADE, WORLD, type Place } from './stage';
 import { VOICE_SCALE, type Point } from './voices';
 
 /** Where the bottom coin of each stack sits: just over the characters' heads. */
@@ -72,6 +72,38 @@ export const eyesTransform = (place: Place, kind: 'circle' | 'square' | 'triangl
 /** A voice floats at its place, drawn at the voices' scale, and pops up from a little smaller as it comes. */
 export const voiceTransform = ([x, y]: Point, shown: number): string =>
   `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${(VOICE_SCALE * (0.7 + 0.3 * shown)).toFixed(4)})`;
+
+/** The lamp's shade hangs over the table's centre, and comes down from above as night falls. */
+export const shadeTransform = (shade: number): string => `translate(${WORLD.centre} ${(SHADE.y - (1 - shade) * SHADE.rise).toFixed(2)})`;
+
+/** How far above the table chapter 7's engine waits before it comes down onto it. */
+const ENGINE_RISE = 560;
+
+export const engineTransform = (shown: number): string => `translate(${ENGINE_AT[0]} ${(ENGINE_AT[1] - (1 - shown) * ENGINE_RISE).toFixed(2)})`;
+
+/**
+ * The engine's two gears, in its own units: where each turns, its size and how fast it turns
+ * against the other, so their teeth mesh.
+ */
+export const GEARS = [
+  { at: [-36, 10], radius: 24, teeth: 9, speed: 1 },
+  { at: [2, 22], radius: 16, teeth: 6, speed: -1.5 },
+] as const satisfies readonly { at: Point; radius: number; teeth: number; speed: number }[];
+
+export const gearTransform = (gear: (typeof GEARS)[number], turn: number): string =>
+  `translate(${gear.at[0]} ${gear.at[1]}) rotate(${((turn * gear.speed) % 360).toFixed(2)})`;
+
+/** A gear's outline: `teeth` square teeth around a wheel of `radius`. */
+export function gearPath(radius: number, teeth: number): string {
+  const inner = radius - 5;
+  const points: string[] = [];
+  for (let i = 0; i < teeth * 4; i++) {
+    const turn = (i / (teeth * 4)) * 2 * Math.PI;
+    const r = i % 4 < 2 ? radius : inner;
+    points.push(`${(r * Math.cos(turn)).toFixed(2)} ${(r * Math.sin(turn)).toFixed(2)}`);
+  }
+  return `M${points.join(' L')} Z`;
+}
 
 /** The pips of a die face, on a 68-unit die: corners, middles and centre. */
 export const PIP_AT = {

@@ -1,5 +1,5 @@
 /**
- * Moment 3 of the table (act 5): a slider over the rows of the curve. Pure selection, formatting
+ * The curve's control (chapter 7; moment 3 of the previous version's table): a slider over the rows of the curve. Pure selection, formatting
  * and announcement; the client script in src/components/curve/ only wires them to the page. The
  * slider moves over row indices, so it only ever lands on values that exist in curve.json.
  */

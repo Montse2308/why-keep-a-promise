@@ -9,6 +9,8 @@ import { SUBPAGES } from './lib/routes';
  * src/content/chapters/{en,es}/<nn>-<id>.md, split into beats by `<!-- beat:<id> -->` marks
  * (src/lib/film/captions.ts). Short text only; dialogue and ticket labels are UI keys. A number is a
  * `{name}` placeholder the build fills from the code (src/lib/film/values.ts), never a figure.
+ * Chapter 7's finding follows a `<!-- lock -->` mark and renders only behind the lock (ADR 0026); its
+ * placeholders are the curve's (src/lib/curve/values.ts).
  */
 const chapters = defineCollection({
   loader: glob({ pattern: '{en,es}/*.md', base: './src/content/chapters' }),
@@ -33,7 +35,7 @@ const acts = defineCollection({
 /**
  * Subpage prose, one Markdown file per subpage and locale: src/content/subpages/{en,es}/<slug>.md.
  * Each deepens one act and only adds to it (docs/content-rules.md, rule (h)). HTML comments mark
- * where a component goes (`<!-- slot:<name> -->`) and where act 5's lock begins (`<!-- lock -->`),
+ * where a component goes (`<!-- slot:<name> -->`) and where the lock begins (`<!-- lock -->`),
  * see src/lib/subpages.ts.
  */
 const subpages = defineCollection({
@@ -46,9 +48,8 @@ const subpages = defineCollection({
 });
 
 /**
- * The home page's two sections that are not acts (ADR 0019): src/content/sections/{en,es}/<id>.md,
- * `research` and `about`. They use the subpages' markers: `<!-- slot:… -->` for a component and
- * `<!-- lock -->` for what renders only behind act 5's lock (docs/content-rules.md, rule (j)).
+ * The home page's section that is not an act (ADR 0019): src/content/sections/{en,es}/about.md. It
+ * uses the subpages' slot markers (`<!-- slot:… -->`) and has nothing behind the lock.
  */
 const sections = defineCollection({
   loader: glob({ pattern: '{en,es}/*.md', base: './src/content/sections' }),

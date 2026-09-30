@@ -41,7 +41,7 @@ export const PALETTE: Record<Theme, Record<ColorToken, string>> = {
     you: '#23508f', // ink blue
     other: '#a4432a', // terracotta
     promise: '#56636b', // slate: neutral, apart from both roles
-    // Act 5's curve (F3). Neutral names, so the always-shipped tokens.css says nothing about the chart.
+    // The curve on the notebook's paper (/finding). Neutral names, so the always-shipped tokens.css says nothing about the chart.
     'series-1': '#8e2f6e', // berry: personal guilt, the emphasised line
     'series-2': '#7d6400', // ochre: partner-specific commitment
     'series-3': '#008a7e', // teal: general guilt, the control, dotted

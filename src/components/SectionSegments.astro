@@ -1,14 +1,11 @@
 ---
 /**
  * A home section's prose, segment by segment: its HTML, and the component each slot names
- * (src/lib/subpages.ts). `research-links` leads to act 5 and /finding, and only ever sits behind the
- * lock; `author-links` carries the author's name and profiles from src/config.ts.
+ * (src/lib/subpages.ts): `author-links` carries the author's name and profiles from src/config.ts.
  */
 import { AUTHOR } from '../config';
 import { useTranslations, type Locale } from '../lib/i18n';
-import { href } from '../lib/routes';
 import type { Segment } from '../lib/subpages';
-import { fill } from '../lib/template';
 
 interface Props {
   segments: readonly Segment[];
@@ -17,7 +14,6 @@ interface Props {
 
 const { segments, locale } = Astro.props;
 const tr = useTranslations(locale);
-const findingTitle = tr('act.finding.title');
 const profiles = [
   { href: AUTHOR.github, label: tr('author.github') },
   ...(AUTHOR.linkedin ? [{ href: AUTHOR.linkedin, label: tr('author.linkedin') }] : []),
@@ -28,17 +24,6 @@ const profiles = [
   segments.map((segment) =>
     segment.kind === 'html' ? (
       <Fragment set:html={segment.html} />
-    ) : segment.name === 'research-links' ? (
-      <nav class="links" aria-label={tr('section.research.links')}>
-        <ul role="list">
-          <li>
-            <a href={href(locale, 'home', 'finding')}>{fill(tr('section.research.to-act'), { title: findingTitle })}</a>
-          </li>
-          <li>
-            <a href={href(locale, 'finding')}>{fill(tr('section.research.to-subpage'), { title: findingTitle })}</a>
-          </li>
-        </ul>
-      </nav>
     ) : segment.name === 'author-links' ? (
       <>
         <p class="author">{tr('author.name')}</p>

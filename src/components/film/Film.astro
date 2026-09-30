@@ -6,12 +6,13 @@
  * beats scroll over it, and ./film.ts moves the camera, the light and the cast with the native scroll.
  *
  * Only the chapters built so far render (src/lib/chapters.ts); the previous version of the home
- * follows.
+ * follows. Chapter 7's captions after its lock mark are the finding (ADR 0026): they go, as written,
+ * to the one component that may render them.
  */
 import { getCollection } from 'astro:content';
-import { BUILT, type ChapterId } from '../../lib/chapters';
+import { BUILT, LOCKED_BEATS, type ChapterId } from '../../lib/chapters';
 import { FILM } from '../../lib/design/film';
-import { splitBeats } from '../../lib/film/captions';
+import { splitAtLock, splitBeats } from '../../lib/film/captions';
 import { stageAt } from '../../lib/film/stage';
 import { BUILT_SPAN } from '../../lib/film/timeline';
 import { FILM_VALUES } from '../../lib/film/values';
@@ -20,6 +21,7 @@ import { useTranslations, type Locale } from '../../lib/i18n';
 import Arrival from './chapters/Arrival.astro';
 import Blackout from './chapters/Blackout.astro';
 import Fold from './chapters/Fold.astro';
+import MyResearch from './chapters/MyResearch.astro';
 import RealPeople from './chapters/RealPeople.astro';
 import Talk from './chapters/Talk.astro';
 import TwoRooms from './chapters/TwoRooms.astro';
@@ -35,13 +37,17 @@ const tr = useTranslations(locale);
 
 // Each built chapter's captions, from src/content/chapters/<locale>/, split by beat.
 const entries = await getCollection('chapters', (entry) => entry.id.startsWith(`${locale}/`));
-// Numbers in the captions are placeholders, filled from the code (src/lib/film/values.ts).
+// Numbers in the captions are placeholders, filled from the code (src/lib/film/values.ts). Only the
+// open part: the finding's placeholders are the curve's, and only its component fills them.
+const locked = new Set(LOCKED_BEATS.map((b) => b.id));
 const chapters = new Map(
   BUILT.map((c) => {
     const entry = entries.find((candidate) => candidate.data.chapter === c.id);
     if (!entry?.rendered) throw new Error(`No captions for chapter "${c.id}" in ${locale}`);
-    const beats = splitBeats(fill(entry.rendered.html, FILM_VALUES), c.beats.map((b) => b.id));
-    return [c.id, { title: entry.data.title, captions: beats }] as const;
+    const parts = splitAtLock(entry.rendered.html);
+    const open = c.beats.filter((b) => !(c.id === 'my-research' && locked.has(b.id)));
+    const beats = splitBeats(fill(parts.open, FILM_VALUES), open.map((b) => b.id));
+    return [c.id, { title: entry.data.title, captions: beats, locked: parts.locked }] as const;
   }),
 );
 const of = (id: ChapterId) => {
@@ -88,6 +94,7 @@ const of = (id: ChapterId) => {
     <TwoVoices locale={locale} {...of('two-voices')} />
     <Blackout locale={locale} {...of('blackout')} />
     <RealPeople locale={locale} {...of('real-people')} />
+    <MyResearch locale={locale} {...of('my-research')} />
   </div>
   <div class="film__fade" aria-hidden="true"></div>
 </section>

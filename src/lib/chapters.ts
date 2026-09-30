@@ -5,6 +5,7 @@
  * A built chapter is told in beats: its cards, in order, each with its own length of scroll. The
  * chapter's Markdown marks where each beat's caption starts (`<!-- beat:<id> -->`).
  */
+import { FINDING_BEATS } from './film/finding';
 
 export const CHAPTER_IDS = [
   'arrival',
@@ -56,9 +57,9 @@ const PHASE: Record<ChapterId, BuildPhase> = {
 /**
  * Beats of the built chapters, tuned against the video review of each phase. A beat holds its card
  * at the bottom of the screen for its length, less the gap before the card and the card's own
- * height, so a tall card needs a long beat. The light of ADR 0027 is set in shares of the whole
- * film, so the lengths keep each point of it in its chapter and the lamp exactly where chapter 7
- * starts (src/lib/design/film.test.ts, ./chapters.test.ts).
+ * height, so a tall card needs a long beat. The light of ADR 0027 is set in shares of the open film
+ * (`OPEN_CHAPTERS`), so the lengths keep each point of it in its chapter and the lamp exactly where
+ * chapter 7 starts (src/lib/design/film.test.ts, ./chapters.test.ts).
  */
 const BEATS: Partial<Record<ChapterId, readonly Beat[]>> = {
   arrival: [{ id: 'ask', screens: 3 }],
@@ -94,23 +95,51 @@ const BEATS: Partial<Record<ChapterId, readonly Beat[]>> = {
     { id: 'expected', screens: 1.1 },
     { id: 'conclusion', screens: 1.1 },
   ],
+  // The part of chapter 7 that shows in both states of the lock (rule (j)): the question, the engine
+  // and the sealed envelope with its stamp. The finding's beats follow it only with the lock open.
+  'my-research': [
+    { id: 'question', screens: 1.1 },
+    { id: 'engine', screens: 1.1 },
+    { id: 'sealed', screens: 1.2 },
+  ],
 };
 
-/** Screens of the chapters still to be built: a placeholder their phase replaces with beats. */
+/**
+ * Screens of the chapters still to be built: a placeholder their phase replaces with beats. Chapter
+ * 8's keeps the open film at 36.75 screens, so the lamp still comes on where chapter 7 starts.
+ */
 const PLANNED_SCREENS: Partial<Record<ChapterId, number>> = {
-  'my-research': 4.35,
-  closing: 3,
+  closing: 3.95,
 };
 
 /** Rounded to a thousandth, so 1.2 + 1.4 + 1.5 + 1.4 is exactly 5.5. */
 const sum = (beats: readonly Beat[]): number => Math.round(beats.reduce((total, b) => total + b.screens, 0) * 1000) / 1000;
 
-export const CHAPTERS: readonly Chapter[] = CHAPTER_IDS.map((id, number) => {
-  const beats = BEATS[id] ?? [];
-  const screens = beats.length > 0 ? sum(beats) : PLANNED_SCREENS[id];
-  if (screens === undefined) throw new Error(`Chapter "${id}" has neither beats nor planned screens`);
-  return { id, number, screens, phase: PHASE[id], beats };
-});
+/** The nine chapters, with chapter 7's finding (ADR 0026) after its open beats. */
+function chaptersWith(finding: readonly Beat[]): readonly Chapter[] {
+  return CHAPTER_IDS.map((id, number) => {
+    const beats = id === 'my-research' ? [...(BEATS[id] ?? []), ...finding] : (BEATS[id] ?? []);
+    const screens = beats.length > 0 ? sum(beats) : PLANNED_SCREENS[id];
+    if (screens === undefined) throw new Error(`Chapter "${id}" has neither beats nor planned screens`);
+    return { id, number, screens, phase: PHASE[id], beats };
+  });
+}
+
+/**
+ * The film as this build shows it. With the lock open, chapter 7 goes on past the sealed envelope
+ * with the finding's beats; a locked build resolves ./film/finding.ts to an empty list, so its film
+ * ends chapter 7 at the envelope (ADR 0026).
+ */
+export const CHAPTERS: readonly Chapter[] = chaptersWith(FINDING_BEATS);
+
+/**
+ * The film without the finding: the one a locked build shows, and the clock of the day's light in
+ * both states, so opening the lock changes the light nowhere (src/lib/film/timeline.ts).
+ */
+export const OPEN_CHAPTERS: readonly Chapter[] = chaptersWith([]);
+
+/** The finding's beats in this build: chapter 7's last ones, or none while the lock is closed. */
+export const LOCKED_BEATS: readonly Beat[] = FINDING_BEATS;
 
 export function chapter(id: ChapterId): Chapter {
   const found = CHAPTERS.find((candidate) => candidate.id === id);

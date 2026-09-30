@@ -2,7 +2,8 @@
  * The film's script (ADR 0025): turns the storyboard into the film. It reads the native scroll,
  * never captures it, and applies what src/lib/film/stage.ts says the stage shows at that point: the
  * camera, the day's light, the cast and their moods, the rooms, the board, the coins, the die, the
- * golden thread, the two voices, the blackout and chapter 6's signs. It also handles the chapters'
+ * golden thread, the two voices, the blackout, chapter 6's signs and chapter 7's night: the stars,
+ * the lamp, the engine and the envelope. It also handles the chapters'
  * choices, which are plain buttons, sliders and, on the deck, a swipe that stands for a button:
  * every line a choice leads to was resolved at build time, so the script only shows it. Nothing is
  * stored or sent (ADR 0023).
@@ -17,9 +18,13 @@ import {
   bulbTransform,
   coinCountY,
   coinsTransform,
+  engineTransform,
   eyesTransform,
+  GEARS,
+  gearTransform,
   PIPS,
   placeTransform,
+  shadeTransform,
   shadowTransform,
   voiceTransform,
   wallTransform,
@@ -140,6 +145,10 @@ export function start(): void {
     globeOther: part('globe-other'),
     globePartner: part('globe-partner'),
     signs: part('signs'),
+    stars: part('stars'),
+    shade: part('shade'),
+    engine: part('engine'),
+    gears: GEARS.map((_, i) => part(`gear-${i}`)),
   };
   /** Each of chapter 6's signs: the sign, its figure, its question mark and the expectation under it. */
   const signParts = (['same', 'switched'] as const).map((id) => ({
@@ -155,6 +164,7 @@ export function start(): void {
   const spool = film.querySelector<SVGElement>('[data-spool]');
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
   const title = film.querySelector<HTMLElement>('[data-title]');
+  const envelope = film.querySelector<HTMLElement>('[data-envelope]');
 
   let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null, guesses: {} };
   let drawStart = 0;
@@ -326,6 +336,15 @@ export function start(): void {
         set(expected, 'opacity', signs.expected.toFixed(3));
       }
     }
+
+    // Chapter 7: the night's stars, the lamp coming down, the engine and its gears, the envelope.
+    set(parts.stars, 'opacity', view.stars.toFixed(3));
+    set(parts.shade, 'transform', shadeTransform(view.shade));
+    set(parts.shade, 'opacity', view.shade > 0.01 ? '1' : '0');
+    set(parts.engine, 'transform', engineTransform(view.engine.shown));
+    set(parts.engine, 'opacity', view.engine.shown > 0.01 ? '1' : '0');
+    if (view.engine.shown > 0) GEARS.forEach((gear, i) => set(parts.gears[i], 'transform', gearTransform(gear, view.engine.turn)));
+    envelope?.style.setProperty('--opened', view.envelope.toFixed(3));
 
     title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
     if (visible) request();

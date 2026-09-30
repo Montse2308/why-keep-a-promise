@@ -24,7 +24,7 @@ export const ACTS: readonly Act[] = [
   { id: 'dilemma', titleKey: 'act.dilemma.title', deeper: 'dilemma', contentPhase: 'F2', film: 'two-rooms' },
   { id: 'two-reasons', titleKey: 'act.two-reasons.title', deeper: null, contentPhase: 'F2', film: 'two-voices' },
   { id: 'vanberg', titleKey: 'act.vanberg.title', deeper: 'vanberg', contentPhase: 'F2', film: 'real-people' },
-  { id: 'finding', titleKey: 'act.finding.title', deeper: 'finding', contentPhase: 'F3', film: null },
+  { id: 'finding', titleKey: 'act.finding.title', deeper: 'finding', contentPhase: 'F3', film: 'my-research' },
   { id: 'how-its-built', titleKey: 'act.how-its-built.title', deeper: 'how-its-built', contentPhase: 'F2', film: null },
 ];
 

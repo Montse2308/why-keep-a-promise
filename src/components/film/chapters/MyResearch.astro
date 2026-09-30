@@ -1,0 +1,178 @@
+---
+/**
+ * Chapter 7, this is where I come in (ADR 0021, rule (j)). In both states of the lock it says only
+ * this: the page's question, as the question of Montse's research, in her own voice; that she built
+ * a simulation engine in TypeScript; and the envelope, sealed with the status stamp (rule (b)). The
+ * envelope is the card itself, and it says nothing but the status sentence: no shape, no axes, no
+ * gap (ADR 0026). With the lock open it opens, and the finding follows (./Finding.astro).
+ */
+import { MANUSCRIPT_STATUS } from '../../../config';
+import { beat, chapter, LOCKED_BEATS } from '../../../lib/chapters';
+import { FILM } from '../../../lib/design/film';
+import { KEY_POSE, stageAt } from '../../../lib/film/stage';
+import { useTranslations, type Locale } from '../../../lib/i18n';
+import { findingUnlocked, statusKey } from '../../../lib/lock';
+import { roundOf } from '../../../lib/pd/round';
+import { outcomeOf } from '../../../lib/table/decision';
+import { fill } from '../../../lib/template';
+import Beat from '../Beat.astro';
+import Chapter from '../Chapter.astro';
+import Finding from './Finding.astro';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  /** The open beats' captions, placeholders filled. */
+  captions: ReadonlyMap<string, string>;
+  /** The finding's captions, the part after the lock mark, as written: only ./Finding.astro reads them. */
+  locked: string;
+}
+
+const { locale, title, captions, locked } = Astro.props;
+const tr = useTranslations(locale);
+const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
+// The film's timeline and this chapter must agree on the lock (astro.config.mjs stubs both).
+if (unlocked !== LOCKED_BEATS.length > 0) throw new Error('Chapter 7 and the film’s timeline disagree on the lock');
+const status = tr(statusKey(MANUSCRIPT_STATUS));
+const question = beat('my-research', 'question');
+const engine = beat('my-research', 'engine');
+const sealed = beat('my-research', 'sealed');
+
+// The storyboard's still frame: the engine on the table at nightfall, under the lamp.
+const still = stageAt(
+  KEY_POSE['my-research'] ?? 0,
+  { promised: true, round: roundOf('cooperate'), chat: 'promise', decision: { phase: 'outcome', ...outcomeOf('roll', 4) } },
+  false,
+  true,
+);
+// A wax seal: a gold disc with a scalloped edge, the thread wound in its middle (as the scroll's).
+const edge = (r: number, turn: number) => `${(r * Math.cos(turn * 2 * Math.PI)).toFixed(1)} ${(r * Math.sin(turn * 2 * Math.PI)).toFixed(1)}`;
+const seal = `M${edge(16, 0)} ${Array.from({ length: 10 }, (_, i) => `Q${edge(23, (i + 0.5) / 10)} ${edge(16, (i + 1) / 10)}`).join(' ')} Z`;
+---
+
+<Chapter locale={locale} id="my-research" labelledby="my-research-title" still={still} stillLabel={tr('film.my-research.still')}>
+  <Beat id={question.id} screens={question.screens} caption={captions.get(question.id)}>
+    <Fragment slot="top">
+      <h2 id="my-research-title" class="card__chapter">
+        <span>{fill(tr('film.chapter'), { n: chapter('my-research').number })}</span>
+        <span aria-hidden="true">·</span>
+        <span>{title}</span>
+      </h2>
+      <p class="research__question">{tr('site.title')}</p>
+      <p class="research__me">{fill(tr('film.my-research.me'), { name: tr('author.name') })}</p>
+    </Fragment>
+  </Beat>
+
+  <Beat id={engine.id} screens={engine.screens} caption={captions.get(engine.id)} />
+
+  <Beat id={sealed.id} screens={sealed.screens} caption={captions.get(sealed.id)} cardClass="card--envelope">
+    <div class="envelope" data-envelope data-open={unlocked ? '' : undefined}>
+      <svg class="envelope__back" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M2 98 L100 46 L198 98" fill="none" stroke={FILM['card-muted']} stroke-width="1.5" vector-effect="non-scaling-stroke" opacity="0.45" />
+      </svg>
+      <div class="envelope__flap" aria-hidden="true">
+        <svg class="envelope__fold" viewBox="0 0 200 80" preserveAspectRatio="none">
+          <path d="M0 0 L100 76 L200 0 Z" fill={FILM.rim} stroke={FILM.ink} stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+        </svg>
+        <svg class="envelope__seal" viewBox="-26 -26 52 52">
+          <path d={seal} fill={FILM.thread} stroke={FILM['thread-edge']} stroke-width="3" stroke-linejoin="round" />
+          <circle r="9" fill="none" stroke={FILM['thread-edge']} stroke-width="2.5" />
+          <circle r="3.5" fill={FILM['thread-edge']} />
+        </svg>
+      </div>
+      <p class="envelope__stamp">{status}</p>
+    </div>
+  </Beat>
+
+  {unlocked && <Finding locale={locale} captions={locked} />}
+</Chapter>
+
+<style>
+  .research__question {
+    font-family: var(--font-display, Georgia, serif);
+    font-size: clamp(1.45rem, 4vw, 2.1rem);
+    font-style: italic;
+    font-weight: 900;
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .research__me {
+    font-weight: 800;
+  }
+
+  /*
+   * The envelope (ADR 0026): the card is drawn as the back of an envelope, its flap sealed with the
+   * golden thread, and the status sentence stamped on it in ink. With the lock open the flap turns up
+   * (`--opened`, from the film's script; open at once without it).
+   */
+  /* Specific enough to win over the beat's own card padding. */
+  :global(.film .card.card--envelope) {
+    position: relative;
+    padding-top: calc(var(--space-6) + 5.5rem);
+    background: linear-gradient(var(--film-card), #fbf3e3);
+  }
+
+  .envelope {
+    display: contents;
+  }
+
+  .envelope[data-open] {
+    --opened: 1;
+  }
+
+  .envelope__back {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .envelope__flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5.5rem;
+    transform-origin: top;
+    transform: perspective(40rem) rotateX(calc(var(--opened, 0) * 178deg));
+    filter: drop-shadow(0 4px 5px rgb(40 30 60 / 0.18));
+  }
+
+  .envelope__fold {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .envelope__seal {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 3.25rem;
+    height: 3.25rem;
+    translate: -50% -62%;
+  }
+
+  .envelope__stamp {
+    justify-self: center;
+    max-width: 22ch;
+    padding: var(--space-2) var(--space-4);
+    border: 4px double var(--film-ink);
+    border-radius: 6px;
+    font-family: var(--font-display, Georgia, serif);
+    font-size: clamp(1.05rem, 3.4vw, 1.35rem);
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: 0.06em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--film-ink);
+    /* Stamped over the envelope's folds, which pass behind it. */
+    background: var(--film-card);
+    transform: rotate(-3deg);
+  }
+</style>

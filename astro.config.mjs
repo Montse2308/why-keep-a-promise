@@ -31,24 +31,38 @@ function variants(file, weight, styles, axes = 'standard') {
 }
 
 /**
- * Act 5's lock at build time (ADR 0015). While it is locked, the curve component resolves to an
- * empty stub, so its markup, script and data are not in the build at all; rendering it
+ * What the lock keeps out of a build while it is closed (ADR 0026), each with the stub it resolves
+ * to: the curve and chapter 7's finding render nothing, and the film's timeline knows no beats past
+ * the sealed envelope. Paths from the project's root.
+ */
+const LOCKED_MODULES = {
+  '/src/components/curve/Curve.astro': '/src/components/curve/Locked.astro',
+  '/src/components/film/chapters/Finding.astro': '/src/components/curve/Locked.astro',
+  '/src/lib/film/finding.ts': '/src/lib/film/finding.locked.ts',
+};
+
+/**
+ * The lock at build time (ADR 0026). While it is closed, every module of `LOCKED_MODULES` resolves
+ * to its stub, so its markup, script and data are not in the build at all; rendering a component
  * conditionally is not enough, because Astro bundles the script of every imported component. The
  * dev server is always unlocked, so the plugin only applies to builds.
  * @returns {import('vite').Plugin}
  */
 function lockFinding() {
-  const curve = '/src/components/curve/Curve.astro';
+  const names = new Set(Object.keys(LOCKED_MODULES).map((path) => path.split('/').at(-1)?.replace(/\.ts$/, '')));
   return {
     name: 'lock-finding',
     apply: 'build',
     enforce: 'pre',
     async resolveId(source, importer, options) {
-      if (findingUnlocked(MANUSCRIPT_STATUS, false) || !source.endsWith('/Curve.astro')) return null;
+      if (findingUnlocked(MANUSCRIPT_STATUS, false) || !names.has(source.split('/').at(-1)?.replace(/\.ts$/, ''))) return null;
       const resolved = await this.resolve(source, importer, { ...options, skipSelf: true });
-      if (!resolved?.id.replace(/\\/g, '/').endsWith(curve)) return null;
-      // The stub sits next to the component, so it resolves the same way.
-      return this.resolve(source.replace(/Curve\.astro$/, 'Locked.astro'), importer, { ...options, skipSelf: true });
+      const id = resolved?.id.replace(/\\/g, '/');
+      const locked = Object.keys(LOCKED_MODULES).find((path) => id?.endsWith(path));
+      if (!id || !locked) return null;
+      // The stub sits under the same root as the module it stands in for.
+      const root = id.slice(0, id.length - locked.length);
+      return this.resolve(`${root}${LOCKED_MODULES[/** @type {keyof typeof LOCKED_MODULES} */ (locked)]}`, importer, { ...options, skipSelf: true });
     },
   };
 }

@@ -1,7 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { BUILT, CHAPTERS } from '../chapters';
-import { splitBeats } from './captions';
-import { at, beatAt, beatRange, BEATS, BUILT_SCREENS, BUILT_SPAN, chapterStart, scrollPosition, TOTAL_SCREENS } from './timeline';
+import { BUILT, chapter, CHAPTERS, LOCKED_BEATS, OPEN_CHAPTERS } from '../chapters';
+import { LIGHT_POINTS } from '../design/film';
+import { splitAtLock, splitBeats } from './captions';
+import { totalScreens } from './spans';
+import {
+  at,
+  beatAt,
+  beatRange,
+  BEATS,
+  BUILT_SCREENS,
+  BUILT_SPAN,
+  chapterStart,
+  lightAt,
+  LOCKED_STRETCH,
+  OPEN_SCREENS,
+  scrollPosition,
+  TOTAL_SCREENS,
+} from './timeline';
 import { spanOf } from './stage';
 
 describe('the timeline, in screens', () => {
@@ -56,5 +71,39 @@ describe('captions split by beat', () => {
     expect(() => splitBeats(html, ['one'])).toThrow();
     expect(() => splitBeats(`<p>Stray.</p>${html}`, ['one', 'two'])).toThrow();
     expect(splitBeats('<!-- beat:only -->', ['only']).get('only')).toBe('');
+  });
+});
+
+describe('the day’s light keeps the open film’s clock (ADR 0026, ADR 0027)', () => {
+  const finding = totalScreens(LOCKED_BEATS);
+
+  it('sets chapter 7’s finding at the end of the chapter, right after the sealed envelope', () => {
+    expect(LOCKED_STRETCH.from).toBeCloseTo(beatRange('my-research', 'sealed').to, 9);
+    expect(LOCKED_STRETCH.to).toBeCloseTo(chapterStart('my-research') + chapter('my-research').screens, 9);
+    expect(LOCKED_STRETCH.to - LOCKED_STRETCH.from).toBeCloseTo(finding, 9);
+    expect(OPEN_SCREENS).toBeCloseTo(totalScreens(OPEN_CHAPTERS), 9);
+    expect(TOTAL_SCREENS).toBeCloseTo(OPEN_SCREENS + finding, 9);
+  });
+
+  it('lights every point outside the finding as the open film would, and holds the light inside it', () => {
+    for (const screens of [0, 3, 12.5, 29.4, LOCKED_STRETCH.from]) expect(lightAt(screens)).toBeCloseTo(screens / OPEN_SCREENS, 12);
+    for (const share of [0.2, 0.5, 0.9]) {
+      const inside = LOCKED_STRETCH.from + share * (LOCKED_STRETCH.to - LOCKED_STRETCH.from);
+      expect(lightAt(inside)).toBeCloseTo(LOCKED_STRETCH.from / OPEN_SCREENS, 12);
+    }
+    expect(lightAt(LOCKED_STRETCH.to + 1)).toBeCloseTo((LOCKED_STRETCH.from + 1) / OPEN_SCREENS, 12);
+    expect(lightAt(TOTAL_SCREENS)).toBeCloseTo(1, 12);
+  });
+
+  it('brings the finding in after nightfall, the day’s last point, so the light it holds is the night’s', () => {
+    expect(lightAt(LOCKED_STRETCH.from)).toBeGreaterThan(LIGHT_POINTS.at(-1)?.at ?? 1);
+  });
+});
+
+describe('captions split at the lock (ADR 0026)', () => {
+  it('keeps everything open without a lock mark, and splits at the one mark there is', () => {
+    expect(splitAtLock('<p>All open.</p>')).toEqual({ open: '<p>All open.</p>', locked: '' });
+    expect(splitAtLock('<p>Open.</p><!-- lock --><p>Locked.</p>')).toEqual({ open: '<p>Open.</p>', locked: '<p>Locked.</p>' });
+    expect(() => splitAtLock('<!-- lock --><!--lock-->')).toThrow();
   });
 });
