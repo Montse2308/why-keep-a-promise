@@ -11,12 +11,14 @@ import { CHOICES, DIE_FACES, PAYOFFS as TABLE } from '../table/game';
 import { fill } from '../template';
 import { BET_LABEL, BETS } from './bet';
 import { DECK } from './deck';
-import { askLine, betLine, conclusionLine, decisionLine, deckLine, pickLine, roundLine, tallyLine } from './lines';
+import { askLine, betLine, conclusionLine, decisionLine, deckLine, nowLine, pageLine, pickLine, roundLine, tallyLine } from './lines';
 import { FILM_VALUES } from './values';
 
 const dictionaries = { en, es } as const;
 const tr = (locale: keyof typeof dictionaries) => (key: UiKey) => dictionaries[locale][key];
 const numbers = (text: string) => (text.match(/\d+/g) ?? []).map(Number);
+/** Words that would tell the visitor which reason moves them. */
+const REASONS = { en: /expect|guilt|\bword\b|reason/i, es: /espera|culpa|palabra|raz[oó]n/i } as const;
 
 describe('the lines of chapter 1, from the pure modules (rule (k))', () => {
   it.each(['en', 'es'] as const)('%s: the round says what each player got', (locale) => {
@@ -115,8 +117,6 @@ describe('the lines of chapter 5 (rule (f), rule (k), ADR 0023)', () => {
   const same = DECK.find((card) => card.partner === 'same');
   const switched = DECK.find((card) => card.partner === 'switched');
   if (!same || !switched) throw new Error('The deck needs both cases');
-  /** Words that would tell the visitor which reason moves them. */
-  const REASONS = { en: /expect|guilt|\bword\b|reason/i, es: /espera|culpa|palabra|raz[oó]n/i } as const;
 
   it.each(['en', 'es'] as const)('%s: a card’s line says what happened, and keeps or breaks a promise only with the one promised', (locale) => {
     const lines = CHOICES.flatMap((choice) => [deckLine(tr(locale), same, choice), deckLine(tr(locale), switched, choice)]);
@@ -140,6 +140,24 @@ describe('the lines of chapter 5 (rule (f), rule (k), ADR 0023)', () => {
       tallyLine(tr(locale), { kept: 0, made: 3 }),
       ...BETS.map((bet) => betLine(tr(locale), bet)),
     ];
+    for (const line of lines) expect(line).not.toMatch(REASONS[locale]);
+  });
+});
+
+describe('the lines of chapter 8 (ADR 0023)', () => {
+  it.each(['en', 'es'] as const)('%s: an answer to the other says what the visitor would do, and pays nothing', (locale) => {
+    expect(numbers(nowLine(tr(locale), 'roll'))).toEqual([]);
+    expect(numbers(nowLine(tr(locale), 'dont'))).toEqual([TABLE.dont.you]);
+    expect(nowLine(tr(locale), 'roll')).not.toBe(nowLine(tr(locale), 'dont'));
+  });
+
+  it.each(['en', 'es'] as const)('%s: the page takes either answer about its own promise, with no figure', (locale) => {
+    expect(pageLine(tr(locale), true)).not.toBe(pageLine(tr(locale), false));
+    for (const kept of [true, false]) expect(numbers(pageLine(tr(locale), kept))).toEqual([]);
+  });
+
+  it.each(['en', 'es'] as const)('%s: no line after an answer names a reason, or tells the visitor what moves them', (locale) => {
+    const lines = [...CHOICES.map((choice) => nowLine(tr(locale), choice)), pageLine(tr(locale), true), pageLine(tr(locale), false)];
     for (const line of lines) expect(line).not.toMatch(REASONS[locale]);
   });
 });

@@ -38,8 +38,9 @@ mueve una cifra a un capítulo, en el mismo commit.
   espera, y sugiere una preferencia por cumplir la palabra en sí.
   Usada en: capítulo 6, «La gente real» (`src/content/chapters/{en,es}/06-real-people.md`).
 - **Uso:** el juego y sus pagos (capítulos 3 y 5), el diseño del juego de cambio de pareja
-  (capítulos 4 y 5), creencias de los receptores (capítulos 5 y 6) y tasas de Roll (capítulo 6,
-  `/vanberg`).
+  (capítulos 4 y 5), creencias de los receptores (capítulos 5 y 6), tasas de Roll (capítulo 6,
+  `/vanberg`) y la cita de los créditos (capítulo 8, «Basada en el experimento de Vanberg (2008)»).
+  El capítulo 8 repite los pagos de la decisión en sus boletos, sin cifras nuevas.
 - **Verificada:** sí. Las cifras, con los suplementos; la ficha del artículo, en EconPapers.
 - PENDIENTE(pdf): cotejar contra las Tablas I–III impresas y agregar su página cuando esté el PDF
   del artículo. Es lo único pendiente de esta referencia.
@@ -51,7 +52,9 @@ mueve una cifra a un capítulo, en el mismo commit.
   Fuente: Suppl. A, p. 2, tabla "Payoffs From the Decision". **Verificada (suplementos).**
   Usada en: capítulo 3 (`src/lib/table/game.ts`, `PAYOFFS`, a través de `src/lib/film/values.ts`:
   los boletos, las monedas, el resultado de cada cara del dado y la tabla del storyboard); capítulo 5
-  (los boletos de cada carta del mazo, `src/lib/film/deck.ts`).
+  (los boletos de cada carta del mazo, `src/lib/film/deck.ts`); capítulo 8 (los boletos de lo que
+  el visitante haría ahora, `src/components/film/chapters/Closing.astro`, y su línea, con
+  `FILM_VALUES.dont`, en `src/lib/film/lines.ts`).
 - Cifra: Don't Roll: A recibe 14 y B recibe 0.
   Clave: `vanberg-payoffs`.
   Fuente: Suppl. A, p. 2, tabla "Payoffs From the Decision". **Verificada (suplementos).**

@@ -4,10 +4,12 @@ Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, 
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
 **Fase activa:** P4 (capítulos 7 y 8, y el candado). P0 a P3 cerradas: Montse las revisó y las
-mergeó (PR #1 a PR #4). En esta sesión, solo el capítulo 7, sin el video final.
+mergeó (PR #1 a PR #4). El capítulo 7 de P4, mergeado (PR #5). En esta sesión, solo el capítulo 8,
+sin el video (así lo pidió).
 
-**Estado del código:** la película cuenta los capítulos 0 a 7; debajo sigue la versión anterior (el
-acto 6 y «Quién es»). La película la reemplaza por capítulos (ADR 0021).
+**Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
+capítulo 8; debajo sigue la versión anterior (el acto 6 y «Quién es»). La película la reemplaza por
+capítulos (ADR 0021).
 
 ## P0 · Documentos
 
@@ -205,10 +207,47 @@ acto 6 y «Quién es»). La película la reemplaza por capítulos (ADR 0021).
 - [x] Capturas para Montse, sin video (así lo pidió): 1440 y 360 px, EN y ES, con el candado cerrado
       (el build) y abierto (el servidor de desarrollo), con movimiento reducido y sin JS. En
       `scratch/p4-review/` (local, no se versiona).
-- [ ] Capítulo 8, «Cierre»: la promesa cobrada, «¿Cumplí?» y los créditos.
+- [x] Capítulo 8, «Cierre», la promesa cobrada: de vuelta en la primera mesa, bajo la lámpara, el
+      motorcito sube y el dado vuelve a flotar como en el capítulo 0. El otro pregunta una última
+      vez, según lo que el visitante contestó al principio (prometió, no prometió o no contestó), y
+      el visitante contesta con dos boletos, «Lo tiraría» o «Me quedaría los 14», con sus pagos de
+      `PAYOFFS`. Es solo una respuesta (ADR 0023): no paga nada, no cambia el hilo, que se queda como
+      lo dejó el capítulo 3, y nadie llora; la línea que sigue dice qué haría y cómo lo toma el otro,
+      nunca por qué (`nowLine` en `src/lib/film/lines.ts`). La leyenda deja el porqué al visitante.
+- [x] Capítulo 8, «¿Cumplí?»: la página pregunta si cumplió la promesa del capítulo 0 (valer los
+      próximos minutos), con dos boletos, «Cumpliste» o «No del todo»; los dos esperan un poco
+      nerviosos y después se alegran o se calman. En pantalla dice que las respuestas no se guardan
+      ni se envían.
+- [x] Capítulo 8, los créditos: una tarjeta que sube con el scroll como los créditos de una película
+      (`roll` en `Beat.astro`), con el título, la autora (`author.name`, sin perfiles), el reparto
+      (cada forma con su papel, `src/lib/film/credits.ts`), «Basada en el experimento de Vanberg
+      (2008)», la tipografía, los enlaces al cuaderno (a `/finding` solo con el candado abierto,
+      `creditPages`) y «Fin». Durante los créditos el triángulo vuelve a la otra mesa para saludar,
+      y al final la película se queda quieta una pantalla en ese último cuadro (`film__hold` en
+      `Film.astro`) antes de seguir con la página.
+- [x] Largo: los tramos del capítulo 8 suman 3.95 pantallas (1.3, 1.1 y 1.55), así que la película
+      abierta sigue en 36.75 y la lámpara justo donde empieza el capítulo 7 (test). Los cortes con
+      movimiento reducido salen ahora de la lista de tramos, en el orden de la película, así que
+      caen después del hallazgo sin nombrarlo.
+- [x] Tests: los tramos del capítulo 8; la vuelta a la primera mesa, la noche hasta el final, las
+      caras de cada respuesta, el hilo que no cambia, el saludo del triángulo (la nube sigue mirando
+      al cuadrado), todo a la vista en cuatro pantallas y los cortes (`stage.test.ts`); ninguna línea
+      tras una respuesta nombra una razón ni paga nada (`lines.test.ts`); los créditos, su reparto y
+      sus enlaces según el candado (`credits.test.ts`); la pregunta de la página, las tres preguntas
+      del otro, la cita y la autora solo por su clave (`tests/film-captions.test.ts`); el capítulo 8
+      entre las fuentes abiertas del candado (`tests/verify-dist.test.ts`).
+- [x] Capturas para Montse del capítulo 8, sin video (así lo pidió): 1440 px en inglés y 360 px en
+      español, con el candado cerrado (el build) y abierto (el servidor de desarrollo), con
+      movimiento reducido y sin JS, y 320 px sin scroll horizontal. En `scratch/p4-review/ch8/`
+      (local, no se versiona).
 - [ ] Sale el acto 6 y «Quién es» del home.
 - [ ] La película entera en un video.
 - [ ] Revisión de P4 por Montse.
+- Transición, hasta que salgan el acto 6 y «Quién es»: debajo de «Fin» todavía siguen los dos, con
+  la versión anterior de su texto.
+- Transición, hasta P5: los créditos enlazan a las páginas del cuaderno que ya existen (`/dilemma`,
+  `/vanberg`, `/how-its-built` y, con el candado abierto, `/finding`), con los títulos de los actos.
+  `/sources` y `/about` se suman con el panel (`TODO(P5)` en `Closing.astro`).
 - Transición, hasta P5: la frase de estado sale una vez en el home, en el sello del capítulo 7
   (`STATUS_ON_HOME = 1`). La segunda es la entrada «El hallazgo» del panel del cuaderno, que el
   ADR 0024 construye en P5; el criterio de salida de P4 pide dos.

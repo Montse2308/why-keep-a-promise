@@ -90,3 +90,16 @@ export function tallyLine(tr: Strings, tally: { readonly kept: number; readonly 
 export function betLine(tr: Strings, bet: Bet): string {
   return fill(tr('film.bet.out'), { bet: tr(BET_LABEL[bet]) });
 }
+
+/**
+ * What the visitor says they would do now, when the other asks one last time (chapter 8), and how
+ * the other takes it. It is an answer, not a decision: nothing is paid, and nothing says why.
+ */
+export function nowLine(tr: Strings, choice: Choice): string {
+  return fill(tr(choice === 'roll' ? 'film.closing.out.roll' : 'film.closing.out.dont'), FILM_VALUES);
+}
+
+/** How the page takes the visitor's answer about its own promise (chapter 8). */
+export function pageLine(tr: Strings, kept: boolean): string {
+  return tr(kept ? 'film.closing.page.kept.out' : 'film.closing.page.not.out');
+}

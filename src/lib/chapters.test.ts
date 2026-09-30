@@ -70,6 +70,14 @@ describe('beats (the cards of a chapter)', () => {
   });
 });
 
+describe('chapter 8, closing (ADR 0021)', () => {
+  it('asks one last time, asks about the page’s own promise and rolls the credits, the film’s last beats', () => {
+    expect(chapter('closing').beats.map((b) => b.id)).toEqual(['collect', 'asked', 'credits']);
+    expect(CHAPTERS.at(-1)?.id).toBe('closing');
+    expect(BUILT).toEqual(CHAPTERS);
+  });
+});
+
 describe('chapter 7 and its lock (ADR 0026)', () => {
   const seventh = chapter('my-research');
   const open = OPEN_CHAPTERS.find((c) => c.id === 'my-research');

@@ -2,11 +2,11 @@
  * The film's script (ADR 0025): turns the storyboard into the film. It reads the native scroll,
  * never captures it, and applies what src/lib/film/stage.ts says the stage shows at that point: the
  * camera, the day's light, the cast and their moods, the rooms, the board, the coins, the die, the
- * golden thread, the two voices, the blackout, chapter 6's signs and chapter 7's night: the stars,
- * the lamp, the engine and the envelope. It also handles the chapters'
- * choices, which are plain buttons, sliders and, on the deck, a swipe that stands for a button:
- * every line a choice leads to was resolved at build time, so the script only shows it. Nothing is
- * stored or sent (ADR 0023).
+ * golden thread, the two voices, the blackout, chapter 6's signs, chapter 7's night (the stars,
+ * the lamp, the engine and the envelope) and chapter 8's return to the first table. It also handles
+ * the chapters' choices, which are plain buttons, sliders and, on the deck, a swipe that stands for
+ * a button: every line a choice leads to was resolved at build time, so the script only shows it.
+ * Nothing is stored or sent (ADR 0023).
  */
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
@@ -166,7 +166,7 @@ export function start(): void {
   const title = film.querySelector<HTMLElement>('[data-title]');
   const envelope = film.querySelector<HTMLElement>('[data-envelope]');
 
-  let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null, guesses: {} };
+  let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null, guesses: {}, now: null, pageKept: null };
   let drawStart = 0;
   let rollStart = 0;
   let countStart = 0;
@@ -378,12 +378,13 @@ export function start(): void {
     if (spoolLabel) spoolLabel.textContent = label ?? '';
   }
 
-  // Chapter 3 reminds the visitor what they answered in chapter 0.
-  const promiseLine = film.querySelector<HTMLElement>('[data-promise-line]');
+  // Chapter 3 reminds the visitor what they answered in chapter 0, and chapter 8's other asks by it.
+  const promiseLines = [...film.querySelectorAll<HTMLElement>('[data-promise-line]')];
   const remind = (): void => {
-    if (!promiseLine) return;
-    const said = state.promised === true ? promiseLine.dataset.yes : state.promised === false ? promiseLine.dataset.no : promiseLine.dataset.none;
-    promiseLine.textContent = said ?? '';
+    for (const line of promiseLines) {
+      const said = state.promised === true ? line.dataset.yes : state.promised === false ? line.dataset.no : line.dataset.none;
+      line.textContent = said ?? '';
+    }
   };
   remind();
 
@@ -638,6 +639,34 @@ export function start(): void {
       if (range) range.disabled = true;
       box.dataset.seen = '';
       if (out) out.textContent = (out.dataset.said ?? '').replace('{guess}', String(guess));
+      request();
+    });
+  });
+
+  // Chapter 8: the other asks one last time. It is only an answer: the promise of chapter 0 is
+  // settled with it, and nothing is paid.
+  const nowTickets = film.querySelector('[data-now-tickets]');
+  const nowOut = film.querySelector<HTMLElement>('[data-now-out]');
+  film.querySelectorAll<HTMLButtonElement>('[data-now]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (settled(button) || state.now) return;
+      state = { ...state, now: button.dataset.now as Choice };
+      settle(nowTickets, button);
+      promiseTickets?.querySelectorAll('button').forEach((ticket) => ticket.setAttribute('aria-disabled', 'true'));
+      if (nowOut) nowOut.textContent = button.dataset.said ?? '';
+      request();
+    });
+  });
+
+  // Chapter 8: whether the page kept its own promise, the one it made at the arrival.
+  const pageTickets = film.querySelector('[data-page-tickets]');
+  const pageOut = film.querySelector<HTMLElement>('[data-page-out]');
+  film.querySelectorAll<HTMLButtonElement>('[data-page-kept]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (settled(button) || state.pageKept != null) return;
+      state = { ...state, pageKept: button.dataset.pageKept === 'yes' };
+      settle(pageTickets, button);
+      if (pageOut) pageOut.textContent = button.dataset.said ?? '';
       request();
     });
   });

@@ -24,7 +24,7 @@ import { SIGN, SIGN_X } from './signs';
 import type { Mood } from './faces';
 import { AFTER, type Chat } from './talk';
 import { spans, type Span } from './spans';
-import { at, beatAt, beatRange, lightAt, TOTAL_SCREENS } from './timeline';
+import { at, beatAt, beatRange, BEATS, lightAt, TOTAL_SCREENS } from './timeline';
 import { easeInOut, progress, sample, track } from './track';
 import { voicePlaces, type Point } from './voices';
 
@@ -68,6 +68,10 @@ export interface StageState {
   readonly bet?: Bet | null;
   /** Chapter 6: the visitor's guesses, by figure; a figure shows once it is guessed. */
   readonly guesses?: Guesses;
+  /** Chapter 8: what the visitor says they would do now, when the other asks one last time. */
+  readonly now?: Choice | null;
+  /** Chapter 8: whether the page kept its own promise, as the visitor answers. */
+  readonly pageKept?: boolean | null;
 }
 
 export interface StageView {
@@ -120,8 +124,8 @@ export interface StageView {
   /** How much of the table shows, from 0 to 1. */
   readonly table: number;
   /**
-   * The die: where it stands, whether it floats (chapter 0) or rolls (chapter 3), and the face it
-   * shows. The face is never a payoff (rule (k)): it only says whether the other gets theirs.
+   * The die: where it stands, whether it floats (chapters 0 and 8) or rolls (chapter 3), and the
+   * face it shows. The face is never a payoff (rule (k)): it only says whether the other gets theirs.
    */
   readonly die: { readonly y: number; readonly opacity: number; readonly floating: boolean; readonly rolling: boolean; readonly face: Face };
   /**
@@ -209,6 +213,15 @@ const OPENING = [SEALED + 0.05, SEALED + 0.3] as const;
 /** How far the engine's gears turn per screen of scroll, in degrees. */
 export const GEAR_TURN = 150;
 /**
+ * Chapter 8. Back at the first table, under the night lamp: the engine goes back up, and the die
+ * floats over the table again, as it did at the arrival, while the other asks one last time. At the
+ * credits the new partner comes back, at the other table, for the curtain call.
+ */
+const CLOSING_IN = entering('closing', 'collect');
+const ENGINE_UP = [CLOSING_IN[0], CLOSING_IN[0] + 0.4] as const;
+const DIE_BACK = [CLOSING_IN[0] + 0.3, CLOSING_IN[1]] as const;
+const CREDITS_IN = entering('closing', 'credits');
+/**
  * Once the table is back, the board folds flat while "another game" is on screen, and the die it
  * folds into drops onto the table.
  */
@@ -243,9 +256,20 @@ const POSE_IN: Readonly<Record<string, number>> = {
   'my-research/engine': 0.4,
   // Sealed at its pose: with reduced motion, the envelope opens at the finding's first cut.
   'my-research/sealed': 0,
+  'closing/collect': 0.3,
+  'closing/asked': 0.3,
+  'closing/credits': 0.5,
 };
 
-const poseOf = (chapter: ChapterId, beat: string): number => beatRange(chapter, beat).from + (POSE_IN[`${chapter}/${beat}`] ?? 0);
+/**
+ * Where a beat's still pose sits, in screens from the top of the film. The finding's beats go
+ * unnamed here, so a locked build carries none of their ids (ADR 0026): each poses a little past its
+ * start, with the envelope already open.
+ */
+function poseOf(chapter: ChapterId, beat: string): number {
+  const finding = chapter === 'my-research' && LOCKED_BEATS.some((b) => b.id === beat);
+  return beatRange(chapter, beat).from + (finding ? 0.3 : (POSE_IN[`${chapter}/${beat}`] ?? 0));
+}
 
 /**
  * With reduced motion the stage cuts between still poses instead of moving (ADR 0027): from each
@@ -256,35 +280,7 @@ const poseOf = (chapter: ChapterId, beat: string): number => beatRange(chapter, 
 export const CUTS: readonly { readonly from: number; readonly pose: number }[] = [
   { from: 0, pose: 0 },
   { from: 0.9, pose: 1.8 },
-  ...(
-    [
-      ['two-rooms', 'rooms'],
-      ['two-rooms', 'play'],
-      ['two-rooms', 'columns'],
-      ['two-rooms', 'trap'],
-      ['talk', 'chat'],
-      ['talk', 'cheap'],
-      ['fold', 'fold'],
-      ['fold', 'decide'],
-      ['two-voices', 'voices'],
-      ['two-voices', 'together'],
-      ['two-voices', 'trick'],
-      ['blackout', 'blackout'],
-      ['blackout', 'new-partner'],
-      ['blackout', 'deck'],
-      ['blackout', 'receive'],
-      ['blackout', 'reveal'],
-      ['real-people', 'guess-same'],
-      ['real-people', 'guess-switched'],
-      ['real-people', 'expected'],
-      ['real-people', 'conclusion'],
-      ['my-research', 'question'],
-      ['my-research', 'engine'],
-      ['my-research', 'sealed'],
-    ] as const
-  ).map(([chapter, b]) => ({ from: beatRange(chapter, b).from - LEAD, pose: poseOf(chapter, b) })),
-  // The finding's beats, with the lock open: each cuts to a still point past the envelope's opening.
-  ...LOCKED_BEATS.map((b) => ({ from: beatRange('my-research', b.id).from - LEAD, pose: beatRange('my-research', b.id).from + 0.3 })),
+  ...BEATS.filter((range) => range.chapter !== 'arrival').map((range) => ({ from: range.from - LEAD, pose: poseOf(range.chapter, range.beat.id) })),
 ];
 
 /** The pose that stands for a point, in screens, when the stage cuts instead of moving. */
@@ -304,13 +300,15 @@ export const KEY_POSE: Partial<Record<ChapterId, number>> = {
   blackout: at(poseOf('blackout', 'new-partner')),
   'real-people': at(poseOf('real-people', 'expected')),
   'my-research': at(poseOf('my-research', 'engine')),
+  closing: at(poseOf('closing', 'collect')),
 };
 
 /**
  * The camera: wide on the title, closing in on the table as the other asks, wide again for the
  * rooms and the fold, close on the table for the decision, a little wider and higher when the two
  * voices come to float over the circle, and wider still once the square has gone to another table.
- * At nightfall it rises a little for the stars and the lamp, then closes in on the engine.
+ * At nightfall it rises a little for the stars and the lamp, then closes in on the engine. Back at
+ * the first table it frames the two and their voices, and it opens up for the curtain call.
  */
 const SHOTS = {
   cx: track([{ at: 0, value: 800 }, { at: at(3), value: 800 }]),
@@ -331,6 +329,10 @@ const SHOTS = {
     { at: at(RESEARCH_IN[1]), value: 470 },
     { at: at(ENGINE_IN[0]), value: 470 },
     { at: at(ENGINE_IN[1]), value: 500 },
+    { at: at(CLOSING_IN[0]), value: 500 },
+    { at: at(CLOSING_IN[1]), value: 495 },
+    { at: at(CREDITS_IN[0]), value: 495 },
+    { at: at(CREDITS_IN[1]), value: 485 },
   ]),
   width: track([
     { at: 0, value: 1500 },
@@ -349,6 +351,10 @@ const SHOTS = {
     { at: at(RESEARCH_IN[1]), value: 1400 },
     { at: at(ENGINE_IN[0]), value: 1400 },
     { at: at(ENGINE_IN[1]), value: 1240 },
+    { at: at(CLOSING_IN[0]), value: 1240 },
+    { at: at(CLOSING_IN[1]), value: 1300 },
+    { at: at(CREDITS_IN[0]), value: 1300 },
+    { at: at(CREDITS_IN[1]), value: 1450 },
   ]),
   widthPortrait: track([
     { at: 0, value: 660 },
@@ -367,6 +373,10 @@ const SHOTS = {
     { at: at(RESEARCH_IN[1]), value: 660 },
     { at: at(ENGINE_IN[0]), value: 660 },
     { at: at(ENGINE_IN[1]), value: 620 },
+    { at: at(CLOSING_IN[0]), value: 620 },
+    { at: at(CLOSING_IN[1]), value: 640 },
+    { at: at(CREDITS_IN[0]), value: 640 },
+    { at: at(CREDITS_IN[1]), value: 660 },
   ]),
 };
 
@@ -398,6 +408,12 @@ const tableLayout = (seat: Point): Layout => ({
 const switchedLayout = (seat: Point, portrait: boolean): Layout => {
   const away = AWAY[portrait ? 'portrait' : 'landscape'];
   return { other: { at: away.at, scale: away.scale, opacity: 1 }, partner: { at: seat, scale: 1, opacity: 1 } };
+};
+
+/** The curtain call (chapter 8): the square in its seat, and the triangle back at the other table. */
+const curtainLayout = (seat: Point, portrait: boolean): Layout => {
+  const away = AWAY[portrait ? 'portrait' : 'landscape'];
+  return { other: { at: seat, scale: 1, opacity: 1 }, partner: { at: away.at, scale: away.scale, opacity: 1 } };
 };
 
 const mixPlace = (a: Place, b: Place, t: number): Place => ({
@@ -469,6 +485,12 @@ function moodsAt(beat: { chapter: ChapterId; id: string }, state: StageState, as
       return { you: 'shock', other: 'shock', partner: 'neutral' };
     case 'my-research/sealed':
       return { you: 'happy', other: 'happy', partner: 'neutral' };
+    case 'closing/collect':
+      return collectMoods(state);
+    case 'closing/asked':
+      return askedMoods(state);
+    case 'closing/credits':
+      return { you: 'happy', other: 'happy', partner: 'happy' };
     default:
       // The question, and the finding's beats with the lock open: both listen.
       if (beat.chapter === 'my-research') return { you: 'neutral', other: 'neutral', partner: 'neutral' };
@@ -487,6 +509,30 @@ function deckMoods(state: StageState): StageView['moods'] {
   const seated: Mood = choice === undefined ? 'happy' : choice === 'roll' ? 'happy' : 'sad';
   const you: Mood = choice === undefined ? 'tempted' : choice === 'dont' ? 'neutral' : card?.partner === 'same' ? 'proud' : 'happy';
   return card?.partner === 'switched' ? { you, other: 'neutral', partner: seated } : { you, other: seated, partner: 'neutral' };
+}
+
+/**
+ * Chapter 8's faces as the other asks one last time: tempted, and the other hoping if it was
+ * promised; then each takes the answer as it comes, never why (ADR 0023). It is only an answer, so
+ * nobody is betrayed by it.
+ */
+function collectMoods(state: StageState): StageView['moods'] {
+  const promised = state.promised === true;
+  switch (state.now ?? null) {
+    case 'roll':
+      return { you: promised ? 'proud' : 'happy', other: 'happy', partner: 'neutral' };
+    case 'dont':
+      return { you: 'neutral', other: 'worried', partner: 'neutral' };
+    default:
+      return { you: 'tempted', other: promised ? 'happy' : 'worried', partner: 'neutral' };
+  }
+}
+
+/** The page asks whether it kept its own promise: the two wait, a little nervous, then take the answer. */
+function askedMoods(state: StageState): StageView['moods'] {
+  const kept = state.pageKept ?? null;
+  const face: Mood = kept === null ? 'worried' : kept ? 'proud' : 'neutral';
+  return { you: face, other: face, partner: 'neutral' };
 }
 
 function pairMoods(beat: { chapter: ChapterId; id: string }, state: StageState, asked: number): { readonly you: Mood; readonly other: Mood } {
@@ -625,15 +671,20 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   const bubbles = { you: state.chat ? talking : 0, other: Math.max(talking, promising) };
   // The die floats over the table in chapter 0 and leaves with the rooms; it comes back out of the
   // board's fold and rests on the table for the decision, until chapter 7's engine takes its place.
+  // In chapter 8 the engine goes back up, and the die floats again, showing its face of chapter 0.
   const reborn = m >= (INTO_ROOMS[1] + FOLD[0]) / 2;
-  const engineDown = eased(m, ENGINE_IN);
-  const die = {
-    y: reborn ? DIE.folds + (DIE.rests - DIE.folds) * eased(m, DIE_DROP) : DIE.floats,
-    opacity: reborn ? eased(m, [DIE_DROP[0] - 0.15, DIE_DROP[0] + 0.05]) * (1 - eased(m, [ENGINE_IN[0], ENGINE_IN[0] + 0.3])) : 1 - eased(m, [INTO_ROOMS[0], INTO_ROOMS[0] + 0.4]),
-    floating: m < 1.5,
-    rolling: decision.phase === 'die',
-    face: outcome?.face ?? RESTING_FACE,
-  };
+  const engineDown = eased(m, ENGINE_IN) * (1 - eased(m, ENGINE_UP));
+  const back = eased(m, DIE_BACK);
+  const die =
+    back > 0
+      ? { y: DIE.floats, opacity: back, floating: true, rolling: false, face: RESTING_FACE }
+      : {
+          y: reborn ? DIE.folds + (DIE.rests - DIE.folds) * eased(m, DIE_DROP) : DIE.floats,
+          opacity: reborn ? eased(m, [DIE_DROP[0] - 0.15, DIE_DROP[0] + 0.05]) * (1 - eased(m, [ENGINE_IN[0], ENGINE_IN[0] + 0.3])) : 1 - eased(m, [INTO_ROOMS[0], INTO_ROOMS[0] + 0.4]),
+          floating: m < 1.5,
+          rolling: decision.phase === 'die',
+          face: outcome?.face ?? RESTING_FACE,
+        };
   const asked = progress(p, at(0.6), at(1.35));
 
   const spread = table + (apart - table) * rooms;
@@ -641,6 +692,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
 
   // Chapter 5: the square leaves for another table in the dark and the triangle sits down; on the
   // deck, whoever the card on stage says; the table as it was to receive; and the switch again.
+  // Chapter 6 brings back the table as it was, and chapter 8's credits the triangle, for the bow.
   const deckAt = state.deck?.at ?? 0;
   const card = DECK[deckAt] ?? DECK[0];
   const asAtTable = tableLayout(seats.other);
@@ -652,6 +704,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     [asAtTable, eased(m, RECEIVE_IN)],
     [asSwitched, eased(m, REVEAL_SWAP)],
     [asAtTable, eased(m, REAL_IN)],
+    [curtainLayout(seats.other, portrait), eased(m, CREDITS_IN)],
   ].reduce<Layout>((from, [to, t]) => mixLayout(from, to as Layout, t as number), asAtTable);
   const cast = { you: seats.you, ...layout };
 
@@ -684,7 +737,9 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   // sits across; my word, at the square it was given to, wherever it went. While they disagree about
   // the trick they look at each other, and while the visitor receives both watch the seat.
   const voiceAt = voicePlaces(cast.you, portrait);
-  const seated = cast.partner.opacity > 0.5 ? cast.partner.at : cast.other.at;
+  // Whoever sits across the table: the triangle only while it is in the square's seat, not at the bow.
+  const partnerSeated = cast.partner.opacity > 0.5 && cast.partner.scale === 1;
+  const seated = partnerSeated ? cast.partner.at : cast.other.at;
   const receiving = beat.chapter === 'blackout' && (beat.beat.id === 'receive' || beat.beat.id === 'reveal');
   const arguing = beat.chapter === 'two-voices' && beat.beat.id === 'trick';
   // In chapter 7 both watch the engine once it is on the table.
@@ -698,7 +753,7 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
         ? { expects: voiceAt.word, word: voiceAt.expects }
         : { expects: seated, word: receiving ? seated : cast.other.at },
     glow: eased(m, CONCLUSION) * (1 - eased(m, RESEARCH_IN)),
-    globe: cast.partner.opacity > 0.5 ? ('partner' as const) : ('other' as const),
+    globe: partnerSeated ? ('partner' as const) : ('other' as const),
   };
 
   const engine = { shown: engineDown, turn: Math.max(0, m - ENGINE_IN[0]) * GEAR_TURN };

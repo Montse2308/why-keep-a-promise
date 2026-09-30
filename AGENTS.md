@@ -17,10 +17,11 @@ A portfolio piece in two layers (ADR 0021):
 
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
-**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). The film tells
-chapters 0 to 7 (P1–P4), chapter 7's finding behind the lock; below it, the previous version still
-shows act 6 and "About". The film replaces them chapter by chapter; each chapter removes what it
-replaces, in the same commit as its tests.
+**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). The film tells all
+nine chapters (P1–P4), chapter 7's finding behind the lock, and ends in chapter 8's credits; below
+it, the previous version still shows act 6 and "About", which P4 retires. The film replaces the
+previous version chapter by chapter; each chapter removes what it replaces, in the same commit as
+its tests.
 
 ## Reading order
 
@@ -104,7 +105,8 @@ src/
                          board.ts, parts.ts (the board, coins, die and where each part goes);
                          talk.ts (chapter 2's chat); voices.ts (the two voices, chapter 4 on);
                          deck.ts, bet.ts (chapter 5's deck and bet); guess.ts, signs.ts (chapter 6);
-                         finding.ts (chapter 7's beats past the envelope, stubbed while locked)
+                         finding.ts (chapter 7's beats past the envelope, stubbed while locked);
+                         credits.ts (chapter 8's cast and the notebook pages its credits link)
     chapters.ts          (P1+) the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light
     acts.ts, sections.ts previous version: the acts and the home's order

@@ -14,12 +14,18 @@ interface Props {
   opening?: boolean;
   /** A class for the card, for a card drawn as something else (chapter 7's envelope). */
   cardClass?: string;
+  /**
+   * The card rolls up with the scroll, like a film's credits, instead of holding at the bottom of
+   * the screen. Its beat should be long enough for it to go by; the film's last one also has the
+   * film's hold after it (Film.astro), for a tall card on a small phone.
+   */
+  roll?: boolean;
 }
 
-const { id, screens, caption, opening = false, cardClass } = Astro.props;
+const { id, screens, caption, opening = false, cardClass, roll = false } = Astro.props;
 ---
 
-<div class:list={['beat', { 'beat--opening': opening }]} data-beat={id} style={`--screens: ${screens}`}>
+<div class:list={['beat', { 'beat--opening': opening, 'beat--roll': roll }]} data-beat={id} style={`--screens: ${screens}`}>
   <slot name="above" />
   <div class:list={['card', cardClass]}>
     <slot name="top" />
@@ -202,6 +208,13 @@ const { id, screens, caption, opening = false, cardClass } = Astro.props;
     position: sticky;
     bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
     pointer-events: auto;
+  }
+
+  /* A rolling card comes up after the gap and scrolls on past the top, leaving the stage alone. */
+  :global(html.js) .beat--roll .card {
+    margin-top: 0;
+    position: relative;
+    bottom: auto;
   }
 
   /* A short screen (a small phone): tighter cards, so the stage still shows above them. */

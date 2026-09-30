@@ -1,0 +1,319 @@
+---
+/**
+ * Chapter 8, closing (ADR 0021, ADR 0023): back at the first table, under the night lamp, the other
+ * asks one last time whether the visitor would roll the die now; then the page asks whether it kept
+ * the promise it made at the arrival; then the credits roll up with the scroll, and lead to the
+ * notebook (ADR 0024). Each answer is only an answer: nothing is paid, nothing says why, and nothing
+ * is stored or sent. Every line an answer can lead to is resolved here.
+ */
+import { MANUSCRIPT_STATUS } from '../../../config';
+import { actForSubpage } from '../../../lib/acts';
+import { beat, chapter } from '../../../lib/chapters';
+import { FILM } from '../../../lib/design/film';
+import { CAST, CAST_LINE, creditPages, type Role } from '../../../lib/film/credits';
+import { nowLine, pageLine } from '../../../lib/film/lines';
+import { PIP_AT, PIPS, type Pip } from '../../../lib/film/parts';
+import { KEY_POSE, RESTING_FACE, stageAt } from '../../../lib/film/stage';
+import { FILM_VALUES } from '../../../lib/film/values';
+import { useTranslations, type Locale, type UiKey } from '../../../lib/i18n';
+import { findingUnlocked } from '../../../lib/lock';
+import { roundOf } from '../../../lib/pd/round';
+import { href } from '../../../lib/routes';
+import { outcomeOf } from '../../../lib/table/decision';
+import { fill } from '../../../lib/template';
+import Beat from '../Beat.astro';
+import Chapter from '../Chapter.astro';
+import Ticket from '../Ticket.astro';
+import Tickets from '../Tickets.astro';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  captions: ReadonlyMap<string, string>;
+}
+
+const { locale, title, captions } = Astro.props;
+const tr = useTranslations(locale);
+const values = (key: UiKey) => fill(tr(key), FILM_VALUES);
+const collect = beat('closing', 'collect');
+const asked = beat('closing', 'asked');
+const credits = beat('closing', 'credits');
+// The notebook's pages, by the titles they carry now; /finding only with the lock open (ADR 0026).
+// TODO(P5): the notebook's own entries, with /sources and /about, once its panel comes (ADR 0024).
+const pages = creditPages(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));
+
+// The storyboard's still frame: the first table again, at night, the die floating over it.
+const still = stageAt(
+  KEY_POSE.closing ?? 0,
+  { promised: true, round: roundOf('cooperate'), chat: 'promise', decision: { phase: 'outcome', ...outcomeOf('roll', 4) } },
+  false,
+  true,
+);
+
+// The cast of the credits, each drawn small as it is on the stage (Character.astro, Voices.astro).
+const cloud = 'M-62 30 C-92 30 -92 -14 -60 -14 C-58 -46 -14 -54 0 -30 C14 -56 64 -44 58 -12 C90 -10 88 30 58 30 Z';
+const scroll = 'M-70 -34 H70 A10 10 0 0 1 70 -14 V40 A10 10 0 0 0 70 60 H-70 A10 10 0 0 1 -70 40 V-14 A10 10 0 0 0 -70 -34 Z';
+const SHAPES: Record<Exclude<Role, 'thread'>, { d: string; fill: string; scale: number }> = {
+  you: { d: 'M0 -58 A58 58 0 1 1 0 58 A58 58 0 1 1 0 -58 Z', fill: FILM.you, scale: 0.19 },
+  other: { d: 'M-38 -56 H38 A18 18 0 0 1 56 -38 V38 A18 18 0 0 1 38 56 H-38 A18 18 0 0 1 -56 38 V-38 A18 18 0 0 1 -38 -56 Z', fill: FILM.other, scale: 0.19 },
+  partner: { d: 'M0 -66 L62 50 L-62 50 Z', fill: FILM.new, scale: 0.19 },
+  expects: { d: cloud, fill: FILM['voice-expects'], scale: 0.14 },
+  word: { d: scroll, fill: FILM['voice-word'], scale: 0.15 },
+};
+---
+
+<Chapter locale={locale} id="closing" labelledby="closing-title" still={still} stillLabel={tr('film.closing.still')}>
+  <Beat id={collect.id} screens={collect.screens} caption={captions.get(collect.id)}>
+    <h2 slot="top" id="closing-title" class="card__chapter">
+      <span>{fill(tr('film.chapter'), { n: chapter('closing').number })}</span>
+      <span aria-hidden="true">·</span>
+      <span>{title}</span>
+    </h2>
+    <p class="card__say">
+      <span class="card__who" aria-hidden="true"></span>
+      <span>
+        <span class="visually-hidden">{tr('film.arrival.who')}: </span>
+        <span data-promise-line data-yes={tr('film.closing.ask.promised')} data-no={tr('film.closing.ask.refused')} data-none={tr('film.closing.ask.unanswered')}>
+          {tr('film.closing.ask.promised')}
+        </span>
+      </span>
+    </p>
+    <Tickets label={tr('film.closing.group')} data-now-tickets="">
+      <Ticket label={tr('film.ticket.roll-now')} detail={values('film.ticket.roll.detail')} data-now="roll" data-said={nowLine(tr, 'roll')}>
+        <svg slot="icon" viewBox="-40 -40 80 80">
+          <g transform="rotate(-8)">
+            <rect x="-30" y="-30" width="60" height="60" rx="13" fill={FILM.rim} stroke={FILM.ink} stroke-width="4.5" />
+            {PIPS[RESTING_FACE].map((pip: Pip) => <circle cx={PIP_AT[pip][0] * 0.85} cy={PIP_AT[pip][1] * 0.85} r="5.5" fill={FILM.ink} />)}
+          </g>
+        </svg>
+      </Ticket>
+      <Ticket label={values('film.ticket.keep-now')} detail={values('film.ticket.keep.detail')} data-now="dont" data-said={nowLine(tr, 'dont')}>
+        <svg slot="icon" viewBox="-40 -40 80 80">
+          <path d="M-26 -8 C-34 18 -24 34 0 34 C24 34 34 18 26 -8 Z" fill={FILM['table-top']} stroke={FILM.ink} stroke-width="4.5" stroke-linejoin="round" />
+          <path d="M-14 -8 C-18 -20 -8 -26 0 -18 C8 -26 18 -20 14 -8" fill={FILM['table-top']} stroke={FILM.ink} stroke-width="4.5" stroke-linejoin="round" />
+          <path d="M-16 -8 H16" stroke={FILM.ink} stroke-width="4.5" />
+          <text y="20" text-anchor="middle" class="card__coin" fill={FILM.ink}>{FILM_VALUES.dont}</text>
+        </svg>
+      </Ticket>
+    </Tickets>
+    <p class="card__out" aria-live="polite" data-now-out></p>
+    <p class="card__noscript">{tr('film.closing.noscript')}</p>
+  </Beat>
+
+  <Beat id={asked.id} screens={asked.screens} caption={captions.get(asked.id)}>
+    <Tickets label={tr('film.closing.page.group')} data-page-tickets="">
+      <Ticket class="ticket--line" label={tr('film.ticket.page-kept')} data-page-kept="yes" data-said={pageLine(tr, true)}>
+        <svg slot="icon" viewBox="-24 -24 48 48">
+          <path d="M-16 6 C-8 -14 8 -14 16 6" fill="none" stroke={FILM['thread-edge']} stroke-width="7" stroke-linecap="round" />
+          <path d="M-16 6 C-8 -14 8 -14 16 6" fill="none" stroke={FILM.thread} stroke-width="4" stroke-linecap="round" />
+          <circle cx="0" cy="-9" r="3.5" fill={FILM['thread-edge']} />
+        </svg>
+      </Ticket>
+      <Ticket class="ticket--line" label={tr('film.ticket.page-not')} data-page-kept="no" data-said={pageLine(tr, false)}>
+        <svg slot="icon" viewBox="-24 -24 48 48">
+          <path d="M-16 6 C-12 -6 -6 -10 -2 -8 M16 6 C12 -6 6 -10 2 -6" fill="none" stroke={FILM['thread-edge']} stroke-width="7" stroke-linecap="round" />
+          <path d="M-16 6 C-12 -6 -6 -10 -2 -8 M16 6 C12 -6 6 -10 2 -6" fill="none" stroke={FILM.thread} stroke-width="4" stroke-linecap="round" />
+        </svg>
+      </Ticket>
+    </Tickets>
+    <p class="card__out" aria-live="polite" data-page-out></p>
+    <p class="closing__private">{tr('film.closing.private')}</p>
+    <p class="card__noscript">{tr('film.closing.page.noscript')}</p>
+  </Beat>
+
+  <Beat id={credits.id} screens={credits.screens} caption={captions.get(credits.id)} cardClass="card--credits" roll>
+    <Fragment slot="top">
+      <h3 class="visually-hidden">{tr('film.closing.credits.label')}</h3>
+      <p class="credits__film">{tr('site.title')}</p>
+      <dl class="credits__list">
+        <div>
+          <dt>{tr('film.closing.credits.by')}</dt>
+          <dd class="credits__name">{tr('author.name')}</dd>
+        </div>
+        <div>
+          <dt>{tr('film.closing.credits.cast')}</dt>
+          <dd>
+            <ul class="credits__cast" role="list">
+              {
+                CAST.map((role) => (
+                  <li>
+                    <svg viewBox="-16 -16 32 32" aria-hidden="true">
+                      {role === 'thread' ? (
+                        <>
+                          <path d="M-12 6 C-6 -10 6 -10 12 6" fill="none" stroke={FILM['thread-edge']} stroke-width="6" stroke-linecap="round" />
+                          <path d="M-12 6 C-6 -10 6 -10 12 6" fill="none" stroke={FILM.thread} stroke-width="3.5" stroke-linecap="round" />
+                        </>
+                      ) : (
+                        <g transform={`scale(${SHAPES[role].scale})`}>
+                          <path d={SHAPES[role].d} fill={FILM.ink} stroke={FILM.ink} stroke-width="16" stroke-linejoin="round" />
+                          <path d={SHAPES[role].d} fill={SHAPES[role].fill} />
+                        </g>
+                      )}
+                    </svg>
+                    <span>{tr(CAST_LINE[role])}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </dd>
+        </div>
+      </dl>
+    </Fragment>
+    <p class="credits__type">{tr('film.closing.credits.type')}</p>
+    <nav class="credits__notebook" aria-labelledby="closing-notebook">
+      <p id="closing-notebook" class="credits__role">{tr('film.closing.credits.notebook')}</p>
+      <ul role="list">
+        {
+          pages.map((page) => (
+            <li>
+              <a href={href(locale, page)}>{tr(actForSubpage(page).titleKey)}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <p class="credits__end">{tr('film.closing.credits.end')}</p>
+  </Beat>
+</Chapter>
+
+<style>
+  /* Only an answer made with JavaScript stays on the page; without it there is none to keep. */
+  .closing__private {
+    display: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--film-card-muted);
+  }
+
+  :global(html.js) .closing__private {
+    display: block;
+  }
+
+  /*
+   * The credits (ADR 0021): a paper card that rolls up with the scroll, set like a film's, centred,
+   * with each role in small capitals over who plays it.
+   */
+  :global(.film .card.card--credits) {
+    justify-items: center;
+    gap: var(--space-4);
+    padding-block: var(--space-6);
+    text-align: center;
+  }
+
+  :global(.film .card.card--credits .card__caption) {
+    font-style: italic;
+  }
+
+  .credits__film,
+  .credits__end {
+    font-family: var(--font-display, Georgia, serif);
+    font-style: italic;
+    font-weight: 900;
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .credits__film {
+    max-width: 18ch;
+    font-size: clamp(1.3rem, 3.8vw, 1.9rem);
+  }
+
+  .credits__end {
+    font-size: clamp(1.7rem, 5vw, 2.5rem);
+  }
+
+  .credits__list {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+  }
+
+  .credits__list dt,
+  .credits__role {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--film-card-muted);
+  }
+
+  .credits__list dd {
+    margin: var(--space-1) 0 0;
+    font-weight: 800;
+  }
+
+  .credits__name {
+    font-family: var(--font-display, Georgia, serif);
+    font-size: clamp(1.15rem, 3.2vw, 1.45rem);
+    line-height: 1.15;
+  }
+
+  .credits__cast {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Each line centred as a line of text, its shape leading it, so a line that wraps stays centred. */
+  .credits__cast li {
+    text-wrap: balance;
+  }
+
+  .credits__cast svg {
+    display: inline-block;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-inline-end: var(--space-2);
+    vertical-align: -0.3em;
+  }
+
+  .credits__type {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--film-card-muted);
+  }
+
+  .credits__notebook ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .credits__notebook a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    color: inherit;
+    font-weight: 800;
+  }
+
+  @media (max-width: 30rem) {
+    .credits__cast {
+      font-size: 0.92rem;
+    }
+  }
+
+  /* A short screen: tighter credits, so they still go by within their beat. */
+  @media (max-height: 40rem) {
+    :global(.film .card.card--credits) {
+      gap: var(--space-3);
+      padding-block: var(--space-4);
+    }
+
+    .credits__list {
+      gap: var(--space-2);
+    }
+
+    .credits__cast {
+      gap: 0;
+      font-size: 0.9rem;
+    }
+  }
+</style>

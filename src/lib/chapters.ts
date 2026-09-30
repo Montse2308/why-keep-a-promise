@@ -34,11 +34,11 @@ export interface Chapter {
   readonly id: ChapterId;
   /** Its number in the film, from 0. */
   readonly number: number;
-  /** Scroll length, in screens: the sum of its beats once it is built. */
+  /** Scroll length, in screens: the sum of its beats. */
   readonly screens: number;
   /** Phase that builds it (docs/phases.md). */
   readonly phase: BuildPhase;
-  /** Its cards, in order; empty until its phase builds it. */
+  /** Its cards, in order. */
   readonly beats: readonly Beat[];
 }
 
@@ -102,14 +102,13 @@ const BEATS: Partial<Record<ChapterId, readonly Beat[]>> = {
     { id: 'engine', screens: 1.1 },
     { id: 'sealed', screens: 1.2 },
   ],
-};
-
-/**
- * Screens of the chapters still to be built: a placeholder their phase replaces with beats. Chapter
- * 8's keeps the open film at 36.75 screens, so the lamp still comes on where chapter 7 starts.
- */
-const PLANNED_SCREENS: Partial<Record<ChapterId, number>> = {
-  closing: 3.95,
+  // Chapter 8 keeps the open film at 36.75 screens, the length the light was set for. The credits
+  // roll up with the scroll, so their beat is long enough for them to go by on a small phone.
+  closing: [
+    { id: 'collect', screens: 1.3 },
+    { id: 'asked', screens: 1.1 },
+    { id: 'credits', screens: 1.55 },
+  ],
 };
 
 /** Rounded to a thousandth, so 1.2 + 1.4 + 1.5 + 1.4 is exactly 5.5. */
@@ -119,9 +118,8 @@ const sum = (beats: readonly Beat[]): number => Math.round(beats.reduce((total, 
 function chaptersWith(finding: readonly Beat[]): readonly Chapter[] {
   return CHAPTER_IDS.map((id, number) => {
     const beats = id === 'my-research' ? [...(BEATS[id] ?? []), ...finding] : (BEATS[id] ?? []);
-    const screens = beats.length > 0 ? sum(beats) : PLANNED_SCREENS[id];
-    if (screens === undefined) throw new Error(`Chapter "${id}" has neither beats nor planned screens`);
-    return { id, number, screens, phase: PHASE[id], beats };
+    if (beats.length === 0) throw new Error(`Chapter "${id}" has no beats`);
+    return { id, number, screens: sum(beats), phase: PHASE[id], beats };
   });
 }
 
@@ -153,7 +151,7 @@ export function builtBy(phase: BuildPhase): readonly Chapter[] {
   return CHAPTERS.filter((c) => order.indexOf(c.phase) <= order.indexOf(phase));
 }
 
-/** The chapters on the page: those with beats, which are always the film's first ones. */
+/** The chapters on the page: those with beats, which since P4 are all nine. */
 export const BUILT: readonly Chapter[] = CHAPTERS.filter((c) => c.beats.length > 0);
 
 /** A beat of a chapter, by id. */
