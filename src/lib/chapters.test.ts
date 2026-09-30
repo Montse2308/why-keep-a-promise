@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { beat, BUILT, builtBy, chapter, CHAPTER_IDS, CHAPTERS } from './chapters';
+import { beat, BUILT, builtBy, chapter, CHAPTER_IDS, CHAPTERS, LOCKED_BEATS, OPEN_CHAPTERS } from './chapters';
 import { LAMP_FROM } from './design/film';
 import { spans } from './film/spans';
 
@@ -57,14 +57,35 @@ describe('beats (the cards of a chapter)', () => {
     expect(builtBy(order[reached] as 'P1').length).toBeGreaterThanOrEqual(BUILT.length);
   });
 
-  it('light the lamp exactly where chapter 7 starts, as ADR 0027 turns it on for chapters 7 and 8', () => {
-    const total = CHAPTERS.reduce((sum, c) => sum + c.screens, 0);
-    const seventh = CHAPTERS.slice(0, chapter('my-research').number).reduce((sum, c) => sum + c.screens, 0);
+  it('light the lamp exactly where chapter 7 starts in the open film, as ADR 0027 turns it on for chapters 7 and 8', () => {
+    const total = OPEN_CHAPTERS.reduce((sum, c) => sum + c.screens, 0);
+    const seventh = OPEN_CHAPTERS.slice(0, chapter('my-research').number).reduce((sum, c) => sum + c.screens, 0);
+    expect(total).toBeCloseTo(36.75, 9);
     expect(LAMP_FROM * total).toBeCloseTo(seventh, 9);
   });
 
   it('are found by id, and an unknown one fails', () => {
     expect(beat('arrival', 'ask').screens).toBe(3);
     expect(() => beat('arrival', 'nope')).toThrow();
+  });
+});
+
+describe('chapter 7 and its lock (ADR 0026)', () => {
+  const seventh = chapter('my-research');
+  const open = OPEN_CHAPTERS.find((c) => c.id === 'my-research');
+
+  it('shows the question, the engine and the sealed envelope in both states of the lock', () => {
+    expect(open?.beats.map((b) => b.id)).toEqual(['question', 'engine', 'sealed']);
+    expect(seventh.beats.slice(0, 3)).toEqual(open?.beats);
+  });
+
+  it('adds the finding after the envelope only with the lock open, and changes no other chapter', () => {
+    expect(seventh.beats.slice(3)).toEqual(LOCKED_BEATS);
+    expect(seventh.screens).toBeCloseTo((open?.screens ?? 0) + LOCKED_BEATS.reduce((sum, b) => sum + b.screens, 0), 9);
+    CHAPTERS.forEach((c, i) => {
+      if (c.id !== 'my-research') expect(c).toEqual(OPEN_CHAPTERS[i]);
+    });
+    // The finding's beats are its own: none shares an id with the open ones.
+    for (const b of LOCKED_BEATS) expect(open?.beats.map((o) => o.id)).not.toContain(b.id);
   });
 });

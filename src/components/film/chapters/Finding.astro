@@ -1,0 +1,65 @@
+---
+/**
+ * Chapter 7's finding (ADR 0026): what the envelope holds once the lock is open. The content of act 5
+ * of the previous version, told in captions and not added to: the third reason, why a lab cannot tell
+ * it apart, background trust, the simulation's worlds, the curve with its control, and why it is a
+ * comparison across worlds and not a population's history (rule (e)). Every number comes from
+ * src/lib/curve/values.ts; the link to /finding and the engine's repository live only here.
+ *
+ * Render this only behind the lock. While it is closed, a build resolves this file to
+ * ../../curve/Locked.astro (`lockFinding` in astro.config.mjs), so its prose, its curve and its
+ * script never reach dist/; `npm run verify:dist` checks that.
+ */
+import { LOCKED_BEATS } from '../../../lib/chapters';
+import { CURVE_VALUES } from '../../../lib/curve/values';
+import { splitBeats } from '../../../lib/film/captions';
+import { useTranslations, type Locale } from '../../../lib/i18n';
+import { href } from '../../../lib/routes';
+import { fill } from '../../../lib/template';
+import Curve from '../../curve/Curve.astro';
+import Beat from '../Beat.astro';
+
+interface Props {
+  locale: Locale;
+  /** The part of chapter 7's captions after its lock mark, placeholders not yet filled. */
+  captions: string;
+}
+
+const { locale, captions } = Astro.props;
+const tr = useTranslations(locale);
+const beats = splitBeats(fill(captions, CURVE_VALUES), LOCKED_BEATS.map((b) => b.id));
+const last = LOCKED_BEATS.at(-1)?.id;
+---
+
+<div class="finding" data-locked-content data-finding>
+  {
+    LOCKED_BEATS.map((b) => (
+      <Beat id={b.id} screens={b.screens} caption={beats.get(b.id)}>
+        {b.id === 'curve' && <Curve locale={locale} id="finding-curve" film />}
+        {b.id === last && (
+          <p class="finding__deeper">
+            <a href={href(locale, 'finding')}>{fill(tr('film.finding.deeper'), { title: tr('act.finding.title') })}</a>
+          </p>
+        )}
+      </Beat>
+    ))
+  }
+</div>
+
+<style>
+  /* The finding's beats stay the chapter's own, in the storyboard's grid and in the film's flow. */
+  .finding {
+    display: contents;
+  }
+
+  .finding__deeper {
+    font-weight: 800;
+  }
+
+  .finding__deeper a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    color: inherit;
+  }
+</style>

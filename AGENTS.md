@@ -18,9 +18,9 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). The film tells
-chapters 0 to 6 (P1–P3); below it, the previous version still shows acts 5 and 6 and the home
-sections. The film replaces them chapter by chapter; each chapter removes what it replaces, in the
-same commit as its tests.
+chapters 0 to 7 (P1–P4), chapter 7's finding behind the lock; below it, the previous version still
+shows act 6 and "About". The film replaces them chapter by chapter; each chapter removes what it
+replaces, in the same commit as its tests.
 
 ## Reading order
 
@@ -81,12 +81,13 @@ which are marked as such.
 src/
   config.ts              author links, manuscript status (it also opens the lock)
   content.config.ts      content collections (frontmatter schemas)
-  content/acts/{en,es}/  previous version: the prose of acts 5 and 6; the film tells acts 1 to 4, and
+  content/acts/{en,es}/  previous version: the prose of act 6; the film tells acts 1 to 5, and
                          replaces the rest in P4
   content/chapters/{en,es}/  (P1+) the film's captions, one file per chapter, split into beats by
-                         <!-- beat:… --> marks; a number is a {placeholder}, never a figure
+                         <!-- beat:… --> marks; a number is a {placeholder}, never a figure;
+                         chapter 7's finding follows its <!-- lock --> mark
   content/subpages/{en,es}/  notebook prose; <!-- slot:… --> and <!-- lock --> markers
-  content/sections/{en,es}/  previous version: "The research" and "About" on the home; retired in P4
+  content/sections/{en,es}/  previous version: "About" on the home; retired in P4
   content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md
   data/curve.json        the engine's precomputed curve, copied with provenance; never edited (ADR 0010)
   i18n/en.json, es.json  UI strings, flat keys, full parity
@@ -102,8 +103,10 @@ src/
                          from the pure modules); lines.ts (what it says after each choice);
                          board.ts, parts.ts (the board, coins, die and where each part goes);
                          talk.ts (chapter 2's chat); voices.ts (the two voices, chapter 4 on);
-                         deck.ts, bet.ts (chapter 5's deck and bet); guess.ts, signs.ts (chapter 6)
-    chapters.ts          (P1+) the nine chapters, their ids, order and beats
+                         deck.ts, bet.ts (chapter 5's deck and bet); guess.ts, signs.ts (chapter 6);
+                         finding.ts (chapter 7's beats past the envelope, stubbed while locked)
+    chapters.ts          (P1+) the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
+                         film without the finding, the clock of the day's light
     acts.ts, sections.ts previous version: the acts and the home's order
     design/              film.ts (the film's colours and the day's light; film.css mirrors it),
                          palette.ts (the notebook and the previous version), colour maths
@@ -113,15 +116,17 @@ src/
     pd/                  the prisoner's dilemma: its payoffs, the one round of chapter 1 and the
                          best reply
     curve/               reads curve.json (build time only), step-chart geometry, the curve control;
-                         finding.ts: guilt, θ, c and robustness for /finding, behind the lock
+                         values.ts: chapter 7's numbers; film.ts: the curve on the film's paper;
+                         finding.ts: guilt, θ, c and robustness for /finding; all behind the lock
     vanberg/             every cell of the switch treatment and the baselines, exact counts
   assets/fonts/          self-hosted woff2, OFL licences, provenance
   styles/                tokens.css, base.css
   components/            previous version: Act, HomeSection, pd/BestResponse (on /dilemma until
                          P5); vanberg/SwitchTable, curve/Curve + Locked (the stub a locked build
-                         uses), LanguageSwitch, SiteFooter
+                         uses for the curve and chapter 7's finding), LanguageSwitch, SiteFooter
                          film/ (P1+: Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
-                         Voices, Signs, chapters/ one per chapter, film.ts), notebook/ (P5, the panel)
+                         Voices, Signs, Engine, chapters/ one per chapter plus Finding, the locked
+                         part of chapter 7, film.ts), notebook/ (P5, the panel)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale

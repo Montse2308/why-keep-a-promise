@@ -139,16 +139,18 @@ corresponde exactamente a las filas "cambio a una pareja a la que otro le promet
 arriba. Por eso el mazo del capítulo 5 usa siempre ese caso, y el capítulo 6 compara esa fila con la
 de la misma pareja.
 
-- Cifra: la creencia después de una promesa, "76" de 100, que la curva del acto 5 deja fija (acto 5
-  y pie de la gráfica, clave `curve.caption`). Es la creencia de segundo orden de los dictadores sin
+- Cifra: la creencia después de una promesa, "76" de 100, que la curva del hallazgo deja fija
+  (capítulo 7 y pie de la gráfica, clave `curve.caption`). Es la creencia de segundo orden de los dictadores sin
   cambio de pareja: lo que creían que su pareja esperaba. Media 0.7585 (n = 384), que redondea a 76.
   También es el extremo del eje de confianza de fondo (de 0 a 76).
   Clave: `vanberg-second-order`.
   Fuente: `switch.dat`, bloque TABLE I de `promises.do`, creencia de segundo orden de los dictadores
   sin cambio. **Verificada por Montse (F3).**
-  Usada en: acto 5 (`src/content/acts/{en,es}/05-finding.md`); pie de la gráfica
-  (`src/components/curve/Curve.astro`). El valor fijo de la curva se comprueba contra
-  `src/data/curve.json` en `tests/curve.test.ts`. En F4, la suma de las dos celdas sin cambio de la
+  Usada en: el hallazgo del capítulo 7, detrás del candado (`src/content/chapters/{en,es}/07-my-research.md`,
+  después de `<!-- lock -->`, marcador `{belief}`); pie de la gráfica
+  (`src/components/curve/Curve.astro`). El marcador sale de las celdas sin cambio
+  (`beliefWithoutSwitch`, `src/lib/curve/values.ts`), que el build exige iguales al extremo del
+  eje. El valor fijo de la curva se comprueba contra `src/data/curve.json` en `tests/curve.test.ts`. En F4, la suma de las dos celdas sin cambio de la
   tabla de `/vanberg` da exactamente este valor: 291.25 / 384 (`src/lib/vanberg/cells.test.ts`).
 
 #### Cifras de `/vanberg` (F4)
@@ -295,9 +297,10 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   experimental test of a new model. *Journal of Economic Behavior & Organization*, 102, 1–9. RePEc:
   <https://ideas.repec.org/a/eee/jeborg/v102y2014icp1-9.html>
 - **Clave:** `kawagoe-narita-2014`.
-- **Uso:** la culpa personal: te duele defraudar una expectativa solo si tú la creaste (acto 5). En
-  su especificación, la culpa personal es el producto de dos cantidades: la expectativa que ya había
-  y lo que tu promesa le agregó (tercer párrafo del acto 5, sin cifras). En `/finding`: que la culpa
+- **Uso:** la culpa personal: te duele defraudar una expectativa solo si tú la creaste (el hallazgo
+  del capítulo 7, detrás del candado; antes, el acto 5). En su especificación, la culpa personal es
+  el producto de dos cantidades: la expectativa que ya había y lo que tu promesa le agregó (la
+  tarjeta `trust` del capítulo 7, sin cifras). En `/finding`: que la culpa
   personal es cero con cambio de pareja lo derivan ellos mismos, citado como "Kawagoe and Narita
   (2014)", sin número de sección.
 - **Verificada:** sí (Montse, F3). La derivación de culpa personal cero con cambio de pareja,
@@ -330,17 +333,17 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 - Cifra: eje de confianza de fondo de "0" a "76", leída "de 100".
   Clave: `curve`.
   Fuente: `axis` de `curve.json`; el 76 es la creencia después de una promesa (`vanberg-second-order`).
-  Usada en: acto 5; ejes y `aria-label` de la gráfica.
+  Usada en: el hallazgo del capítulo 7 (`{min}`, `{max}`, `{outof}`); ejes y `aria-label` de la gráfica.
 - Cifra: la culpa personal tira de "15" a "65": primera y última fila donde tira, "medido en pasos
   de 5": las filas vecinas de la ventana son 10 y 70, sin filas intermedias.
   Clave: `curve`.
   Fuente: `grid[].rolls.PGA` y `grid[].beta0` de `curve.json`.
-  Usada en: acto 5; `aria-label` de la gráfica.
+  Usada en: el hallazgo del capítulo 7 (`{from}`, `{to}`, `{step}`); `aria-label` de la gráfica.
 - Cifra: pagos "10" y "5": la culpa personal gana 10 dentro de esa ventana y 5 fuera; el compromiso
   específico a la pareja y la culpa general (control) ganan 10 en todo el recorrido.
   Clave: `curve`.
   Fuente: `grid[].payoff` de `curve.json`.
-  Usada en: acto 5; gráfica, tabla oculta y momento 3.
+  Usada en: el hallazgo del capítulo 7 (`{high}`, `{low}`); gráfica, tabla oculta y su control.
 - Cifra: la regla de entrada, "tirar paga 10 y no tirar paga 5". En la simulación, la otra persona
   ve tu tipo (cuál de las razones te mueve) antes de jugar y solo entra si vas a tirar; si no entra,
   cada quien se queda con "5".
@@ -349,11 +352,12 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   quedarse fuera es la opción externa del motor (`TRUST.outside`), que llega a este repo solo a
   través del JSON, como el pago de cada fila donde un tipo no tira. `tests/curve.test.ts` comprueba
   en cada fila y cada serie que tirar paga 10 y no tirar paga 5.
-  Usada en: acto 5 (cuarto párrafo).
+  Usada en: el hallazgo del capítulo 7 (la tarjeta `worlds`).
 - Cifra: pico en "38", donde más pesa la culpa personal.
   Clave: `curve`.
   Fuente: `peak` de `curve.json`.
-  Usada en: acto 5; marca del pico y valor inicial del control deslizante.
+  Usada en: el hallazgo del capítulo 7 (`{peak}`, la tarjeta `middle`); marca del pico y valor
+  inicial del control deslizante.
 
 #### Cifras de `/finding` (F4, ADR 0026)
 

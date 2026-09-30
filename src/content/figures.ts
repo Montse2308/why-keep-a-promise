@@ -64,7 +64,7 @@ export const FIGURES: readonly Figure[] = [
   { value: '70', source: 'vanberg-beliefs', what: 'mean bet of promised recipients, no switch, out of 100' },
   { value: '68', source: 'vanberg-beliefs', what: 'mean bet of promised recipients, switch, out of 100' },
   { value: '100', source: 'vanberg-beliefs', what: 'top of the 0–100 belief scale' },
-  // Act 5: the curve (src/data/curve.json). tests/curve.test.ts checks CURVE_FIGURES against the file.
+  // Chapter 7's finding: the curve (src/data/curve.json). tests/curve.test.ts checks CURVE_FIGURES against the file.
   { value: '76', source: 'vanberg-second-order', what: 'belief after a promise, held fixed; top of the background-trust axis' },
   { value: '0', source: 'curve', what: 'bottom of the background-trust axis' },
   { value: '100', source: 'curve', what: 'background trust is read out of 100' },
@@ -131,7 +131,7 @@ export const FINDING_FIGURES = {
   robustness: { cap: 5, from: 70, payoff: 10 },
 } as const;
 
-/** The curve's figures as act 5 and its chart state them, each checked against src/data/curve.json. */
+/** The curve's figures as chapter 7's finding and its chart state them, each checked against src/data/curve.json. */
 export const CURVE_FIGURES = {
   axis: { min: 0, max: 76 },
   window: { from: 15, to: 65 },

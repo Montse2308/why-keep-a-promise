@@ -4,8 +4,9 @@ import { homeBlocks, homeIds, SECTIONS } from './sections';
 import { SLOTS } from './subpages';
 
 describe('home sections (ADR 0019)', () => {
-  it('puts the research between act 4 and act 5, and About last', () => {
-    expect(homeIds()).toEqual(['question', 'dilemma', 'two-reasons', 'vanberg', 'research', 'finding', 'how-its-built', 'about']);
+  it('puts About last; "The research" is told by chapter 7 now', () => {
+    expect(homeIds()).toEqual(['question', 'dilemma', 'two-reasons', 'vanberg', 'finding', 'how-its-built', 'about']);
+    expect(SECTIONS.map((section) => section.id)).toEqual(['about']);
   });
 
   it('keeps the six acts in their order, untouched', () => {

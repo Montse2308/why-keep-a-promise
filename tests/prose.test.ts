@@ -5,13 +5,11 @@ import es from '../src/i18n/es.json';
 import { CITATIONS, FIGURES, SOURCE_KEYS } from '../src/content/figures';
 import { ACTS } from '../src/lib/acts';
 import { LOCALES, type Locale } from '../src/lib/locales';
-import { FILM_VALUES } from '../src/lib/film/values';
+import { splitAtLock } from '../src/lib/film/captions';
 import { SUBPAGES, type Subpage } from '../src/lib/routes';
 import { SECTIONS } from '../src/lib/sections';
 import { slotsIn, splitSubpage } from '../src/lib/subpages';
-import { fill } from '../src/lib/template';
-import { MARKERS, findMarks } from '../scripts/verify-dist.mjs';
-import { citationsIn, numbersIn, readable, sentences, wordCount } from './prose';
+import { citationsIn, filledCaptions, numbersIn, readable, sentences, wordCount } from './prose';
 
 type Raw = Record<string, string>;
 const actSources = import.meta.glob('../src/content/acts/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
@@ -49,12 +47,15 @@ const byAct = (locale: Locale, act: number) => actFiles.find((f) => f.locale ===
 const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
 
 /** The acts still on `/`, by number: the film tells the others now, and their prose is retired (ADR 0021). */
-const WRITTEN_ACTS = [5, 6] as const;
-/** Words per act and language. R4 shortened acts 1–4 and 6 (ADR 0019); act 5 keeps its F3.1 budget. */
+const WRITTEN_ACTS = [6] as const;
+/** Words per act and language. R4 shortened acts 1–4 and 6 (ADR 0019). */
 const WORD_BUDGET: Record<(typeof WRITTEN_ACTS)[number], { max: number; tables: boolean }> = {
-  5: { max: 420, tables: true },
   6: { max: 145, tables: true },
 };
+
+/** Chapter 7's captions in a locale, split at its lock mark (ADR 0026). */
+const seventh = (locale: Locale) =>
+  splitAtLock((Object.entries(captionSources).find(([path]) => path.endsWith(`/chapters/${locale}/07-my-research.md`))?.[1] ?? '').replace(/^---[\s\S]*?---/, ''));
 
 /** Words per subpage and language, tables not counted (the F4 session's budget). */
 const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 700, 'how-its-built': 600 };
@@ -64,7 +65,7 @@ describe('act files', () => {
     expect(ACTS.filter((act) => !act.film).map((act) => ACTS.indexOf(act) + 1)).toEqual([...WRITTEN_ACTS]);
     for (const locale of LOCALES) {
       const names = actFiles.filter((f) => f.locale === locale).map((f) => f.name).sort();
-      expect(names).toEqual(['05-finding', '06-how-its-built']);
+      expect(names).toEqual(['06-how-its-built']);
     }
   });
 
@@ -110,40 +111,12 @@ describe('home section files (ADR 0019)', () => {
     expect(slotsIn([...open, ...locked])).toEqual(section?.slots);
   });
 
-  it('keeps "The research" to the question and the engine while locked (rule (j))', () => {
-    const outsideTheLock = /\b(tests?|seeds?|semillas?|generations?|generaci[oó]n(es)?|imitat\w*|imitaci[oó]n|provenance|procedencia|curves?|curvas?|parameters?|par[aá]metros?|finding|hallazgo)\b|θ/iu;
-    for (const locale of LOCALES) {
-      const file = sectionFiles.find((f) => f.locale === locale && f.name === 'research');
-      const { open, locked } = splitSubpage(file?.body ?? '');
-      const openText = readable(open.map((segment) => (segment.kind === 'html' ? segment.html : '')).join('\n'));
-      expect(openText).toContain('TypeScript');
-      expect(openText).toMatch(locale === 'en' ? /\bmy research\b/ : /\bmi investigación\b/);
-      expect(openText).not.toMatch(outsideTheLock);
-      expect(findMarks(openText)).toEqual([]);
-      // Behind the lock: only the links and the engine's repository, no finding either.
-      expect(slotsIn(locked)).toEqual(['research-links']);
-      expect(findMarks(locked.map((segment) => (segment.kind === 'html' ? segment.html : '')).join('\n'), MARKERS)).toEqual([]);
-    }
-  });
-
   it('keeps "About" to the facts Montse gave: the author links, and a TODO for the rest', () => {
     for (const locale of LOCALES) {
       const body = sectionFiles.find((f) => f.locale === locale && f.name === 'about')?.body ?? '';
       expect(readable(body).trim()).toBe('');
       expect([...body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1])).toEqual(['F5']);
     }
-  });
-
-  it('marks the research only with TODO(launch), the engine link of step 8', () => {
-    for (const locale of LOCALES) {
-      const body = sectionFiles.find((f) => f.locale === locale && f.name === 'research')?.body ?? '';
-      expect([...body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1])).toEqual(['launch']);
-    }
-  });
-
-  it.each(LOCALES)('%s: "The research" stays short, within 60 words', (locale) => {
-    const body = sectionFiles.find((f) => f.locale === locale && f.name === 'research')?.body ?? '';
-    expect(wordCount(readable(body))).toBeLessThanOrEqual(60);
   });
 });
 
@@ -231,24 +204,25 @@ describe('voice', () => {
     expect(bySubpage('es', 'dilemma')?.body.replace(/\s+/g, ' ')).toMatch(/«[^»]+» \(traducción propia\)/);
   });
 
-  it("ends chapter 6 at Vanberg's conclusion, where act 4 ended, and act 5 opens with the transition", () => {
+  it("ends chapter 6 at Vanberg's conclusion, where act 4 ended, and chapter 7's finding opens with act 5's transition", () => {
     const conclusion = { en: "a preference for keeping one's word in itself.", es: 'una preferencia por cumplir la palabra en sí.' };
     const transition = { en: "Vanberg's design separates", es: 'El diseño de Vanberg separa' };
     for (const locale of LOCALES) {
       const sixth = Object.entries(captionSources).find(([path]) => path.endsWith(`/chapters/${locale}/06-real-people.md`))?.[1] ?? '';
       expect(sixth.trim().replace(/\s+/g, ' ').endsWith(conclusion[locale])).toBe(true);
-      expect(byAct(locale, 5)?.body.trim().startsWith(transition[locale])).toBe(true);
+      const finding = readable(seventh(locale).locked).replace(/^\s*#+.*$/m, '').trim();
+      expect(finding.startsWith(transition[locale])).toBe(true);
     }
   });
 
-  it("names act 5's and /finding's reasons in words, never by the curve's series ids", () => {
+  it("names chapter 7's finding's and /finding's reasons in words, never by the curve's series ids", () => {
     const names = {
       en: ['personal guilt', 'partner-specific commitment', 'general guilt'],
       es: ['culpa personal', 'compromiso específico a la pareja', 'culpa general'],
     };
     for (const locale of LOCALES) {
-      for (const file of [byAct(locale, 5), bySubpage(locale, 'finding')]) {
-        const body = readable(file?.body ?? '').replace(/\s+/g, ' ').toLowerCase();
+      for (const text of [seventh(locale).locked, bySubpage(locale, 'finding')?.body]) {
+        const body = readable(text ?? '').replace(/\s+/g, ' ').toLowerCase();
         for (const name of names[locale]) expect(body).toContain(name);
         expect(body).not.toMatch(/\b(pga|mc-b|ga)\b/);
       }
@@ -263,7 +237,7 @@ describe('voice', () => {
 });
 
 describe('the acts still to be replaced (R4, ADR 0019)', () => {
-  it.each(LOCALES)('%s: act 6 is about the page only; the engine is in "The research"', (locale) => {
+  it.each(LOCALES)('%s: act 6 is about the page only; the engine is in chapter 7', (locale) => {
     expect(byAct(locale, 6)?.body ?? '').not.toMatch(/engine|motor|simulat|simulaci/i);
   });
 });
@@ -273,7 +247,7 @@ describe('subpages only add to their act, or to the film that tells it now (rule
   const film = (locale: Locale) =>
     Object.entries(captionSources)
       .filter(([path]) => path.includes(`/chapters/${locale}/`))
-      .map(([, raw]) => fill(raw.replace(/^---[\s\S]*?---/, ''), FILM_VALUES))
+      .map(([, raw]) => filledCaptions(raw.replace(/^---[\s\S]*?---/, '')))
       .join('\n\n');
 
   it('splits prose into whole sentences', () => {
@@ -289,7 +263,7 @@ describe('subpages only add to their act, or to the film that tells it now (rule
   });
 
   it('would catch a sentence copied from the act', () => {
-    const act = byAct('en', 5)?.body ?? '';
+    const act = byAct('en', 6)?.body ?? '';
     const copied = sentences(act)[2] ?? '';
     expect(copied.length).toBeGreaterThan(0);
     expect(new Set(sentences(act)).has(sentences(`Intro. ${copied}`)[1] ?? '')).toBe(true);

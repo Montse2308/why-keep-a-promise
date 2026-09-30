@@ -8,6 +8,7 @@ import { FACES, MOODS, TRIANGLE_MOODS } from './faces';
 import { outcomeOf, type DecisionState } from '../table/decision';
 import { PAYOFFS, type Face } from '../table/game';
 import { DECK } from './deck';
+import { LOCKED_BEATS } from '../chapters';
 import { SIGN } from './signs';
 import {
   AWAY,
@@ -16,12 +17,16 @@ import {
   castPositions,
   CUTS,
   DIE,
+  ENGINE_AT,
+  GEAR_TURN,
   KEY_POSE,
   LEAD,
   RESTING_FACE,
   ROOMS_SPREAD,
   SPANS,
   spanOf,
+  SHADE,
+  SHADE_MARGIN,
   SIGNS_MARGIN,
   SPREAD,
   stageAt,
@@ -596,5 +601,115 @@ describe('chapter 6, the real people (ADR 0021, ADR 0023)', () => {
     const still = stageAt(KEY_POSE['real-people'] ?? 0, { promised: true }, false, true);
     expect(still.beat).toEqual({ chapter: 'real-people', id: 'expected' });
     expect(still.signs).toMatchObject({ shown: 1, same: 1, switched: 1, expected: 1 });
+  });
+});
+
+describe('chapter 7, this is where I come in (ADR 0021, ADR 0027)', () => {
+  const conclusion = beatRange('real-people', 'conclusion');
+  const question = beatRange('my-research', 'question');
+  const engine = beatRange('my-research', 'engine');
+  const sealed = beatRange('my-research', 'sealed');
+  const inside = (range: { from: number }, by = 0.4) => at(range.from + by);
+  const view = (p: number, state: StageState = { promised: true }, portrait = false, reduced = false) => stageAt(p, state, portrait, reduced);
+  /** How far the engine's drawing reaches from its centre, ink included (Engine.astro): its body, and its crank. */
+  const ENGINE_LEFT = 93;
+  const ENGINE_RIGHT = 109;
+
+  it('takes chapter 6’s signs back up and lowers the lamp over the table as the chapter comes', () => {
+    const before = view(inside(conclusion, 0.3));
+    expect(before.signs.shown).toBe(1);
+    expect(before.shade).toBe(0);
+    const v = view(inside(question));
+    expect(v.signs.shown).toBe(0);
+    expect(v.shade).toBe(1);
+    expect(v.lamp).toBeGreaterThan(0);
+  });
+
+  it('brings the stars out as night falls, all of them by the envelope', () => {
+    expect(view(inside(conclusion, 0.3)).stars).toBe(0);
+    const [q, e, s] = [question, engine, sealed].map((range) => view(inside(range)).stars);
+    expect(q).toBeGreaterThan(0);
+    expect(e).toBeGreaterThan(q ?? 1);
+    expect(s).toBe(1);
+  });
+
+  it('keeps the lamp in view on any screen, above the voices', () => {
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 1440, height: 640 },
+      { width: 360, height: 740 },
+      { width: 320, height: 568 },
+    ]) {
+      const portrait = isPortrait(viewport);
+      for (const range of [question, engine, sealed]) {
+        const v = view(inside(range), { promised: true }, portrait);
+        expect(frame(v.shot, viewport).y).toBeLessThanOrEqual(SHADE.top - SHADE_MARGIN + 1e-9);
+        // The bulb hangs 34 units under the shade's middle; the cloud's globe is the voices' top.
+        const globeTop = v.voices.at.expects[1] + (GLOBE_AT[1] - 30) * VOICE_SCALE;
+        expect(SHADE.y + 36).toBeLessThan(Math.min(globeTop, v.voices.at.word[1] - 36 * VOICE_SCALE));
+      }
+    }
+  });
+
+  it('brings the engine down onto the table where the die rested, and the die goes', () => {
+    expect(view(inside(question)).engine.shown).toBe(0);
+    expect(view(inside(question)).die.opacity).toBe(1);
+    const v = view(inside(engine));
+    expect(v.engine.shown).toBe(1);
+    expect(v.die.opacity).toBe(0);
+    expect(ENGINE_AT[0]).toBe(WORLD.centre);
+    expect(view(inside(sealed)).engine.shown).toBe(1);
+  });
+
+  it('fits the engine on the table between the circle and the square, on a phone too', () => {
+    for (const spread of [SPREAD.landscape, SPREAD.portrait]) {
+      const cast = castPositions(spread);
+      expect(ENGINE_AT[0] - ENGINE_LEFT).toBeGreaterThan(cast.you[0] + 58 + 6.5);
+      expect(ENGINE_AT[0] + ENGINE_RIGHT).toBeLessThan(cast.other[0] - 56 - 6.5);
+    }
+  });
+
+  it('turns the engine’s gears with the scroll only, and holds them with reduced motion', () => {
+    const early = view(inside(engine, 0.1)).engine.turn;
+    const late = view(inside(engine, 0.7)).engine.turn;
+    expect(late - early).toBeCloseTo(0.6 * GEAR_TURN, 6);
+    // Two points under the same cut: the engine's card has the stage in both.
+    expect(view(inside(engine, 0.1), { promised: true }, false, true).engine.turn).toBe(view(inside(engine, 0.4), { promised: true }, false, true).engine.turn);
+  });
+
+  it('has everyone watch the engine, surprised, then glad at the envelope; my word stops glowing', () => {
+    const v = view(inside(engine));
+    expect(v.voices.look).toEqual({ expects: ENGINE_AT, word: ENGINE_AT });
+    expect(v.moods).toEqual({ you: 'shock', other: 'shock', partner: 'neutral' });
+    expect(view(inside(question)).moods).toEqual({ you: 'neutral', other: 'neutral', partner: 'neutral' });
+    expect(view(inside(sealed)).moods).toEqual({ you: 'happy', other: 'happy', partner: 'neutral' });
+    expect(view(inside(question)).voices.glow).toBe(0);
+  });
+
+  it('seals the envelope, and with the lock open opens it before the finding', () => {
+    expect(view(at(sealed.from)).envelope).toBe(0);
+    expect(view(at(sealed.from), { promised: true }, false, true).envelope).toBe(0);
+    expect(view(inside(sealed, 0.4)).envelope).toBe(LOCKED_BEATS.length > 0 ? 1 : 0);
+  });
+
+  it('holds the light still across the finding, and cuts to each of its beats with reduced motion', () => {
+    const first = LOCKED_BEATS[0];
+    const last = LOCKED_BEATS.at(-1);
+    if (!first || !last) throw new Error('The tests run with the lock open');
+    const start = view(at(beatRange('my-research', first.id).from));
+    const end = view(at(beatRange('my-research', last.id).to - 0.01));
+    expect(end.light).toEqual(start.light);
+    expect(end.lamp).toBe(start.lamp);
+    for (const b of LOCKED_BEATS) expect(CUTS.some((cut) => cut.from === beatRange('my-research', b.id).from - LEAD)).toBe(true);
+    // The envelope stays open through the finding, with or without motion.
+    expect(view(at(beatRange('my-research', first.id).from + 0.5), { promised: true }, false, true).envelope).toBe(1);
+  });
+
+  it('draws its still frame with the engine on the table under the lamp, at night', () => {
+    const still = stageAt(KEY_POSE['my-research'] ?? 0, { promised: true }, false, true);
+    expect(still.beat).toEqual({ chapter: 'my-research', id: 'engine' });
+    expect(still).toMatchObject({ shade: 1, engine: { shown: 1 }, envelope: 0 });
+    expect(still.lamp).toBeGreaterThan(0.5);
+    expect(still.signs.shown).toBe(0);
   });
 });

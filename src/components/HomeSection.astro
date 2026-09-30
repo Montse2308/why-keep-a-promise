@@ -1,16 +1,12 @@
 ---
 /**
- * One of the home page's two sections that are not acts (ADR 0019), from
- * src/content/sections/<locale>/<id>.md. "The research" is always visible: the question and the
- * engine. What follows its lock marker, the links to act 5, /finding and the engine's repository,
- * renders only behind act 5's lock, inside `data-research-links`, the mark `verify:dist` looks for
- * (docs/content-rules.md, rule (j)). "About" carries only the facts Montse gave: name and profiles.
+ * The home page's section that is not an act (ADR 0019), from src/content/sections/<locale>/<id>.md:
+ * "About", which carries only the facts Montse gave: name and profiles. "The research" was the other
+ * one; chapter 7 tells it now, with its lock (ADR 0026).
  */
 import { getCollection } from 'astro:content';
 import SectionSegments from './SectionSegments.astro';
-import { MANUSCRIPT_STATUS } from '../config';
-import { useTranslations, type Locale } from '../lib/i18n';
-import { findingUnlocked } from '../lib/lock';
+import type { Locale } from '../lib/i18n';
 import type { Section } from '../lib/sections';
 import { slotsIn, splitSubpage } from '../lib/subpages';
 
@@ -20,83 +16,24 @@ interface Props {
 }
 
 const { section, locale } = Astro.props;
-const tr = useTranslations(locale);
 const entry = (await getCollection('sections', (candidate) => candidate.id === `${locale}/${section.id}`))[0];
 if (!entry?.rendered) throw new Error(`No prose for section ${locale}/${section.id}`);
 
 const parts = splitSubpage(entry.rendered.html);
 const stray = slotsIn([...parts.open, ...parts.locked]).filter((slot) => !section.slots.includes(slot));
 if (stray.length > 0) throw new Error(`Section ${section.id} uses slots it does not own: ${stray.join(', ')}`);
-if (section.id === 'about' && parts.locked.length > 0) throw new Error('"About" has nothing behind the lock');
+if (parts.locked.length > 0) throw new Error(`"${entry.data.title}" has nothing behind the lock`);
 
-const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
 const titleId = `${section.id}-title`;
 ---
 
 <section id={section.id} class="home-section container column" aria-labelledby={titleId}>
-  {
-    section.id === 'research' ? (
-      <div class="research wide">
-        <h2 id={titleId} class="research__title">
-          {entry.data.title}
-        </h2>
-        <p class="research__question">{tr('site.title')}</p>
-        <div class="research__text">
-          <SectionSegments segments={parts.open} locale={locale} />
-          {unlocked && parts.locked.length > 0 && (
-            <div class="research__more" data-research-links>
-              <SectionSegments segments={parts.locked} locale={locale} />
-            </div>
-          )}
-        </div>
-      </div>
-    ) : (
-      <>
-        <h2 id={titleId}>{entry.data.title}</h2>
-        <SectionSegments segments={parts.open} locale={locale} />
-      </>
-    )
-  }
+  <h2 id={titleId}>{entry.data.title}</h2>
+  <SectionSegments segments={parts.open} locale={locale} />
 </section>
 
 <style>
   .home-section {
     padding-block: var(--space-12);
-  }
-
-  /* The research: wider than the prose column, the question large on one side and the engine on the other. */
-  .research {
-    display: grid;
-    gap: var(--space-4) var(--space-12);
-    align-items: start;
-  }
-
-  .research__title {
-    margin: 0 0 var(--space-4);
-  }
-
-  .research__question {
-    margin: 0;
-    font-family: var(--font-prose);
-    font-size: var(--step-4);
-    font-style: italic;
-    font-weight: 600;
-    line-height: var(--leading-tight);
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-  }
-
-  .research__text > :global(p:first-child) {
-    margin-top: 0;
-  }
-
-  @media (min-width: 48rem) {
-    .research {
-      grid-template-columns: 1.1fr 1fr;
-    }
-
-    .research__title {
-      grid-column: 1 / -1;
-    }
   }
 </style>

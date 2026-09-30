@@ -1,14 +1,26 @@
 import { describe, expect, it } from 'vitest';
+import astroConfig from '../astro.config.mjs?raw';
 import config from '../src/config.ts?raw';
 import curveComponent from '../src/components/curve/Curve.astro?raw';
 import curveController from '../src/components/curve/controller.ts?raw';
-import actEn from '../src/content/acts/en/05-finding.md?raw';
-import actEs from '../src/content/acts/es/05-finding.md?raw';
+import curveStub from '../src/components/curve/Locked.astro?raw';
+import filmComponent from '../src/components/film/Film.astro?raw';
+import findingComponent from '../src/components/film/chapters/Finding.astro?raw';
+import myResearch from '../src/components/film/chapters/MyResearch.astro?raw';
+import engineComponent from '../src/components/film/Engine.astro?raw';
+import worldComponent from '../src/components/film/World.astro?raw';
+import chapterEn from '../src/content/chapters/en/07-my-research.md?raw';
+import chapterEs from '../src/content/chapters/es/07-my-research.md?raw';
 import en from '../src/i18n/en.json';
 import es from '../src/i18n/es.json';
+import findingBeats from '../src/lib/film/finding.ts?raw';
+import findingStub from '../src/lib/film/finding.locked.ts?raw';
+import { FINDING_BEATS as STUBBED } from '../src/lib/film/finding.locked';
 import homeSection from '../src/components/HomeSection.astro?raw';
 import homeView from '../src/views/HomeView.astro?raw';
 import subpageView from '../src/views/SubpageView.astro?raw';
+import { LOCKED_BEATS } from '../src/lib/chapters';
+import { splitAtLock } from '../src/lib/film/captions';
 import { splitSubpage } from '../src/lib/subpages';
 import {
   countStandalone,
@@ -32,28 +44,47 @@ const parts = Object.entries({ ...subpages, ...sections }).map(([path, raw]) => 
   return { path, open: text(open), locked: text(locked) };
 });
 
-const curveKeys = (dictionary: Record<string, string>) =>
+/** Chapter 7's captions, split at the lock mark (ADR 0026). */
+const seventh = [chapterEn, chapterEs].map((raw) => splitAtLock(raw.replace(/^---[\s\S]*?---/, '')));
+
+/** UI strings only the locked components use: the curve's, and those of chapter 7's finding. */
+const isLockedKey = (key: string) => key.startsWith('curve.') || key.startsWith('film.finding.');
+const keys = (dictionary: Record<string, string>, locked: boolean) =>
   Object.entries(dictionary)
-    .filter(([key]) => key.startsWith('curve.'))
+    .filter(([key]) => isLockedKey(key) === locked)
     .map(([, value]) => value)
     .join('\n');
 
-// What the lock covers once open: act 5, /finding, the engine part of /how-its-built and the links
-// of "The research".
+// What the lock covers once open: chapter 7's finding, the curve and its control, /finding and the
+// engine part of /how-its-built (ADR 0026).
 const lockedSources = [
-  actEn,
-  actEs,
-  curveKeys(en),
-  curveKeys(es),
+  ...seventh.map((part) => part.locked),
+  keys(en, true),
+  keys(es, true),
   curveComponent,
   curveController,
-  homeView,
-  homeSection,
+  findingComponent,
+  findingBeats,
   subpageView,
   ...parts.map((part) => part.locked),
 ].join('\n');
 
-describe('verify:dist (ADR 0015, ADR 0017, ADR 0019)', () => {
+// What renders in both states: chapter 7's question, engine and envelope, the film around them, the
+// home, and every other UI string.
+const openSources = {
+  'chapter 7, open part (en)': seventh[0]?.open ?? '',
+  'chapter 7, open part (es)': seventh[1]?.open ?? '',
+  'MyResearch.astro': myResearch,
+  'Film.astro': filmComponent,
+  'World.astro': worldComponent,
+  'Engine.astro': engineComponent,
+  'HomeView.astro': homeView,
+  'HomeSection.astro': homeSection,
+  'the open UI strings (en)': keys(en, false),
+  'the open UI strings (es)': keys(es, false),
+};
+
+describe('verify:dist (ADR 0026)', () => {
   it('looks for marks that the locked content really carries, so the list cannot go stale', () => {
     expect(findMarks(lockedSources)).toEqual(MARKERS);
     for (const mark of UNLOCKED_MARKERS) expect(MARKERS).toContain(mark);
@@ -72,6 +103,10 @@ describe('verify:dist (ADR 0015, ADR 0017, ADR 0019)', () => {
     },
   );
 
+  it.each(Object.entries(openSources))("%s carries none of the lock's marks", (_name, source) => {
+    expect(findMarks(source)).toEqual([]);
+  });
+
   it('puts all of /finding and the engine of /how-its-built behind the lock', () => {
     for (const part of parts) {
       if (part.path.endsWith('/finding.md')) expect(part.open.trim()).toBe('');
@@ -80,35 +115,49 @@ describe('verify:dist (ADR 0015, ADR 0017, ADR 0019)', () => {
     }
   });
 
-  it('keeps "The research" visible and puts only its links behind the lock', () => {
-    const research = parts.filter((part) => part.path.endsWith('/research.md'));
-    expect(research).toHaveLength(2);
-    for (const part of research) {
-      expect(part.open).toContain('TypeScript');
-      expect(part.locked).toContain('TODO(launch)');
-    }
-    // The links render inside the mark only when unlocked, so a locked build cannot carry them.
-    expect(homeSection).toMatch(/unlocked && parts\.locked\.length > 0 && \(\s*<div class="research__more" data-research-links>/);
+  it("puts chapter 7's finding behind the lock, in the component a locked build does not have", () => {
+    for (const part of seventh) expect(findMarks(part.locked).length).toBeGreaterThan(0);
+    // The finding renders inside its marks, and chapter 7 renders it only with the lock open.
+    expect(findingComponent).toMatch(/<div class="finding" data-locked-content data-finding>/);
+    expect(myResearch).toMatch(/\{unlocked && <Finding locale=\{locale\} captions=\{locked\} \/>\}/);
+    // The finding's first beat is a mark: only a timeline with the lock open names it.
+    expect(LOCKED_BEATS[0]?.id).toBe('third-reason');
   });
 
-  it('requires the research links on both home pages once unlocked', () => {
-    for (const page of Object.keys(HOME_PAGES)) expect(UNLOCKED_PAGES[page as keyof typeof UNLOCKED_PAGES]).toContain('data-research-links');
+  it('requires chapter 7’s finding on both home pages once unlocked', () => {
+    for (const page of Object.keys(HOME_PAGES)) {
+      expect(UNLOCKED_PAGES[page as keyof typeof UNLOCKED_PAGES]).toEqual(expect.arrayContaining(['data-finding', 'finding-curve', 'third-reason']));
+    }
+  });
+
+  it('stubs every locked module in a locked build, with a stub that carries nothing', () => {
+    const map = /const LOCKED_MODULES = \{([\s\S]*?)\};/.exec(astroConfig)?.[1] ?? '';
+    const pairs = [...map.matchAll(/'([^']+)':\s*'([^']+)'/g)].map((m) => [m[1], m[2]]);
+    expect(pairs).toEqual([
+      ['/src/components/curve/Curve.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/film/chapters/Finding.astro', '/src/components/curve/Locked.astro'],
+      ['/src/lib/film/finding.ts', '/src/lib/film/finding.locked.ts'],
+    ]);
+    // The component stub is only its frontmatter; the timeline stub knows no beats.
+    expect(curveStub.replace(/^---[\s\S]*?---/, '').trim()).toBe('');
+    expect(STUBBED).toEqual([]);
+    expect(findMarks(curveStub + findingStub)).toEqual([]);
   });
 
   it('matches across line breaks and case', () => {
     expect(findMarks('<p>…from Kawagoe and\nNarita. Personal\n  guilt weighs…</p>')).toEqual(['Kawagoe', 'personal guilt']);
   });
 
-  it('finds nothing in act 5 and /finding as they render while locked', () => {
-    const locked = `<section id="finding" class="act"><h2 id="finding-title">${en['act.finding.title']}</h2><p class="act__status">${en['manuscript.status.in-preparation']}</p></section>`;
-    const lockedEs = `<h2>${es['act.finding.title']}</h2><p>${es['manuscript.status.in-preparation']}</p>`;
+  it("finds nothing in chapter 7's envelope and /finding as they render while locked", () => {
+    const envelope = `<section id="my-research" class="chapter"><h2 id="my-research-title" class="card__chapter">${en['film.chapter']} · ${en['act.finding.title']}</h2><div class="envelope" data-envelope><p class="envelope__stamp">${en['manuscript.status.in-preparation']}</p></div></section>`;
+    const envelopeEs = `<div class="envelope" data-envelope><p class="envelope__stamp">${es['manuscript.status.in-preparation']}</p></div>`;
     const subpage = `<article class="subpage"><h1 id="subpage-title">${en['act.finding.title']}</h1><p class="subpage__status">${en['manuscript.status.in-preparation']}</p></article>`;
-    expect(findMarks(locked + lockedEs + subpage)).toEqual([]);
+    expect(findMarks(envelope + envelopeEs + subpage)).toEqual([]);
   });
 
   it('counts the status sentence where it stands alone, across line breaks and case', () => {
     const sentence = en['manuscript.status.in-preparation'];
-    expect(countStandalone('<p class="stamp">A manuscript is in preparation.</p><p class="act__status">\n A manuscript\n is in PREPARATION.</p>', sentence)).toBe(2);
+    expect(countStandalone('<p class="stamp">A manuscript is in preparation.</p><p class="subpage__status">\n A manuscript\n is in PREPARATION.</p>', sentence)).toBe(2);
     expect(countStandalone('<p>Nothing to see.</p>', sentence)).toBe(0);
     expect(() => countStandalone('<p>text</p>', ' ')).toThrow();
   });
@@ -127,10 +176,15 @@ describe('verify:dist (ADR 0015, ADR 0017, ADR 0019)', () => {
       'finding/index.html': page(en[`manuscript.status.${status}`], 1),
     });
 
-    it('passes with act 5 alone on each home page while the film lands, in both states', () => {
+    it("passes with chapter 7's stamp alone on each home page until the notebook's entry comes, in both states", () => {
       expect(STATUS_ON_HOME).toBe(1);
       expect(statusProblems('in-preparation', dictionaries, home('in-preparation'))).toEqual([]);
       expect(statusProblems('under-review', dictionaries, home('under-review'))).toEqual([]);
+    });
+
+    it('stamps the envelope with the status sentence, standing alone, and nowhere else in chapter 7', () => {
+      expect(myResearch).toMatch(/<p class="envelope__stamp">\{status\}<\/p>/);
+      expect(myResearch.match(/\{status\}/g)).toHaveLength(1);
     });
 
     it('fails when the sentence is missing, or appears twice', () => {

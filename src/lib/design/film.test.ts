@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import faviconSvg from '../../../public/favicon.svg?raw';
 import filmCss from '../../styles/film.css?raw';
-import { CHAPTERS, type ChapterId } from '../chapters';
+import { OPEN_CHAPTERS, type ChapterId } from '../chapters';
 import { sample, steepestColourRate } from '../film/track';
 import { spanAt, spans, totalScreens } from '../film/spans';
 import { contrastRatio, deltaE, parseHex, simulate, type Deficiency } from './color';
@@ -73,8 +73,10 @@ describe('the day’s light (ADR 0027)', () => {
     }
   });
 
+  // The light keeps the clock of the open film, the one without chapter 7's finding, so the lock's
+  // state never changes it (src/lib/film/timeline.ts, `lightAt`).
   it('keeps each point of light in the chapter ADR 0027 gives it, and the lamp for chapters 7 and 8', () => {
-    const chapterOf = (p: number) => spanAt(spans(CHAPTERS), p).id;
+    const chapterOf = (p: number) => spanAt(spans(OPEN_CHAPTERS), p).id;
     const ADR_0027: Record<string, readonly ChapterId[]> = {
       dawn: ['arrival'],
       sunrise: ['arrival', 'two-rooms'],
@@ -86,13 +88,13 @@ describe('the day’s light (ADR 0027)', () => {
     };
     expect(LIGHT_POINTS.map((point) => point.name)).toEqual(Object.keys(ADR_0027));
     for (const point of LIGHT_POINTS) expect(ADR_0027[point.name], point.name).toContain(chapterOf(point.at));
-    const seventh = spans(CHAPTERS).find((span) => span.id === 'my-research');
+    const seventh = spans(OPEN_CHAPTERS).find((span) => span.id === 'my-research');
     expect(LAMP_FROM).toBeGreaterThanOrEqual((seventh?.from ?? 1) - 1e-9);
     expect(chapterOf(LAMP_FROM + 1e-9)).toBe('my-research');
   });
 
   it.each(LIGHT_SURFACES)('never cuts: %s changes at most a few ΔE per screen of scroll', (surface) => {
-    const perScreen = steepestColourRate(LIGHT[surface]) / totalScreens(CHAPTERS);
+    const perScreen = steepestColourRate(LIGHT[surface]) / totalScreens(OPEN_CHAPTERS);
     expect(perScreen).toBeLessThanOrEqual(MAX_LIGHT_CHANGE_PER_SCREEN);
   });
 });

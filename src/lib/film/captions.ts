@@ -26,3 +26,18 @@ export function splitBeats(html: string, beats: readonly string[]): Map<string, 
     }),
   );
 }
+
+const LOCK = /<!--\s*lock\s*-->/g;
+
+/**
+ * A chapter's captions split where its lock begins (ADR 0026): chapter 7's finding follows a
+ * `<!-- lock -->` mark, and only a build with the lock open renders what comes after it. Every other
+ * chapter has no mark, so all of it is open. At most one mark.
+ */
+export function splitAtLock(html: string): { readonly open: string; readonly locked: string } {
+  const marks = [...html.matchAll(LOCK)];
+  if (marks.length > 1) throw new Error('A chapter has at most one lock mark');
+  const mark = marks[0];
+  if (!mark) return { open: html, locked: '' };
+  return { open: html.slice(0, mark.index), locked: html.slice(mark.index + mark[0].length) };
+}

@@ -1,5 +1,5 @@
 /**
- * The curve of act 5, read from src/data/curve.json (ADR 0010). The page never recomputes the
+ * The curve of chapter 7's finding, read from src/data/curve.json (ADR 0010). The page never recomputes the
  * model: this module only checks the file's shape and keeps the columns the page shows, one row
  * per value of background trust. Model parameters and intermediate values in the file are never
  * read here, so they cannot reach the page.

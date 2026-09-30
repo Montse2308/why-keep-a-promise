@@ -1,9 +1,9 @@
 /**
- * What /finding shows beyond act 5's curve (ADR 0017): the guilt available at each grid row, the
+ * What /finding shows beyond chapter 7's curve (ADR 0026): the guilt available at each grid row, the
  * sensitivity θ and the fixed cost c from `params.sens`, and the robustness variant. Read from
  * src/data/curve.json as it is; nothing here recomputes the model or interpolates between rows.
  *
- * Build time only, and only behind act 5's lock: the one component that imports this module is
+ * Build time only, and only behind the lock: the one component that imports this module is
  * src/components/curve/Curve.astro, which a locked build replaces with an empty stub
  * (astro.config.mjs). No other parameter of the file is read.
  */

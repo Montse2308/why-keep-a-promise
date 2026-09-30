@@ -2,6 +2,20 @@
  * Reading prose as a visitor meets it, for the tests of the site's text: the acts, the notebook's
  * subpages, the home sections and the film's captions.
  */
+import { CURVE_VALUES } from '../src/lib/curve/values';
+import { splitAtLock } from '../src/lib/film/captions';
+import { FILM_VALUES } from '../src/lib/film/values';
+import { fill } from '../src/lib/template';
+
+/**
+ * A chapter's captions as the visitor reads them, the way the build fills them: the placeholders of
+ * the open part from the film's values, and those of chapter 7's finding, after its lock mark, from
+ * the curve's (ADR 0026).
+ */
+export function filledCaptions(body: string): string {
+  const { open, locked } = splitAtLock(body);
+  return `${fill(open, FILM_VALUES)}${fill(locked, CURVE_VALUES)}`;
+}
 
 /**
  * The prose a reader sees: no TODO markers, no HTML comments (slot, lock and beat marks), no code

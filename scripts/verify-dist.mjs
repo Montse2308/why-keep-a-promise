@@ -1,17 +1,15 @@
 // Checks the built site against the lock (ADR 0026). Run after `npm run build`.
 //
-// The lock covers act 5 (prose, chart, moment 3), all of /finding, the engine part of
-// /how-its-built and the links of "The research". While MANUSCRIPT_STATUS in src/config.ts is
+// The lock covers chapter 7's finding (its prose, the curve and its control, its links), all of
+// /finding and the engine part of /how-its-built. While MANUSCRIPT_STATUS in src/config.ts is
 // 'in-preparation', it fails if any file in dist/ carries a mark of that content: its data
-// attributes, the charts' ids, moment 3's hook or a key phrase of its prose and charts. Once the
-// status is 'under-review', it fails if the locked content is missing from any page that carries it,
-// so a broken unlock is caught too.
+// attributes, the charts' ids, the control's hook, the finding's first beat (which only the film's
+// timeline names) or a key phrase of its prose and charts. Once the status is 'under-review', it
+// fails if the locked content is missing from any page that carries it, so a broken unlock is caught
+// too.
 //
 // In both states it also checks the status sentence (docs/content-rules.md, rule (b)): the active one
 // appears exactly `STATUS_ON_HOME` times on each home page, and the other one appears nowhere.
-//
-// The lock still guards the previous version's places (act 5, /finding, /how-its-built, "The
-// research"); it moves to chapter 7 and the notebook in P4 (ADR 0026).
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
@@ -39,14 +37,15 @@ export const MARKERS = [
   'generador con semilla',
   'by imitation',
   'por imitación',
-  // "The research": its links to act 5, /finding and the engine's repository (ADR 0019).
-  'data-research-links',
+  // Chapter 7's finding: the cards the envelope holds, and the timeline's first beat past it.
+  'data-finding',
+  'third-reason',
 ];
 
 /** What each unlocked page must carry, by its path in dist/. */
 export const UNLOCKED_PAGES = {
-  'index.html': ['data-locked-content', 'finding-curve', 'data-research-links'],
-  'es/index.html': ['data-locked-content', 'finding-curve', 'data-research-links'],
+  'index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason'],
+  'es/index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason'],
   'finding/index.html': ['data-locked-content', 'finding-guilt', 'identification result'],
   'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'resultado de identificación'],
   'how-its-built/index.html': ['data-locked-content', 'by imitation'],
@@ -60,9 +59,8 @@ export const UNLOCKED_MARKERS = [...new Set(Object.values(UNLOCKED_PAGES).flat()
 export const HOME_PAGES = { 'index.html': 'en', 'es/index.html': 'es' };
 
 /**
- * The active status sentence on each home page. While the film lands (P1–P3) it is act 5 alone: the
- * film replaced the first screen and its stamp. From P4 it is two: the stamp of chapter 7 and the
- * notebook's entry (ADR 0026).
+ * The active status sentence on each home page: the stamp on chapter 7's envelope. It is two once
+ * the notebook's panel brings its entry for the finding (ADR 0024, ADR 0026).
  */
 export const STATUS_ON_HOME = 1;
 
@@ -102,8 +100,8 @@ export function readStatus(source) {
 }
 
 /**
- * How many elements of an HTML text hold exactly this sentence and nothing else: the way the stamp
- * and act 5 render the status sentence. The same words inside a longer sentence of prose do not
+ * How many elements of an HTML text hold exactly this sentence and nothing else: the way chapter 7's
+ * stamp and /finding render the status sentence. The same words inside a longer sentence of prose do not
  * count ("…until the manuscript is under review. While…" on /how-its-built).
  * @param {string} html
  * @param {string} sentence
@@ -117,7 +115,7 @@ export function countStandalone(html, sentence) {
 }
 
 /**
- * Problems with the status sentence (rule (b), ADR 0019): the active one must stand alone exactly
+ * Problems with the status sentence (rule (b), ADR 0026): the active one must stand alone exactly
  * `STATUS_ON_HOME` times on each home page, and the inactive one on no page at all.
  * @param {'in-preparation' | 'under-review'} status
  * @param {Record<string, Record<string, string>>} dictionaries the UI strings, by locale

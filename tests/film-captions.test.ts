@@ -2,11 +2,14 @@ import { describe, expect, it } from 'vitest';
 import en from '../src/i18n/en.json';
 import es from '../src/i18n/es.json';
 import { CITATIONS, FIGURES } from '../src/content/figures';
-import { BUILT, CHAPTERS } from '../src/lib/chapters';
+import { BUILT, CHAPTERS, LOCKED_BEATS, OPEN_CHAPTERS } from '../src/lib/chapters';
+import { CURVE_VALUES } from '../src/lib/curve/values';
+import { splitAtLock } from '../src/lib/film/captions';
 import { FILM_VALUES } from '../src/lib/film/values';
 import { LOCALES, type Locale } from '../src/lib/locales';
 import { fill } from '../src/lib/template';
-import { CITATION, citationsIn, numbersIn, readable } from './prose';
+import { findMarks } from '../scripts/verify-dist.mjs';
+import { CITATION, citationsIn, filledCaptions, numbersIn, readable } from './prose';
 
 type Raw = Record<string, string>;
 const sources = import.meta.glob('../src/content/chapters/*/*.md', { query: '?raw', import: 'default', eager: true }) as Raw;
@@ -30,7 +33,7 @@ const files: CaptionFile[] = Object.entries(sources).map(([path, raw]) => {
 
 const captionsOf = (locale: Locale, id: string) => files.find((f) => f.locale === locale && f.chapter === id);
 /** A caption as the visitor reads it: placeholders filled from the code. */
-const filled = (file: CaptionFile | undefined) => fill(file?.body ?? '', FILM_VALUES);
+const filled = (file: CaptionFile | undefined) => filledCaptions(file?.body ?? '');
 const filmKeys = (locale: Locale) => Object.entries(dictionaries[locale]).filter(([key]) => key.startsWith('film.'));
 
 describe('the film’s caption files (ADR 0021)', () => {
@@ -69,7 +72,7 @@ describe('every number of the film comes from the code (rule (k))', () => {
   });
 
   it('fills the placeholders with numbers, not with words', () => {
-    for (const value of Object.values(FILM_VALUES)) expect(typeof value).toBe('number');
+    for (const value of [...Object.values(FILM_VALUES), ...Object.values(CURVE_VALUES)]) expect(typeof value).toBe('number');
   });
 
   it('would catch a figure written in a caption', () => {
@@ -215,5 +218,65 @@ describe('chapter 6, the real people (rule (k))', () => {
     expect(out).toContain('{real}');
     expect(out).toContain('{guess}');
     expect(out).not.toMatch(locale === 'en' ? /close|far|right|wrong|good|better/i : /cerca|lejos|acert|fall|bien|mejor/i);
+  });
+});
+
+describe('chapter 7, this is where I come in (rule (j), ADR 0026)', () => {
+  const parts = (locale: Locale) => splitAtLock(captionsOf(locale, 'my-research')?.body ?? '');
+  const marks = (html: string) => [...html.matchAll(/<!--\s*beat:([a-z-]+)\s*-->/g)].map((m) => m[1]);
+  /** What the open part may not say (rule (j)): nothing of the engine's workings, nor of the finding. */
+  const outsideTheLock = /\b(tests?|seeds?|semillas?|generations?|generaci[oó]n(es)?|imitat\w*|imitaci[oó]n|provenance|procedencia|commits?|curves?|curvas?|parameters?|par[aá]metros?|finding|hallazgo)\b|θ/iu;
+  const openKeys = (locale: Locale) => filmKeys(locale).filter(([key]) => key.startsWith('film.my-research.'));
+
+  it.each(LOCALES)('%s: its open part says the question is Montse’s research question, and that she built a simulation engine in TypeScript', (locale) => {
+    const open = readable(parts(locale).open).replace(/\s+/g, ' ');
+    expect(open).toMatch(locale === 'en' ? /\bthe question of my research\b/ : /\bla pregunta de mi investigación\b/);
+    expect(open).toMatch(locale === 'en' ? /\bI built a simulation engine\b/ : /\bconstruí un motor de simulación\b/);
+    expect(open).toContain('TypeScript');
+  });
+
+  it.each(LOCALES)('%s: its open part says nothing else: not the engine’s workings, not the finding, no figure and no mark of the lock', (locale) => {
+    const open = readable(parts(locale).open);
+    expect(open).not.toMatch(outsideTheLock);
+    expect(numbersIn(open)).toEqual([]);
+    expect(findMarks(parts(locale).open)).toEqual([]);
+    expect(parts(locale).open).not.toMatch(/TODO\(/);
+    for (const [key, value] of openKeys(locale)) {
+      expect(value, key).not.toMatch(outsideTheLock);
+      expect(findMarks(value), key).toEqual([]);
+    }
+  });
+
+  it.each(LOCALES)('%s: names the author in the first person, with her full name from its key', (locale) => {
+    const me = dictionaries[locale]['film.my-research.me'];
+    expect(me).toContain('{name}');
+    expect(me).toMatch(locale === 'en' ? /^I’m / : /^Soy /);
+    expect(dictionaries[locale]['author.name']).toBe(en['author.name']);
+  });
+
+  it.each(LOCALES)('%s: seals the envelope with nothing but the status sentence: its beat has no caption', (locale) => {
+    const sealed = parts(locale).open.split('<!-- beat:sealed -->')[1] ?? 'missing';
+    expect(sealed.trim()).toBe('');
+  });
+
+  it.each(LOCALES)('%s: puts the question, the engine and the envelope before the lock, and the finding after it', (locale) => {
+    const { open, locked } = parts(locale);
+    expect(marks(open)).toEqual(OPEN_CHAPTERS.find((c) => c.id === 'my-research')?.beats.map((b) => b.id));
+    expect(marks(open)).toEqual(['question', 'engine', 'sealed']);
+    expect(marks(locked)).toEqual(LOCKED_BEATS.map((b) => b.id));
+    expect(LOCKED_BEATS.length).toBeGreaterThan(0);
+  });
+
+  it.each(LOCALES)('%s: behind the lock, tells act 5’s finding with its citation, and links the engine only there', (locale) => {
+    const locked = readable(parts(locale).locked);
+    expect(findMarks(locked).length).toBeGreaterThan(0);
+    expect(citationsIn(locked)).toContain('Kawagoe+Narita 2014');
+    expect([...parts(locale).locked.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1])).toEqual(['launch']);
+  });
+
+  it.each(LOCALES)('%s: says the curve compares worlds, not a population’s history (rule (e))', (locale) => {
+    const text = readable(parts(locale).locked).replace(/\s+/g, ' ').toLocaleLowerCase('und');
+    expect(text).toMatch(locale === 'en' ? /a comparison across worlds/ : /una comparación entre mundos/);
+    expect(text).toMatch(locale === 'en' ? /not a population moving along the curve/ : /no es una población que recorre la curva/);
   });
 });

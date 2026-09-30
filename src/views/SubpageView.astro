@@ -1,9 +1,9 @@
 ---
 /**
  * A subpage: the prose of src/content/subpages/<locale>/<slug>.md, with the components its slots
- * name, and a link back to the act it deepens, or to the film's chapter that now tells that act. What follows the prose's lock marker renders only
- * behind act 5's lock (ADR 0015, ADR 0017); /finding is locked whole, so a locked build shows its
- * title and the status sentence and nothing else.
+ * name, and a link back to the act it deepens, or to the film's chapter that now tells that act.
+ * What follows the prose's lock marker renders only behind the lock (ADR 0026); /finding is locked
+ * whole, so a locked build shows its title and the status sentence and nothing else.
  */
 import { getCollection } from 'astro:content';
 import BestResponse from '../components/pd/BestResponse.astro';
@@ -86,7 +86,7 @@ if (stray.length > 0) throw new Error(`Subpage ${subpage} uses slots that are no
     margin-block: var(--space-12) var(--space-4);
   }
 
-  /* Like act 5's status sentence and "Go deeper →" link (src/components/Act.astro). */
+  /* The status sentence, set apart; the back link like "Go deeper →" (src/components/Act.astro). */
   .subpage__status {
     font-style: italic;
     color: var(--color-muted);

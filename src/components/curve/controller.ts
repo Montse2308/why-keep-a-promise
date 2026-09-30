@@ -1,5 +1,5 @@
 /**
- * Client script for moment 3 (act 5): the slider moves a cursor over the rows of the curve. It reads
+ * Client script for the curve's control (chapter 7): the slider moves a cursor over the rows of the curve. It reads
  * the rows the component rendered into the figure (never curve.json itself), shows the payoff of
  * each reason at the selected row and announces it in the figure's `aria-live` region.
  */

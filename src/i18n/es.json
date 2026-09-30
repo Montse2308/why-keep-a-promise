@@ -13,10 +13,6 @@
   "act.vanberg.title": "El experimento de Vanberg",
   "act.finding.title": "El hallazgo",
   "act.how-its-built.title": "Cómo está hecho",
-  "section.research.title": "La investigación",
-  "section.research.links": "Adónde lleva",
-  "section.research.to-act": "{title}, justo abajo",
-  "section.research.to-subpage": "{title}, a fondo",
   "section.about.title": "Quién es",
   "section.about.links": "Perfiles",
   "deeper.link": "Profundiza →",
@@ -214,5 +210,8 @@
   "film.real-people.guess.see": "Ver la cifra real",
   "film.real-people.guess.yours": "Adivinas: {n} %",
   "film.real-people.guess.out": "En el experimento: {real} %. Adivinaste {guess} %.",
-  "film.real-people.guess.noscript": "Adivinar necesita JavaScript. La cifra: {real} %."
+  "film.real-people.guess.noscript": "Adivinar necesita JavaScript. La cifra: {real} %.",
+  "film.my-research.still": "Al anochecer, bajo una lámpara de papel, un motorcito de papel con dos engranes está sobre la mesa entre el círculo y el cuadrado, y las dos voces lo miran. Sobre las colinas salieron las estrellas.",
+  "film.my-research.me": "Soy {name}.",
+  "film.finding.deeper": "{title}, a fondo"
 }

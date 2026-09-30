@@ -1,7 +1,7 @@
 /**
- * The home page's order (ADR 0019): the six acts, with two sections that are not acts between them.
- * "The research" comes after act 4, where the work of others ends and Montse's begins, just before
- * the finding; "About" comes after act 6, last. Section ids share the acts' namespace on `/`.
+ * The home page's order (ADR 0019): the acts, with a section that is not an act after them. "About"
+ * comes after act 6, last. "The research" came after act 4; chapter 7 tells it now (ADR 0021).
+ * Section ids share the acts' namespace on `/`.
  */
 import { ACTS, type Act } from './acts';
 import type { UiKey } from './i18n';
@@ -9,7 +9,7 @@ import type { SlotName } from './subpages';
 
 export interface Section {
   /** Section id on `/`; identical in every locale. */
-  readonly id: 'research' | 'about';
+  readonly id: 'about';
   readonly titleKey: UiKey;
   /** The act this section follows. */
   readonly after: Act['id'];
@@ -18,7 +18,6 @@ export interface Section {
 }
 
 export const SECTIONS: readonly Section[] = [
-  { id: 'research', titleKey: 'section.research.title', after: 'vanberg', slots: ['research-links'] },
   { id: 'about', titleKey: 'section.about.title', after: 'how-its-built', slots: ['author-links'] },
 ];
 

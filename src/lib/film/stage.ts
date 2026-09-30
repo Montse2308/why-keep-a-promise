@@ -8,7 +8,7 @@
  * y = 640. `p` is the scroll position through the whole film, from 0 to 1; the choreography is
  * written in screens from the top of the film (src/lib/film/timeline.ts) and turned into `p` there.
  */
-import { CHAPTERS, type ChapterId } from '../chapters';
+import { CHAPTERS, LOCKED_BEATS, type ChapterId } from '../chapters';
 import { LAMP_FROM, LIGHT, LIGHT_SURFACES, type LightSurface } from '../design/film';
 import { cellTags, COLUMNS, currentColumn, reduce as pick, START as NO_PICKS, type CellKey, type State as Picks, type Tag } from '../pd/bestReply';
 import { bestReply, type Move } from '../pd/game';
@@ -24,7 +24,7 @@ import { SIGN, SIGN_X } from './signs';
 import type { Mood } from './faces';
 import { AFTER, type Chat } from './talk';
 import { spans, type Span } from './spans';
-import { at, beatAt, beatRange, TOTAL_SCREENS } from './timeline';
+import { at, beatAt, beatRange, lightAt, TOTAL_SCREENS } from './timeline';
 import { easeInOut, progress, sample, track } from './track';
 import { voicePlaces, type Point } from './voices';
 
@@ -75,6 +75,10 @@ export interface StageView {
   readonly light: Record<LightSurface, string>;
   /** How much of the lamp's warm light falls on the table, from 0 to 1. */
   readonly lamp: number;
+  /** How far the lamp's shade has come down over the table (chapter 7 on), from 0 to 1. */
+  readonly shade: number;
+  /** How much the night's stars show, from 0 to 1. */
+  readonly stars: number;
   /** The beat whose card has the stage. */
   readonly beat: { readonly chapter: ChapterId; readonly id: string };
   /** Half the distance between the circle and the square's seat at the table. */
@@ -130,6 +134,13 @@ export interface StageView {
     readonly column: Move | null;
     readonly tags: Readonly<Record<CellKey, readonly Tag[]>>;
   };
+  /**
+   * Chapter 7's engine on the table: how far it has come down, from 0 to 1, and how far its gears have
+   * turned, in degrees. It turns with the scroll, never on its own.
+   */
+  readonly engine: { readonly shown: number; readonly turn: number };
+  /** Chapter 7's envelope: 0 sealed; with the lock open, it opens to 1 before the finding. */
+  readonly envelope: number;
   /** The coins over each character, and how much they show, from 0 to 1. */
   readonly coins: { readonly you: number; readonly other: number; readonly shown: number };
   /** Chapter 2's speech bubbles over the wall, from 0 (gone) to 1. */
@@ -184,6 +195,20 @@ const REAL_IN = entering('real-people', 'guess-same');
 const EXPECTED = entering('real-people', 'expected');
 const CONCLUSION = entering('real-people', 'conclusion');
 /**
+ * Chapter 7. Night has fallen: the signs go back up, and the lamp comes down over the table as the
+ * chapter's card comes up. The engine comes down onto the table, where the die was; the envelope
+ * follows, and with the lock open it opens before the finding (ADR 0026).
+ */
+const RESEARCH_IN = entering('my-research', 'question');
+const SIGNS_UP = [RESEARCH_IN[0], RESEARCH_IN[0] + 0.4] as const;
+const SHADE_DOWN = [RESEARCH_IN[0] + 0.3, RESEARCH_IN[1]] as const;
+const ENGINE_IN = entering('my-research', 'engine');
+const SEALED = beatRange('my-research', 'sealed').from;
+/** The flap opens while the envelope's card is held at the bottom of the screen. */
+const OPENING = [SEALED + 0.05, SEALED + 0.3] as const;
+/** How far the engine's gears turn per screen of scroll, in degrees. */
+export const GEAR_TURN = 150;
+/**
  * Once the table is back, the board folds flat while "another game" is on screen, and the die it
  * folds into drops onto the table.
  */
@@ -214,6 +239,10 @@ const POSE_IN: Readonly<Record<string, number>> = {
   'real-people/guess-switched': 0.3,
   'real-people/expected': 0.1,
   'real-people/conclusion': 0.3,
+  'my-research/question': 0.4,
+  'my-research/engine': 0.4,
+  // Sealed at its pose: with reduced motion, the envelope opens at the finding's first cut.
+  'my-research/sealed': 0,
 };
 
 const poseOf = (chapter: ChapterId, beat: string): number => beatRange(chapter, beat).from + (POSE_IN[`${chapter}/${beat}`] ?? 0);
@@ -249,8 +278,13 @@ export const CUTS: readonly { readonly from: number; readonly pose: number }[] =
       ['real-people', 'guess-switched'],
       ['real-people', 'expected'],
       ['real-people', 'conclusion'],
+      ['my-research', 'question'],
+      ['my-research', 'engine'],
+      ['my-research', 'sealed'],
     ] as const
   ).map(([chapter, b]) => ({ from: beatRange(chapter, b).from - LEAD, pose: poseOf(chapter, b) })),
+  // The finding's beats, with the lock open: each cuts to a still point past the envelope's opening.
+  ...LOCKED_BEATS.map((b) => ({ from: beatRange('my-research', b.id).from - LEAD, pose: beatRange('my-research', b.id).from + 0.3 })),
 ];
 
 /** The pose that stands for a point, in screens, when the stage cuts instead of moving. */
@@ -269,12 +303,14 @@ export const KEY_POSE: Partial<Record<ChapterId, number>> = {
   'two-voices': at(poseOf('two-voices', 'together')),
   blackout: at(poseOf('blackout', 'new-partner')),
   'real-people': at(poseOf('real-people', 'expected')),
+  'my-research': at(poseOf('my-research', 'engine')),
 };
 
 /**
  * The camera: wide on the title, closing in on the table as the other asks, wide again for the
  * rooms and the fold, close on the table for the decision, a little wider and higher when the two
  * voices come to float over the circle, and wider still once the square has gone to another table.
+ * At nightfall it rises a little for the stars and the lamp, then closes in on the engine.
  */
 const SHOTS = {
   cx: track([{ at: 0, value: 800 }, { at: at(3), value: 800 }]),
@@ -291,6 +327,10 @@ const SHOTS = {
     { at: at(WIDER[1]), value: 520 },
     { at: at(REAL_IN[0]), value: 520 },
     { at: at(REAL_IN[1]), value: 490 },
+    { at: at(RESEARCH_IN[0]), value: 490 },
+    { at: at(RESEARCH_IN[1]), value: 470 },
+    { at: at(ENGINE_IN[0]), value: 470 },
+    { at: at(ENGINE_IN[1]), value: 500 },
   ]),
   width: track([
     { at: 0, value: 1500 },
@@ -305,6 +345,10 @@ const SHOTS = {
     { at: at(WIDER[1]), value: 1500 },
     { at: at(REAL_IN[0]), value: 1500 },
     { at: at(REAL_IN[1]), value: 1320 },
+    { at: at(RESEARCH_IN[0]), value: 1320 },
+    { at: at(RESEARCH_IN[1]), value: 1400 },
+    { at: at(ENGINE_IN[0]), value: 1400 },
+    { at: at(ENGINE_IN[1]), value: 1240 },
   ]),
   widthPortrait: track([
     { at: 0, value: 660 },
@@ -319,6 +363,10 @@ const SHOTS = {
     { at: at(WIDER[1]), value: 660 },
     { at: at(REAL_IN[0]), value: 660 },
     { at: at(REAL_IN[1]), value: 640 },
+    { at: at(RESEARCH_IN[0]), value: 640 },
+    { at: at(RESEARCH_IN[1]), value: 660 },
+    { at: at(ENGINE_IN[0]), value: 660 },
+    { at: at(ENGINE_IN[1]), value: 620 },
   ]),
 };
 
@@ -359,6 +407,19 @@ const mixPlace = (a: Place, b: Place, t: number): Place => ({
 });
 const mixLayout = (a: Layout, b: Layout, t: number): Layout =>
   t <= 0 ? a : t >= 1 ? b : { other: mixPlace(a.other, b.other, t), partner: mixPlace(a.partner, b.partner, t) };
+
+/** Where chapter 7's engine stands on the table: its centre, where the die rested. */
+export const ENGINE_AT: Point = [WORLD.centre, 496];
+
+/**
+ * The night lamp of the character sheet (ADR 0027), from chapter 7 on: a paper shade hung over the
+ * table's centre, high enough to clear the voices. `top` is the top of the shade, which the view keeps
+ * on screen; `rise` is how far above its place it waits before it comes down.
+ */
+export const SHADE = { y: 190, top: 168, rise: 640 } as const;
+
+/** Room the view leaves over the lamp's shade. */
+export const SHADE_MARGIN = 30;
 
 /** Where the die floats in chapter 0, where the board's fold drops it from, and where it rests. */
 export const DIE = { floats: WORLD.tableTop - 90, folds: 236, rests: WORLD.tableTop - 44 } as const;
@@ -404,7 +465,13 @@ function moodsAt(beat: { chapter: ChapterId; id: string }, state: StageState, as
       return { you: 'shock', other: 'neutral', partner: 'neutral' };
     case 'real-people/conclusion':
       return { you: 'neutral', other: 'happy', partner: 'neutral' };
+    case 'my-research/engine':
+      return { you: 'shock', other: 'shock', partner: 'neutral' };
+    case 'my-research/sealed':
+      return { you: 'happy', other: 'happy', partner: 'neutral' };
     default:
+      // The question, and the finding's beats with the lock open: both listen.
+      if (beat.chapter === 'my-research') return { you: 'neutral', other: 'neutral', partner: 'neutral' };
       return { ...pairMoods(beat, state, asked), partner: 'neutral' };
   }
 }
@@ -495,8 +562,11 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   const m = reduced ? poseAt(screens) : screens;
   const beat = beatAt(screens + LEAD);
 
-  const light = Object.fromEntries(LIGHT_SURFACES.map((s) => [s, sample(LIGHT[s], p)])) as Record<LightSurface, string>;
-  const lamp = easeInOut(progress(p, LAMP_FROM, Math.min(1, LAMP_FROM + 0.05)));
+  // The day's light keeps the open film's clock, so the lock's state never changes it (./timeline.ts).
+  const day = lightAt(screens);
+  const light = Object.fromEntries(LIGHT_SURFACES.map((s) => [s, sample(LIGHT[s], day)])) as Record<LightSurface, string>;
+  const lamp = easeInOut(progress(day, LAMP_FROM, Math.min(1, LAMP_FROM + 0.05)));
+  const stars = easeInOut(progress(day, LAMP_FROM, Math.min(1, LAMP_FROM + 0.06)));
 
   const rooms = eased(m, INTO_ROOMS) * (1 - eased(m, OUT_OF_ROOMS));
   const boardShown = eased(m, BOARD_DOWN);
@@ -504,15 +574,21 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   const boardSeen = boardShown * (1 - folded);
   const table = portrait ? SPREAD.portrait : SPREAD.landscape;
   const apart = portrait ? ROOMS_SPREAD.portrait : ROOMS_SPREAD.landscape;
+  // Chapter 6's signs hang over the table until chapter 7 comes.
+  const signsDown = eased(m, REAL_IN) * (1 - eased(m, SIGNS_UP));
 
   const shot: Shot = {
     cx: sample(SHOTS.cx, at(m)),
     cy: sample(SHOTS.cy, at(m)),
     width: sample(SHOTS.width, at(m)),
     widthPortrait: sample(SHOTS.widthPortrait, at(m)),
-    // While the board is down, the view keeps it clear of the spool in the corner; hidden, the
-    // constraint is far away.
-    top: Math.min(BOARD.card.y - BOARD_MARGIN + (1 - boardSeen) * 2000, SIGN.top - SIGNS_MARGIN + (1 - eased(m, REAL_IN)) * 2000),
+    // While the board, chapter 6's signs or the lamp's shade hang in view, the view keeps them clear
+    // of the spool in the corner; out of sight, each constraint is far away.
+    top: Math.min(
+      BOARD.card.y - BOARD_MARGIN + (1 - boardSeen) * 2000,
+      SIGN.top - SIGNS_MARGIN + (1 - signsDown) * 2000,
+      SHADE.top - SHADE_MARGIN + (1 - eased(m, SHADE_DOWN)) * 2000,
+    ),
   };
 
   const columns = state.columns ?? NO_PICKS;
@@ -548,11 +624,12 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   const promising = eased(m, RECEIVE_IN) * (1 - eased(m, REVEAL_SWAP));
   const bubbles = { you: state.chat ? talking : 0, other: Math.max(talking, promising) };
   // The die floats over the table in chapter 0 and leaves with the rooms; it comes back out of the
-  // board's fold and rests on the table for the decision.
+  // board's fold and rests on the table for the decision, until chapter 7's engine takes its place.
   const reborn = m >= (INTO_ROOMS[1] + FOLD[0]) / 2;
+  const engineDown = eased(m, ENGINE_IN);
   const die = {
     y: reborn ? DIE.folds + (DIE.rests - DIE.folds) * eased(m, DIE_DROP) : DIE.floats,
-    opacity: reborn ? eased(m, [DIE_DROP[0] - 0.15, DIE_DROP[0] + 0.05]) : 1 - eased(m, [INTO_ROOMS[0], INTO_ROOMS[0] + 0.4]),
+    opacity: reborn ? eased(m, [DIE_DROP[0] - 0.15, DIE_DROP[0] + 0.05]) * (1 - eased(m, [ENGINE_IN[0], ENGINE_IN[0] + 0.3])) : 1 - eased(m, [INTO_ROOMS[0], INTO_ROOMS[0] + 0.4]),
     floating: m < 1.5,
     rolling: decision.phase === 'die',
     face: outcome?.face ?? RESTING_FACE,
@@ -588,10 +665,9 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     shown: Math.min(1, 1 - eased(m, RECEIVE_IN) + eased(m, REAL_IN)),
   } as const;
 
-  const shown = eased(m, REAL_IN);
   const figures = eased(m, EXPECTED);
   const signs = {
-    shown,
+    shown: signsDown,
     x: SIGN_X[portrait ? 'portrait' : 'landscape'],
     same: state.guesses?.same === undefined ? figures : 1,
     switched: state.guesses?.switched === undefined ? figures : 1,
@@ -611,18 +687,30 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   const seated = cast.partner.opacity > 0.5 ? cast.partner.at : cast.other.at;
   const receiving = beat.chapter === 'blackout' && (beat.beat.id === 'receive' || beat.beat.id === 'reveal');
   const arguing = beat.chapter === 'two-voices' && beat.beat.id === 'trick';
+  // In chapter 7 both watch the engine once it is on the table.
+  const watching = engineDown > 0.5;
   const voices = {
     shown: eased(m, VOICES_IN),
     at: voiceAt,
-    look: arguing ? { expects: voiceAt.word, word: voiceAt.expects } : { expects: seated, word: receiving ? seated : cast.other.at },
-    glow: eased(m, CONCLUSION),
+    look: watching
+      ? { expects: ENGINE_AT, word: ENGINE_AT }
+      : arguing
+        ? { expects: voiceAt.word, word: voiceAt.expects }
+        : { expects: seated, word: receiving ? seated : cast.other.at },
+    glow: eased(m, CONCLUSION) * (1 - eased(m, RESEARCH_IN)),
     globe: cast.partner.opacity > 0.5 ? ('partner' as const) : ('other' as const),
   };
+
+  const engine = { shown: engineDown, turn: Math.max(0, m - ENGINE_IN[0]) * GEAR_TURN };
+  // The envelope opens only where the finding follows it: with the lock open.
+  const envelope = LOCKED_BEATS.length > 0 ? eased(m, OPENING) : 0;
 
   return {
     shot,
     light,
     lamp,
+    shade: eased(m, SHADE_DOWN),
+    stars,
     beat: { chapter: beat.chapter, id: beat.beat.id },
     spread,
     cast,
@@ -634,6 +722,8 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     table: 1 - rooms,
     die,
     board,
+    engine,
+    envelope,
     coins,
     bubbles,
     moods: moodsAt({ chapter: beat.chapter, id: beat.beat.id }, state, asked),
