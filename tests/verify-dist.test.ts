@@ -19,14 +19,18 @@ import findingStub from '../src/lib/film/finding.locked.ts?raw';
 import { FINDING_BEATS as STUBBED } from '../src/lib/film/finding.locked';
 import homeSection from '../src/components/HomeSection.astro?raw';
 import homeView from '../src/views/HomeView.astro?raw';
+import siteFooter from '../src/components/SiteFooter.astro?raw';
 import subpageView from '../src/views/SubpageView.astro?raw';
 import { LOCKED_BEATS } from '../src/lib/chapters';
 import { splitAtLock } from '../src/lib/film/captions';
 import { splitSubpage } from '../src/lib/subpages';
 import {
   countStandalone,
+  FINDING_PAGES,
+  findingLinks,
   findMarks,
   HOME_PAGES,
+  lockedLinkProblems,
   MARKERS,
   readStatus,
   STATUS_ON_HOME,
@@ -82,6 +86,7 @@ const openSources = {
   'Closing.astro': closingComponent,
   'HomeView.astro': homeView,
   'HomeSection.astro': homeSection,
+  'SiteFooter.astro': siteFooter,
   'the open UI strings (en)': keys(en, false),
   'the open UI strings (es)': keys(es, false),
 };
@@ -178,8 +183,8 @@ describe('verify:dist (ADR 0026)', () => {
       'finding/index.html': page(en[`manuscript.status.${status}`], 1),
     });
 
-    it("passes with chapter 7's stamp alone on each home page until the notebook's entry comes, in both states", () => {
-      expect(STATUS_ON_HOME).toBe(1);
+    it("passes with chapter 7's stamp and the notebook's entry on each home page, in both states", () => {
+      expect(STATUS_ON_HOME).toBe(2);
       expect(statusProblems('in-preparation', dictionaries, home('in-preparation'))).toEqual([]);
       expect(statusProblems('under-review', dictionaries, home('under-review'))).toEqual([]);
     });
@@ -189,9 +194,19 @@ describe('verify:dist (ADR 0026)', () => {
       expect(myResearch.match(/\{status\}/g)).toHaveLength(1);
     });
 
-    it('fails when the sentence is missing, or appears twice', () => {
+    it("gives the footer the notebook's entry for the finding until the panel comes: its title and the sentence, standing alone", () => {
+      expect(siteFooter).toMatch(/<span class="footer__status">\{status\}<\/span>/);
+      expect(siteFooter.match(/\{status\}/g)).toHaveLength(1);
+      expect(siteFooter).toContain('const status = tr(statusKey(MANUSCRIPT_STATUS));');
+      // The entry links to /finding only behind the lock; closed, its title is plain text.
+      expect(siteFooter).toContain('{unlocked ? anchor : <span class="footer__title">{link.label}</span>}');
+      expect(siteFooter).toContain('const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);');
+    });
+
+    it('fails when the sentence is missing, appears once, or three times', () => {
       expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 0))).toHaveLength(2);
-      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 2))[0]).toMatch(/appears 2 times, not 1/);
+      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 1))[0]).toMatch(/appears 1 times, not 2/);
+      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 3))[0]).toMatch(/appears 3 times, not 2/);
     });
 
     it('fails when the inactive sentence ships anywhere', () => {
@@ -204,6 +219,31 @@ describe('verify:dist (ADR 0026)', () => {
     it('fails when a home page is missing', () => {
       const { 'es/index.html': _gone, ...pages } = home('in-preparation');
       expect(statusProblems('in-preparation', dictionaries, pages)).toEqual(['es/index.html: missing']);
+    });
+  });
+
+  describe('links to /finding while locked (ADR 0026)', () => {
+    const base = '/why-keep-a-promise/';
+    const link = (path: string, attributes = '') => `<a${attributes} href="${base}${path}">x</a>`;
+
+    it('counts links to /finding in either language, with any attributes, and nothing else', () => {
+      expect(findingLinks(link('finding/') + link('es/finding/', ' class="a" data-astro-cid-x') + link('finding/#top'))).toBe(3);
+      expect(findingLinks(link('vanberg/') + '<link rel="canonical" href="https://x.io/why-keep-a-promise/finding/">')).toBe(0);
+    });
+
+    it('lets only /finding link to itself (its language switch)', () => {
+      expect(FINDING_PAGES).toEqual(['finding/index.html', 'es/finding/index.html']);
+      const pages = {
+        'index.html': link('dilemma/'),
+        'finding/index.html': link('es/finding/'),
+        'es/finding/index.html': link('finding/'),
+      };
+      expect(lockedLinkProblems(pages)).toEqual([]);
+    });
+
+    it('fails when any other page links to /finding', () => {
+      const pages = { 'index.html': link('finding/') + link('finding/'), 'es/vanberg/index.html': link('es/finding/') };
+      expect(lockedLinkProblems(pages)).toEqual(['index.html: links to /finding 2 times', 'es/vanberg/index.html: links to /finding once']);
     });
   });
 
