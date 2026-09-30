@@ -18,10 +18,11 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). The film tells all
-nine chapters (P1–P4), chapter 7's finding behind the lock, and ends in chapter 8's credits; below
-it, the previous version still shows act 6 and "About", which P4 retires. The film replaces the
-previous version chapter by chapter; each chapter removes what it replaces, in the same commit as
-its tests.
+nine chapters (P1–P4), chapter 7's finding behind the lock, and ends in chapter 8's credits: the home
+is the film alone. Of the previous version, the subpages and the footer remain until the notebook
+(P5); the footer carries the notebook's entry for the finding (its title and the status sentence)
+until the panel comes. Each piece of the film removed what it replaced, in the same commit as its
+tests.
 
 ## Reading order
 
@@ -51,7 +52,7 @@ not by reading test output.
 | `npm test`        | Vitest, once                                      |
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
-| `npm run verify:dist` | After `build`: fails if locked content reached `dist/`, or if the status sentence is off (ADR 0026) |
+| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence is off (ADR 0026) |
 
 `check`, `test`, `build` and `verify:dist` must be green before every commit. CI
 (`.github/workflows/ci.yml`) runs install → check → test → build → verify:dist on every push and PR.
@@ -82,13 +83,10 @@ which are marked as such.
 src/
   config.ts              author links, manuscript status (it also opens the lock)
   content.config.ts      content collections (frontmatter schemas)
-  content/acts/{en,es}/  previous version: the prose of act 6; the film tells acts 1 to 5, and
-                         replaces the rest in P4
   content/chapters/{en,es}/  (P1+) the film's captions, one file per chapter, split into beats by
                          <!-- beat:… --> marks; a number is a {placeholder}, never a figure;
                          chapter 7's finding follows its <!-- lock --> mark
   content/subpages/{en,es}/  notebook prose; <!-- slot:… --> and <!-- lock --> markers
-  content/sections/{en,es}/  previous version: "About" on the home; retired in P4
   content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md
   data/curve.json        the engine's precomputed curve, copied with provenance; never edited (ADR 0010)
   i18n/en.json, es.json  UI strings, flat keys, full parity
@@ -109,7 +107,8 @@ src/
                          credits.ts (chapter 8's cast and the notebook pages its credits link)
     chapters.ts          (P1+) the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light
-    acts.ts, sections.ts previous version: the acts and the home's order
+    acts.ts              previous version: the six acts, which the film tells now; each subpage
+                         takes its title and links back to the chapter that stands for its act
     design/              film.ts (the film's colours and the day's light; film.css mirrors it),
                          palette.ts (the notebook and the previous version), colour maths
     subpages.ts          splits notebook prose at its slot and lock markers
@@ -123,16 +122,17 @@ src/
     vanberg/             every cell of the switch treatment and the baselines, exact counts
   assets/fonts/          self-hosted woff2, OFL licences, provenance
   styles/                tokens.css, base.css
-  components/            previous version: Act, HomeSection, pd/BestResponse (on /dilemma until
-                         P5); vanberg/SwitchTable, curve/Curve + Locked (the stub a locked build
-                         uses for the curve and chapter 7's finding), LanguageSwitch, SiteFooter
+  components/            previous version: pd/BestResponse (on /dilemma until P5);
+                         vanberg/SwitchTable, curve/Curve + Locked (the stub a locked build uses
+                         for the curve and chapter 7's finding), LanguageSwitch, SiteFooter (with
+                         the notebook's entry for the finding until P5)
                          film/ (P1+: Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
                          Voices, Signs, Engine, chapters/ one per chapter plus Finding, the locked
                          part of chapter 7, film.ts), notebook/ (P5, the panel)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale
-scripts/verify-dist.mjs  checks dist/ against the lock and the status sentence (ADR 0026)
+scripts/verify-dist.mjs  checks dist/ against the lock, its links and the status sentence (ADR 0026)
 tests/                   repo-level tests (page parity, prose figures and budgets, the film's
                          captions, forbidden phrases, curve and /finding figures, verify:dist
                          markers, code quoted on /how-its-built; previous-version tests are
