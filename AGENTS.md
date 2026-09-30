@@ -17,12 +17,12 @@ A portfolio piece in two layers (ADR 0021):
 
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
-**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). The film tells all
-nine chapters (P1–P4), chapter 7's finding behind the lock, and ends in chapter 8's credits: the home
-is the film alone. Of the previous version, the subpages and the footer remain until the notebook
-(P5); the footer carries the notebook's entry for the finding (its title and the status sentence)
-until the panel comes. Each piece of the film removed what it replaced, in the same commit as its
-tests.
+**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P4 are closed;
+the next phase is P5, the notebook. The film tells all nine chapters, chapter 7's finding behind the
+lock, and ends in chapter 8's credits: the home is the film alone. Of the previous version, the
+subpages and the footer remain until the notebook (P5); the footer carries the notebook's entry for
+the finding (its title and the status sentence) until the panel comes. Each piece of the film
+removed what it replaced, in the same commit as its tests.
 
 ## Reading order
 

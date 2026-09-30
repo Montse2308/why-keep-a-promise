@@ -3,9 +3,9 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P4 (capítulos 7 y 8, y el candado). P0 a P3 cerradas: Montse las revisó y las
-mergeó (PR #1 a PR #4). Los capítulos 7 y 8 de P4, mergeados (PR #5 y PR #6). En esta sesión, lo
-que faltaba del candado y la salida del acto 6 y «Quién es», sin video (así lo pidió).
+**Fase activa:** ninguna; la siguiente es P5 (el cuaderno), cuando Montse la abra. P0 a P4
+cerradas: Montse las revisó (PR #1 a PR #7). P4 se cerró sin videos, como ella lo pidió: dio por
+hecho el de la película entera.
 
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
 capítulo 8: el home es solo la película, y después el pie. De la versión anterior quedan las
@@ -260,9 +260,9 @@ subpáginas y el pie hasta el cuaderno (P5, ADR 0024).
       360 px en español, con el candado cerrado y abierto (build local con `under-review`), y
       `/finding` cerrado; a 320 px, sin scroll horizontal en los dos estados. En
       `scratch/p4-review/lock/` (local, no se versiona).
-- [ ] La película entera en un video (criterio de salida de P4; en esta sesión Montse pidió no
-      hacer videos).
-- [ ] Revisión de P4 por Montse.
+- [x] La película entera en un video: Montse lo dio por hecho al revisar P4, sin grabarlo (así lo
+      pidió).
+- [x] Revisión de P4 por Montse (PR #5, PR #6 y PR #7).
 - Transición, resuelta en P4: debajo de «Fin» seguían el acto 6 y «Quién es»; salieron.
 - Transición, resuelta en P4: el pie de la versión anterior enlazaba a `/finding` también con el
   candado cerrado; ahora su entrada no enlaza, y `verify:dist` lo comprueba.
