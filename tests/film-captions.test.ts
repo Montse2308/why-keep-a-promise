@@ -9,6 +9,7 @@ import { FILM_VALUES } from '../src/lib/film/values';
 import { LOCALES, type Locale } from '../src/lib/locales';
 import { fill } from '../src/lib/template';
 import { findMarks } from '../scripts/verify-dist.mjs';
+import closing from '../src/components/film/chapters/Closing.astro?raw';
 import { CITATION, citationsIn, filledCaptions, numbersIn, readable } from './prose';
 
 type Raw = Record<string, string>;
@@ -278,5 +279,47 @@ describe('chapter 7, this is where I come in (rule (j), ADR 0026)', () => {
     const text = readable(parts(locale).locked).replace(/\s+/g, ' ').toLocaleLowerCase('und');
     expect(text).toMatch(locale === 'en' ? /a comparison across worlds/ : /una comparación entre mundos/);
     expect(text).toMatch(locale === 'en' ? /not a population moving along the curve/ : /no es una población que recorre la curva/);
+  });
+});
+
+describe('chapter 8, closing (ADR 0021, ADR 0023, ADR 0024)', () => {
+  const text = (locale: Locale) => readable(captionsOf(locale, 'closing')?.body ?? '').replace(/\s+/g, ' ');
+
+  it.each(LOCALES)('%s: goes back to the first table, and the page asks whether it kept the promise of chapter 0', (locale) => {
+    expect(text(locale)).toMatch(locale === 'en' ? /\bthe first table\b/ : /\bla primera mesa\b/);
+    expect(text(locale)).toMatch(locale === 'en' ? /Did I keep my promise\?/ : /¿Cumplí\?/);
+    // The promise the page made at the arrival: these few minutes.
+    const minutes = locale === 'en' ? 'your next few minutes' : 'tus próximos minutos';
+    expect(readable(captionsOf(locale, 'arrival')?.body ?? '')).toContain(minutes);
+    expect(text(locale)).toContain(minutes);
+  });
+
+  it.each(LOCALES)('%s: has the other ask by what the visitor answered in chapter 0, each ask its own', (locale) => {
+    const d = dictionaries[locale];
+    const asks = ['promised', 'refused', 'unanswered'].map((answer) => d[`film.closing.ask.${answer}`] ?? '');
+    expect(new Set(asks).size).toBe(3);
+    for (const ask of asks) expect(ask).toMatch(locale === 'en' ? /\broll (the die|it)\b/ : /\btirar(ías)? el dado\b|\blo tirarías\b/i);
+    expect(closing).toContain("data-promise-line data-yes={tr('film.closing.ask.promised')}");
+  });
+
+  it.each(LOCALES)('%s: leaves the why to the visitor, and says nothing is stored or sent (ADR 0023)', (locale) => {
+    expect(text(locale)).toMatch(locale === 'en' ? /only you know why/ : /solo tú sabes por qué/);
+    expect(dictionaries[locale]['film.closing.private']).toMatch(locale === 'en' ? /nothing is stored or sent/ : /nada se guarda ni se envía/);
+  });
+
+  it.each(LOCALES)('%s: credits the experiment the film is based on, and the author by her key only', (locale) => {
+    expect(citationsIn(text(locale))).toEqual(['Vanberg 2008']);
+    expect(text(locale)).not.toContain(dictionaries[locale]['author.name']);
+  });
+
+  it('puts the author’s name in the credits and no profile: GitHub and LinkedIn belong to /about', () => {
+    expect(closing).toContain("tr('author.name')");
+    expect(closing).not.toMatch(/\bAUTHOR\b/);
+    expect(closing).not.toMatch(/github|linkedin/i);
+  });
+
+  it('links the credits to the notebook, with /finding only behind the lock (ADR 0026)', () => {
+    expect(closing).toContain('creditPages(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV))');
+    expect(closing.match(/href=\{href\(locale, [^)]*\)\}/g)).toEqual(['href={href(locale, page)}']);
   });
 });

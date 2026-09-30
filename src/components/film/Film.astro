@@ -5,8 +5,8 @@
  * JavaScript (`html.js`, set before first paint), the stage sticks to the screen, the chapters'
  * beats scroll over it, and ./film.ts moves the camera, the light and the cast with the native scroll.
  *
- * Only the chapters built so far render (src/lib/chapters.ts); the previous version of the home
- * follows. Chapter 7's captions after its lock mark are the finding (ADR 0026): they go, as written,
+ * The nine chapters render in order (src/lib/chapters.ts); what is left of the previous version of
+ * the home follows the film until it is retired (docs/tasks.md). Chapter 7's captions after its lock mark are the finding (ADR 0026): they go, as written,
  * to the one component that may render them.
  */
 import { getCollection } from 'astro:content';
@@ -20,6 +20,7 @@ import { fill } from '../../lib/template';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import Arrival from './chapters/Arrival.astro';
 import Blackout from './chapters/Blackout.astro';
+import Closing from './chapters/Closing.astro';
 import Fold from './chapters/Fold.astro';
 import MyResearch from './chapters/MyResearch.astro';
 import RealPeople from './chapters/RealPeople.astro';
@@ -95,7 +96,9 @@ const of = (id: ChapterId) => {
     <Blackout locale={locale} {...of('blackout')} />
     <RealPeople locale={locale} {...of('real-people')} />
     <MyResearch locale={locale} {...of('my-research')} />
+    <Closing locale={locale} {...of('closing')} />
   </div>
+  <div class="film__hold" aria-hidden="true"></div>
   <div class="film__fade" aria-hidden="true"></div>
 </section>
 
@@ -142,6 +145,20 @@ const of = (id: ChapterId) => {
     position: relative;
     margin-top: -100vh;
     margin-top: -100svh;
+  }
+
+  /*
+   * The film's last frame holds after the credits have rolled by: the stage stays stuck, at the end of
+   * the film, for this much more of the native scroll, before the page goes on.
+   */
+  .film__hold {
+    display: none;
+  }
+
+  :global(html.js) .film__hold {
+    display: block;
+    height: 100vh;
+    height: 100svh;
   }
 
   :global(html.js) .film__fade {

@@ -713,3 +713,110 @@ describe('chapter 7, this is where I come in (ADR 0021, ADR 0027)', () => {
     expect(still.signs.shown).toBe(0);
   });
 });
+
+describe('chapter 8, closing (ADR 0021, ADR 0023, ADR 0027)', () => {
+  const sealed = beatRange('my-research', 'sealed');
+  const collect = beatRange('closing', 'collect');
+  const asked = beatRange('closing', 'asked');
+  const credits = beatRange('closing', 'credits');
+  const inside = (range: { from: number }, by = 0.4) => at(range.from + by);
+  const view = (p: number, state: StageState = { promised: true }, portrait = false, reduced = false) => stageAt(p, state, portrait, reduced);
+  const kept: StageState = { promised: true, decision: { phase: 'outcome', ...outcomeOf('roll', 4) } };
+  const broken: StageState = { promised: true, decision: { phase: 'outcome', ...outcomeOf('dont', null) } };
+
+  it('goes back to the first table: the engine goes up, and the die floats over it again, as at the arrival', () => {
+    expect(view(inside(sealed)).engine.shown).toBe(1);
+    const v = view(inside(collect), kept);
+    expect(v.engine.shown).toBe(0);
+    expect(v.die).toEqual({ y: DIE.floats, opacity: 1, floating: true, rolling: false, face: RESTING_FACE });
+    expect(v.die).toEqual(stageAt(at(1), { promised: true }, false, false).die);
+    expect(v).toMatchObject({ table: 1, rooms: 0, dark: 0 });
+    // The voices stop watching the engine and look at the other again.
+    expect(v.voices.look).toEqual({ expects: v.cast.other.at, word: v.cast.other.at });
+  });
+
+  it('keeps the night to the end: the lamp over the table and every star', () => {
+    for (const range of [collect, asked, credits]) {
+      const v = view(inside(range));
+      expect(v).toMatchObject({ shade: 1, stars: 1 });
+      expect(v.lamp).toBeGreaterThan(0.5);
+    }
+  });
+
+  it('asks with the other hoping if it was promised, then each takes the answer as it comes', () => {
+    expect(view(inside(collect)).moods).toEqual({ you: 'tempted', other: 'happy', partner: 'neutral' });
+    expect(view(inside(collect), { promised: false }).moods.other).toBe('worried');
+    expect(view(inside(collect), { promised: true, now: 'roll' }).moods).toEqual({ you: 'proud', other: 'happy', partner: 'neutral' });
+    expect(view(inside(collect), { promised: false, now: 'roll' }).moods.you).toBe('happy');
+    // It is only an answer: keeping the money now betrays no one, and nobody cries.
+    for (const promised of [true, false, null]) {
+      expect(view(inside(collect), { promised, now: 'dont' }).moods).toEqual({ you: 'neutral', other: 'worried', partner: 'neutral' });
+    }
+  });
+
+  it('leaves the golden thread as chapter 3 left it, whatever the visitor answers now', () => {
+    for (const now of ['roll', 'dont'] as const) {
+      expect(view(inside(collect), { ...kept, now }).thread).toMatchObject({ state: 'tied', shown: 1 });
+      expect(view(inside(collect), { ...broken, now }).thread).toMatchObject({ state: 'broken', shown: 1 });
+      expect(view(inside(collect), { promised: false, now }).thread.state).toBe('none');
+    }
+  });
+
+  it('waits on the page’s question a little nervous, glad at a yes, and calm at a no', () => {
+    expect(view(inside(asked)).moods).toEqual({ you: 'worried', other: 'worried', partner: 'neutral' });
+    expect(view(inside(asked), { promised: true, pageKept: true }).moods).toEqual({ you: 'proud', other: 'proud', partner: 'neutral' });
+    expect(view(inside(asked), { promised: true, pageKept: false }).moods).toEqual({ you: 'neutral', other: 'neutral', partner: 'neutral' });
+  });
+
+  it('brings the new partner back for the curtain call, at the other table, with everyone glad', () => {
+    expect(view(inside(asked)).cast.partner.opacity).toBe(0);
+    for (const portrait of [false, true]) {
+      const v = view(inside(credits), { promised: true }, portrait);
+      const away = AWAY[portrait ? 'portrait' : 'landscape'];
+      expect(v.cast.partner).toEqual({ at: away.at, scale: away.scale, opacity: 1 });
+      expect(v.cast.other).toEqual({ at: castPositions(portrait ? SPREAD.portrait : SPREAD.landscape).other, scale: 1, opacity: 1 });
+      expect(v.moods).toEqual({ you: 'happy', other: 'happy', partner: 'happy' });
+      // The cloud keeps its eyes, and its globe, on the square across the table, not on the bow.
+      expect(v.voices.globe).toBe('other');
+      expect(v.voices.look.expects).toEqual(v.cast.other.at);
+    }
+  });
+
+  it('keeps the lamp, the voices and the whole cast in view on any screen', () => {
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 1440, height: 640 },
+      { width: 360, height: 740 },
+      { width: 320, height: 568 },
+    ]) {
+      const portrait = isPortrait(viewport);
+      for (const range of [collect, asked, credits]) {
+        const v = view(inside(range), { promised: true }, portrait);
+        const box = frame(v.shot, viewport);
+        expect(box.y).toBeLessThanOrEqual(SHADE.top - SHADE_MARGIN + 1e-9);
+        const globeTop = v.voices.at.expects[1] + (GLOBE_AT[1] - 30) * VOICE_SCALE;
+        expect(Math.min(globeTop, v.voices.at.word[1] - 36 * VOICE_SCALE)).toBeGreaterThan(box.y);
+        expect(v.voices.at.word[0] - 80 * VOICE_SCALE).toBeGreaterThan(box.x);
+        expect(v.cast.other.at[0] + 64).toBeLessThan(box.x + box.width);
+        if (range === credits) {
+          const { at: [x, y], scale } = v.cast.partner;
+          expect(x + 62 * scale).toBeLessThan(box.x + box.width);
+          expect(y - 66 * scale).toBeGreaterThan(box.y);
+        }
+      }
+    }
+  });
+
+  it('cuts to each of its beats with reduced motion, after the finding’s, with the curtain call already on', () => {
+    for (const range of [collect, asked, credits]) expect(CUTS.some((cut) => cut.from === range.from - LEAD)).toBe(true);
+    CUTS.slice(1).forEach((cut, i) => expect(cut.from).toBeGreaterThan(CUTS[i]?.from ?? Infinity));
+    expect(view(at(credits.from - 0.3), { promised: true }, false, true).cast.partner.opacity).toBe(1);
+    expect(view(at(collect.from - 0.3), { promised: true }, false, true).die).toMatchObject({ opacity: 1, floating: true });
+  });
+
+  it('draws its still frame at the first table, at night, with the die floating over it', () => {
+    const still = stageAt(KEY_POSE.closing ?? 0, kept, false, true);
+    expect(still.beat).toEqual({ chapter: 'closing', id: 'collect' });
+    expect(still).toMatchObject({ shade: 1, engine: { shown: 0 }, die: { floating: true, opacity: 1 }, thread: { state: 'tied' } });
+  });
+});

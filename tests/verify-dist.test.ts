@@ -7,6 +7,7 @@ import curveStub from '../src/components/curve/Locked.astro?raw';
 import filmComponent from '../src/components/film/Film.astro?raw';
 import findingComponent from '../src/components/film/chapters/Finding.astro?raw';
 import myResearch from '../src/components/film/chapters/MyResearch.astro?raw';
+import closingComponent from '../src/components/film/chapters/Closing.astro?raw';
 import engineComponent from '../src/components/film/Engine.astro?raw';
 import worldComponent from '../src/components/film/World.astro?raw';
 import chapterEn from '../src/content/chapters/en/07-my-research.md?raw';
@@ -69,8 +70,8 @@ const lockedSources = [
   ...parts.map((part) => part.locked),
 ].join('\n');
 
-// What renders in both states: chapter 7's question, engine and envelope, the film around them, the
-// home, and every other UI string.
+// What renders in both states: chapter 7's question, engine and envelope, the film around them (chapter
+// 8's credits too), the home, and every other UI string.
 const openSources = {
   'chapter 7, open part (en)': seventh[0]?.open ?? '',
   'chapter 7, open part (es)': seventh[1]?.open ?? '',
@@ -78,6 +79,7 @@ const openSources = {
   'Film.astro': filmComponent,
   'World.astro': worldComponent,
   'Engine.astro': engineComponent,
+  'Closing.astro': closingComponent,
   'HomeView.astro': homeView,
   'HomeSection.astro': homeSection,
   'the open UI strings (en)': keys(en, false),
