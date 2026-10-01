@@ -6,7 +6,8 @@
  * the lamp, the engine and the envelope) and chapter 8's return to the first table. It also handles
  * the chapters' choices, which are plain buttons, sliders and, on the deck, a swipe that stands for
  * a button: every line a choice leads to was resolved at build time, so the script only shows it.
- * Nothing is stored or sent (ADR 0023).
+ * Nothing is stored or sent (ADR 0023). With the sound on (./sound.ts), the die, the chat's bubbles,
+ * the seal and the end of the credits sound as the stage shows them (ADR 0025).
  */
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
@@ -43,6 +44,8 @@ import { BET_START, isBet, type Bet } from '../../lib/film/bet';
 import { current as waiting, DEALT, decide as decideCard, tally, type DeckState } from '../../lib/film/deck';
 import { guessOf, type GuessId } from '../../lib/film/guess';
 import { fill } from '../../lib/template';
+import type { Cue } from '../../lib/film/sound';
+import { createSound } from './sound';
 import { decide, UNDECIDED, type DecisionState } from '../../lib/table/decision';
 import { DIE_FACES, type Choice, type Face } from '../../lib/table/game';
 
@@ -165,6 +168,33 @@ export function start(): void {
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
   const title = film.querySelector<HTMLElement>('[data-title]');
   const envelope = film.querySelector<HTMLElement>('[data-envelope]');
+
+  // The sound: off until the visitor presses its button, which shows only where Web Audio exists.
+  const sound = createSound();
+  const soundButton = film.querySelector<HTMLButtonElement>('[data-sound]');
+  if (sound && soundButton) {
+    soundButton.hidden = false;
+    soundButton.addEventListener('click', () => soundButton.setAttribute('aria-pressed', String(sound.toggle())));
+  }
+  const play = (cue: Cue): void => sound?.play(cue);
+  /**
+   * A cue for something that comes into view: it sounds the first time it is seen with the sound on.
+   * Most of it in view, not all: a card moving with the scroll may never report exactly 1.
+   */
+  const onSight = (element: Element | null | undefined, cue: Cue, threshold: number): void => {
+    if (!element || !sound) return;
+    const watch = new IntersectionObserver(
+      (entries) => {
+        if (!sound.on || !entries.some((entry) => entry.isIntersecting)) return;
+        play(cue);
+        watch.disconnect();
+      },
+      { threshold },
+    );
+    watch.observe(element);
+  };
+  onSight(envelope?.querySelector('.envelope__seal'), 'stamp', 0.75);
+  onSight(film.querySelector('.credits__end'), 'theme', 0.75);
 
   let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null, guesses: {}, now: null, pageKept: null };
   let drawStart = 0;
@@ -347,6 +377,8 @@ export function start(): void {
     envelope?.style.setProperty('--opened', view.envelope.toFixed(3));
 
     title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
+    // On a phone the sound's button waits under the spool until the title has gone (Film.astro).
+    set(film, 'data-title', view.titleGone < 0.6 ? 'shown' : 'gone');
     if (visible) request();
   };
 
@@ -464,6 +496,7 @@ export function start(): void {
         bubble.dataset.shown = '';
       }
       if (chatOut) chatOut.textContent = button.dataset.said ?? '';
+      play('bubbles');
       request();
     });
   });
@@ -484,6 +517,7 @@ export function start(): void {
         const decision: DecisionState = decide(state.decision ?? UNDECIDED, { type: 'settle' }, Math.random);
         state = { ...state, decision };
         countStart = performance.now();
+        if (decision.phase === 'outcome' && decision.face !== null) play('land');
         if (decision.phase === 'outcome') {
           const said = decision.face === null ? button.dataset.said : (JSON.parse(button.dataset.said ?? '{}') as Record<string, string>)[decision.face];
           const thread = state.promised === true ? (decision.choice === 'dont' ? decisionOut?.dataset.broken : decisionOut?.dataset.kept) : undefined;
@@ -494,6 +528,7 @@ export function start(): void {
       };
       if (choice === 'roll' && !reduced.matches) {
         rollStart = performance.now();
+        play('roll');
         setTimeout(land, ROLL_MS);
       } else {
         land();
