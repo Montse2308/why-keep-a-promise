@@ -3,13 +3,15 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P5 (el cuaderno), construida y en espera de la revisión de Montse. P0 a P4
-cerradas: Montse las revisó (PR #1 a PR #7). P4 se cerró sin videos, como ella lo pidió: dio por
+**Fase activa:** P6 (el pulido), construida y en espera de la revisión de Montse. P0 a P5
+cerradas: Montse las revisó (PR #1 a PR #8). P4 se cerró sin videos, como ella lo pidió: dio por
 hecho el de la película entera.
 
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
-capítulo 8; el cuaderno tiene sus seis páginas, su panel en todas las páginas, sus lupas en la
-película y su pie. De la versión anterior ya no queda nada en el sitio.
+capítulo 8, con su sonido, apagado hasta que el visitante lo enciende; el cuaderno tiene sus seis
+páginas, su panel en todas las páginas, sus lupas en la película y su pie. Cada página tiene su
+póster para compartir, y cada build se pesa contra los presupuestos. De la versión anterior ya no
+queda nada en el sitio.
 
 ## P0 · Documentos
 
@@ -368,9 +370,76 @@ película y su pie. De la versión anterior ya no queda nada en el sitio.
       `TODO(P6)` de `/how-its-built`) o una fuente `data-unverified` (`tests/launch.test.ts`). Hasta
       ahora eso lo pedía solo el checklist, a mano (pasos 3 y 8). De paso, `deploy.yml` decía que era
       el paso 8 (es el 9), y los dos workflows nombraban el ADR 0015, archivado.
-- [ ] Revisión de P5 por Montse (el PR).
+- [x] Revisión de P5 por Montse (PR #8, mergeado).
+
+## P6 · Pulido
+
+- [x] **El sonido** (ADR 0025): apagado por defecto, con un botón «Sonido» en la esquina de la
+      película, junto al carrete, que dice su estado (`aria-pressed`) y solo aparece donde hay Web
+      Audio; sin JavaScript no está. En el celular es solo el dibujo, y aparece cuando el título del
+      primer cuadro se desvanece (el título ocupa el ancho y la fila de arriba es del idioma). La
+      partitura es pura y con tests (`src/lib/film/sound.ts`): el dado al lanzarse y al caer, las dos
+      burbujas del chat, el sello del sobre y un tema corto al final de los créditos, en do mayor
+      pentatónico. Cada señal va con algo que se ve (`CUE_SIGHT`), ninguna satura (un test suma sus
+      voces) y nada se guarda: cada visita empieza en silencio. La reproduce
+      `src/components/film/sound.ts`, sin archivos de audio. Con movimiento reducido el dado no gira,
+      así que solo suena al caer.
+- [x] **El título de la pestaña:** al irse a otra pestaña cambia a una línea sobre la promesa, según
+      el hilo de la película (sin promesa, atada, cumplida o rota), y vuelve al regresar; en las
+      páginas del cuaderno, la línea sin promesa. **La consola:** una nota breve con el enlace a
+      `/how-its-built` en el idioma de la página. Las dos van en el script del panel del cuaderno, que
+      carga cada página, así que el sitio sigue con los tres scripts que lista el ADR 0025
+      (`src/lib/details.ts`, `src/components/notebook/details.ts`).
+- [x] **Los pósteres de Open Graph:** uno por página y por idioma (14), de 1200 × 630, dibujados en
+      SVG con la paleta de la película: una tarjeta de papel con «I promise» / «Te lo prometo» y el
+      título de la página (y la pregunta del sitio bajo el de una página del cuaderno), y el círculo y
+      el cuadrado unidos por el mismo hilo de la película, en una hora del día distinta por página. No
+      llevan la frase de estado ni nada del candado. `@resvg/resvg-js` 2.6.2 (verificada con
+      `npm view`), solo de desarrollo, los pasa a PNG en el build (`src/pages/posters/`). Como resvg no
+      lee woff2 ni ejes variables, los pósteres tienen sus propios cortes estáticos TrueType de
+      Fraunces y Nunito, de Fontsource 5.3.0, con su procedencia y su SHA-256
+      (`src/assets/fonts/posters/`); nunca llegan a `dist/`. Los títulos se parten en renglones
+      medidos con los anchos de la fuente, y equilibrados. Cada página lleva `og:title`, `og:url`,
+      `og:image` (con tamaño, tipo y texto alternativo) y `twitter:card`. La descripción de cada
+      página queda para F5 (`TODO(F5)` en `BaseLayout.astro`).
+- [x] **Los presupuestos de peso** con su script: `npm run budgets` (`scripts/budgets.mjs` y
+      `src/lib/budgets.ts`) pesa cada página de `dist/` como la pediría un navegador (el HTML, los
+      scripts con sus imports, las hojas de estilo, las fuentes que la página necesita según su
+      `unicode-range` y el ícono; el texto en gzip, las fuentes tal cual) y falla si una se pasa.
+      Corre en CI y en `deploy.yml`, después de `verify:dist`. Hoy: el JS del home, 14.3 KiB de 40;
+      las fuentes, 118.6 KiB de 160 (158.0 en `/how-its-built`, con JetBrains Mono); la primera carga
+      del home, 207 KiB de 450.
+- [x] **Lighthouse** 13.5.0 en celular emulado (moto g power, 4G lenta simulada, CPU 4×), tres
+      corridas por home contra `npm run preview`: LCP de 2.11 s en `/` y en `/es/` (techo: 2.5 s),
+      rendimiento 0.98. `scripts/lighthouse.mjs` toma la mediana y escribe `src/data/lighthouse.json`
+      con su procedencia; `/how-its-built` lo cita en una tabla nueva (en «Peso y velocidad», cada
+      techo junto a lo medido), que reemplaza el `TODO(P6)`. Las cifras viven en la tabla, no en la
+      prosa. Lighthouse no es dependencia: se corre aparte, con la versión fijada (el comando está en
+      el script). Los informes completos, en `scratch/p6-review/lighthouse/`.
+- [x] Tests: la partitura (señales, envolventes, tono, sin saturar, el tema), su conexión con la
+      película y el botón; la pestaña y la consola; los presupuestos (qué pide una página, imports,
+      `unicode-range`, un sitio de prueba en `tests/fixtures/budgets-dist/`, CI y deploy); los pósteres
+      (que cada título cabe, que cada carácter tiene glifo, la paleta, el dibujo igual al de
+      `Character.astro`, el PNG de 1200 × 630, las etiquetas); la medición de Lighthouse (la mediana,
+      la procedencia, el LCP y los pesos dentro de los techos).
+- [x] Revisado con el build, con el candado cerrado y abierto (`under-review` en local, sin commit):
+      `verify:dist` y `budgets` en verde en los dos; en Chrome, cada señal arranca exactamente sus
+      voces (el sello y el tema, solo la primera vez que se ven con el sonido encendido), el título de
+      la pestaña cambia y vuelve, la consola muestra su nota y la página no da errores. A 320 px, sin
+      choques en la esquina.
+- [x] Video con sonido para Montse: la película en compu (EN, 1440 px) y en celular (ES, 360 px),
+      con el sonido encendido y las cinco señales; capturas del botón (apagado, encendido, celular,
+      320 px, movimiento reducido, sin JavaScript), los 14 pósteres y la tabla de `/how-its-built` en
+      claro y oscuro. En `scratch/p6-review/` (local, no se versiona).
+- [ ] Revisión de P6 por Montse (el PR).
 
 ## Preguntas abiertas
+
+- **Los KB de los presupuestos (P6).** El ADR 0025 dice «KB»; `npm run budgets` los lee como KiB
+  (1024 bytes), como cuenta Lighthouse sus presupuestos. Importa en un solo lugar: `/how-its-built`
+  carga 161 808 bytes de fuentes (las tres del sitio y JetBrains Mono), dentro de 160 KiB (163 840)
+  y fuera de 160 000. Si Montse prefiere KB de 1000, hay que aligerar la tipografía del código o
+  precisar en un ADR que el techo de fuentes es el del home.
 
 - **Axelrod (1984):** verificar antes del lanzamiento la página de los pagos del dilema, de la
   condición `2R > T + S`, de la sombra del futuro y del torneo. La prosa ya la usa y sigue «por

@@ -27,6 +27,11 @@ alike (ADR 0027). The first load carries Fraunces (36,620 bytes normal, 45,656 i
 
 JetBrains Mono is used only by the code blocks of `/how-its-built` and is never preloaded
 (ADR 0027). Its two files weigh 40,404 bytes (`latin`) and 15,196 bytes (`latin-ext`).
+`/how-its-built` therefore loads four files, 161,808 bytes (158.0 KiB), the closest page to the fonts
+budget of 160 KiB that `npm run budgets` checks (ADR 0025).
+
+`posters/` holds static TrueType cuts of Fraunces and Nunito for the Open Graph posters, used only
+at build time: see [`posters/README.md`](posters/README.md).
 
 Newsreader and Inter, the faces of the previous version, left with its last component (P5).
 
