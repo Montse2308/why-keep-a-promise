@@ -5,6 +5,7 @@ import LanguageSwitch from '../components/LanguageSwitch.astro';
 import Notebook from '../components/notebook/Notebook.astro';
 import NotebookFooter from '../components/notebook/NotebookFooter.astro';
 import { FILM } from '../lib/design/film';
+import { AWAY_KEYS, THREADS } from '../lib/details';
 import { DEFAULT_LOCALE, LOCALES, t, type Locale } from '../lib/i18n';
 import { POSTER, posterPath } from '../lib/posters/poster';
 import { fill } from '../lib/template';
@@ -33,6 +34,9 @@ const textFont = fontData['--font-body']?.find((font) => font.style === 'normal'
 // The page's poster for a shared link (ADR 0025), drawn by src/pages/posters/.
 const poster = new URL(assetHref(posterPath(locale, route)), site).href;
 const posterAlt = fill(t(locale, 'poster.alt'), { title });
+// The tab's line while the visitor is away, by the thread's state, and the console's note (src/lib/details.ts).
+const away = JSON.stringify(Object.fromEntries(THREADS.map((thread) => [thread, t(locale, AWAY_KEYS[thread])])));
+const consoleLine = fill(t(locale, 'console.line'), { url: absoluteHref(site, locale, 'how-its-built') });
 // TODO(F5): each page's description.
 ---
 
@@ -63,7 +67,7 @@ const posterAlt = fill(t(locale, 'poster.alt'), { title });
     {codeFont && <Font cssVariable="--font-jetbrains-mono" />}
     <meta name="generator" content={Astro.generator} />
   </head>
-  <body>
+  <body data-away={away} data-console={consoleLine} data-name={t(locale, 'poster.name')}>
     <a class="skip-link visually-hidden" href={href(locale, route, 'main')}>{t(locale, 'skip.link')}</a>
     <!-- No fixed strip: the corner of the first screen scrolls away; over the film, only the notebook's button stays. -->
     <header class:list={['corner', { 'corner--film': film }]}>

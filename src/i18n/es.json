@@ -267,5 +267,10 @@
   "film.closing.credits.notebook": "Para ir más a fondo, el cuaderno",
   "film.closing.credits.end": "Fin",
   "poster.name": "Te lo prometo",
-  "poster.alt": "El círculo y el cuadrado de la película, unidos por un hilo dorado, junto al título de la página: {title}"
+  "poster.alt": "El círculo y el cuadrado de la película, unidos por un hilo dorado, junto al título de la página: {title}",
+  "tab.away.none": "Una promesa te espera.",
+  "tab.away.tied": "Lo prometiste. Vuelve.",
+  "tab.away.kept": "Cumpliste tu promesa.",
+  "tab.away.broken": "Aquí se rompió una promesa.",
+  "console.line": "¿Te da curiosidad cómo está hecha esta página? Aquí se cuenta todo: {url}"
 }

@@ -406,6 +406,7 @@ export function start(): void {
   /** The spool in the corner: the thread's state, in words too. */
   function spoolAs(thread: 'tied' | 'kept' | 'broken' | 'none'): void {
     spool?.setAttribute('data-spool', thread === 'kept' ? 'tied' : thread);
+    if (film) film.dataset.thread = thread;
     const label = { tied: film?.dataset.threadTied, kept: film?.dataset.threadKept, broken: film?.dataset.threadBroken, none: film?.dataset.threadNone }[thread];
     if (spoolLabel) spoolLabel.textContent = label ?? '';
   }
