@@ -5,7 +5,7 @@ import sourcesDoc from '../../docs/sources.md?raw';
 import { CITATIONS, FIGURES, SOURCE_KEYS } from '../content/figures';
 import { CHAPTER_IDS } from './chapters';
 import { SUBPAGES } from './routes';
-import { atKey, ENTRIES, figuresOf, FINDING, referenceHtml, RETIRED, shownUrl, whatKey, WORKS, worksOf } from './sources';
+import { atKey, ENTRIES, figuresOf, FINDING, referenceHtml, RETIRED, shownUrl, UNVERIFIED, whatKey, WORKS, worksOf } from './sources';
 
 const dictionaries: Record<'en' | 'es', Record<string, string>> = { en, es };
 
@@ -37,6 +37,19 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
     for (const candidate of WORKS) expect(candidate.reference.text).not.toMatch(/Kawagoe/);
   });
 
+  it('says "pages to be verified" exactly for the keys docs/sources.md still has to verify', () => {
+    const pending = ENTRIES.map((entry) => entry.source).filter((key) => blocks(key).some((block) => /Por verificar; bloquea el lanzamiento/.test(block)));
+    expect(UNVERIFIED).toEqual(pending);
+    expect(UNVERIFIED).toEqual(['axelrod-1984']);
+    // A key is either still to be verified or has its place in the source written, never both.
+    for (const key of UNVERIFIED) {
+      expect(Object.hasOwn(en, `sources.at.${key}`), key).toBe(false);
+      expect(Object.hasOwn(es, `sources.at.${key}`), key).toBe(false);
+    }
+    expect(en['sources.unverified']).toBe('Pages to be verified.');
+    expect(es['sources.unverified']).toBe('Páginas por verificar.');
+  });
+
   it('lists the figures the register gives each key, each once, in its order', () => {
     expect(figuresOf('vanberg-rates')).toEqual(['73', '54']);
     expect(figuresOf('vanberg-beliefs')).toEqual(['70', '68', '100']);
@@ -56,7 +69,7 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
       expect(Object.hasOwn(en, atKey(entry)), entry.source).toBe(Object.hasOwn(es, atKey(entry)));
     }
     // And no description is left over for a key that is not on the page.
-    const keys = Object.keys(en).filter((key) => key.startsWith('sources.') && key.split('.').length === 2 && !['sources.figures', 'sources.at', 'sources.used', 'sources.supplements'].includes(key));
+    const keys = Object.keys(en).filter((key) => key.startsWith('sources.') && key.split('.').length === 2 && !['sources.figures', 'sources.at', 'sources.used', 'sources.supplements', 'sources.unverified'].includes(key));
     expect(keys.sort()).toEqual(ENTRIES.map((entry) => whatKey(entry)).sort());
   });
 

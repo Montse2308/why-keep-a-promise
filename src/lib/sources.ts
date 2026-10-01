@@ -112,6 +112,14 @@ export const ENTRIES: readonly Entry[] = [
 export const FINDING: readonly SourceKey[] = ['kawagoe-narita-2014', 'vanberg-second-order', 'curve', 'curve-finding'];
 
 /**
+ * Keys whose place in their source is still to be verified (docs/sources.md: "Por verificar; bloquea
+ * el lanzamiento"). /sources says so where the place would go, marked `data-unverified`, and the
+ * deploy refuses a dist/ that still carries that mark (.github/workflows/deploy.yml). Once a key's
+ * pages are verified, take it out of here and write its `sources.at.<key>`.
+ */
+export const UNVERIFIED: readonly SourceKey[] = ['axelrod-1984'];
+
+/**
  * Keys of the register no part of the page uses any more (docs/sources.md: "ya no se muestra"):
  * the chance of a partner switch and the chat's limits left with the previous version (P3).
  */

@@ -3,14 +3,15 @@
  * /sources (ADR 0024): the works the page draws on, each with its full reference and, under it, every
  * figure it gives and where that figure is used, from the register (src/lib/sources.ts). It has no
  * lock and looks the same in both of its states (ADR 0026): it lists none of the finding's sources,
- * and it links to no chapter or page the lock keeps closed.
+ * and it links to no chapter or page the lock keeps closed. Where a source's pages are still to be
+ * verified, it says so, marked for the deploy to refuse (`UNVERIFIED`).
  */
 import { getCollection } from 'astro:content';
 import { chapter } from '../../lib/chapters';
 import { hasKey, useTranslations, type Locale } from '../../lib/i18n';
 import { notebookPage } from '../../lib/notebook';
 import { href } from '../../lib/routes';
-import { atKey, figuresOf, referenceHtml, shownUrl, whatKey, worksOf, type Place } from '../../lib/sources';
+import { atKey, figuresOf, referenceHtml, shownUrl, UNVERIFIED, whatKey, worksOf, type Place } from '../../lib/sources';
 import { fill } from '../../lib/template';
 
 interface Props {
@@ -79,6 +80,12 @@ function place(where: Place): { label: string; url: string } {
                     <p class="sources__row">
                       <span class="sources__term">{tr('sources.at')}</span>
                       <span class="sources__located">{tr(located)}</span>
+                    </p>
+                  )}
+                  {!located && UNVERIFIED.includes(entry.source) && (
+                    <p class="sources__row" data-unverified>
+                      <span class="sources__term">{tr('sources.at')}</span>
+                      <span class="sources__unverified">{tr('sources.unverified')}</span>
                     </p>
                   )}
                   {places.length > 0 && (
@@ -203,6 +210,11 @@ function place(where: Place): { label: string; url: string } {
     align-items: center;
     min-height: var(--target-min);
     font-weight: 700;
+  }
+
+  .sources__unverified {
+    font-style: italic;
+    color: var(--color-muted);
   }
 
   .sources__dot {
