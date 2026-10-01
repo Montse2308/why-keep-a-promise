@@ -10,6 +10,7 @@ import Author from '../components/notebook/Author.astro';
 import Day from '../components/notebook/Day.astro';
 import Sources from '../components/notebook/Sources.astro';
 import Vignette from '../components/notebook/Vignette.astro';
+import Weight from '../components/notebook/Weight.astro';
 import GuiltChart from '../components/curve/GuiltChart.astro';
 import Matrix from '../components/pd/Matrix.astro';
 import SwitchTable from '../components/vanberg/SwitchTable.astro';
@@ -70,6 +71,8 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
           <Author locale={locale} />
         ) : segment.name === 'day' ? (
           <Day locale={locale} />
+        ) : segment.name === 'weight' ? (
+          <Weight locale={locale} />
         ) : null,
       )
     }

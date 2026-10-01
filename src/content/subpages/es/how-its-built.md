@@ -89,9 +89,9 @@ con los dos daltonismos más comunes.
 ## Peso y velocidad
 
 El script del home, sus tipografías y su primera carga tienen un techo, fijado antes de escribir
-la película.
+la película; un script revisa cada build.
 
-<p class="todo">TODO(P6): los presupuestos de peso con su script y el informe de Lighthouse en un celular emulado.</p>
+<!-- slot:weight -->
 
 ## Una bitácora de decisiones
 

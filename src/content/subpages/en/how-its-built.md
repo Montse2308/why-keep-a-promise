@@ -85,9 +85,9 @@ kinds of colour blindness.
 ## Weight and speed
 
 The home's script, its fonts and its first load each have a ceiling, set before the film was
-written.
+written; a script checks every build against them.
 
-<p class="todo">TODO(P6): the weight budgets with their script, and the Lighthouse report on an emulated phone.</p>
+<!-- slot:weight -->
 
 ## A log of decisions
 
