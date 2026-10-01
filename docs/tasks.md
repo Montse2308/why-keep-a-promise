@@ -337,8 +337,9 @@ película y su pie. De la versión anterior ya no queda nada en el sitio.
     (`src/lib/sources.ts`, `Sources.astro`). No tiene candado (ADR 0024), así que se ve igual en los
     dos estados (ADR 0026): no lista las fuentes del hallazgo (Kawagoe y Narita, 2014; la creencia que
     la curva deja fija; la curva; las cifras de `/finding`), que el capítulo 7 y `/finding` citan
-    donde las usan, ni las cifras retiradas (1/2 y el chat). Axelrod (1984) sale sin página hasta que
-    se verifique (preguntas abiertas).
+    donde las usan, ni las cifras retiradas (1/2 y el chat). Donde iría la página de Axelrod (1984)
+    dice «Páginas por verificar.», marcado `data-unverified` (`UNVERIFIED` en `src/lib/sources.ts`, atado
+    por un test a lo que `docs/sources.md` marca «por verificar»), hasta que se verifique.
   - `/about`, nueva: el nombre, GitHub y LinkedIn (`AUTHOR`), nada más.
   - Cada página lleva arriba una viñeta de la familia de la película (`Vignette.astro`); `/finding`
     cerrado, no.
@@ -361,19 +362,29 @@ película y su pie. De la versión anterior ya no queda nada en el sitio.
       con el candado cerrado (el build) y abierto (build local con `under-review`); el panel abierto;
       las lupas de los capítulos 1, 6 y 7; los créditos; sin JavaScript; el carrete a 320 px. En
       `scratch/p5-review/` (local, no se versiona).
-- [ ] Revisión de P5 por Montse.
+- [x] De la revisión de Montse, antes del PR: el paso 3b del checklist (decidir con un ADR, antes de
+      abrir el candado, si `/sources` lista las cifras del hallazgo); «Páginas por verificar.» para
+      Axelrod en `/sources`; y `deploy.yml` se detiene si `dist/` todavía lleva un `TODO(` (como el
+      `TODO(P6)` de `/how-its-built`) o una fuente `data-unverified` (`tests/launch.test.ts`). Hasta
+      ahora eso lo pedía solo el checklist, a mano (pasos 3 y 8). De paso, `deploy.yml` decía que era
+      el paso 8 (es el 9), y los dos workflows nombraban el ADR 0015, archivado.
+- [ ] Revisión de P5 por Montse (el PR).
 
 ## Preguntas abiertas
 
 - **Axelrod (1984):** verificar antes del lanzamiento la página de los pagos del dilema, de la
   condición `2R > T + S`, de la sombra del futuro y del torneo. La prosa ya la usa y sigue «por
-  verificar» en `docs/sources.md`.
+  verificar» en `docs/sources.md`. Se cita la edición original, Basic Books, 1984: las páginas se
+  buscan en esa. Si solo se tiene otra edición (la revisada de 2006), hay que decidir antes si cambia
+  la referencia. Mientras tanto `/sources` dice «Páginas por verificar.» y el deploy no publica.
+  Al verificarla: escribir `sources.at.axelrod-1984` en los dos idiomas y quitarla de `UNVERIFIED`.
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
 - **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0026 dice que
   todo lo que no cubre se ve igual en los dos estados, así que `/sources` no lista las fuentes del
-  hallazgo, tampoco con el candado abierto. Si Montse quiere que las liste al abrirse, hace falta un
-  ADR nuevo que le dé a `/sources` una parte bloqueada (θ y c seguirían solo en `/finding`).
+  hallazgo, tampoco con el candado abierto, y el «cada cifra de la página» del 0024 queda con ese
+  hueco. Montse lo confirmó en la revisión de P5 y no quiso el ADR todavía: se decide en el paso 3b
+  del checklist, antes de abrir el candado.
 
 ## Preguntas cerradas
 
