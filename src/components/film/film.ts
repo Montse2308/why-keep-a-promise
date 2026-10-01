@@ -356,7 +356,7 @@ export function start(): void {
     requestAnimationFrame(render);
   };
 
-  // Only animate while the film is on screen: past it, the page is the previous version's prose.
+  // Only animate while the film is on screen: past it, the page is the notebook's footer.
   new IntersectionObserver((entries) => {
     visible = entries.some((entry) => entry.isIntersecting);
     if (visible) request();

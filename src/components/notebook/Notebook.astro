@@ -1,0 +1,337 @@
+---
+/**
+ * The notebook's button and panel (ADR 0024), on every page. The panel is a native modal <dialog>
+ * with the six entries, each with a line on what it holds: Esc closes it, and closing gives the
+ * focus back to the button (./notebook.ts). Without JavaScript the button is a plain link to the
+ * notebook's list in the footer, so every page reaches every other one.
+ *
+ * The finding's entry carries the status sentence in both states of the lock, standing alone in its
+ * element: on the home it is the second one, after chapter 7's stamp (rule (b), ADR 0026). While the
+ * lock is closed its title is plain text, and the panel links neither to /finding nor to the engine.
+ */
+import { MANUSCRIPT_STATUS } from '../../config';
+import { FILM } from '../../lib/design/film';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { findingUnlocked, statusKey } from '../../lib/lock';
+import { NOTEBOOK, NOTEBOOK_PAGES_ID } from '../../lib/notebook';
+import { href, type Route } from '../../lib/routes';
+
+interface Props {
+  locale: Locale;
+  route: Route;
+  /** The button floats over the film's stage, on the film's paper. */
+  film?: boolean;
+}
+
+const { locale, route, film = false } = Astro.props;
+const tr = useTranslations(locale);
+const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
+const status = tr(statusKey(MANUSCRIPT_STATUS));
+const label = tr('notebook.label');
+---
+
+<a class:list={['notebook__open', { 'notebook__open--film': film }]} href={`#${NOTEBOOK_PAGES_ID}`} data-notebook-link>
+  <svg class="notebook__icon" viewBox="-14 -14 28 28" aria-hidden="true">
+    <rect x="-9" y="-11" width="19" height="22" rx="3" fill={FILM['table-top']} stroke={FILM.ink} stroke-width="2.2" />
+    <path d="M3 -11 V2 L5.5 -0.5 L8 2 V-11" fill={FILM.thread} stroke={FILM.ink} stroke-width="1.6" stroke-linejoin="round" />
+    <path d="M-12 -6 H-6 M-12 0 H-6 M-12 6 H-6" stroke={FILM.ink} stroke-width="2.2" stroke-linecap="round" />
+  </svg>
+  <span class="notebook__label">{label}</span>
+</a>
+<button type="button" class:list={['notebook__open', { 'notebook__open--film': film }]} aria-haspopup="dialog" aria-controls="notebook" aria-expanded="false" hidden data-notebook-open>
+  <svg class="notebook__icon" viewBox="-14 -14 28 28" aria-hidden="true">
+    <rect x="-9" y="-11" width="19" height="22" rx="3" fill={FILM['table-top']} stroke={FILM.ink} stroke-width="2.2" />
+    <path d="M3 -11 V2 L5.5 -0.5 L8 2 V-11" fill={FILM.thread} stroke={FILM.ink} stroke-width="1.6" stroke-linejoin="round" />
+    <path d="M-12 -6 H-6 M-12 0 H-6 M-12 6 H-6" stroke={FILM.ink} stroke-width="2.2" stroke-linecap="round" />
+  </svg>
+  <span class="notebook__label">{label}</span>
+</button>
+
+<dialog id="notebook" class="notebook" aria-labelledby="notebook-title" data-notebook>
+  <div class="notebook__sheet">
+    <div class="notebook__head">
+      <h2 id="notebook-title" class="notebook__title">{label}</h2>
+      <button type="button" class="notebook__close" autofocus data-notebook-close>
+        <svg viewBox="-12 -12 24 24" aria-hidden="true">
+          <path d="M-7 -7 L7 7 M7 -7 L-7 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+        </svg>
+        <span class="visually-hidden">{tr('notebook.close')}</span>
+      </button>
+    </div>
+    <nav aria-labelledby="notebook-title">
+      <ol class="notebook__entries" role="list">
+        {
+          NOTEBOOK.map((entry) => {
+            const current = entry.page === route ? 'page' : undefined;
+            const anchor = (
+              <a class="notebook__name" href={href(locale, entry.page)} aria-current={current}>
+                {tr(entry.titleKey)}
+              </a>
+            );
+            if (entry.page !== 'finding') {
+              return (
+                <li class="notebook__entry">
+                  {anchor}
+                  {entry.lineKey && <span class="notebook__line">{tr(entry.lineKey)}</span>}
+                </li>
+              );
+            }
+            const title = (
+              <span class="notebook__name" aria-current={current}>
+                {tr(entry.titleKey)}
+              </span>
+            );
+            return (
+              <li class="notebook__entry">
+                {unlocked ? anchor : title}
+                <span class="notebook__status">{status}</span>
+                {unlocked && (
+                  <span class="notebook__line">
+                    {tr('notebook.engine')} <span class="todo">TODO(launch): enlace al repo del motor</span>
+                  </span>
+                )}
+              </li>
+            );
+          })
+        }
+      </ol>
+    </nav>
+  </div>
+</dialog>
+
+<script>
+  import { mount } from './notebook';
+
+  mount();
+</script>
+
+<style>
+  /* The button: a paper tab with the notebook drawn on it; a full-size target. */
+  .notebook__open {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-2);
+    box-sizing: border-box;
+    min-width: var(--target-min);
+    min-height: var(--target-min);
+    margin: 0;
+    padding: 0 var(--space-4) 0 var(--space-3);
+    border: var(--border-width) solid var(--color-control);
+    border-radius: 999px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-paper);
+    color: var(--color-fg);
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .notebook__open:hover {
+    border-color: var(--color-fg);
+  }
+
+  .notebook__icon {
+    flex: none;
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  /* Over the film: on the film's paper, in its ink, whatever the visitor's theme. */
+  .notebook__open--film {
+    border-color: transparent;
+    background: var(--film-card);
+    box-shadow: 0 4px 14px rgb(40 30 60 / 0.2);
+    color: var(--film-ink);
+  }
+
+  .notebook__open--film:hover {
+    border-color: var(--film-ink);
+  }
+
+  .notebook__open--film:focus-visible {
+    outline-color: var(--film-ink);
+  }
+
+  /* With the film running, the button stays in the corner of the screen, a tap away from any frame. */
+  :global(html.js) .notebook__open--film {
+    position: fixed;
+    top: calc(var(--space-2) + env(safe-area-inset-top, 0px));
+    right: var(--gutter);
+    z-index: 6;
+  }
+
+  /* On a phone, the film's top row is the spool's: the notebook alone, drawn, its name for screen readers. */
+  @media (max-width: 30rem) {
+    .notebook__open--film {
+      padding: 0;
+      justify-content: center;
+    }
+
+    .notebook__open--film .notebook__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  /*
+   * The panel: a sheet of the notebook's paper that slides in from the right edge, ruled, with the
+   * golden thread for a margin line. It follows the visitor's theme, over the film too.
+   */
+  .notebook {
+    box-sizing: border-box;
+    width: min(27rem, calc(100vw - 2.75rem));
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-paper);
+    color: var(--color-fg);
+    font-family: var(--font-ui);
+    font-weight: 400;
+    text-align: start;
+    overscroll-behavior: contain;
+  }
+
+  .notebook[open] {
+    animation: notebook-in var(--duration-slow) var(--ease-standard);
+  }
+
+  .notebook::backdrop {
+    background: rgb(29 27 58 / 0.5);
+  }
+
+  .notebook[open]::backdrop {
+    animation: notebook-dim var(--duration-slow) var(--ease-standard);
+  }
+
+  @keyframes notebook-in {
+    from {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes notebook-dim {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .notebook__sheet {
+    box-sizing: border-box;
+    min-height: 100%;
+    padding: calc(var(--space-4) + env(safe-area-inset-top, 0px)) var(--space-4) var(--space-8) var(--space-12);
+    background-image: linear-gradient(
+      to right,
+      transparent calc(var(--space-8) - 1px),
+      var(--color-accent) calc(var(--space-8) - 1px),
+      var(--color-accent) calc(var(--space-8) + 1px),
+      transparent calc(var(--space-8) + 1px)
+    );
+  }
+
+  .notebook__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .notebook__title {
+    margin: 0;
+    font-size: var(--step-2);
+    font-style: italic;
+    font-weight: 900;
+  }
+
+  .notebook__close {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--target-min);
+    height: var(--target-min);
+    padding: 0;
+    border: var(--border-width) solid var(--color-control);
+    border-radius: 999px;
+    background: none;
+    color: var(--color-fg);
+    cursor: pointer;
+  }
+
+  .notebook__close:hover {
+    border-color: var(--color-fg);
+  }
+
+  .notebook__close svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .notebook__entries {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .notebook__entry {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-3);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .notebook__name {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    font-family: var(--font-heading);
+    font-size: var(--step-1);
+    font-weight: 800;
+    line-height: var(--leading-tight);
+    color: var(--color-fg);
+    text-decoration: none;
+  }
+
+  a.notebook__name:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+  }
+
+  /* The page you are on: a knot of the golden thread beside its title. */
+  .notebook__name[aria-current='page']::before {
+    content: '';
+    flex: none;
+    width: 0.55rem;
+    height: 0.55rem;
+    margin-inline-end: var(--space-2);
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  .notebook__line,
+  .notebook__status {
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+    color: var(--color-muted);
+  }
+
+  .notebook__status {
+    font-style: italic;
+  }
+</style>

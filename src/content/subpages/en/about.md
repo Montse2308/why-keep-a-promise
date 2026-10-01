@@ -1,0 +1,5 @@
+---
+title: About
+---
+
+<!-- slot:author -->

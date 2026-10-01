@@ -1,30 +1,31 @@
 /*
- * Design tokens (ADR 0018). Colour values mirror src/lib/design/palette.ts exactly; a test fails
- * if they drift apart. Change a colour there first, then here.
+ * The notebook's design tokens (ADR 0024, ADR 0027). Colour values mirror src/lib/design/palette.ts
+ * exactly; a test fails if they drift apart. Change a colour there first, then here. The film's own
+ * colours are in film.css.
  */
 
 :root {
   color-scheme: light dark;
 
-  /* Colour: light paper */
-  --color-bg: #f6f1e7;
-  --color-surface: #fbf8f2;
-  --color-surface-hover: #efe8da;
-  --color-fg: #221d17;
-  --color-muted: #5e564a;
-  --color-border: #ddd4c4;
-  --color-control: #857b6c;
-  --color-focus: #221d17;
-  --color-you: #23508f;
-  --color-other: #a4432a;
-  --color-promise: #56636b;
-  --color-series-1: #8e2f6e;
-  --color-series-2: #7d6400;
-  --color-series-3: #008a7e;
+  /* Colour: day paper */
+  --color-bg: #f9f0e1;
+  --color-glow: #fbe3c8;
+  --color-surface: #fffdf8;
+  --color-fg: #1d1b3a;
+  --color-muted: #5b5875;
+  --color-border: #e7dcc8;
+  --color-control: #857d98;
+  --color-focus: #1d1b3a;
+  --color-accent: #8a6500;
 
-  /* Typography: the serif is what you read, the sans is what you touch. */
-  --font-prose: var(--font-serif, Georgia, serif);
-  --font-ui: var(--font-sans, system-ui, sans-serif);
+  /* The paper's grain: the film's ink, scattered thin over the page. */
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .11 0 0 0 0 .1 0 0 0 0 .23 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --shadow-paper: 0 1px 0 rgb(29 27 58 / 0.05), 0 10px 28px rgb(29 27 58 / 0.12);
+
+  /* Typography (ADR 0027): Fraunces for headings, Nunito for what you read and touch, mono for code. */
+  --font-heading: var(--font-display, Georgia, serif);
+  --font-prose: var(--font-body, system-ui, sans-serif);
+  --font-ui: var(--font-body, system-ui, sans-serif);
   --font-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
   /* Code blocks only (/how-its-built). --font-jetbrains-mono is declared only on the pages that load it. */
   --font-code: var(--font-jetbrains-mono, ui-monospace, 'Cascadia Code', Consolas, monospace);
@@ -87,21 +88,19 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Colour: dark paper (warm ink) */
-    --color-bg: #1c1915;
-    --color-surface: #25211c;
-    --color-surface-hover: #2f2a23;
-    --color-fg: #ede5d6;
-    --color-muted: #b1a794;
-    --color-border: #3e382f;
-    --color-control: #8a806f;
-    --color-focus: #ede5d6;
-    --color-you: #8db4ea;
-    --color-other: #e8906d;
-    --color-promise: #aab4bb;
-    --color-series-1: #c472a6;
-    --color-series-2: #a88619;
-    --color-series-3: #16a39b;
+    /* Colour: night paper, the film's ink */
+    --color-bg: #1d1b3a;
+    --color-glow: #2c2858;
+    --color-surface: #28264d;
+    --color-fg: #fffaf0;
+    --color-muted: #c4bfdc;
+    --color-border: #3b3866;
+    --color-control: #8e88b8;
+    --color-focus: #f3bd46;
+    --color-accent: #f3bd46;
+
+    --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .98 0 0 0 0 .94 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    --shadow-paper: 0 1px 0 rgb(0 0 0 / 0.2), 0 12px 30px rgb(0 0 0 / 0.35);
   }
 }
 

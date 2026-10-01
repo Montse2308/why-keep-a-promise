@@ -1,16 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import tokensCss from '../../styles/tokens.css?raw';
-import { contrastRatio, deltaE, parseHex, relativeLuminance, simulate, type Deficiency } from './color';
-import {
-  COLOR_TOKENS,
-  CONTRAST_PAIRS,
-  MIN_CONTRAST,
-  MIN_DISTANCE,
-  PALETTE,
-  SERIES_TOKENS,
-  THEMES,
-  type Theme,
-} from './palette';
+import { contrastRatio, parseHex, relativeLuminance, simulate } from './color';
+import { FILM } from './film';
+import { COLOR_TOKENS, CONTRAST_PAIRS, MIN_CONTRAST, PALETTE, THEMES, type Theme } from './palette';
 
 const read = (block: string) =>
   Object.fromEntries([...block.matchAll(/--color-([a-z0-9-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2]?.trim()]));
@@ -26,9 +18,6 @@ function colorDeclarations(css: string): Record<Theme, Record<string, string>> {
     dark: read(css.slice(darkStart, darkEnd < 0 ? undefined : darkEnd)),
   };
 }
-
-const visions: Array<Deficiency | 'typical'> = ['typical', 'protanopia', 'deuteranopia'];
-const seen = (hex: string, vision: Deficiency | 'typical') => (vision === 'typical' ? parseHex(hex) : simulate(hex, vision));
 
 describe('colour maths', () => {
   it('matches the WCAG reference values', () => {
@@ -50,45 +39,43 @@ describe('colour maths', () => {
   });
 });
 
-describe.each(THEMES)('palette, %s theme', (theme) => {
+describe.each(THEMES)("the notebook's paper, %s theme", (theme) => {
   const colors = PALETTE[theme];
 
-  it.each(CONTRAST_PAIRS.map((pair) => [`${pair.fg} on ${pair.bg}`, pair] as const))(
-    'meets WCAG AA contrast: %s',
-    (_name, pair) => {
-      expect(contrastRatio(colors[pair.fg], colors[pair.bg])).toBeGreaterThanOrEqual(MIN_CONTRAST[pair.kind]);
-    },
-  );
-
-  it.each(visions)('keeps the two roles apart under %s vision', (vision) => {
-    expect(deltaE(seen(colors.you, vision), seen(colors.other, vision))).toBeGreaterThanOrEqual(MIN_DISTANCE.roles);
+  it.each(CONTRAST_PAIRS.map((pair) => [`${pair.fg} on ${pair.bg} (${pair.use})`, pair] as const))('meets WCAG AA contrast: %s', (_name, pair) => {
+    expect(contrastRatio(colors[pair.fg], colors[pair.bg])).toBeGreaterThanOrEqual(MIN_CONTRAST[pair.kind]);
   });
 
-  it.each(visions)('keeps the promise accent apart from both roles under %s vision', (vision) => {
-    for (const role of [colors.you, colors.other]) {
-      expect(deltaE(seen(colors.promise, vision), seen(role, vision))).toBeGreaterThanOrEqual(MIN_DISTANCE.promise);
+  it('checks the text and the focus ring against every paper they sit on', () => {
+    const papers = (token: string, kind: 'text' | 'graphic') => [...new Set(CONTRAST_PAIRS.filter((pair) => pair.fg === token && pair.kind === kind).map((pair) => pair.bg))].sort();
+    expect(papers('fg', 'text')).toEqual(['bg', 'glow', 'surface']);
+    expect(papers('muted', 'text')).toEqual(['bg', 'glow', 'surface']);
+    expect(papers('focus', 'graphic')).toEqual(['bg', 'glow', 'surface']);
+  });
+
+  it('is paper with colour, never a flat grey: the page keeps a warm or a night hue', () => {
+    for (const token of ['bg', 'glow', 'surface'] as const) {
+      const [r, g, b] = parseHex(colors[token]);
+      expect(Math.max(r, g, b) - Math.min(r, g, b), token).toBeGreaterThan(0);
     }
+    const [r, , b] = parseHex(colors.bg);
+    // Day paper leans warm (more red than blue); night paper leans to the film's indigo ink.
+    expect(theme === 'light' ? r > b : b > r).toBe(true);
+  });
+});
+
+describe('the paper comes from the film (ADR 0027)', () => {
+  it("reads in the film's ink on day paper and in its paper on night paper", () => {
+    expect(PALETTE.light.fg).toBe(FILM.ink);
+    expect(PALETTE.dark.bg).toBe(FILM.ink);
+    expect(PALETTE.dark.fg).toBe(FILM.rim);
+    expect(PALETTE.light.surface).toBe(FILM.card);
   });
 
-  it.each(visions)('keeps personal guilt apart from partner-specific commitment under %s vision', (vision) => {
-    expect(deltaE(seen(colors['series-1'], vision), seen(colors['series-2'], vision))).toBeGreaterThanOrEqual(MIN_DISTANCE.series);
-  });
-
-  it('gives the curve colours of their own, apart from the roles and the promise accent', () => {
-    for (const series of SERIES_TOKENS) {
-      for (const table of ['you', 'other', 'promise'] as const) {
-        expect(deltaE(parseHex(colors[series]), parseHex(colors[table])), `${series} vs ${table}`).toBeGreaterThanOrEqual(
-          MIN_DISTANCE.seriesFromRoles,
-        );
-      }
-    }
-  });
-
-  it('checks every curve colour against the page and the figure surface', () => {
-    for (const series of SERIES_TOKENS) {
-      const backgrounds = CONTRAST_PAIRS.filter((pair) => pair.fg === series).map((pair) => pair.bg);
-      expect(backgrounds.sort()).toEqual(['bg', 'surface']);
-    }
+  it("marks with the golden thread: its edge by day, the thread itself by night", () => {
+    expect(PALETTE.light.accent).toBe(FILM['thread-edge']);
+    expect(PALETTE.dark.accent).toBe(FILM.thread);
+    expect(PALETTE.dark.focus).toBe(FILM.thread);
   });
 });
 

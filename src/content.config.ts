@@ -21,16 +21,15 @@ const chapters = defineCollection({
 });
 
 /**
- * Subpage prose, one Markdown file per subpage and locale: src/content/subpages/{en,es}/<slug>.md.
- * Each deepens one act, and only adds to the film that tells it now (docs/content-rules.md, rule
- * (h)). HTML comments mark where a component goes (`<!-- slot:<name> -->`) and where the lock begins
- * (`<!-- lock -->`), see src/lib/subpages.ts.
+ * The notebook's prose (ADR 0024), one Markdown file per page and locale:
+ * src/content/subpages/{en,es}/<slug>.md. Each page only adds to the film (docs/content-rules.md,
+ * rule (h)). HTML comments mark where a component goes (`<!-- slot:<name> -->`) and where the lock
+ * begins (`<!-- lock -->`), see src/lib/subpages.ts.
  */
 const subpages = defineCollection({
   loader: glob({ pattern: '{en,es}/*.md', base: './src/content/subpages' }),
   schema: z.object({
-    /** The act this subpage deepens (src/lib/acts.ts). */
-    act: z.number().int().min(1).max(6),
+    /** The page's title: its entry in the notebook (src/lib/notebook.ts), word for word. */
     title: z.string().min(1),
   }),
 });

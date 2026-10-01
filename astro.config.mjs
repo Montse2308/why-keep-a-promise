@@ -3,26 +3,25 @@ import { defineConfig, fontProviders } from 'astro/config';
 import { MANUSCRIPT_STATUS } from './src/config.ts';
 import { findingUnlocked } from './src/lib/lock.ts';
 
-// Unicode ranges copied from each @fontsource-variable package's standard.css (src/assets/fonts/README.md).
+// Unicode ranges copied from each @fontsource-variable package's wght.css (src/assets/fonts/README.md).
 const LATIN =
   'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD'.split(',');
 const LATIN_EXT =
   'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF'.split(',');
 
 /**
- * One @font-face per subset and style of a self-hosted variable font.
+ * One @font-face per subset and style of a self-hosted variable font, weight axis only.
  * @param {string} file file prefix in src/assets/fonts/
  * @param {string} weight variable weight range
  * @param {Array<'normal' | 'italic'>} styles
- * @param {'standard' | 'wght'} [axes] the package's file infix: every axis, or weight only
  */
-function variants(file, weight, styles, axes = 'standard') {
+function variants(file, weight, styles) {
   return styles.flatMap((style) =>
     /** @type {const} */ ([
       ['latin', LATIN],
       ['latin-ext', LATIN_EXT],
     ]).map(([subset, unicodeRange]) => ({
-      src: [`./src/assets/fonts/${file}-${subset}-${axes}-${style}.woff2`],
+      src: [`./src/assets/fonts/${file}-${subset}-wght-${style}.woff2`],
       weight,
       style,
       unicodeRange,
@@ -32,11 +31,12 @@ function variants(file, weight, styles, axes = 'standard') {
 
 /**
  * What the lock keeps out of a build while it is closed (ADR 0026), each with the stub it resolves
- * to: the curve and chapter 7's finding render nothing, and the film's timeline knows no beats past
- * the sealed envelope. Paths from the project's root.
+ * to: the curve, /finding's guilt chart and chapter 7's finding render nothing, and the film's
+ * timeline knows no beats past the sealed envelope. Paths from the project's root.
  */
 const LOCKED_MODULES = {
   '/src/components/curve/Curve.astro': '/src/components/curve/Locked.astro',
+  '/src/components/curve/GuiltChart.astro': '/src/components/curve/Locked.astro',
   '/src/components/film/chapters/Finding.astro': '/src/components/curve/Locked.astro',
   '/src/lib/film/finding.ts': '/src/lib/film/finding.locked.ts',
 };
@@ -91,30 +91,9 @@ export default defineConfig({
   markdown: {
     syntaxHighlight: false,
   },
-  // Serif is what you read (prose, headings); sans is what you touch (the table, UI); mono is code. ADR 0014.
+  // The faces of the film and the notebook (ADR 0027): Fraunces for display and headings, Nunito for text and
+  // interface, weight axis only, to keep the first load within budget (ADR 0025); mono is code.
   fonts: [
-    {
-      provider: fontProviders.local(),
-      name: 'Newsreader',
-      cssVariable: '--font-serif',
-      fallbacks: ['Georgia', 'serif'],
-      display: 'swap',
-      options: {
-        variants: /** @type {any} */ (variants('newsreader', '200 800', ['normal', 'italic'])),
-      },
-    },
-    {
-      provider: fontProviders.local(),
-      name: 'Inter',
-      cssVariable: '--font-sans',
-      fallbacks: ['system-ui', 'sans-serif'],
-      display: 'swap',
-      options: {
-        variants: /** @type {any} */ (variants('inter', '100 900', ['normal'])),
-      },
-    },
-    // The film's faces (ADR 0027): Fraunces for display, Nunito for text and interface. Weight axis only, to
-    // keep the first load within budget (ADR 0025); they replace Newsreader and Inter as the film lands (P1).
     {
       provider: fontProviders.local(),
       name: 'Fraunces',
@@ -122,7 +101,7 @@ export default defineConfig({
       fallbacks: ['Georgia', 'serif'],
       display: 'swap',
       options: {
-        variants: /** @type {any} */ (variants('fraunces', '100 900', ['normal', 'italic'], 'wght')),
+        variants: /** @type {any} */ (variants('fraunces', '100 900', ['normal', 'italic'])),
       },
     },
     {
@@ -132,7 +111,7 @@ export default defineConfig({
       fallbacks: ['system-ui', 'sans-serif'],
       display: 'swap',
       options: {
-        variants: /** @type {any} */ (variants('nunito', '200 1000', ['normal'], 'wght')),
+        variants: /** @type {any} */ (variants('nunito', '200 1000', ['normal'])),
       },
     },
     // Code blocks only, on /how-its-built; never preloaded (ADR 0027).
@@ -143,7 +122,7 @@ export default defineConfig({
       fallbacks: ['ui-monospace', 'monospace'],
       display: 'swap',
       options: {
-        variants: /** @type {any} */ (variants('jetbrains-mono', '100 800', ['normal'], 'wght')),
+        variants: /** @type {any} */ (variants('jetbrains-mono', '100 800', ['normal'])),
       },
     },
   ],

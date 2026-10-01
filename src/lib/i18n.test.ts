@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import en from '../i18n/en.json';
 import es from '../i18n/es.json';
-import { assertParity, findParityProblems, isLocale, otherLocale, t } from './i18n';
+import { assertParity, findParityProblems, hasKey, isLocale, otherLocale, t } from './i18n';
 
 describe('i18n parity', () => {
   it('holds for the real dictionaries', () => {
@@ -10,8 +10,8 @@ describe('i18n parity', () => {
   });
 
   it('fails when a key exists in en but not in es', () => {
-    const { ['footer.home']: _removed, ...esMissing } = es;
-    expect(() => assertParity({ en, es: esMissing })).toThrow('es: missing key "footer.home"');
+    const { ['notebook.label']: _removed, ...esMissing } = es;
+    expect(() => assertParity({ en, es: esMissing })).toThrow('es: missing key "notebook.label"');
   });
 
   it('fails when a key exists in es but not in en', () => {
@@ -29,8 +29,13 @@ describe('i18n parity', () => {
 
 describe('i18n helpers', () => {
   it('translates by locale', () => {
-    expect(t('en', 'footer.home')).toBe('Home');
-    expect(t('es', 'footer.home')).toBe('Inicio');
+    expect(t('en', 'notebook.label')).toBe('Notebook');
+    expect(t('es', 'notebook.label')).toBe('Cuaderno');
+  });
+
+  it('tells which keys exist', () => {
+    expect(hasKey('notebook.label')).toBe(true);
+    expect(hasKey('notebook.nothing')).toBe(false);
   });
 
   it('recognises locales and swaps them', () => {

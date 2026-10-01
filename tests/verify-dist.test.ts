@@ -4,12 +4,24 @@ import config from '../src/config.ts?raw';
 import curveComponent from '../src/components/curve/Curve.astro?raw';
 import curveController from '../src/components/curve/controller.ts?raw';
 import curveStub from '../src/components/curve/Locked.astro?raw';
+import guiltChart from '../src/components/curve/GuiltChart.astro?raw';
 import filmComponent from '../src/components/film/Film.astro?raw';
 import findingComponent from '../src/components/film/chapters/Finding.astro?raw';
 import myResearch from '../src/components/film/chapters/MyResearch.astro?raw';
 import closingComponent from '../src/components/film/chapters/Closing.astro?raw';
 import engineComponent from '../src/components/film/Engine.astro?raw';
 import worldComponent from '../src/components/film/World.astro?raw';
+import magnifier from '../src/components/film/Magnifier.astro?raw';
+import twoRooms from '../src/components/film/chapters/TwoRooms.astro?raw';
+import realPeople from '../src/components/film/chapters/RealPeople.astro?raw';
+import notebook from '../src/components/notebook/Notebook.astro?raw';
+import notebookScript from '../src/components/notebook/notebook.ts?raw';
+import notebookFooter from '../src/components/notebook/NotebookFooter.astro?raw';
+import sourcesComponent from '../src/components/notebook/Sources.astro?raw';
+import vignette from '../src/components/notebook/Vignette.astro?raw';
+import day from '../src/components/notebook/Day.astro?raw';
+import author from '../src/components/notebook/Author.astro?raw';
+import baseLayout from '../src/layouts/BaseLayout.astro?raw';
 import chapterEn from '../src/content/chapters/en/07-my-research.md?raw';
 import chapterEs from '../src/content/chapters/es/07-my-research.md?raw';
 import en from '../src/i18n/en.json';
@@ -18,11 +30,11 @@ import findingBeats from '../src/lib/film/finding.ts?raw';
 import findingStub from '../src/lib/film/finding.locked.ts?raw';
 import { FINDING_BEATS as STUBBED } from '../src/lib/film/finding.locked';
 import homeView from '../src/views/HomeView.astro?raw';
-import siteFooter from '../src/components/SiteFooter.astro?raw';
 import subpageView from '../src/views/SubpageView.astro?raw';
 import { LOCKED_BEATS } from '../src/lib/chapters';
 import { splitAtLock } from '../src/lib/film/captions';
-import { splitSubpage } from '../src/lib/subpages';
+import { slotsIn, splitSubpage } from '../src/lib/subpages';
+import { worksOf } from '../src/lib/sources';
 import {
   countStandalone,
   FINDING_PAGES,
@@ -58,13 +70,14 @@ const keys = (dictionary: Record<string, string>, locked: boolean) =>
     .map(([, value]) => value)
     .join('\n');
 
-// What the lock covers once open: chapter 7's finding, the curve and its control, /finding and the
-// engine part of /how-its-built (ADR 0026).
+// What the lock covers once open: chapter 7's finding, the curve and its control, /finding and its
+// guilt chart, and the engine part of /how-its-built (ADR 0026).
 const lockedSources = [
   ...seventh.map((part) => part.locked),
   keys(en, true),
   keys(es, true),
   curveComponent,
+  guiltChart,
   curveController,
   findingComponent,
   findingBeats,
@@ -73,7 +86,8 @@ const lockedSources = [
 ].join('\n');
 
 // What renders in both states: chapter 7's question, engine and envelope, the film around them (chapter
-// 8's credits too), the home, and every other UI string.
+// 8's credits and the magnifiers too), the home, the notebook's panel, footer and pages, and every
+// other UI string.
 const openSources = {
   'chapter 7, open part (en)': seventh[0]?.open ?? '',
   'chapter 7, open part (es)': seventh[1]?.open ?? '',
@@ -83,7 +97,19 @@ const openSources = {
   'Engine.astro': engineComponent,
   'Closing.astro': closingComponent,
   'HomeView.astro': homeView,
-  'SiteFooter.astro': siteFooter,
+  'Magnifier.astro': magnifier,
+  'TwoRooms.astro': twoRooms,
+  'RealPeople.astro': realPeople,
+  'Notebook.astro': notebook,
+  'notebook.ts': notebookScript,
+  'NotebookFooter.astro': notebookFooter,
+  'Sources.astro': sourcesComponent,
+  'Vignette.astro': vignette,
+  'Day.astro': day,
+  'Author.astro': author,
+  'BaseLayout.astro': baseLayout,
+  // /sources' open part: the references of its works, and the works themselves.
+  'the works of /sources': worksOf().map((group) => JSON.stringify(group)).join('\n'),
   'the open UI strings (en)': keys(en, false),
   'the open UI strings (es)': keys(es, false),
 };
@@ -111,12 +137,19 @@ describe('verify:dist (ADR 0026)', () => {
     expect(findMarks(source)).toEqual([]);
   });
 
-  it('puts all of /finding and the engine of /how-its-built behind the lock', () => {
+  it('puts all of /finding and the engine of /how-its-built behind the lock, and nothing of /sources', () => {
     for (const part of parts) {
       if (part.path.endsWith('/finding.md')) expect(part.open.trim()).toBe('');
       if (part.path.endsWith('/how-its-built.md')) expect(findMarks(part.locked).length).toBeGreaterThan(0);
-      if (/\/(dilemma|vanberg)\.md$/.test(part.path)) expect(part.locked).toBe('');
+      if (/\/(dilemma|vanberg|sources|about)\.md$/.test(part.path)) expect(part.locked).toBe('');
     }
+    // /sources has no lock (ADR 0024): it looks the same in both states, so it lists none of the finding's sources.
+    for (const [path, raw] of Object.entries(subpages).filter(([path]) => path.endsWith('/sources.md'))) {
+      const split = splitSubpage(raw.replace(/^---[\s\S]*?---/, ''));
+      expect(slotsIn(split.open), path).toEqual(['sources']);
+      expect(split.locked, path).toEqual([]);
+    }
+    expect(sourcesComponent).not.toMatch(/findingUnlocked\(|unlocked \?/);
   });
 
   it("puts chapter 7's finding behind the lock, in the component a locked build does not have", () => {
@@ -139,6 +172,7 @@ describe('verify:dist (ADR 0026)', () => {
     const pairs = [...map.matchAll(/'([^']+)':\s*'([^']+)'/g)].map((m) => [m[1], m[2]]);
     expect(pairs).toEqual([
       ['/src/components/curve/Curve.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/curve/GuiltChart.astro', '/src/components/curve/Locked.astro'],
       ['/src/components/film/chapters/Finding.astro', '/src/components/curve/Locked.astro'],
       ['/src/lib/film/finding.ts', '/src/lib/film/finding.locked.ts'],
     ]);
@@ -153,9 +187,9 @@ describe('verify:dist (ADR 0026)', () => {
   });
 
   it("finds nothing in chapter 7's envelope and /finding as they render while locked", () => {
-    const envelope = `<section id="my-research" class="chapter"><h2 id="my-research-title" class="card__chapter">${en['film.chapter']} · ${en['act.finding.title']}</h2><div class="envelope" data-envelope><p class="envelope__stamp">${en['manuscript.status.in-preparation']}</p></div></section>`;
+    const envelope = `<section id="my-research" class="chapter"><h2 id="my-research-title" class="card__chapter">${en['film.chapter']} · ${en['notebook.finding.title']}</h2><div class="envelope" data-envelope><p class="envelope__stamp">${en['manuscript.status.in-preparation']}</p></div></section>`;
     const envelopeEs = `<div class="envelope" data-envelope><p class="envelope__stamp">${es['manuscript.status.in-preparation']}</p></div>`;
-    const subpage = `<article class="subpage"><h1 id="subpage-title">${en['act.finding.title']}</h1><p class="subpage__status">${en['manuscript.status.in-preparation']}</p></article>`;
+    const subpage = `<article class="subpage"><h1 id="subpage-title">${en['notebook.finding.title']}</h1><p class="subpage__status">${en['manuscript.status.in-preparation']}</p></article>`;
     expect(findMarks(envelope + envelopeEs + subpage)).toEqual([]);
   });
 
@@ -191,14 +225,30 @@ describe('verify:dist (ADR 0026)', () => {
       expect(myResearch.match(/\{status\}/g)).toHaveLength(1);
     });
 
-    it("gives the footer the notebook's entry for the finding until the panel comes: its title and the sentence, standing alone", () => {
-      expect(siteFooter).toMatch(/<span class="footer__status">\{status\}<\/span>/);
-      expect(siteFooter.match(/\{status\}/g)).toHaveLength(1);
-      expect(siteFooter).toContain('const status = tr(statusKey(MANUSCRIPT_STATUS));');
+    it("gives the notebook's panel the entry for the finding: its title and the sentence, standing alone", () => {
+      expect(notebook).toMatch(/<span class="notebook__status">\{status\}<\/span>/);
+      expect(notebook.match(/\{status\}/g)).toHaveLength(1);
+      expect(notebook).toContain('const status = tr(statusKey(MANUSCRIPT_STATUS));');
       // The entry links to /finding only behind the lock; closed, its title is plain text.
-      expect(siteFooter).toContain('{unlocked ? anchor : title}');
-      expect(siteFooter).toMatch(/const title = \(\s*<span class="footer__title"/);
-      expect(siteFooter).toContain('const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);');
+      expect(notebook).toContain('{unlocked ? anchor : title}');
+      expect(notebook).toMatch(/const title = \(\s*<span class="notebook__name"/);
+      expect(notebook).toContain('const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);');
+      // The engine's repository waits for step 8 of the launch, and only behind the lock.
+      expect(notebook).toMatch(/\{unlocked && \(\s*<span class="notebook__line">\s*\{tr\('notebook\.engine'\)\} <span class="todo">TODO\(launch\): enlace al repo del motor<\/span>/);
+    });
+
+    it('keeps the status sentence off the footer and the rest of the page, so the home says it twice', () => {
+      for (const source of [notebookFooter, baseLayout, sourcesComponent, magnifier]) {
+        expect(source).not.toMatch(/statusKey|manuscript\.status/);
+      }
+      // The panel is in the layout once, on every page: one entry for the finding per page.
+      expect(baseLayout.match(/<Notebook /g)).toHaveLength(1);
+      expect(baseLayout.match(/<NotebookFooter /g)).toHaveLength(1);
+    });
+
+    it('leaves /finding out of the footer while the lock is closed, as out of the credits', () => {
+      expect(notebookFooter).toContain('const pages = linkable(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));');
+      expect(closingComponent).toContain('const pages = creditPages(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));');
     });
 
     it('fails when the sentence is missing, appears once, or three times', () => {

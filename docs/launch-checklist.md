@@ -15,6 +15,14 @@ el paso 6.
       nombres de revista, correos, rutas de Drive y datos personales. Si aparece algo, se limpia
       el historial antes de seguir. Revisar también `dist/` (`grep -r "TODO(" dist/` vacío salvo
       `TODO(launch)`, que se resuelve en el paso 8).
+- [ ] **3b. Las cifras del hallazgo en `/sources`.** Antes de abrir el candado, decidir con un ADR
+      nuevo si `/sources` lista también las cifras del hallazgo (las de `/finding` y las del
+      capítulo 7) cuando el candado esté abierto. Hoy no las lista: el ADR 0024 le da a `/sources`
+      «Candado: —» y el ADR 0026 hace que todo lo que no cubre se vea igual en los dos estados, así
+      que con el candado abierto el «cada cifra de la página» del ADR 0024 deja fuera las del
+      hallazgo. Si el ADR dice que sí, `/sources` gana una parte bloqueada (θ y c siguen solo en
+      `/finding`) y `verify:dist` la suma a las páginas que llevan contenido bloqueado; si dice que
+      no, el ADR precisa el «cada cifra de la página» del 0024. El paso 4 no se da sin ese ADR.
 - [ ] **4. Estado del manuscrito.** Pasar `MANUSCRIPT_STATUS` en `src/config.ts` a
       `'under-review'` ("The manuscript is under review." / "El manuscrito está en revisión.").
       Cambiar el estado abre el candado (ADR 0026): el hallazgo del capítulo 7 con su curva y su
@@ -29,6 +37,9 @@ el paso 6.
       enlace al repo del motor, público desde el paso 2: en el capítulo 7, en el panel del
       cuaderno, en `/finding` y en `/how-its-built` (`grep -rn "TODO(launch)" src/` los lista).
       Después, `npm run build` y `grep -r "TODO(" dist/` vacío.
-- [ ] **9. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`).
+- [ ] **9. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`). El
+      workflow se detiene si `dist/` todavía lleva un `TODO(` (por ejemplo, el `TODO(P6)` de
+      `/how-its-built`) o una fuente que `/sources` marca «por verificar» (`data-unverified`, hoy
+      Axelrod, 1984): lo que piden los pasos 3 y 8, comprobado otra vez antes de publicar.
 - [ ] **10. Verificación.** Comprobar `/` y `/es/` en línea en
       `https://montse2308.github.io/why-keep-a-promise/`, incluido el switch EN/ES y `hreflang`.

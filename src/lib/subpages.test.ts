@@ -7,9 +7,9 @@ describe('splitSubpage', () => {
   });
 
   it('puts a slot in place, between the prose around it', () => {
-    const { open } = splitSubpage('<p>Before.</p>\n<!-- slot:best-response -->\n<p>After.</p>');
+    const { open } = splitSubpage('<p>Before.</p>\n<!-- slot:pd-matrix -->\n<p>After.</p>');
     expect(open.map((segment) => segment.kind)).toEqual(['html', 'slot', 'html']);
-    expect(slotsIn(open)).toEqual(['best-response']);
+    expect(slotsIn(open)).toEqual(['pd-matrix']);
   });
 
   it('moves everything after the lock marker to the locked part, slots included', () => {

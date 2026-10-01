@@ -1,6 +1,7 @@
 import { DEFAULT_LOCALE, type Locale } from './locales';
 
-export const SUBPAGES = ['dilemma', 'vanberg', 'finding', 'how-its-built'] as const;
+/** The notebook's pages (ADR 0024), in its order (src/lib/notebook.ts). */
+export const SUBPAGES = ['dilemma', 'vanberg', 'finding', 'how-its-built', 'sources', 'about'] as const;
 export type Subpage = (typeof SUBPAGES)[number];
 export type Route = 'home' | Subpage;
 export const ROUTES: readonly Route[] = ['home', ...SUBPAGES];

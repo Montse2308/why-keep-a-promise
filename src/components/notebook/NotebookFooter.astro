@@ -1,0 +1,112 @@
+---
+/**
+ * The footer of every page (ADR 0024): the notebook's pages, the EN/ES switch (ADR 0013) and, on a
+ * notebook page, the way back to the film. Its list is also where the notebook's button leads
+ * without JavaScript. It never carries the status sentence: on the home that would be a third one
+ * (rule (b)); the finding's entry, with the sentence, is the panel's. While the lock is closed it
+ * does not list /finding at all (ADR 0026).
+ */
+import LanguageSwitch from '../LanguageSwitch.astro';
+import { MANUSCRIPT_STATUS } from '../../config';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { findingUnlocked } from '../../lib/lock';
+import { linkable, NOTEBOOK_PAGES_ID } from '../../lib/notebook';
+import { href, type Route } from '../../lib/routes';
+
+interface Props {
+  locale: Locale;
+  route: Route;
+}
+
+const { locale, route } = Astro.props;
+const tr = useTranslations(locale);
+const pages = linkable(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));
+---
+
+<footer class="footer">
+  <div class="footer__inner container">
+    <nav id={NOTEBOOK_PAGES_ID} class="footer__notebook" aria-labelledby="footer-notebook" tabindex="-1">
+      <p id="footer-notebook" class="footer__title">{tr('notebook.label')}</p>
+      <ul class="footer__links" role="list">
+        {
+          pages.map((entry) => (
+            <li>
+              <a href={href(locale, entry.page)} aria-current={entry.page === route ? 'page' : undefined}>
+                {tr(entry.titleKey)}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="footer__end">
+      {
+        route !== 'home' && (
+          <a class="footer__film" href={href(locale, 'home')}>
+            {tr('notebook.film')}
+          </a>
+        )
+      }
+      <LanguageSwitch locale={locale} route={route} landmark={false} />
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: var(--space-16);
+    padding-block: var(--space-8) var(--space-12);
+    border-top: var(--border-width) solid var(--color-border);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6) var(--space-8);
+  }
+
+  .footer__notebook:focus {
+    outline: none;
+  }
+
+  .footer__title {
+    margin: 0 0 var(--space-1);
+    font-family: var(--font-heading);
+    font-size: var(--step-0);
+    font-style: italic;
+    font-weight: 900;
+  }
+
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer__links a,
+  .footer__film {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    font-weight: 700;
+  }
+
+  [aria-current='page'] {
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+  }
+
+  .footer__end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-6);
+  }
+</style>

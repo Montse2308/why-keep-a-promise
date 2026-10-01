@@ -18,11 +18,11 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P4 are closed;
-the next phase is P5, the notebook. The film tells all nine chapters, chapter 7's finding behind the
-lock, and ends in chapter 8's credits: the home is the film alone. Of the previous version, the
-subpages and the footer remain until the notebook (P5); the footer carries the notebook's entry for
-the finding (its title and the status sentence) until the panel comes. Each piece of the film
-removed what it replaced, in the same commit as its tests.
+P5, the notebook, is built and waits for Montse's review; the next phase is P6, the polish. The
+film tells all nine chapters, chapter 7's finding behind the lock, and ends in chapter 8's credits.
+The notebook has its six pages, its panel on every page (with the finding's entry: its title and the
+status sentence), its magnifiers in the film and its footer. Nothing of the previous version is
+left on the site.
 
 ## Reading order
 
@@ -76,18 +76,17 @@ not by reading test output.
 
 ## Map
 
-The film's pieces are marked **(P1+)**: they arrive from P1 on and replace the previous version's,
-which are marked as such.
-
 ```
 src/
   config.ts              author links, manuscript status (it also opens the lock)
   content.config.ts      content collections (frontmatter schemas)
-  content/chapters/{en,es}/  (P1+) the film's captions, one file per chapter, split into beats by
+  content/chapters/{en,es}/  the film's captions, one file per chapter, split into beats by
                          <!-- beat:… --> marks; a number is a {placeholder}, never a figure;
                          chapter 7's finding follows its <!-- lock --> mark
-  content/subpages/{en,es}/  notebook prose; <!-- slot:… --> and <!-- lock --> markers
-  content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md
+  content/subpages/{en,es}/  the notebook's prose, one file per page; <!-- slot:… --> and
+                         <!-- lock --> markers
+  content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md;
+                         /sources shows it
   data/curve.json        the engine's precomputed curve, copied with provenance; never edited (ADR 0010)
   i18n/en.json, es.json  UI strings, flat keys, full parity
   lib/                   pure, tested modules
@@ -95,7 +94,7 @@ src/
     locales.ts           locale list, no dictionary imports (safe for client scripts)
     routes.ts            buildHref/href/assetHref: every internal link goes through here
     lock.ts              the lock: full content only under review or in dev (ADR 0026)
-    film/                (P1+) the scene engine: tracks, easing, colours (OKLCH), camera, chapter
+    film/                the scene engine: tracks, easing, colours (OKLCH), camera, chapter
                          spans; timeline.ts (screens, beats, the native scroll mapped to the film);
                          faces.ts (the moods); stage.ts (what the stage shows at each point);
                          captions.ts (beats in Markdown); values.ts (every number the film says,
@@ -104,39 +103,45 @@ src/
                          talk.ts (chapter 2's chat); voices.ts (the two voices, chapter 4 on);
                          deck.ts, bet.ts (chapter 5's deck and bet); guess.ts, signs.ts (chapter 6);
                          finding.ts (chapter 7's beats past the envelope, stubbed while locked);
-                         credits.ts (chapter 8's cast and the notebook pages its credits link)
-    chapters.ts          (P1+) the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
+                         credits.ts (chapter 8's cast and the notebook pages its credits link);
+                         day.ts (/how-its-built's demonstration of the engine's sky)
+    chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light
-    acts.ts              previous version: the six acts, which the film tells now; each subpage
-                         takes its title and links back to the chapter that stands for its act
+    notebook.ts          the notebook's six pages, their order, titles and lines, the chapter each
+                         leads back to, what may be linked in each state of the lock, and the
+                         film's magnifiers (MAGNIFIERS)
+    sources.ts           /sources: the works, each key of the register under its work, where its
+                         figures are used; the finding's keys and the retired ones are left out
     design/              film.ts (the film's colours and the day's light; film.css mirrors it),
-                         palette.ts (the notebook and the previous version), colour maths
+                         palette.ts (the notebook's paper, day and night; tokens.css mirrors it),
+                         colour maths
     subpages.ts          splits notebook prose at its slot and lock markers
     table/               Vanberg's game: exact payoffs (PAYOFFS), the decision (chapter 3), the
                          recipients' beliefs and scale, real roll counts, exact fractions
     pd/                  the prisoner's dilemma: its payoffs, the one round of chapter 1 and the
-                         best reply
+                         best reply of its two columns
     curve/               reads curve.json (build time only), step-chart geometry, the curve control;
                          values.ts: chapter 7's numbers; film.ts: the curve on the film's paper;
                          finding.ts: guilt, θ, c and robustness for /finding; all behind the lock
     vanberg/             every cell of the switch treatment and the baselines, exact counts
   assets/fonts/          self-hosted woff2, OFL licences, provenance
   styles/                tokens.css, base.css
-  components/            previous version: pd/BestResponse (on /dilemma until P5);
-                         vanberg/SwitchTable, curve/Curve + Locked (the stub a locked build uses
-                         for the curve and chapter 7's finding), LanguageSwitch, SiteFooter (with
-                         the notebook's entry for the finding until P5)
-                         film/ (P1+: Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
-                         Voices, Signs, Engine, chapters/ one per chapter plus Finding, the locked
-                         part of chapter 7, film.ts), notebook/ (P5, the panel)
+  components/            film/ (Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
+                         Voices, Signs, Engine, Magnifier, chapters/ one per chapter plus Finding,
+                         the locked part of chapter 7, film.ts);
+                         notebook/ (Notebook, the button and panel, with notebook.ts;
+                         NotebookFooter; Sources, Author, Day, Vignette);
+                         curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
+                         stub a locked build uses for both and for chapter 7's finding);
+                         pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
+                         LanguageSwitch
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale
 scripts/verify-dist.mjs  checks dist/ against the lock, its links and the status sentence (ADR 0026)
-tests/                   repo-level tests (page parity, prose figures and budgets, the film's
-                         captions, forbidden phrases, curve and /finding figures, verify:dist
-                         markers, code quoted on /how-its-built; previous-version tests are
-                         replaced with their code)
+tests/                   repo-level tests (page parity, prose figures and budgets, rule (h), the
+                         film's captions, forbidden phrases, curve and /finding figures,
+                         verify:dist markers, code quoted on /how-its-built)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy); archivo/ = history;
                          prototipo/ = the round-4 prototype
 scratch/                 local notes, git-ignored, never committed

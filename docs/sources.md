@@ -8,15 +8,25 @@ Una línea `PENDIENTE(...)` marca una comprobación extra que no bloquea el lanz
 de un TODO, que sí lo bloquea.
 
 Cada entrada lleva una **clave** (línea `Clave:`). `src/content/figures.ts` registra cada cifra y
-cada cita permitidas en la prosa de los actos con la clave de su entrada, y `tests/prose.test.ts`
-falla si la prosa usa un número o una cita que no están registrados, o si una clave no existe aquí.
+cada cita permitidas en la prosa del cuaderno y en las leyendas de la película con la clave de su
+entrada, y `tests/prose.test.ts` y `tests/film-captions.test.ts` fallan si la prosa usa un número o
+una cita que no están registrados, o si una clave no existe aquí.
+
+`/sources` (P5, ADR 0024) muestra ese registro al visitante (`src/lib/sources.ts`): cada obra con su
+referencia completa y, debajo, cada clave con sus cifras, dónde está en la fuente y dónde se usa. No
+tiene candado, así que se ve igual en los dos estados (ADR 0026): no lista las claves del hallazgo
+(`kawagoe-narita-2014`, `vanberg-second-order`, `curve` y `curve-finding`, en `FINDING`), que el
+capítulo 7 y `/finding` citan donde las usan, ni las que ya no se muestran (`vanberg-switch` y
+`vanberg-chat`, en `RETIRED`). Un test exige que cada clave esté en uno solo de esos tres lugares.
+Lo que `/sources` dice de cada clave y dónde está en la fuente vive en las claves `sources.*` de
+`src/i18n/`.
 
 Una referencia que ya se usa en la página y sigue "por verificar" bloquea el lanzamiento hasta que
 Montse la verifique (`docs/tasks.md`, preguntas abiertas).
 
-Mientras la película reemplaza la versión anterior (P1–P4, ADR 0021), las líneas «Usada en» describen
-el código que hay en ese momento: los actos, la mesa y sus momentos. Cada fase las actualiza cuando
-mueve una cifra a un capítulo, en el mismo commit.
+Las líneas «Usada en» describen el código de hoy: la película y el cuaderno. Desde P5 no queda nada de
+la versión anterior (los actos, la mesa y sus momentos). Cada fase las actualiza cuando mueve una
+cifra, en el mismo commit, y también los lugares de `ENTRIES` en `src/lib/sources.ts`.
 
 ## Referencias
 
@@ -82,7 +92,8 @@ mueve una cifra a un capítulo, en el mismo commit.
   Suppl. A, p. 1.
   **Verificada (suplementos).**
   Usada en: capítulo 6 (`src/lib/vanberg/cells.ts`, `SWITCH_DESIGN`, a través de
-  `src/lib/film/values.ts`). Un test comprueba que las decisiones de las seis celdas de
+  `src/lib/film/values.ts`); `/vanberg` (la sección «Contadas otra vez, en fracciones», que dice que
+  las seis celdas reúnen las decisiones de la mitad de las 192 personas en sus 8 rondas). Un test comprueba que las decisiones de las seis celdas de
   `vanberg-cells` son exactamente las de 192 / 2 personas en 8 rondas: 768.
 - Cifra: lo que espera el otro, "69 / 100" si recibió una promesa y "48 / 100" si no. Es la
   creencia de primer orden de B (`pfob`): su apuesta a que A tira el dado, en una escala de 5
@@ -135,7 +146,8 @@ mueve una cifra a un capítulo, en el mismo commit.
   Fuente: `switch.dat` con el método de `promises.do`. **Verificada (suplementos).**
   Usada en: capítulo 6 (`src/lib/table/results.ts`, `ROLL_COUNTS`, a través de
   `src/lib/film/values.ts` y `src/lib/film/guess.ts`: las barras de adivinar, los letreros y su
-  tramo); `/vanberg` (la tabla de celdas, claves `table.*`).
+  tramo); `/vanberg` (la tabla de celdas, claves `table.*`, con la cuenta exacta de cada celda junto a
+  su tasa, y la prosa).
 
 El caso ilustrativo del cambio de pareja ("tu nueva pareja recibió una promesa de otro dictador")
 corresponde exactamente a las filas "cambio a una pareja a la que otro le prometió" de la tabla de
@@ -210,7 +222,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   Clave: `vanberg-cells`.
   Fuente: `switch.dat`, bloques TABLE I (`tabstat sob … by (switch)`), TABLE II (creencias por
   celda) y TABLE III (`tabulate roll promise …`) de `promises.do`.
-  Usada en: `/vanberg` (tabla `src/components/vanberg/SwitchTable.astro` y prosa).
+  Usada en: `/vanberg` (tabla `src/components/vanberg/SwitchTable.astro`, que muestra cada cuenta
+  exacta de tiró, «227 de 309», junto a su tasa redondeada, y prosa).
 - Cifra: los tratamientos base, con y sin chat, sin cambio de pareja. Con chat se tiró en "92" de
   "128" decisiones; sin chat, en "67" de "128"; "32" personas en cada tratamiento, en "8" rondas.
   Clave: `vanberg-baseline`.
@@ -240,7 +253,9 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 - **Clave:** `axelrod-1984`.
 - **Uso:** matriz del dilema del prisionero (capítulo 1 y `/dilemma`); contexto del dilema
   iterado (`/dilemma`).
-- **Verificada:** no.
+- **Verificada:** no. Se cita la edición original (Basic Books, 1984); las páginas se buscan en esa.
+  Mientras siga por verificar, `/sources` dice «Páginas por verificar.» donde iría su página
+  (`UNVERIFIED` en `src/lib/sources.ts`), y `deploy.yml` no publica un `dist/` con esa marca.
 - **Cifras:**
 
 - Cifra: pagos del dilema del prisionero, (3, 3), (0, 5), (5, 0) y (1, 1), con T = 5, R = 3, P = 1
@@ -249,7 +264,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   Fuente: Axelrod (1984), página por verificar. **Por verificar; bloquea el lanzamiento.**
   Usada en: capítulo 1 (`src/lib/pd/game.ts`, `PAYOFFS`, a través de `src/lib/film/values.ts`: el
   tablero, los boletos, las leyendas y los resultados de la ronda y de las dos columnas);
-  `/dilemma` (la mejor respuesta, `PAYOFFS`, y la prosa).
+  `/dilemma` (la matriz estática, `src/components/pd/Matrix.astro`, con `PAYOFFS`, y la prosa). La
+  mejor respuesta jugable salió de `/dilemma` en P5: se juega en el capítulo 1 (ADR 0023).
 - Cifra: la condición 2R > T + S, leída por ronda como "3 > 2.5": cooperar siempre deja más que
   turnarse para traicionar ((T + S) / 2 = 2.5). El "2" es el de 2R.
   Clave: `axelrod-1984`.
@@ -374,7 +390,8 @@ La única cuenta es la cuadrática del corte analítico, y solo en un test, para
   con culpa "14.44"; cero en 0 y en 76.
   Clave: `curve-finding`.
   Fuente: `grid[].guilt` y `peak` de `curve.json`.
-  Usada en: `/finding` (prosa y segunda gráfica, `Curve.astro` con `variant="guilt"`).
+  Usada en: `/finding` (prosa y su gráfica, `src/components/curve/GuiltChart.astro`, detrás del
+  candado).
 - Cifra: la culpa personal tira si θ · culpa > "4", el costo de tirar ("14" − "10", de
   `vanberg-payoffs`), con θ = "0.6"; es decir, si la culpa pasa de "20/3", cerca de "6.67".
   Clave: `curve-finding`.

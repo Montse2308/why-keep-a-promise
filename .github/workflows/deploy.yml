@@ -1,8 +1,9 @@
 # Deploys the site to GitHub Pages.
 #
 # DO NOT RUN UNTIL F6 (launch). It is manual-only on purpose: there is no partial
-# deploy. Run it only as step 8 of docs/launch-checklist.md, after the repository
-# is public and Pages is set to "Source: GitHub Actions".
+# deploy. Run it only as step 9 of docs/launch-checklist.md, after the repository
+# is public and Pages is set to "Source: GitHub Actions". It refuses a dist/ that
+# still carries unwritten content (a TODO marker) or a source to be verified.
 
 name: Deploy to GitHub Pages
 
@@ -46,8 +47,17 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Verify the act 5 lock in dist/ (ADR 0015)
+      - name: Verify the lock in dist/ (ADR 0026)
         run: npm run verify:dist
+
+      # Steps 3 and 8 of docs/launch-checklist.md: by now nothing in dist/ may be left to write
+      # (no TODO(P6), no TODO(launch)) or to verify (a source /sources marks data-unverified).
+      - name: Nothing left to write or to verify in dist/
+        run: |
+          if grep -rl -e 'TODO(' -e 'data-unverified' dist/; then
+            echo "dist/ still carries a TODO marker or a source to be verified: see docs/launch-checklist.md."
+            exit 1
+          fi
 
       - uses: actions/configure-pages@v6
 

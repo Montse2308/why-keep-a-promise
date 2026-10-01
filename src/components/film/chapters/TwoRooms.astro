@@ -17,6 +17,7 @@ import { roundOf } from '../../../lib/pd/round';
 import { fill } from '../../../lib/template';
 import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
+import Magnifier from '../Magnifier.astro';
 import Ticket from '../Ticket.astro';
 import Tickets from '../Tickets.astro';
 
@@ -134,5 +135,7 @@ const still = stageAt(KEY_POSE['two-rooms'] ?? 0, { promised: true, round: round
     <p class="card__noscript">{both}</p>
   </Beat>
 
-  <Beat id={trap.id} screens={trap.screens} caption={caption(trap.id)} />
+  <Beat id={trap.id} screens={trap.screens} caption={caption(trap.id)}>
+    <Magnifier locale={locale} chapter="two-rooms" beat="trap" />
+  </Beat>
 </Chapter>

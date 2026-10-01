@@ -3,8 +3,8 @@ import sources from '../docs/sources.md?raw';
 import en from '../src/i18n/en.json';
 import es from '../src/i18n/es.json';
 import { CITATIONS, FIGURES, SOURCE_KEYS } from '../src/content/figures';
-import { ACTS } from '../src/lib/acts';
 import { LOCALES, type Locale } from '../src/lib/locales';
+import { notebookPage } from '../src/lib/notebook';
 import { splitAtLock } from '../src/lib/film/captions';
 import { SUBPAGES, type Subpage } from '../src/lib/routes';
 import { citationsIn, filledCaptions, numbersIn, readable, sentences, wordCount } from './prose';
@@ -43,8 +43,11 @@ const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) =>
 const seventh = (locale: Locale) =>
   splitAtLock((Object.entries(captionSources).find(([path]) => path.endsWith(`/chapters/${locale}/07-my-research.md`))?.[1] ?? '').replace(/^---[\s\S]*?---/, ''));
 
-/** Words per subpage and language, tables not counted (the F4 session's budget). */
-const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 700, 'how-its-built': 600 };
+/**
+ * Words per page and language, tables not counted: the F4 session's budget, kept by the notebook
+ * (ADR 0024). /sources is its register, so its own prose is only the lead; /about is its slot alone.
+ */
+const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 700, 'how-its-built': 600, sources: 120, about: 0 };
 
 describe('subpage files', () => {
   it('exist for every subpage in every locale, named by its slug', () => {
@@ -53,11 +56,10 @@ describe('subpage files', () => {
     }
   });
 
-  it.each(subpageFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))('%s deepens the act that links to it, with its title', (_name, file) => {
-    const act = ACTS[Number(file.data.act) - 1];
-    expect(act?.deeper).toBe(file.name);
+  it.each(subpageFiles.map((f) => [`${f.locale}/${f.name}`, f] as const))("%s carries its notebook entry's title, word for word", (_name, file) => {
     const dictionary = file.locale === 'en' ? en : es;
-    expect(file.data.title).toBe(act && dictionary[act.titleKey]);
+    expect(file.data.title).toBe(dictionary[notebookPage(file.name as Subpage).titleKey]);
+    expect(Object.keys(file.data)).toEqual(['title']);
   });
 });
 
@@ -152,14 +154,18 @@ describe('voice', () => {
     }
   });
 
-  it('marks unwritten content only with TODO(launch), the engine link of step 8', () => {
+  it('marks unwritten content only with TODO(launch), the engine link of step 8, and TODO(P6) for the measured performance', () => {
     for (const file of subpageFiles) {
-      expect([...file.body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1]).every((phase) => phase === 'launch'), `${file.locale}/${file.name}`).toBe(true);
+      const phases = [...file.body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1] ?? '');
+      const allowed = file.name === 'how-its-built' ? ['launch', 'P6'] : ['launch'];
+      expect(phases.every((phase) => allowed.includes(phase)), `${file.locale}/${file.name}`).toBe(true);
     }
+    // /how-its-built waits for P6 in one place only: the weight budgets and the Lighthouse report.
+    for (const locale of LOCALES) expect(bySubpage(locale, 'how-its-built')?.body.match(/TODO\(P6\)/g)).toHaveLength(1);
   });
 });
 
-describe('subpages only add to the film, which tells their act now (rule (h))', () => {
+describe('the notebook only adds to the film (rule (h))', () => {
   /** The film's captions in a locale, as the visitor reads them: placeholders filled from the code. */
   const film = (locale: Locale) =>
     Object.entries(captionSources)
@@ -176,6 +182,17 @@ describe('subpages only add to the film, which tells their act now (rule (h))', 
     expect(told.trim().length).toBeGreaterThan(0);
     const theirs = new Set(sentences(told));
     expect(sentences(file.body).filter((sentence) => theirs.has(sentence))).toEqual([]);
+  });
+
+  it.each(LOCALES)("%s: the notebook's own lines, in its panel, on /sources and /how-its-built, share no whole sentence with the film", (locale) => {
+    const dictionary: Record<string, string> = locale === 'en' ? en : es;
+    const lines = Object.entries(dictionary)
+      .filter(([key]) => key.startsWith('notebook.') || key.startsWith('sources.'))
+      .map(([, value]) => (/[.!?:]$/.test(value) ? value : `${value}.`))
+      .join('\n\n');
+    expect(sentences(lines).length).toBeGreaterThan(20);
+    const theirs = new Set(sentences(film(locale)));
+    expect(sentences(lines).filter((sentence) => theirs.has(sentence))).toEqual([]);
   });
 
   it('would catch a sentence copied from the film', () => {

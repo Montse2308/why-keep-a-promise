@@ -1,0 +1,224 @@
+---
+/**
+ * /sources (ADR 0024): the works the page draws on, each with its full reference and, under it, every
+ * figure it gives and where that figure is used, from the register (src/lib/sources.ts). It has no
+ * lock and looks the same in both of its states (ADR 0026): it lists none of the finding's sources,
+ * and it links to no chapter or page the lock keeps closed. Where a source's pages are still to be
+ * verified, it says so, marked for the deploy to refuse (`UNVERIFIED`).
+ */
+import { getCollection } from 'astro:content';
+import { chapter } from '../../lib/chapters';
+import { hasKey, useTranslations, type Locale } from '../../lib/i18n';
+import { notebookPage } from '../../lib/notebook';
+import { href } from '../../lib/routes';
+import { atKey, figuresOf, referenceHtml, shownUrl, UNVERIFIED, whatKey, worksOf, type Place } from '../../lib/sources';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const groups = worksOf();
+const chapters = await getCollection('chapters', (entry) => entry.id.startsWith(`${locale}/`));
+
+function place(where: Place): { label: string; url: string } {
+  if ('page' in where) return { label: tr(notebookPage(where.page).titleKey), url: href(locale, where.page) };
+  const entry = chapters.find((candidate) => candidate.data.chapter === where.chapter);
+  if (!entry) throw new Error(`No chapter "${where.chapter}" in ${locale}`);
+  return { label: `${fill(tr('film.chapter'), { n: chapter(where.chapter).number })} · ${entry.data.title}`, url: href(locale, 'home', where.chapter) };
+}
+---
+
+<div class="sources">
+  {
+    groups.map(({ work, entries }) => {
+      const ref = work.reference;
+      return (
+        <section class="sources__work" aria-labelledby={`source-${work.id}`}>
+          <h2 id={`source-${work.id}`} class="sources__cite">
+            {work.cite}
+          </h2>
+          <p class="sources__reference">
+            <Fragment set:html={referenceHtml(ref.text)} />
+            {ref.url && <a class="sources__url" href={ref.url}>{shownUrl(ref.url)}</a>}
+          </p>
+          {work.parts && (
+            <div class="sources__parts">
+              <p class="sources__term">{tr('sources.supplements')}</p>
+              <ul role="list">
+                {work.parts.map((item) => (
+                  <li>
+                    <Fragment set:html={referenceHtml(item.text)} />
+                    {item.url && <a class="sources__url" href={item.url}>{shownUrl(item.url)}</a>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <ul class="sources__entries" role="list">
+            {entries.map((entry) => {
+              const figures = figuresOf(entry.source);
+              const at = atKey(entry);
+              const located = hasKey(at) ? at : null;
+              const places = entry.places.map(place);
+              return (
+                <li class="sources__entry">
+                  <p class="sources__what">{tr(whatKey(entry))}</p>
+                  {figures.length > 0 && (
+                    <p class="sources__row">
+                      <span class="sources__term">{tr('sources.figures')}</span>
+                      <span class="sources__figures">
+                        {figures.map((figure) => (
+                          <span class="sources__figure">{figure}</span>
+                        ))}
+                      </span>
+                    </p>
+                  )}
+                  {located && (
+                    <p class="sources__row">
+                      <span class="sources__term">{tr('sources.at')}</span>
+                      <span class="sources__located">{tr(located)}</span>
+                    </p>
+                  )}
+                  {!located && UNVERIFIED.includes(entry.source) && (
+                    <p class="sources__row" data-unverified>
+                      <span class="sources__term">{tr('sources.at')}</span>
+                      <span class="sources__unverified">{tr('sources.unverified')}</span>
+                    </p>
+                  )}
+                  {places.length > 0 && (
+                    <p class="sources__row">
+                      <span class="sources__term">{tr('sources.used')}</span>
+                      <span class="sources__places">
+                        {places.map((found, i) => (
+                          <>
+                            {i > 0 && <span class="sources__dot" aria-hidden="true">·</span>}
+                            <a href={found.url}>{found.label}</a>
+                          </>
+                        ))}
+                      </span>
+                    </p>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      );
+    })
+  }
+</div>
+
+<style>
+  .sources {
+    display: grid;
+    gap: var(--space-8);
+    margin-block: var(--space-6);
+  }
+
+  .sources__work {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .sources__cite {
+    margin: 0;
+  }
+
+  .sources__reference {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .sources__url {
+    margin-inline-start: 0.3em;
+    overflow-wrap: anywhere;
+  }
+
+  .sources__parts ul {
+    margin: var(--space-1) 0 0;
+    padding-inline-start: 1.25em;
+  }
+
+  .sources__parts,
+  .sources__entries {
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  .sources__entries {
+    display: grid;
+    gap: var(--space-3);
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Each figure's entry is a slip of the notebook's paper. */
+  .sources__entry {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-paper);
+  }
+
+  .sources__what {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .sources__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    margin: 0;
+  }
+
+  .sources__term {
+    margin: 0;
+    font-size: var(--step-n2);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .sources__figures,
+  .sources__places {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
+  }
+
+  .sources__figure {
+    padding: 0 var(--space-2);
+    border: var(--border-width) solid var(--color-control);
+    border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+
+  .sources__places a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    font-weight: 700;
+  }
+
+  .sources__unverified {
+    font-style: italic;
+    color: var(--color-muted);
+  }
+
+  .sources__dot {
+    align-self: center;
+    color: var(--color-muted);
+  }
+</style>

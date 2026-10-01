@@ -34,5 +34,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Verify the act 5 lock in dist/ (ADR 0015)
+      - name: Verify the lock in dist/ (ADR 0026)
         run: npm run verify:dist

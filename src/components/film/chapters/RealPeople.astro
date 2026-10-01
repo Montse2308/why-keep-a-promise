@@ -17,6 +17,7 @@ import { outcomeOf } from '../../../lib/table/decision';
 import { fill } from '../../../lib/template';
 import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
+import Magnifier from '../Magnifier.astro';
 import Ticket from '../Ticket.astro';
 import Tickets from '../Tickets.astro';
 
@@ -90,7 +91,9 @@ const still = stageAt(
     ))
   }
 
-  <Beat id={expected.id} screens={expected.screens} caption={captions.get(expected.id)} />
+  <Beat id={expected.id} screens={expected.screens} caption={captions.get(expected.id)}>
+    <Magnifier locale={locale} chapter="real-people" beat="expected" />
+  </Beat>
   <Beat id={conclusion.id} screens={conclusion.screens} caption={captions.get(conclusion.id)} />
 </Chapter>
 
