@@ -185,8 +185,17 @@ const of = (id: ChapterId) => {
   }
 
   .film__spool svg {
+    flex: none;
     width: 1.75rem;
     height: 1.75rem;
+  }
+
+  /* A narrow phone: the spool's words take two lines, so the corner's language link and the notebook fit beside it. */
+  @media (max-width: 24rem) {
+    .film__spool span {
+      max-width: 7.25rem;
+      line-height: 1.15;
+    }
   }
 
   .film__spool svg[data-spool='none'] .film__spool-thread {
