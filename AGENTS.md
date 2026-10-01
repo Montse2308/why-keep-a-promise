@@ -63,7 +63,7 @@ The LCP is measured apart, by hand, with Lighthouse pinned (not a dependency), t
 against `npm run preview`; `node scripts/lighthouse.mjs` turns the reports into
 `src/data/lighthouse.json`, which `/how-its-built` cites (the command is in the script's header).
 
-## Stack (ADR 0025)
+## Stack (ADR 0025, ADR 0028)
 
 - Astro, 100 % static output. TypeScript strict. No UI framework, no Tailwind.
 - Progressive enhancement: Astro renders a storyboard in HTML (each chapter as a still frame with
@@ -74,8 +74,8 @@ against `npm run preview`; `node scripts/lighthouse.mjs` turns the reports into
 - CSS with tokens (`src/styles/tokens.css`, mirroring `src/lib/design/palette.ts`). Self-hosted
   fonts: Fraunces and Nunito from P1 (ADR 0027), JetBrains Mono for code only.
 - Sound: optional, off by default, synthesised with Web Audio.
-- Budgets: home JS ≤ 40 KB gzipped, fonts ≤ 160 KB, first load ≤ 450 KB (KB read as KiB, as
-  Lighthouse counts), LCP ≤ 2.5 s on a mid-range phone.
+- Budgets: home JS ≤ 40 KiB gzipped (the two homes), fonts ≤ 160 KiB and first load ≤ 450 KiB (every
+  page), LCP ≤ 2.5 s on a mid-range phone. KiB, and which pages, by ADR 0028.
 - The only new dependency the plan allows is `@resvg/resvg-js`, as a dev dependency, for Open Graph
   posters (in since P6). Anything else: ask first.
 - No `@types/node`: code that needs Node's API at build time is plain `.mjs` (`scripts/`,

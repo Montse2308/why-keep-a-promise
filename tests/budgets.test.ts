@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import adr from '../docs/decisions/0025-technology.md?raw';
+import precision from '../docs/decisions/0028-budget-units.md?raw';
+import decisions from '../docs/decisions/README.md?raw';
 import agents from '../AGENTS.md?raw';
 import ci from '../.github/workflows/ci.yml?raw';
 import deploy from '../.github/workflows/deploy.yml?raw';
@@ -37,6 +39,14 @@ describe('the budgets', () => {
 
   it('hold the film’s script to the home pages, and the fonts and the first load to every page', () => {
     expect(BUDGETS.filter((b) => b.home).map((b) => b.id)).toEqual(['home-script']);
+  });
+
+  it('are read as ADR 0028 decides: KiB, with the same bytes as its table', () => {
+    // Grouped by thousands with a space, as docs/ writes figures.
+    for (const bytes of BUDGETS.map((b) => b.bytes)) expect(precision).toContain(`| ${String(bytes).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} |`);
+    expect(precision).toContain('**Un KB de los presupuestos es un KiB, 1024 bytes,**');
+    expect(adr).toContain('Precisado por el ADR 0028');
+    expect(decisions).toContain('[0028](0028-budget-units.md)');
   });
 
   it('run after every build, in CI and before the deploy', () => {

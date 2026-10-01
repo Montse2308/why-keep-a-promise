@@ -406,7 +406,9 @@ queda nada en el sitio.
       `src/lib/budgets.ts`) pesa cada página de `dist/` como la pediría un navegador (el HTML, los
       scripts con sus imports, las hojas de estilo, las fuentes que la página necesita según su
       `unicode-range` y el ícono; el texto en gzip, las fuentes tal cual) y falla si una se pasa.
-      Corre en CI y en `deploy.yml`, después de `verify:dist`. Hoy: el JS del home, 14.3 KiB de 40;
+      Corre en CI y en `deploy.yml`, después de `verify:dist`. Los techos se leen en KiB, el del JS
+      en los dos home y los otros dos en cada página (ADR 0028, que precisa el 0025, decidido con
+      Montse en la revisión de P6). Hoy: el JS del home, 14.3 KiB de 40;
       las fuentes, 118.6 KiB de 160 (158.0 en `/how-its-built`, con JetBrains Mono); la primera carga
       del home, 207 KiB de 450.
 - [x] **Lighthouse** 13.5.0 en celular emulado (moto g power, 4G lenta simulada, CPU 4×), tres
@@ -427,6 +429,17 @@ queda nada en el sitio.
       voces (el sello y el tema, solo la primera vez que se ven con el sonido encendido), el título de
       la pestaña cambia y vuelve, la consola muestra su nota y la página no da errores. A 320 px, sin
       choques en la esquina.
+- [x] De la revisión de Montse: el botón de sonido no respondía a un clic real. Encima de él
+      estaban la franja de la esquina (`.corner--film`, de todo el ancho) y los capítulos
+      (`.film__chapters`, sobre todo el escenario); las pruebas y el video lo encendían con
+      `.click()` por script, que se salta esa comprobación. Las dos capas dejan pasar ahora los clics
+      y los toques (`pointer-events: none`), y solo los toman las tarjetas, como ya hacían sus beats,
+      y los enlaces, botones y el panel de la esquina. Probado con un clic de mouse real
+      (`Input.dispatchMouseEvent`) a 1440 px y con un toque real (`Input.dispatchTouchEvent`) a
+      360 px, en EN y ES, en dev y en el build, a lo largo de la película; cuando una tarjeta pasa
+      encima del botón lo tapa a la vista, y el toque es de la tarjeta. Con clics reales también: el
+      boleto del capítulo 0, el botón del cuaderno, cerrar el panel por su botón y por el fondo, un
+      enlace del panel y el enlace de idioma. Un test fija la cadena de capas.
 - [x] Video con sonido para Montse: la película en compu (EN, 1440 px) y en celular (ES, 360 px),
       con el sonido encendido y las cinco señales; capturas del botón (apagado, encendido, celular,
       320 px, movimiento reducido, sin JavaScript), los 14 pósteres y la tabla de `/how-its-built` en
@@ -434,12 +447,6 @@ queda nada en el sitio.
 - [ ] Revisión de P6 por Montse (el PR).
 
 ## Preguntas abiertas
-
-- **Los KB de los presupuestos (P6).** El ADR 0025 dice «KB»; `npm run budgets` los lee como KiB
-  (1024 bytes), como cuenta Lighthouse sus presupuestos. Importa en un solo lugar: `/how-its-built`
-  carga 161 808 bytes de fuentes (las tres del sitio y JetBrains Mono), dentro de 160 KiB (163 840)
-  y fuera de 160 000. Si Montse prefiere KB de 1000, hay que aligerar la tipografía del código o
-  precisar en un ADR que el techo de fuentes es el del home.
 
 - **Axelrod (1984):** verificar antes del lanzamiento la página de los pagos del dilema, de la
   condición `2R > T + S`, de la sombra del futuro y del torneo. La prosa ya la usa y sigue «por
@@ -456,6 +463,10 @@ queda nada en el sitio.
   del checklist, antes de abrir el candado.
 
 ## Preguntas cerradas
+
+- ~~¿Los KB de los presupuestos son de 1000 o de 1024 bytes?~~ KiB, 1024 bytes, como Lighthouse; el
+  techo de JS vale en los dos home y los de fuentes y primera carga en cada página (ADR 0028,
+  decisión de Montse en la revisión de P6).
 
 - ~~¿Otro repo o el mismo?~~ El mismo, con archivo (P0).
 - ~~¿Se abre el candado en revisión o al aceptar?~~ En revisión, después de revisar la política de

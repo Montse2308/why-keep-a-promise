@@ -8,8 +8,8 @@
  * counted as it travels, compressed with gzip; fonts are counted as they are, since woff2 is already
  * compressed. A font counts when the page preloads it, or when its family's @font-face covers a
  * character the page holds (its `unicode-range`); every family the page declares is taken as used.
- * A kilobyte is 1024 bytes (a KiB), as Lighthouse counts its budgets: the tool ADR 0025 names for
- * the page's speed.
+ * A kilobyte is 1024 bytes (a KiB), as Lighthouse counts its budgets, and the fonts and first-load
+ * ceilings hold on every page (ADR 0028, which makes ADR 0025's budgets precise).
  */
 
 export const KB = 1024;
@@ -25,7 +25,7 @@ export interface Budget {
   readonly home: boolean;
 }
 
-/** ADR 0025: the home's JavaScript, the fonts of a first load, and the whole first load. */
+/** ADR 0025, read as ADR 0028 says: the home's JavaScript, the fonts of a first load, and the whole first load. */
 export const BUDGETS: readonly Budget[] = [
   { id: 'home-script', bytes: 40 * KB, home: true },
   { id: 'fonts', bytes: 160 * KB, home: false },
