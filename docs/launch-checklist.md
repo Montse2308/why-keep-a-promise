@@ -29,6 +29,9 @@ el paso 6.
       enlace al repo del motor, público desde el paso 2: en el capítulo 7, en el panel del
       cuaderno, en `/finding` y en `/how-its-built` (`grep -rn "TODO(launch)" src/` los lista).
       Después, `npm run build` y `grep -r "TODO(" dist/` vacío.
-- [ ] **9. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`).
+- [ ] **9. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`). El
+      workflow se detiene si `dist/` todavía lleva un `TODO(` (por ejemplo, el `TODO(P6)` de
+      `/how-its-built`) o una fuente que `/sources` marca «por verificar» (`data-unverified`, hoy
+      Axelrod, 1984): lo que piden los pasos 3 y 8, comprobado otra vez antes de publicar.
 - [ ] **10. Verificación.** Comprobar `/` y `/es/` en línea en
       `https://montse2308.github.io/why-keep-a-promise/`, incluido el switch EN/ES y `hreflang`.
