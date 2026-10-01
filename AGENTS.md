@@ -53,9 +53,11 @@ not by reading test output.
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
 | `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence is off (ADR 0026) |
+| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load) |
 
-`check`, `test`, `build` and `verify:dist` must be green before every commit. CI
-(`.github/workflows/ci.yml`) runs install → check → test → build → verify:dist on every push and PR.
+`check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
+(`.github/workflows/ci.yml`) runs install → check → test → build → verify:dist → budgets on every
+push and PR.
 
 ## Stack (ADR 0025)
 

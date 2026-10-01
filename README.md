@@ -19,6 +19,7 @@ npm run check    # astro check + tsc
 npm test         # vitest
 npm run build    # static site in dist/
 npm run verify:dist  # nothing locked reached dist/
+npm run budgets      # every page within its weight budget
 ```
 
 Built with Astro, TypeScript and SVG. English at `/`, Spanish at `/es/`.
