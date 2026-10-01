@@ -1,8 +1,9 @@
 ---
 /**
  * Every cell of Vanberg's (2008) partner-switch treatment, on /vanberg: how often dictators rolled
- * and what they believed their partner expected. Exact counts live in src/lib/vanberg/cells.ts;
- * this table shows them rounded. A static prose table, styled like the ones in the acts.
+ * and what they believed their partner expected. Exact counts live in src/lib/vanberg/cells.ts; this
+ * table shows each count as it is in the data, over its total, beside the rate rounded. A static
+ * prose table on the notebook's paper.
  */
 import { useTranslations, type Locale } from '../../lib/i18n';
 import { beliefOutOf100, rollPercent, SWITCH_CELLS, type Partner } from '../../lib/vanberg/cells';
@@ -22,7 +23,7 @@ const partner: Record<Partner, UiKey> = {
 };
 ---
 
-<table>
+<table class="switch-table">
   <caption>{tr('vanberg.table.caption')}</caption>
   <thead>
     <tr>
@@ -38,7 +39,10 @@ const partner: Record<Partner, UiKey> = {
           <th scope="row">
             {tr(cell.promised ? 'table.reveal.row.promised' : 'table.reveal.row.not-promised')} · {tr(partner[cell.partner])}
           </th>
-          <td>{fill(tr('table.rate'), { p: rollPercent(cell) })}</td>
+          <td>
+            <span class="switch-table__rate">{fill(tr('table.rate'), { p: rollPercent(cell) })}</span>
+            <span class="switch-table__count">{fill(tr('vanberg.table.count'), { rolled: cell.rolled, n: cell.n })}</span>
+          </td>
           <td>{beliefOutOf100(cell)}</td>
         </tr>
       ))
@@ -46,3 +50,16 @@ const partner: Record<Partner, UiKey> = {
   </tbody>
 </table>
 <p class="table-source">{tr('table.source')}</p>
+
+<style>
+  .switch-table__rate {
+    display: block;
+    font-weight: 800;
+  }
+
+  .switch-table__count {
+    display: block;
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+</style>

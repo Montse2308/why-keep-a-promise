@@ -1,11 +1,11 @@
 ---
-act: 4
 title: El experimento de Vanberg
 ---
 
 ## El diseño completo
 
-Las instrucciones y las pantallas que publicó Vanberg (2008) completan lo que la mesa deja fuera.
+Las instrucciones y las pantallas que publicó Vanberg (2008) completan lo que la película deja
+fuera.
 
 - El experimento tiene 8 rondas. En cada una te toca otra persona, elegida al azar, y nunca la
   misma dos veces.
@@ -24,10 +24,10 @@ Las instrucciones y las pantallas que publicó Vanberg (2008) completan lo que l
 
 ## Todas las celdas del tratamiento con cambio de pareja
 
-El hilo principal compara dos de las celdas. El tratamiento tiene seis: si el dictador prometió,
-cruzado con a quién tuvo enfrente: la misma pareja, una pareja nueva a la que otro dictador le había
+La película compara dos de las celdas. El tratamiento tiene seis: si el dictador prometió, cruzado
+con a quién tuvo enfrente: la misma pareja, una pareja nueva a la que otro dictador le había
 prometido, o una pareja nueva a la que nadie le había prometido nada. Cada cuenta es de decisiones,
-una por dictador y ronda.
+una por dictador y ronda, escrita como está en los datos, sobre el total de su celda.
 
 La última columna es la creencia de segundo orden de los dictadores: lo que un dictador cree que su
 pareja espera de él, en la misma escala de cinco puntos, leída de 0 a 100.
@@ -47,3 +47,13 @@ promesas.
 Vanberg corrió además dos tratamientos más simples, que reporta en su Apéndice A: el mismo juego con
 chat y sin chat, sin cambio de pareja. Con chat se tiró el dado en 92 de 128 decisiones; sin chat,
 en 67 de 128. Cada tratamiento tuvo 32 personas, en 8 rondas.
+
+## Contadas otra vez, en fracciones
+
+Las cuentas de esta página no se copiaron del artículo. Cada una se volvió a contar con los datos
+que Vanberg publicó junto con él, `switch.dat` y `baseline.dat`, siguiendo su propio programa,
+`promises.do`. La página guarda cada cuenta como una fracción de números enteros y redondea solo
+cuando escribe una tasa sobre 100: al entero más cercano, con las mitades hacia arriba y con
+aritmética entera, para que ningún paso agregue un error propio. Una prueba comprueba que las seis
+celdas reúnen todas las decisiones del tratamiento: la mitad de sus 192 personas decide en cada una
+de sus 8 rondas.

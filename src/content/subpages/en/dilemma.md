@@ -1,22 +1,19 @@
 ---
-act: 2
 title: The dilemma
 ---
 
 ## A move that wins either way
 
-Read the matrix one column at a time. If the other cooperates, defecting gives you 5 and
-cooperating gives you 3. If the other defects, defecting gives you 1 and cooperating gives you 0.
-A move that is your best reply to anything the other might do is a dominant strategy, and here
-defecting is one.
+In the matrix, each cell gives your payoff first and the other's second. Read it one column at a
+time. If the other cooperates, defecting gives you 5 and cooperating gives you 3. If the other
+defects, defecting gives you 1 and cooperating gives you 0. A move that is your best reply to
+anything the other might do is a dominant strategy, and here defecting is one.
+
+<!-- slot:pd-matrix -->
 
 A Nash equilibrium is a pair of moves in which neither player can do better by changing only their
 own. The dilemma has one: both defect, at (1, 1). It is inefficient, because both would be better
 off at (3, 3), and neither can get there alone.
-
-Try it: pick your move against each of the other's.
-
-<!-- slot:best-response -->
 
 ## Why taking turns does not help
 

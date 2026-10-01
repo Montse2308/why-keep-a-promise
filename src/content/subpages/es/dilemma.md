@@ -1,21 +1,19 @@
 ---
-act: 2
 title: El dilema
 ---
 
 ## Una jugada que gana siempre
 
-Lee la matriz una columna a la vez. Si el otro coopera, traicionar te da 5 y cooperar te da 3. Si el
-otro traiciona, traicionar te da 1 y cooperar te da 0. Una jugada que es tu mejor respuesta a
-cualquier cosa que haga el otro es una estrategia dominante, y aquí traicionar lo es.
+En la matriz, cada celda da primero tu pago y después el del otro. Léela una columna a la vez. Si
+el otro coopera, traicionar te da 5 y cooperar te da 3. Si el otro traiciona, traicionar te da 1 y
+cooperar te da 0. Una jugada que es tu mejor respuesta a cualquier cosa que haga el otro es una
+estrategia dominante, y aquí traicionar lo es.
+
+<!-- slot:pd-matrix -->
 
 Un equilibrio de Nash es un par de jugadas en el que ningún jugador puede mejorar cambiando solo la
 suya. El dilema tiene uno: los dos traicionan, en (1, 1). Es ineficiente, porque los dos estarían
 mejor en (3, 3), y ninguno puede llegar ahí solo.
-
-Pruébalo: elige tu jugada contra cada una de las del otro.
-
-<!-- slot:best-response -->
 
 ## Por qué turnarse no ayuda
 

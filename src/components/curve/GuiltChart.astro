@@ -1,0 +1,243 @@
+---
+/**
+ * /finding's chart (ADR 0024, ADR 0026): the guilt available at each row of the grid, with the
+ * threshold above which personal guilt rolls the die and its peak, built at build time from
+ * src/lib/curve/finding.ts. Static: no control and no script (ADR 0023), readable without JavaScript,
+ * with a visually hidden table of every row. On the notebook's paper, in either theme: personal
+ * guilt's dots in ink, as on the film's curve; filled where it rolls, hollow where it doesn't, so
+ * rolling is told by shape, not by colour alone.
+ *
+ * Render this only inside the lock (src/lib/lock.ts, ADR 0026). While the lock is closed, a build
+ * resolves this file to ./Locked.astro (astro.config.mjs), so its markup, style and data never reach
+ * dist/; `npm run verify:dist` checks that.
+ */
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { xPercent, yPixel, type Frame } from '../../lib/curve/chart';
+import { pullWindow } from '../../lib/curve/curve';
+import { CURVE, FINDING } from '../../lib/curve/data';
+import { guiltPeak, hundredths } from '../../lib/curve/finding';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+  /** Unique on the page; prefixes every id inside the figure. */
+  id: string;
+}
+
+const { locale, id } = Astro.props;
+const tr = useTranslations(locale);
+const { axis } = CURVE;
+const window = pullWindow(CURVE);
+
+// Vertical layout in CSS px; x is a percentage of the plot width, so text never scales.
+const Y_ZERO = 200;
+const x = (trust: number) => `${xPercent(trust, axis)}%`;
+const xTicks = [axis.min, CURVE.peak, axis.max];
+
+// In hundredths of guilt; the threshold is the cost of rolling over θ.
+const rows = FINDING.rows;
+const top = guiltPeak(rows);
+const frame: Frame = { zero: Y_ZERO, top: 40, high: top.guilt };
+const gy = (hundredthsOfGuilt: number) => yPixel(hundredthsOfGuilt, frame);
+const threshold = (100 * FINDING.threshold.num) / FINDING.threshold.den;
+const thresholdText = `${FINDING.threshold.num}/${FINDING.threshold.den}`;
+const ends = [rows[0], rows.at(-1)];
+if (ends.some((row) => row?.guilt !== 0)) throw new Error('The guilt chart summary says the guilt is zero at both ends');
+const summary = fill(tr('curve.guilt.summary'), {
+  min: axis.min,
+  max: axis.max,
+  zero: hundredths(0),
+  peak: top.trust,
+  top: hundredths(top.guilt),
+  threshold: thresholdText,
+  from: window.from,
+  to: window.to,
+});
+const ticks = [
+  { at: 0, label: hundredths(0) },
+  { at: threshold, label: thresholdText },
+  { at: top.guilt, label: hundredths(top.guilt) },
+];
+---
+
+<figure class="guilt wide" id={id} data-locked-content aria-labelledby={`${id}-caption`}>
+  <ul class="guilt__legend" role="list">
+    <li>
+      <svg class="guilt__swatch guilt__swatch--dot" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><circle class="guilt__dot guilt__dot--pulls" cx="6" cy="6" r="4" /></svg>
+      {tr('curve.guilt.legend.pulls')}
+    </li>
+    <li>
+      <svg class="guilt__swatch guilt__swatch--dot" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><circle class="guilt__dot guilt__dot--not" cx="6" cy="6" r="4" /></svg>
+      {tr('curve.guilt.legend.not')}
+    </li>
+    <li>
+      <svg class="guilt__swatch" viewBox="0 0 20 8" aria-hidden="true" focusable="false"><line class="guilt__threshold" x1="0" x2="20" y1="4" y2="4" /></svg>
+      {fill(tr('curve.guilt.threshold'), { value: thresholdText })}
+    </li>
+  </ul>
+  <p class="guilt__axis" aria-hidden="true">{tr('curve.guilt.axis.y')}</p>
+  <div class="guilt__plot">
+    <svg class="guilt__svg" width="100%" height="248" role="img" aria-label={summary}>
+      <line class="guilt__grid" x1="0" x2="100%" y1={gy(0)} y2={gy(0)} />
+      <line class="guilt__grid" x1="0" x2="100%" y1={gy(top.guilt)} y2={gy(top.guilt)} />
+      {ticks.map((tick) => <text class="guilt__tick" x="-8" y={gy(tick.at) + 4} text-anchor="end">{tick.label}</text>)}
+      {rows.map((row) => <line class="guilt__mark" x1={x(row.trust)} x2={x(row.trust)} y1={Y_ZERO} y2={Y_ZERO + 4} />)}
+      {
+        xTicks.map((tick) => (
+          <>
+            <line class="guilt__mark" x1={x(tick)} x2={x(tick)} y1={Y_ZERO} y2={Y_ZERO + 7} />
+            <text class="guilt__tick" x={x(tick)} y={Y_ZERO + 22} text-anchor={tick === axis.min ? 'start' : tick === axis.max ? 'end' : 'middle'}>{tick}</text>
+          </>
+        ))
+      }
+      <line class="guilt__peak" x1={x(top.trust)} x2={x(top.trust)} y1={gy(top.guilt) + 8} y2={Y_ZERO} />
+      <text class="guilt__tick" x={x(top.trust)} y={gy(top.guilt) - 12} text-anchor="middle">{fill(tr('curve.guilt.peak'), { value: hundredths(top.guilt) })}</text>
+      <line class="guilt__threshold" x1="0" x2="100%" y1={gy(threshold)} y2={gy(threshold)} />
+      {rows.map((row) => <circle class={`guilt__dot ${row.pulls ? 'guilt__dot--pulls' : 'guilt__dot--not'}`} cx={x(row.trust)} cy={gy(row.guilt)} r="5" />)}
+    </svg>
+    <p class="guilt__axis guilt__axis--x" aria-hidden="true">{tr('curve.axis.x')}</p>
+  </div>
+
+  {/* A table ignores width and overflow, so the div does the hiding and keeps the page from scrolling sideways. */}
+  <div class="visually-hidden">
+    <table>
+      <caption>{tr('curve.guilt.table.caption')}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{tr('curve.table.trust')}</th>
+          <th scope="col">{tr('curve.guilt.table.guilt')}</th>
+          <th scope="col">{tr('curve.guilt.table.pulls')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row) => (
+            <tr>
+              <th scope="row">{fill(tr('curve.trust.value'), { n: row.trust })}</th>
+              <td>{hundredths(row.guilt)}</td>
+              <td>{tr(row.pulls ? 'curve.guilt.yes' : 'curve.guilt.no')}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <figcaption class="guilt__caption" id={`${id}-caption`}>{tr('curve.guilt.caption')}</figcaption>
+</figure>
+
+<style>
+  .guilt {
+    margin: var(--space-8) auto;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  @media (min-width: 40rem) {
+    .guilt {
+      padding: var(--space-6);
+    }
+  }
+
+  .guilt__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin: 0 0 var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .guilt__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .guilt__swatch {
+    width: 1.25rem;
+    height: 0.5rem;
+    overflow: visible;
+  }
+
+  .guilt__swatch--dot {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .guilt__axis {
+    margin: 0 0 var(--space-2);
+    font-size: var(--step-n2);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .guilt__axis--x {
+    margin: var(--space-2) 0 0;
+    text-align: center;
+  }
+
+  /* Room on the left for the guilt ticks, which sit outside the plot. */
+  .guilt__plot {
+    padding-inline: 2.25rem 0.25rem;
+  }
+
+  .guilt__svg {
+    display: block;
+    overflow: visible;
+    font-size: var(--step-n2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .guilt__grid {
+    stroke: var(--color-border);
+    stroke-width: 1;
+  }
+
+  .guilt__mark {
+    stroke: var(--color-control);
+    stroke-width: 1;
+  }
+
+  .guilt__tick {
+    fill: var(--color-muted);
+  }
+
+  .guilt__peak {
+    stroke: var(--color-control);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  .guilt__threshold {
+    stroke: var(--color-fg);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 4;
+  }
+
+  .guilt__dot {
+    stroke: var(--color-fg);
+    stroke-width: 2;
+  }
+
+  .guilt__dot--pulls {
+    fill: var(--color-fg);
+  }
+
+  .guilt__dot--not {
+    fill: var(--color-surface);
+  }
+
+  .guilt__caption {
+    margin: var(--space-4) 0 0;
+    color: var(--color-muted);
+  }
+</style>

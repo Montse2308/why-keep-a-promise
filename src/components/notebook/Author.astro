@@ -1,0 +1,67 @@
+---
+/**
+ * /about (ADR 0024, rule (j)): the author's full name, GitHub and LinkedIn (`AUTHOR` in
+ * src/config.ts), and nothing else: no school, job, city or biography.
+ */
+import { AUTHOR } from '../../config';
+import { useTranslations, type Locale } from '../../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+---
+
+<div class="author">
+  <p class="author__name">{tr('author.name')}</p>
+  <ul class="author__links" role="list">
+    <li><a href={AUTHOR.github} rel="me">{tr('author.github')}</a></li>
+    <li><a href={AUTHOR.linkedin} rel="me">{tr('author.linkedin')}</a></li>
+  </ul>
+</div>
+
+<style>
+  .author {
+    display: grid;
+    gap: var(--space-4);
+    margin-block: var(--space-6) var(--space-8);
+  }
+
+  .author__name {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--step-3);
+    font-weight: 800;
+    line-height: var(--leading-tight);
+    text-wrap: balance;
+  }
+
+  .author__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .author__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    padding: 0 var(--space-6);
+    border: var(--border-width) solid var(--color-control);
+    border-radius: 999px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-paper);
+    font-family: var(--font-ui);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .author__links a:hover {
+    border-color: var(--color-fg);
+  }
+</style>

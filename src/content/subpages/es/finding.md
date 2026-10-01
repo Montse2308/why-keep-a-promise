@@ -1,5 +1,4 @@
 ---
-act: 5
 title: El hallazgo
 ---
 

@@ -7,7 +7,6 @@
  * is stored or sent. Every line an answer can lead to is resolved here.
  */
 import { MANUSCRIPT_STATUS } from '../../../config';
-import { actForSubpage } from '../../../lib/acts';
 import { beat, chapter } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { CAST, CAST_LINE, creditPages, type Role } from '../../../lib/film/credits';
@@ -17,6 +16,7 @@ import { KEY_POSE, RESTING_FACE, stageAt } from '../../../lib/film/stage';
 import { FILM_VALUES } from '../../../lib/film/values';
 import { useTranslations, type Locale, type UiKey } from '../../../lib/i18n';
 import { findingUnlocked } from '../../../lib/lock';
+import { notebookPage } from '../../../lib/notebook';
 import { roundOf } from '../../../lib/pd/round';
 import { href } from '../../../lib/routes';
 import { outcomeOf } from '../../../lib/table/decision';
@@ -38,8 +38,7 @@ const values = (key: UiKey) => fill(tr(key), FILM_VALUES);
 const collect = beat('closing', 'collect');
 const asked = beat('closing', 'asked');
 const credits = beat('closing', 'credits');
-// The notebook's pages, by the titles they carry now; /finding only with the lock open (ADR 0026).
-// TODO(P5): the notebook's own entries, with /sources and /about, once its panel comes (ADR 0024).
+// The notebook's six pages, in its order; /finding only with the lock open (ADR 0024, ADR 0026).
 const pages = creditPages(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));
 
 // The storyboard's still frame: the first table again, at night, the die floating over it.
@@ -166,7 +165,7 @@ const SHAPES: Record<Exclude<Role, 'thread'>, { d: string; fill: string; scale: 
         {
           pages.map((page) => (
             <li>
-              <a href={href(locale, page)}>{tr(actForSubpage(page).titleKey)}</a>
+              <a href={href(locale, page)}>{tr(notebookPage(page).titleKey)}</a>
             </li>
           ))
         }

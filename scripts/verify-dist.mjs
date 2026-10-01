@@ -6,8 +6,8 @@
 // attributes, the charts' ids, the control's hook, the finding's first beat (which only the film's
 // timeline names) or a key phrase of its prose and charts. Once the status is 'under-review', it
 // fails if the locked content is missing from any page that carries it, so a broken unlock is caught
-// too. While locked, no page links to /finding either: chapter 7, the notebook's entry and the credits
-// link to it only behind the lock.
+// too. While locked, no page links to /finding either: chapter 7, the notebook's panel, its footer and
+// the credits link to it only behind the lock.
 //
 // In both states it also checks the status sentence (docs/content-rules.md, rule (b)): the active one
 // appears exactly `STATUS_ON_HOME` times on each home page, and the other one appears nowhere.
@@ -61,7 +61,7 @@ export const HOME_PAGES = { 'index.html': 'en', 'es/index.html': 'es' };
 
 /**
  * The active status sentence on each home page: the stamp on chapter 7's envelope, and the notebook's
- * entry for the finding (ADR 0026), which the footer carries until the panel comes (ADR 0024, P5).
+ * entry for the finding, in its panel (ADR 0024, ADR 0026).
  */
 export const STATUS_ON_HOME = 2;
 

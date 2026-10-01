@@ -1,0 +1,77 @@
+---
+/**
+ * /how-its-built's small demonstration of the scene engine (ADR 0024): three strips of swatches the
+ * engine computed while the page was built (src/lib/film/day.ts). The film's whole sky, then dawn
+ * straight to morning mixed two ways: channel by channel, through grey, and by hue, through pink, the
+ * reason the film's day has a sunrise. Static: no script, nothing to play with (ADR 0023).
+ */
+import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
+import { dawnToMorning, filmSky } from '../../lib/film/day';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const { channel, hue } = dawnToMorning();
+const strips: { key: UiKey; colours: string[] }[] = [
+  { key: 'notebook.day.film', colours: filmSky() },
+  { key: 'notebook.day.channel', colours: channel },
+  { key: 'notebook.day.hue', colours: hue },
+];
+---
+
+<figure class="day wide">
+  {
+    strips.map(({ key, colours }) => (
+      <div class="day__strip">
+        <p class="day__label">{tr(key)}</p>
+        <svg class="day__swatches" viewBox={`0 0 ${colours.length} 1`} preserveAspectRatio="none" role="img" aria-label={tr(key)}>
+          {colours.map((colour, i) => (
+            <rect x={i} y="0" width="1.04" height="1" fill={colour} />
+          ))}
+        </svg>
+      </div>
+    ))
+  }
+  <figcaption class="day__caption">{tr('notebook.day.caption')}</figcaption>
+</figure>
+
+<style>
+  .day {
+    display: grid;
+    gap: var(--space-4);
+    margin: var(--space-8) 0;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  .day__strip {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .day__label {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .day__swatches {
+    display: block;
+    width: 100%;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 0 2px var(--color-fg);
+  }
+
+  .day__caption {
+    color: var(--color-muted);
+  }
+</style>

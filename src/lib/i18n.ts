@@ -49,6 +49,11 @@ export function assertParity(dictionaries: Readonly<Record<string, Dictionary>>)
 // Runtime parity: every page imports this module, so a mismatch fails `astro build`.
 assertParity(DICTIONARIES);
 
+/** Whether a key exists, for a component that shows a line only where one was written. */
+export function hasKey(key: string): key is UiKey {
+  return Object.hasOwn(DICTIONARIES.en, key);
+}
+
 export function t(locale: Locale, key: UiKey): string {
   return DICTIONARIES[locale][key];
 }

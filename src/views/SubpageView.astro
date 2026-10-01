@@ -1,19 +1,23 @@
 ---
 /**
- * A subpage: the prose of src/content/subpages/<locale>/<slug>.md, with the components its slots
- * name, and a link back to the film's chapter that stands for the act it deepens (src/lib/acts.ts).
+ * A page of the notebook (ADR 0024): the prose of src/content/subpages/<locale>/<slug>.md, with the
+ * components its slots name, and a link back to the film's chapter it deepens (src/lib/notebook.ts).
  * What follows the prose's lock marker renders only behind the lock (ADR 0026); /finding is locked
  * whole, so a locked build shows its title and the status sentence and nothing else.
  */
 import { getCollection } from 'astro:content';
-import BestResponse from '../components/pd/BestResponse.astro';
-import Curve from '../components/curve/Curve.astro';
+import Author from '../components/notebook/Author.astro';
+import Day from '../components/notebook/Day.astro';
+import Sources from '../components/notebook/Sources.astro';
+import Vignette from '../components/notebook/Vignette.astro';
+import GuiltChart from '../components/curve/GuiltChart.astro';
+import Matrix from '../components/pd/Matrix.astro';
 import SwitchTable from '../components/vanberg/SwitchTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { MANUSCRIPT_STATUS } from '../config';
-import { actForSubpage } from '../lib/acts';
 import { t, type Locale } from '../lib/i18n';
 import { findingUnlocked, statusKey } from '../lib/lock';
+import { notebookPage } from '../lib/notebook';
 import { href, type Subpage } from '../lib/routes';
 import { focusableCode, splitSubpage, type Segment } from '../lib/subpages';
 import { fill } from '../lib/template';
@@ -24,11 +28,12 @@ interface Props {
 }
 
 const { locale, subpage } = Astro.props;
-const act = actForSubpage(subpage);
+const page = notebookPage(subpage);
 const entry = (await getCollection('subpages', (candidate) => candidate.id === `${locale}/${subpage}`))[0];
 if (!entry?.rendered) throw new Error(`No prose for subpage ${locale}/${subpage}`);
 
 const heading = entry.data.title;
+if (heading !== t(locale, page.titleKey)) throw new Error(`The title of ${locale}/${subpage} is not its notebook entry's`);
 const parts = splitSubpage(focusableCode(entry.rendered.html));
 const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
 const segments: readonly Segment[] = unlocked ? [...parts.open, ...parts.locked] : parts.open;
@@ -37,33 +42,42 @@ const hasLocked = parts.locked.length > 0;
 const lockedWhole = !unlocked && parts.open.length === 0;
 const showStatus = subpage === 'finding';
 const status = t(locale, statusKey(MANUSCRIPT_STATUS));
-// Back to the chapter of the film that stands for the act (ADR 0021).
-const chapterEntry = (await getCollection('chapters', (candidate) => candidate.id.startsWith(`${locale}/`) && candidate.data.chapter === act.film))[0];
-if (!chapterEntry) throw new Error(`No chapter "${act.film}" for subpage ${subpage} in ${locale}`);
-const back = fill(t(locale, 'subpage.back'), { title: chapterEntry.data.title });
+// Back to the chapter of the film the page deepens; every page has the way back to the film in its footer.
+const chapterEntry = page.film && (await getCollection('chapters', (candidate) => candidate.id.startsWith(`${locale}/`) && candidate.data.chapter === page.film))[0];
+if (page.film && !chapterEntry) throw new Error(`No chapter "${page.film}" for subpage ${subpage} in ${locale}`);
+const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntry.data.title }) : null;
 ---
 
 <BaseLayout locale={locale} route={subpage} title={`${heading} · ${t(locale, 'site.title')}`} codeFont={subpage === 'how-its-built'}>
   <article class="container column subpage" aria-labelledby="subpage-title" data-locked-content={unlocked && hasLocked ? '' : undefined}>
-    <h1 id="subpage-title">{heading}</h1>
+    <header class="subpage__head">
+      {!lockedWhole && <Vignette page={subpage} />}
+      <h1 id="subpage-title">{heading}</h1>
+    </header>
     {
       segments.map((segment) =>
         segment.kind === 'html' ? (
           <Fragment set:html={segment.html} />
-        ) : segment.name === 'best-response' ? (
-          <BestResponse locale={locale} id="dilemma-best-reply" />
+        ) : segment.name === 'pd-matrix' ? (
+          <Matrix locale={locale} />
         ) : segment.name === 'switch-table' ? (
           <SwitchTable locale={locale} />
         ) : segment.name === 'guilt-chart' ? (
-          <Curve locale={locale} id="finding-guilt" variant="guilt" />
+          <GuiltChart locale={locale} id="finding-guilt" />
+        ) : segment.name === 'sources' ? (
+          <Sources locale={locale} />
+        ) : segment.name === 'author' ? (
+          <Author locale={locale} />
+        ) : segment.name === 'day' ? (
+          <Day locale={locale} />
         ) : null,
       )
     }
     {showStatus && <p class="subpage__status">{status}</p>}
     {
-      !lockedWhole && (
+      back && !lockedWhole && (
         <p class="subpage__back">
-          <a href={href(locale, 'home', act.film)}>{back}</a>
+          <a href={href(locale, 'home', page.film ?? undefined)}>{back}</a>
         </p>
       )
     }
@@ -72,11 +86,31 @@ const back = fill(t(locale, 'subpage.back'), { title: chapterEntry.data.title })
 
 <style>
   .subpage {
-    padding-block: var(--space-12);
+    padding-block: var(--space-8) var(--space-12);
+  }
+
+  .subpage__head {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    margin-bottom: var(--space-4);
+  }
+
+  .subpage__head h1 {
+    margin: 0;
   }
 
   .subpage :global(h2) {
     margin-block: var(--space-12) var(--space-4);
+  }
+
+  .subpage__head + :global(h2),
+  .subpage__head + :global(p) {
+    margin-top: var(--space-6);
+  }
+
+  .subpage :global(h3) {
+    margin-block: var(--space-8) var(--space-3);
   }
 
   /* The status sentence, set apart; the back link in the interface font, a full-size target. */
@@ -86,10 +120,10 @@ const back = fill(t(locale, 'subpage.back'), { title: chapterEntry.data.title })
   }
 
   .subpage__back {
-    margin-top: var(--space-8);
+    margin-top: var(--space-12);
     font-family: var(--font-ui);
     font-size: var(--step-n1);
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .subpage__back a {

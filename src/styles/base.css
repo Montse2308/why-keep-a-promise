@@ -34,9 +34,15 @@ html {
   display: none !important;
 }
 
+/*
+ * The notebook's paper (ADR 0027): day or night paper with the film's grain over it, lit at the top
+ * like the film's sky. The film paints its own stage over it.
+ */
 body {
   margin: 0;
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image: var(--paper-grain), linear-gradient(var(--color-glow), var(--color-bg) 32rem);
+  background-repeat: repeat, no-repeat;
   color: var(--color-fg);
   font-family: var(--font-prose);
   font-optical-sizing: auto;
@@ -44,22 +50,27 @@ body {
   line-height: var(--leading-body);
 }
 
+/* Headings in Fraunces, as the film's cards; the page's title in its italic, as the film's. */
 h1,
 h2,
 h3 {
-  font-family: var(--font-prose);
-  font-weight: 500;
+  font-family: var(--font-heading);
+  font-weight: 800;
   line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 
 h1 {
   font-size: var(--step-5);
-  letter-spacing: -0.01em;
+  font-style: italic;
+  font-weight: 900;
+  line-height: var(--leading-display);
+  letter-spacing: -0.015em;
 }
 
 h2 {
-  font-size: var(--step-3);
+  font-size: var(--step-2);
 }
 
 h3 {
@@ -103,11 +114,6 @@ textarea {
   white-space: nowrap;
 }
 
-/* A hairline between the home page's blocks, acts and sections alike (ADR 0019). */
-main > section + section {
-  border-top: var(--border-width) solid var(--color-border);
-}
-
 .container {
   width: 100%;
   max-width: var(--content-max);
@@ -136,7 +142,7 @@ main > section + section {
   max-width: var(--table-max);
 }
 
-/* Static tables in the prose (act 2's matrix, act 3's predictions, the subpages): hairlines, sans, tabular. */
+/* Static tables in the notebook's prose: hairlines, the interface face, tabular figures. */
 .column > table {
   width: 100%;
   margin-block: var(--space-6);
@@ -176,7 +182,7 @@ main > section + section {
   margin-top: var(--space-2);
 }
 
-/* Code blocks (/how-its-built): JetBrains Mono, only here (ADR 0017, ADR 0018). */
+/* Code blocks (/how-its-built): JetBrains Mono, only here (ADR 0027). */
 .column > pre {
   margin-block: var(--space-6);
   padding: var(--space-4);

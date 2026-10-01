@@ -1,11 +1,10 @@
 ---
-act: 4
 title: Vanberg's experiment
 ---
 
 ## The whole design
 
-The instructions and screens that Vanberg (2008) published fill in what the table leaves out.
+The instructions and screens that Vanberg (2008) published fill in what the film leaves out.
 
 - The experiment has 8 rounds. In each one you are matched with another participant, chosen at
   random, and never with the same one twice.
@@ -23,10 +22,10 @@ The instructions and screens that Vanberg (2008) published fill in what the tabl
 
 ## Every cell of the switch treatment
 
-The main thread compares two of the cells. The treatment has six: whether the dictator promised,
-crossed with whom they faced: the same partner, a new partner who had been promised by another
-dictator, or a new partner whom no one had promised anything. Each count is of decisions, one per
-dictator and round.
+The film compares two of the cells. The treatment has six: whether the dictator promised, crossed
+with whom they faced: the same partner, a new partner who had been promised by another dictator, or
+a new partner whom no one had promised anything. Each count is of decisions, one per dictator and
+round, written as it is in the data, over the cell's total.
 
 The last column is the dictators' second-order belief: what a dictator believes their partner
 expects of them, on the same five-point scale, read from 0 to 100.
@@ -45,3 +44,12 @@ changes where beliefs do not, so a change in beliefs cannot be what makes promis
 Vanberg also ran two simpler treatments, reported in his Appendix A: the same game with the chat
 and without it, with no partner switch. With the chat, the die was rolled in 92 of 128 decisions;
 without it, in 67 of 128. Each treatment had 32 people, over 8 rounds.
+
+## Counted again, in fractions
+
+The counts on this page were not copied from the article. Each was counted again from the data
+Vanberg published with it, `switch.dat` and `baseline.dat`, following his own program,
+`promises.do`. The page keeps every count as a fraction of whole numbers and rounds only when it
+writes a rate out of 100: to the nearest whole number, halves up, in integer arithmetic, so no step
+adds an error of its own. A test checks that the six cells hold every decision of the treatment:
+half of its 192 people decide in each of its 8 rounds.

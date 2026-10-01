@@ -5,9 +5,9 @@
  * JavaScript (`html.js`, set before first paint), the stage sticks to the screen, the chapters'
  * beats scroll over it, and ./film.ts moves the camera, the light and the cast with the native scroll.
  *
- * The nine chapters render in order (src/lib/chapters.ts); what is left of the previous version of
- * the home follows the film until it is retired (docs/tasks.md). Chapter 7's captions after its lock mark are the finding (ADR 0026): they go, as written,
- * to the one component that may render them.
+ * The nine chapters render in order (src/lib/chapters.ts), and the notebook's footer follows the
+ * film. Chapter 7's captions after its lock mark are the finding (ADR 0026): they go, as written, to
+ * the one component that may render them.
  */
 import { getCollection } from 'astro:content';
 import { BUILT, LOCKED_BEATS, type ChapterId } from '../../lib/chapters';

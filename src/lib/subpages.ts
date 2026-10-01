@@ -2,14 +2,14 @@
  * A subpage's prose, split where the page inserts a component or where the lock begins (ADR 0026).
  * The Markdown marks those places with HTML comments:
  *
- *   <!-- slot:best-response -->   a component the view renders in place
+ *   <!-- slot:pd-matrix -->       a component the view renders in place
  *   <!-- lock -->                 everything after it renders only behind the lock
  *
  * The view renders the open part always and the locked part only when `findingUnlocked()` says so,
  * so locked prose never reaches a locked build.
  */
 
-export const SLOTS = ['best-response', 'switch-table', 'guilt-chart'] as const;
+export const SLOTS = ['pd-matrix', 'switch-table', 'guilt-chart', 'day', 'sources', 'author'] as const;
 export type SlotName = (typeof SLOTS)[number];
 
 export type Segment = { readonly kind: 'html'; readonly html: string } | { readonly kind: 'slot'; readonly name: SlotName };

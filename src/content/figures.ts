@@ -3,7 +3,8 @@
  * its entry in docs/sources.md ("Clave: `<key>`"). tests/prose.test.ts fails on any number in
  * src/content/subpages/ that is not listed here, and on any year that is not a citation in
  * "Author (year)" form; tests/film-captions.test.ts does the same for the captions, once their
- * placeholders are filled from the code. Code blocks are not prose and are not checked.
+ * placeholders are filled from the code. Code blocks are not prose and are not checked. /sources
+ * shows this register to the visitor, key by key (src/lib/sources.ts).
  */
 
 export const SOURCE_KEYS = [

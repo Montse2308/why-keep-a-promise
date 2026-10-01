@@ -2,7 +2,9 @@
 import { Font, fontData } from 'astro:assets';
 import '../styles/base.css';
 import LanguageSwitch from '../components/LanguageSwitch.astro';
-import SiteFooter from '../components/SiteFooter.astro';
+import Notebook from '../components/notebook/Notebook.astro';
+import NotebookFooter from '../components/notebook/NotebookFooter.astro';
+import { FILM } from '../lib/design/film';
 import { DEFAULT_LOCALE, LOCALES, t, type Locale } from '../lib/i18n';
 import { absoluteHref, assetHref, href, type Route } from '../lib/routes';
 
@@ -13,19 +15,19 @@ interface Props {
   /** Declare JetBrains Mono for the page's code blocks (/how-its-built only; never preloaded). */
   codeFont?: boolean;
   /**
-   * The page opens on the film (the home, ADR 0021): load its faces, mark `html.js` before the first
-   * paint so the film's layout applies at once, and float the language corner over the stage.
+   * The page opens on the film (the home, ADR 0021): mark `html.js` before the first paint so the
+   * film's layout applies at once, and float the corner over the stage, with the notebook's button
+   * held in it for the whole film.
    */
   film?: boolean;
 }
 
 const { locale, route, title, codeFont = false, film = false } = Astro.props;
 const site = Astro.site ?? new URL('https://montse2308.github.io');
-// Preload only the text face: Newsreader, normal, latin. The local provider keeps the variant order
-// of astro.config.mjs, where latin comes first; the provider does not tag subsets.
-const textFont = fontData['--font-serif']?.find((font) => font.style === 'normal')?.src[0];
-// On the film, the first thing drawn in text is the title, in Fraunces italic.
+// The local provider keeps the variant order of astro.config.mjs, where latin comes first; it does
+// not tag subsets. Preload what the first screen draws: the title in Fraunces italic, the text in Nunito.
 const titleFont = fontData['--font-display']?.find((font) => font.style === 'italic')?.src[0];
+const textFont = fontData['--font-body']?.find((font) => font.style === 'normal')?.src[0];
 // TODO(F5): description and Open Graph tags.
 ---
 
@@ -40,27 +42,41 @@ const titleFont = fontData['--font-display']?.find((font) => font.style === 'ita
     <link rel="alternate" hreflang="x-default" href={absoluteHref(site, DEFAULT_LOCALE, route)} />
     <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
     {film && <script is:inline>document.documentElement.classList.add('js');</script>}
-    {film && titleFont && <link rel="preload" href={titleFont.url} as="font" type="font/woff2" crossorigin />}
+    {titleFont && <link rel="preload" href={titleFont.url} as="font" type="font/woff2" crossorigin />}
     {textFont && <link rel="preload" href={textFont.url} as="font" type="font/woff2" crossorigin />}
-    {film && <Font cssVariable="--font-display" />}
-    {film && <Font cssVariable="--font-body" />}
-    <Font cssVariable="--font-serif" />
-    <Font cssVariable="--font-sans" />
+    <Font cssVariable="--font-display" />
+    <Font cssVariable="--font-body" />
     {codeFont && <Font cssVariable="--font-jetbrains-mono" />}
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
     <a class="skip-link visually-hidden" href={href(locale, route, 'main')}>{t(locale, 'skip.link')}</a>
-    <!-- No fixed strip: the language link sits in the corner of the first screen and scrolls away. -->
+    <!-- No fixed strip: the corner of the first screen scrolls away; over the film, only the notebook's button stays. -->
     <header class:list={['corner', { 'corner--film': film }]}>
       <div class="corner__inner container">
-        <LanguageSwitch locale={locale} route={route} />
+        {
+          !film && (
+            <a class="corner__film" href={href(locale, 'home')}>
+              <svg viewBox="-24 -14 48 28" aria-hidden="true">
+                <path d="M-11 -2 C-4 -12 4 -12 11 -2" fill="none" stroke={FILM['thread-edge']} stroke-width="5" stroke-linecap="round" />
+                <path d="M-11 -2 C-4 -12 4 -12 11 -2" fill="none" stroke={FILM.thread} stroke-width="2.6" stroke-linecap="round" />
+                <circle cx="-13" cy="3" r="8" fill={FILM.you} stroke={FILM.ink} stroke-width="2.4" />
+                <rect x="5" y="-5" width="16" height="16" rx="3.5" fill={FILM.other} stroke={FILM.ink} stroke-width="2.4" />
+              </svg>
+              <span>{t(locale, 'notebook.film.short')}</span>
+            </a>
+          )
+        }
+        <div class="corner__end">
+          <LanguageSwitch locale={locale} route={route} />
+          <Notebook locale={locale} route={route} film={film} />
+        </div>
       </div>
     </header>
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    <SiteFooter locale={locale} route={route} />
+    <NotebookFooter locale={locale} route={route} />
   </body>
 </html>
 
@@ -74,6 +90,45 @@ const titleFont = fontData['--font-display']?.find((font) => font.style === 'ita
     border-radius: var(--radius-sm);
   }
 
+  .corner__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-2);
+  }
+
+  .corner__end {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-inline-start: auto;
+  }
+
+  /* Back to the film: the cast of the tab's icon, the circle and the square tied by the thread. */
+  .corner__film {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--target-min);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .corner__film:hover span {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+  }
+
+  .corner__film svg {
+    flex: none;
+    width: 2.6rem;
+    height: 1.5rem;
+  }
+
   /* Over the film's stage, in ink, out of the flow so the stage starts at the very top. */
   .corner--film {
     position: absolute;
@@ -84,14 +139,48 @@ const titleFont = fontData['--font-display']?.find((font) => font.style === 'ita
     font-weight: 700;
   }
 
+  /* As wide as the stage, so its corner lines up with the spool and the notebook's button. */
   .corner--film .corner__inner {
-    padding-top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
+    max-width: none;
+    padding-top: calc(var(--space-2) + env(safe-area-inset-top, 0px));
   }
 
-  .corner__inner {
-    display: flex;
-    justify-content: flex-end;
-    padding-block: var(--space-2);
+  /* The film's language links keep the film's ink in either theme; its button floats, so leave its room. */
+  .corner--film :global(.lang__current) {
+    color: var(--film-card-muted);
+  }
+
+  .corner--film :global(.lang a:focus-visible) {
+    outline-color: var(--film-ink);
+  }
+
+  :global(html.js) .corner--film .corner__end {
+    padding-inline-end: calc(var(--notebook-room, 9rem) + var(--space-3));
+  }
+
+  @media (max-width: 30rem) {
+    :global(html.js) .corner--film {
+      --notebook-room: var(--target-min);
+    }
+
+    /* A phone: the language you are reading needs no label; the other one stays. */
+    .corner :global(.lang__current) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .corner__film span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
   }
 
   main:focus {

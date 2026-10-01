@@ -1,66 +1,41 @@
 /**
- * Single source of the site's colour values (ADR 0018). `src/styles/tokens.css` must carry exactly
- * these values; `palette.test.ts` checks that, the WCAG contrast of every pair below, and that the
- * two roles, and the two main lines of the curve, stay apart under protanopia and deuteranopia. The
- * film has its own colours, in ./film.ts.
+ * The notebook's paper (ADR 0024, ADR 0027): single source of its colour values. Unlike the film,
+ * which owns its light (./film.ts), the notebook follows the visitor's theme: day paper in the light
+ * theme, night paper in the dark one, both drawn from the film's ink, paper and golden thread.
+ * `src/styles/tokens.css` must carry exactly these values; `palette.test.ts` checks that and the
+ * WCAG contrast of every pair below, in both themes.
  */
 
 export const THEMES = ['light', 'dark'] as const;
 export type Theme = (typeof THEMES)[number];
 
 /** Each token is the CSS custom property `--color-<token>`. */
-export const COLOR_TOKENS = [
-  'bg',
-  'surface',
-  'surface-hover',
-  'fg',
-  'muted',
-  'border',
-  'control',
-  'focus',
-  'you',
-  'other',
-  'promise',
-  'series-1',
-  'series-2',
-  'series-3',
-] as const;
+export const COLOR_TOKENS = ['bg', 'glow', 'surface', 'fg', 'muted', 'border', 'control', 'focus', 'accent'] as const;
 export type ColorToken = (typeof COLOR_TOKENS)[number];
 
 /** The paper: everything that is read, in the visitor's theme. */
 export const PALETTE: Record<Theme, Record<ColorToken, string>> = {
   light: {
-    bg: '#f6f1e7', // warm paper
-    surface: '#fbf8f2',
-    'surface-hover': '#efe8da',
-    fg: '#221d17', // warm ink
-    muted: '#5e564a',
-    border: '#ddd4c4', // hairline rules only; never the sole boundary of a control
-    control: '#857b6c', // control outlines, die and meter strokes
-    focus: '#221d17',
-    you: '#23508f', // ink blue
-    other: '#a4432a', // terracotta
-    promise: '#56636b', // slate: neutral, apart from both roles
-    // The curve on the notebook's paper (/finding). Neutral names, so the always-shipped tokens.css says nothing about the chart.
-    'series-1': '#8e2f6e', // berry: personal guilt, the emphasised line
-    'series-2': '#7d6400', // ochre: partner-specific commitment
-    'series-3': '#008a7e', // teal: general guilt, the control, dotted
+    bg: '#f9f0e1', // day paper, warm, with the film's grain over it
+    glow: '#fbe3c8', // the top of the page, lit like the film's dawn
+    surface: '#fffdf8', // figures and the panel: the film's card paper
+    fg: '#1d1b3a', // the film's ink
+    muted: '#5b5875',
+    border: '#e7dcc8', // hairline rules only; never the sole boundary of a control
+    control: '#857d98', // control outlines and link underlines
+    focus: '#1d1b3a',
+    accent: '#8a6500', // the golden thread's edge: small marks, never text alone
   },
   dark: {
-    bg: '#1c1915', // warm ink
-    surface: '#25211c',
-    'surface-hover': '#2f2a23',
-    fg: '#ede5d6',
-    muted: '#b1a794',
-    border: '#3e382f',
-    control: '#8a806f',
-    focus: '#ede5d6',
-    you: '#8db4ea',
-    other: '#e8906d',
-    promise: '#aab4bb',
-    'series-1': '#c472a6',
-    'series-2': '#a88619',
-    'series-3': '#16a39b',
+    bg: '#1d1b3a', // night paper: the film's ink
+    glow: '#2c2858', // the top of the page, as the film's nightfall
+    surface: '#28264d',
+    fg: '#fffaf0', // the film's paper rim
+    muted: '#c4bfdc',
+    border: '#3b3866',
+    control: '#8e88b8',
+    focus: '#f3bd46', // the golden thread
+    accent: '#f3bd46',
   },
 };
 
@@ -77,43 +52,19 @@ export interface ContrastPair<T extends string = ColorToken> {
 /** Every foreground/background pair on paper. `border` is decorative and not listed. */
 export const CONTRAST_PAIRS: readonly ContrastPair[] = [
   { fg: 'fg', bg: 'bg', kind: 'text', use: 'body text' },
-  { fg: 'fg', bg: 'surface', kind: 'text', use: 'text on figures and buttons' },
-  { fg: 'fg', bg: 'surface-hover', kind: 'text', use: 'button text on hover' },
+  { fg: 'fg', bg: 'glow', kind: 'text', use: 'the title, at the top of the page' },
+  { fg: 'fg', bg: 'surface', kind: 'text', use: 'text on figures and in the panel' },
   { fg: 'muted', bg: 'bg', kind: 'text', use: 'secondary text' },
-  { fg: 'muted', bg: 'surface', kind: 'text', use: 'secondary text on a figure' },
-  { fg: 'muted', bg: 'surface-hover', kind: 'text', use: 'option terms on a hovered button' },
-  { fg: 'you', bg: 'bg', kind: 'text', use: 'role "you": label and marker' },
-  { fg: 'you', bg: 'surface', kind: 'text', use: 'role "you" on a figure' },
-  { fg: 'other', bg: 'bg', kind: 'text', use: 'role "other": label and marker' },
-  { fg: 'other', bg: 'surface', kind: 'text', use: 'role "other" on a figure' },
-  { fg: 'you', bg: 'surface-hover', kind: 'graphic', use: 'role marks in a hovered option' },
-  { fg: 'other', bg: 'surface-hover', kind: 'graphic', use: 'role marks in a hovered option' },
-  { fg: 'promise', bg: 'bg', kind: 'text', use: 'promise accent' },
-  { fg: 'promise', bg: 'surface', kind: 'text', use: 'promise accent on a figure' },
-  { fg: 'control', bg: 'bg', kind: 'graphic', use: 'control outlines' },
-  { fg: 'control', bg: 'surface', kind: 'graphic', use: 'control outlines on a figure' },
+  { fg: 'muted', bg: 'glow', kind: 'text', use: 'secondary text at the top of the page' },
+  { fg: 'muted', bg: 'surface', kind: 'text', use: 'secondary text on a figure or in the panel' },
+  { fg: 'control', bg: 'bg', kind: 'graphic', use: 'control outlines and link underlines' },
+  { fg: 'control', bg: 'surface', kind: 'graphic', use: 'control outlines on a figure or in the panel' },
   { fg: 'focus', bg: 'bg', kind: 'graphic', use: 'focus ring' },
-  { fg: 'focus', bg: 'surface', kind: 'graphic', use: 'focus ring on a figure' },
-  { fg: 'focus', bg: 'surface-hover', kind: 'graphic', use: 'focus ring on a hovered button' },
-  { fg: 'series-1', bg: 'bg', kind: 'graphic', use: 'curve: personal guilt line and label mark' },
-  { fg: 'series-1', bg: 'surface', kind: 'graphic', use: 'curve: personal guilt line on the figure' },
-  { fg: 'series-2', bg: 'bg', kind: 'graphic', use: 'curve: partner-specific commitment line' },
-  { fg: 'series-2', bg: 'surface', kind: 'graphic', use: 'curve: partner-specific commitment line on the figure' },
-  { fg: 'series-3', bg: 'bg', kind: 'graphic', use: 'curve: general guilt dotted line' },
-  { fg: 'series-3', bg: 'surface', kind: 'graphic', use: 'curve: general guilt dotted line on the figure' },
+  { fg: 'focus', bg: 'glow', kind: 'graphic', use: 'focus ring at the top of the page' },
+  { fg: 'focus', bg: 'surface', kind: 'graphic', use: 'focus ring on a figure or in the panel' },
+  { fg: 'accent', bg: 'bg', kind: 'graphic', use: 'small marks: the current page, the thread' },
+  { fg: 'accent', bg: 'surface', kind: 'graphic', use: 'small marks in the panel' },
+  // /finding's guilt chart, behind the lock: its dots and its threshold are drawn in ink and in the control's colour.
+  { fg: 'fg', bg: 'surface', kind: 'graphic', use: "guilt chart: personal guilt's dots" },
+  { fg: 'control', bg: 'surface', kind: 'graphic', use: 'guilt chart: the threshold and the ticks' },
 ];
-
-/** Minimum CIE76 ΔE between two colours after simulating each colour-vision deficiency. */
-export const MIN_DISTANCE = {
-  /** The two roles must never be confused. */
-  roles: 40,
-  /** The promise accent must stay apart from both roles. */
-  promise: 20,
-  /** Personal guilt and partner-specific commitment, the two lines the curve compares. */
-  series: 40,
-  /** Every curve colour against every role colour and the promise accent, in typical vision. */
-  seriesFromRoles: 20,
-} as const;
-
-/** The curve's colours. General guilt (series-3) is also told apart by its dotted pattern. */
-export const SERIES_TOKENS = ['series-1', 'series-2', 'series-3'] as const satisfies readonly ColorToken[];

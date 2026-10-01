@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { contrastRatio, deltaE, parseHex, simulate, type Deficiency } from '../design/color';
 import { FILM } from '../design/film';
-import { MIN_CONTRAST, MIN_DISTANCE } from '../design/palette';
+import { MIN_CONTRAST } from '../design/palette';
 import { REASONS } from './curve';
-import { CASED, FILM_CASING, FILM_PAPER, FILM_SERIES } from './film';
+import { CASED, FILM_CASING, FILM_PAPER, FILM_SERIES, SERIES_DISTANCE } from './film';
 
 const visions: Array<Deficiency | 'typical'> = ['typical', 'protanopia', 'deuteranopia'];
 const seen = (hex: string, vision: Deficiency | 'typical') => (vision === 'typical' ? parseHex(hex) : simulate(hex, vision));
@@ -26,16 +26,16 @@ describe('chapter 7’s curve on the film’s paper (ADR 0027)', () => {
   });
 
   it.each(visions)('keeps personal guilt and partner-specific commitment apart under %s vision, and the control apart from both', (vision) => {
-    expect(deltaE(seen(colour('personal'), vision), seen(colour('partner'), vision))).toBeGreaterThanOrEqual(MIN_DISTANCE.series);
+    expect(deltaE(seen(colour('personal'), vision), seen(colour('partner'), vision))).toBeGreaterThanOrEqual(SERIES_DISTANCE.series);
     for (const other of ['personal', 'partner'] as const) {
-      expect(deltaE(seen(colour('general'), vision), seen(colour(other), vision)), other).toBeGreaterThanOrEqual(MIN_DISTANCE.seriesFromRoles);
+      expect(deltaE(seen(colour('general'), vision), seen(colour(other), vision)), other).toBeGreaterThanOrEqual(SERIES_DISTANCE.others);
     }
   });
 
   it('keeps every line apart from the cast it shares the film with', () => {
     for (const reason of REASONS) {
       for (const cast of [FILM.you, FILM.other, FILM.new]) {
-        expect(deltaE(parseHex(colour(reason)), parseHex(cast)), `${reason} vs ${cast}`).toBeGreaterThanOrEqual(MIN_DISTANCE.seriesFromRoles);
+        expect(deltaE(parseHex(colour(reason)), parseHex(cast)), `${reason} vs ${cast}`).toBeGreaterThanOrEqual(SERIES_DISTANCE.others);
       }
     }
   });

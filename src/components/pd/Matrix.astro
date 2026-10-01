@@ -1,0 +1,172 @@
+---
+/**
+ * The prisoner's dilemma as /dilemma reads it (ADR 0024): the static matrix of payoffs, yours first,
+ * with each column's best reply, the equilibrium and the cell where both would be better off marked
+ * in words. No script: the exercise of trying both columns is chapter 1's (ADR 0023). It is not
+ * Vanberg's game (docs/content-rules.md, rule (g)). Every payoff comes from src/lib/pd/game.ts.
+ */
+import { FILM } from '../../lib/design/film';
+import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
+import { bestReply, bothBetterOff, MOVES, nashEquilibria, payoff, type Move } from '../../lib/pd/game';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const equilibria = nashEquilibria();
+const [equilibrium] = equilibria;
+if (!equilibrium || equilibria.length !== 1) throw new Error('The dilemma has exactly one equilibrium');
+const atEquilibrium = payoff(...equilibrium);
+
+/** What a cell is, in words: the column's best reply, where both end up, both better off. */
+function tags(you: Move, other: Move): UiKey[] {
+  const cell = payoff(you, other);
+  return [
+    ...(bestReply(other) === you ? (['pd.tag.best'] as const) : []),
+    ...(equilibrium?.[0] === you && equilibrium[1] === other ? (['pd.tag.equilibrium'] as const) : []),
+    ...(bothBetterOff(cell, atEquilibrium) ? (['pd.tag.better'] as const) : []),
+  ];
+}
+---
+
+<figure class="pd-matrix wide">
+  <table>
+    <caption>{tr('pd.matrix.caption')}</caption>
+    <thead>
+      <tr>
+        <td></td>
+        {
+          MOVES.map((other) => (
+            <th scope="col">
+              <svg class="pd-matrix__who" viewBox="-12 -12 24 24" aria-hidden="true">
+                <rect x="-9" y="-9" width="18" height="18" rx="4" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" />
+              </svg>
+              {tr(`pd.col.${other}`)}
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody>
+      {
+        MOVES.map((you) => (
+          <tr>
+            <th scope="row">
+              <svg class="pd-matrix__who" viewBox="-12 -12 24 24" aria-hidden="true">
+                <circle r="9.5" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" />
+              </svg>
+              {tr(`pd.row.${you}`)}
+            </th>
+            {MOVES.map((other) => {
+              const marks = tags(you, other);
+              return (
+                <td class:list={['pd-matrix__cell', { 'pd-matrix__cell--best': marks.includes('pd.tag.best') }]}>
+                  <span class="pd-matrix__payoff">{fill(tr('pd.cell'), { ...payoff(you, other) })}</span>
+                  {marks.length > 0 && (
+                    <span class="pd-matrix__tags">
+                      {marks.map((mark) => (
+                        <span class="pd-matrix__tag">{tr(mark)}</span>
+                      ))}
+                    </span>
+                  )}
+                </td>
+              );
+            })}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</figure>
+
+<style>
+  .pd-matrix {
+    margin: var(--space-8) 0;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+    font-variant-numeric: tabular-nums;
+  }
+
+  caption {
+    margin-bottom: var(--space-3);
+    text-align: start;
+    font-weight: 700;
+    color: var(--color-muted);
+  }
+
+  th {
+    padding: var(--space-2);
+    font-weight: 700;
+    text-align: start;
+    vertical-align: middle;
+  }
+
+  thead th {
+    border-bottom: 2px solid var(--color-fg);
+  }
+
+  tbody th {
+    border-right: 2px solid var(--color-fg);
+    white-space: nowrap;
+  }
+
+  .pd-matrix__who {
+    width: 1.1em;
+    height: 1.1em;
+    margin-inline-end: var(--space-2);
+    vertical-align: -0.2em;
+  }
+
+  .pd-matrix__cell {
+    padding: var(--space-3) var(--space-2);
+    vertical-align: top;
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .pd-matrix__payoff {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: var(--step-1);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+  }
+
+  /* Each column's best reply: your payoff circled in ink, as on a worked page. */
+  .pd-matrix__cell--best .pd-matrix__payoff {
+    display: inline-block;
+    padding: 0 0.35em;
+    border: 2px solid var(--color-fg);
+    border-radius: 999px;
+  }
+
+  .pd-matrix__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+  }
+
+  .pd-matrix__tag {
+    padding: 0 var(--space-2);
+    border: var(--border-width) solid var(--color-control);
+    border-radius: 999px;
+    font-size: var(--step-n2);
+    font-weight: 700;
+    color: var(--color-muted);
+  }
+</style>

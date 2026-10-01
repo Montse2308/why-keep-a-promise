@@ -21,5 +21,11 @@ export const FILM_SERIES: Record<Reason, FilmToken> = {
 export const FILM_CASING: FilmToken = 'ink';
 export const FILM_PAPER: FilmToken = 'card';
 
+/**
+ * Minimum CIE76 ΔE between the curve's colours: the two lines it compares, under protanopia and
+ * deuteranopia too, and every line against the control and the cast it shares the film with.
+ */
+export const SERIES_DISTANCE = { series: 40, others: 20 } as const;
+
 /** The lines that wear an ink casing: those in a light colour. */
 export const CASED: readonly Reason[] = ['partner', 'general'];
