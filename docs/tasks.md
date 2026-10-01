@@ -3,13 +3,13 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** ninguna; la siguiente es P5 (el cuaderno), cuando Montse la abra. P0 a P4
+**Fase activa:** P5 (el cuaderno), construida y en espera de la revisión de Montse. P0 a P4
 cerradas: Montse las revisó (PR #1 a PR #7). P4 se cerró sin videos, como ella lo pidió: dio por
 hecho el de la película entera.
 
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
-capítulo 8: el home es solo la película, y después el pie. De la versión anterior quedan las
-subpáginas y el pie hasta el cuaderno (P5, ADR 0024).
+capítulo 8; el cuaderno tiene sus seis páginas, su panel en todas las páginas, sus lupas en la
+película y su pie. De la versión anterior ya no queda nada en el sitio.
 
 ## P0 · Documentos
 
@@ -42,7 +42,8 @@ subpáginas y el pie hasta el cuaderno (P5, ADR 0024).
       hilo, el papel, los seis puntos de luz y la lámpara; tests de contraste en cada punto de luz, de
       daltonismo (44 y 22), de luz continua (≤ 25 ΔE por pantalla) y de cielo que nunca pasa por gris
       (la luz se mezcla por tono, OKLCH, y hay una salida del sol entre el amanecer y la mañana).
-- [ ] El papel del cuaderno en `palette.ts` y `tokens.css`, con sus tests (con el cuaderno, P5).
+- [x] El papel del cuaderno en `palette.ts` y `tokens.css`, con sus tests: se hizo con el cuaderno, en
+      P5 (abajo).
 - [x] `src/lib/film/`: pistas, curvas, interpolación de colores, cámara según la pantalla y tramos,
       con tests.
 - [x] `src/lib/chapters.ts`: los nueve ids, su orden, su largo en pantallas y su fase, con test.
@@ -100,7 +101,7 @@ subpáginas y el pie hasta el cuaderno (P5, ADR 0024).
       celular en inglés (promete, no juega la ronda, «confía en mí», se queda los 14 y el hilo se
       rompe). En `scratch/p2-review/` (local, no se versiona).
 - [x] Revisión de P2 por Montse (PR #3, mergeado).
-- Transición, hasta P5: `/dilemma` conserva su ejercicio de mejor respuesta (`BestResponse`). Pasa
+- Transición, resuelta en P5: `/dilemma` conservaba su ejercicio de mejor respuesta (`BestResponse`). Pasa
   al capítulo 1 (ADR 0023), pero quitarlo de `/dilemma` pide reescribir su prosa con la matriz
   estática, que es trabajo del cuaderno (P5, ADR 0024).
 - Transición, hasta P3: el acto 3 abre con «Dos razones podrían explicar por qué», que ahora sigue
@@ -158,7 +159,7 @@ subpáginas y el pie hasta el cuaderno (P5, ADR 0024).
   (`docs/sources.md`, `vanberg-beliefs`).
 - Transición, resuelta en P4: el acto 6 del home decía que el navegador corre «el código de la mesa,
   en sus tres momentos». Salió con el acto.
-- Transición, hasta P5: la prosa de `/vanberg` todavía habla de «la mesa» («lo que la mesa deja
+- Transición, resuelta en P5: la prosa de `/vanberg` todavía hablaba de «la mesa» («lo que la mesa deja
   fuera»). La reescribe el cuaderno (ADR 0024).
 
 ## P4 · Capítulos 7 y 8, y el candado
@@ -266,15 +267,101 @@ subpáginas y el pie hasta el cuaderno (P5, ADR 0024).
 - Transición, resuelta en P4: debajo de «Fin» seguían el acto 6 y «Quién es»; salieron.
 - Transición, resuelta en P4: el pie de la versión anterior enlazaba a `/finding` también con el
   candado cerrado; ahora su entrada no enlaza, y `verify:dist` lo comprueba.
-- Transición, hasta P5: los créditos enlazan a las páginas del cuaderno que ya existen (`/dilemma`,
+- Transición, resuelta en P5: los créditos enlazaban a las páginas del cuaderno que ya existían (`/dilemma`,
   `/vanberg`, `/how-its-built` y, con el candado abierto, `/finding`), con los títulos de los actos.
   `/sources` y `/about` se suman con el panel (`TODO(P5)` en `Closing.astro`).
-- Transición, hasta P5: la entrada «El hallazgo» vive en el pie de la versión anterior
+- Transición, resuelta en P5: la entrada «El hallazgo» vivía en el pie de la versión anterior
   (`SiteFooter.astro`), así que sale en todas las páginas; en `/finding` cerrado la frase se lee dos
   veces (la página y el pie). En P5 pasa al panel, y el pie nuevo del cuaderno no la repite en el
   home, para que siga saliendo dos veces.
-- Transición, hasta P5: GitHub y LinkedIn no están en el sitio; salieron con «Quién es» y vuelven
+- Transición, resuelta en P5: GitHub y LinkedIn no estaban en el sitio; salieron con «Quién es» y vuelven
   con `/about` (ADR 0024).
+
+## P5 · El cuaderno
+
+- [x] El papel del cuaderno (la tarea pendiente de P1), en `palette.ts` y `tokens.css`, de la tinta, el
+      papel y el hilo de la película: papel de día (`#f9f0e1`, con un resplandor arriba como el del
+      amanecer) y papel de noche (la tinta, `#1d1b3a`), las dos con el grano del papel encima. Tests de
+      contraste AA de cada par en los dos temas, de que el papel tiene color y de que sale de la
+      película. Los tokens de la versión anterior (los roles, la promesa, las series) salieron con
+      sus usos; las distancias de daltonismo de la curva viven ahora junto a sus colores
+      (`src/lib/curve/film.ts`).
+- [x] Las tipografías: el cuaderno pasa a Fraunces (títulos) y Nunito (texto e interfaz), así que
+      Newsreader e Inter salen del sitio con sus archivos y licencias (ADR 0027). Todas las páginas
+      cargan los mismos tres archivos (121 404 bytes); JetBrains Mono, solo `/how-its-built`.
+- [x] El panel (`src/components/notebook/Notebook.astro` y `notebook.ts`): el botón «Cuaderno», en
+      todas las páginas, abre un `<dialog>` modal nativo con las seis entradas, cada una con su línea.
+      Esc, el botón de cerrar o un clic fuera lo cierran, y el foco vuelve al botón. En la película el
+      botón se queda fijo en la esquina, a un toque de cualquier cuadro; en el celular es solo el
+      dibujo del cuaderno, con su nombre para los lectores de pantalla. Sin JavaScript (o sin
+      `<dialog>`), el botón es un enlace a la lista del pie.
+- [x] La entrada «El hallazgo» pasa del pie al panel: con el candado cerrado, su título y la frase de
+      estado, sin enlace; abierto, enlaza a `/finding`, dice «El manuscrito está en revisión.» y lleva
+      el `TODO(launch)` del repo del motor (paso 8 del checklist). En el home la frase sigue saliendo
+      dos veces: el sello del capítulo 7 y el panel (`STATUS_ON_HOME = 2`).
+- [x] El pie del cuaderno (`NotebookFooter.astro`), en todas las páginas, también en el home: las páginas
+      del cuaderno (sin `/finding` con el candado cerrado), el enlace EN/ES y, en las páginas del
+      cuaderno, «Volver a la película». No lleva la frase de estado. Sale el pie de la versión anterior
+      (`SiteFooter.astro`). Las páginas del cuaderno llevan arriba el ícono del hilo, que vuelve a la
+      película, el EN/ES y el botón.
+- [x] Las lupas (`src/components/film/Magnifier.astro`, `MAGNIFIERS` en `src/lib/notebook.ts`): «El dilema,
+      a fondo» en la trampa del capítulo 1, «El experimento de Vanberg, a fondo» en las cifras del
+      capítulo 6 y «El hallazgo, a fondo» en la última tarjeta del hallazgo, solo con el candado
+      abierto. Una lupa en una tarjeta que la lista no nombra rompe el build.
+- [x] Los créditos enlazan a las seis páginas, con `/finding` solo con el candado abierto; sale el
+      `TODO(P5)` de `Closing.astro`.
+- [x] El cuaderno en código: `src/lib/notebook.ts` (las seis entradas, su orden, sus títulos y líneas, el
+      capítulo al que vuelve cada una y qué se puede enlazar según el candado) reemplaza a
+      `src/lib/acts.ts`, que sale con las claves `act.*` y `footer.*`. Rutas nuevas: `/sources`,
+      `/about`, `/es/sources` y `/es/about`.
+- [x] Las seis páginas:
+  - `/dilemma`, sin interacción (ADR 0023): la matriz estática (`src/components/pd/Matrix.astro`, de
+    `src/lib/pd/game.ts`) marca la mejor respuesta de cada columna, el equilibrio y la celda donde los
+    dos estarían mejor. Salen `BestResponse`, su script, `pd/strings.ts`, `pd/text.ts` y 16 claves
+    `pd.*`; la mejor respuesta se juega en el capítulo 1.
+  - `/vanberg`, sin «la mesa»: la tabla de celdas muestra cada cuenta exacta junto a su tasa, y una
+    sección nueva cuenta cómo se volvieron a contar los datos públicos, en fracciones.
+  - `/finding`, con el mismo contenido. Su gráfica de culpa sale de `Curve.astro` a un componente propio,
+    estático y sin script (`GuiltChart.astro`), en el papel del cuaderno (la culpa personal en tinta,
+    como en la curva de la película) y detrás del candado (`LOCKED_MODULES`). Así `/finding` ya no
+    carga el script del control de la curva: se cierra la pregunta abierta que venía de F5.
+  - `/how-its-built`, un caso de estudio: el storyboard, el motor de escenas con una demostración
+    pequeña (`Day.astro` y `src/lib/film/day.ts`: el cielo de la película como lo pinta el motor, y el
+    amanecer directo a la mañana mezclado canal por canal, que pasa por gris, contra girando el tono,
+    que pasa por rosa: por eso el día tiene una salida del sol), el candado, las fracciones, las
+    revisiones que detienen el build, la accesibilidad, el peso y la bitácora de decisiones. Los
+    presupuestos medidos y Lighthouse quedan en `TODO(P6)`. La parte del motor de simulación sigue
+    detrás del candado, igual.
+  - `/sources`, nueva: cada obra con su referencia completa y, debajo, cada clave del registro con sus
+    cifras, dónde está en la fuente y dónde se usa, con enlaces a los capítulos y a las páginas
+    (`src/lib/sources.ts`, `Sources.astro`). No tiene candado (ADR 0024), así que se ve igual en los
+    dos estados (ADR 0026): no lista las fuentes del hallazgo (Kawagoe y Narita, 2014; la creencia que
+    la curva deja fija; la curva; las cifras de `/finding`), que el capítulo 7 y `/finding` citan
+    donde las usan, ni las cifras retiradas (1/2 y el chat). Axelrod (1984) sale sin página hasta que
+    se verifique (preguntas abiertas).
+  - `/about`, nueva: el nombre, GitHub y LinkedIn (`AUTHOR`), nada más.
+  - Cada página lleva arriba una viñeta de la familia de la película (`Vignette.astro`); `/finding`
+    cerrado, no.
+- [x] La película, a 320 px: el texto del carrete se parte en dos líneas en un celular angosto, así que
+      ya no se encima con el enlace de idioma (pasaba desde antes, al prometer) ni con el botón.
+- [x] Tests: la paridad de páginas con las rutas nuevas; el cuaderno, sus enlaces según el candado y las
+      lupas en las tarjetas que nombra la lista (`src/lib/notebook.test.ts`); el panel (`<dialog>` modal,
+      el foco de vuelta al botón al cerrar por cualquier vía, el respaldo sin JavaScript); `/sources`
+      (cada clave del registro en un solo lugar, las cifras del registro, descripciones sin cifras,
+      nada del hallazgo, `src/lib/sources.test.ts`); la demostración del motor (`day.test.ts`); el papel;
+      el título de cada página igual a su entrada; la regla (h) sobre las seis páginas y además sobre
+      las líneas del panel, de `/sources` y de la demostración; `verify:dist` (la gráfica de culpa entre
+      los módulos bloqueados, la entrada del panel, y ni el pie ni `/sources` llevan la frase).
+- [x] Revisado con el build: el panel solo con el teclado, en inglés a 1440 px y en español a 360 px
+      (Tab llega al botón, Enter abre con el foco en «Cerrar», Tab se queda dentro, y Esc, cerrar o un
+      clic fuera lo cierran con el foco de vuelta en el botón); 320 px sin scroll horizontal en las 14
+      páginas; `verify:dist` en verde en los dos estados (con `under-review` en local, sin commit), y el
+      artículo de `/sources` igual byte a byte en los dos.
+- [x] Capturas para Montse: cada página a 1440 px en inglés y a 360 px en español, en claro y oscuro,
+      con el candado cerrado (el build) y abierto (build local con `under-review`); el panel abierto;
+      las lupas de los capítulos 1, 6 y 7; los créditos; sin JavaScript; el carrete a 320 px. En
+      `scratch/p5-review/` (local, no se versiona).
+- [ ] Revisión de P5 por Montse.
 
 ## Preguntas abiertas
 
@@ -283,11 +370,10 @@ subpáginas y el pie hasta el cuaderno (P5, ADR 0024).
   verificar» en `docs/sources.md`.
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
-- **Un pendiente de la versión anterior sobrevive a P4** (de `docs/archivo/tareas-anteriores.md`,
-  sección F5): con el candado abierto, `/finding` carga el script de `Curve.astro`, que busca un
-  control (`[data-curve]`) que la gráfica de culpa no tiene y no hace nada. Se ve en F5 o con el
-  cuaderno. Los otros dos ya no existen: la tabla oculta del acto 5 salió con el acto (a 320 px, sin
-  scroll horizontal con el candado abierto) y `src/components/table/` salió en P3.
+- **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0026 dice que
+  todo lo que no cubre se ve igual en los dos estados, así que `/sources` no lista las fuentes del
+  hallazgo, tampoco con el candado abierto. Si Montse quiere que las liste al abrirse, hace falta un
+  ADR nuevo que le dé a `/sources` una parte bloqueada (θ y c seguirían solo en `/finding`).
 
 ## Preguntas cerradas
 
