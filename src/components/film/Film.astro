@@ -152,10 +152,15 @@ const of = (id: ChapterId) => {
     overflow: hidden;
   }
 
+  /*
+   * The chapters lie over the whole stage, mostly transparent: they let a click or a tap through to
+   * the stage, where the sound's button is, and only their cards take them (Beat.astro).
+   */
   :global(html.js) .film__chapters {
     position: relative;
     margin-top: -100vh;
     margin-top: -100svh;
+    pointer-events: none;
   }
 
   /*

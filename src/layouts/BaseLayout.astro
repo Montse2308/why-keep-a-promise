@@ -147,11 +147,16 @@ const consoleLine = fill(t(locale, 'console.line'), { url: absoluteHref(site, lo
     height: 1.5rem;
   }
 
-  /* Over the film's stage, in ink, out of the flow so the stage starts at the very top. */
+  /*
+   * Over the film's stage, in ink, out of the flow so the stage starts at the very top. The strip is
+   * as wide as the screen, so it lets clicks and taps through to the stage (the sound's button sits
+   * under it); its links, its button and the notebook's panel take them.
+   */
   .corner--film {
     position: absolute;
     inset: 0 0 auto;
     z-index: 5;
+    pointer-events: none;
     color: var(--film-ink);
     font-family: var(--font-body, system-ui, sans-serif);
     font-weight: 700;
@@ -164,6 +169,10 @@ const consoleLine = fill(t(locale, 'console.line'), { url: absoluteHref(site, lo
   }
 
   /* The film's language links keep the film's ink in either theme; its button floats, so leave its room. */
+  .corner--film :global(:is(a, button, dialog)) {
+    pointer-events: auto;
+  }
+
   .corner--film :global(.lang__current) {
     color: var(--film-card-muted);
   }

@@ -3,6 +3,8 @@ import adr from '../../../docs/decisions/0025-technology.md?raw';
 import film from '../../components/film/film.ts?raw';
 import filmComponent from '../../components/film/Film.astro?raw';
 import player from '../../components/film/sound.ts?raw';
+import beatComponent from '../../components/film/Beat.astro?raw';
+import baseLayout from '../../layouts/BaseLayout.astro?raw';
 import {
   CUE_SIGHT,
   CUES,
@@ -116,6 +118,19 @@ describe('playing it', () => {
     expect(player).toContain('if (!on || !ctx || !master) return;');
     // Not stored: every visit starts silent (ADR 0023: nothing is stored).
     expect(player).not.toMatch(/localStorage|sessionStorage|indexedDB|document\.cookie/);
+  });
+
+  it('takes a real click or tap: every layer over the stage lets it through, but cards and the corner’s controls', () => {
+    // The chapters lie over the whole stage, and the corner strip over its top: the button sits
+    // under both. A script's .click() skips hit-testing, so only these rules keep a person's click.
+    expect(filmComponent).toMatch(/:global\(html\.js\) \.film__chapters \{[^}]*pointer-events: none;/);
+    expect(beatComponent).toMatch(/:global\(html\.js\) \.beat \{[^}]*pointer-events: none;/);
+    expect(beatComponent).toMatch(/:global\(html\.js\) \.card \{[^}]*pointer-events: auto;/);
+    expect(baseLayout).toMatch(/\.corner--film \{[^}]*pointer-events: none;/);
+    expect(baseLayout).toMatch(/\.corner--film :global\(:is\(a, button, dialog\)\) \{\s*pointer-events: auto;/);
+    // The button itself is not inside any of those layers: it is in the stage, beside the spool.
+    expect(filmComponent.indexOf('data-sound')).toBeGreaterThan(filmComponent.indexOf('class="film__controls"'));
+    expect(filmComponent.indexOf('data-sound')).toBeLessThan(filmComponent.indexOf('class="film__chapters"'));
   });
 
   it('makes its sounds in Web Audio, from no file', () => {
