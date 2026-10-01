@@ -9,7 +9,7 @@
  * so locked prose never reaches a locked build.
  */
 
-export const SLOTS = ['pd-matrix', 'switch-table', 'guilt-chart', 'day', 'sources', 'author'] as const;
+export const SLOTS = ['pd-matrix', 'switch-table', 'guilt-chart', 'day', 'weight', 'sources', 'author'] as const;
 export type SlotName = (typeof SLOTS)[number];
 
 export type Segment = { readonly kind: 'html'; readonly html: string } | { readonly kind: 'slot'; readonly name: SlotName };

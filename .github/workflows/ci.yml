@@ -36,3 +36,6 @@ jobs:
 
       - name: Verify the lock in dist/ (ADR 0026)
         run: npm run verify:dist
+
+      - name: Weigh dist/ against the budgets (ADR 0025)
+        run: npm run budgets

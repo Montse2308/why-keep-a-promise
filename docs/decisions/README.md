@@ -23,6 +23,7 @@ números no se reutilizan.
 | [0025](0025-technology.md) | La tecnología: mejora progresiva, el motor de escenas propio, sonido, presupuestos y dependencias. |
 | [0026](0026-the-lock.md) | El candado: qué cubre, cómo se cierra en el build, `verify:dist` y cómo se abre. |
 | [0027](0027-character-sheet.md) | Dirección de arte Papel y la hoja de personajes aprobada: la luz del día, el elenco y sus colores, las dos voces, el hilo dorado, los boletos y la tipografía. |
+| [0028](0028-budget-units.md) | Los presupuestos de peso del 0025 en KiB, y sobre qué páginas valen. |
 
 Archivados (no rigen): 0002, 0003, 0004, 0009, 0014, 0015, 0017, 0018, 0019, 0020 y 0022, en
 [`docs/archivo/decisiones/`](../archivo/decisiones/).

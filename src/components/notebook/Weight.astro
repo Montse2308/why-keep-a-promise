@@ -1,0 +1,81 @@
+---
+/**
+ * /how-its-built's table of the home's weight and speed (ADR 0025): each ceiling, from
+ * src/lib/budgets.ts, beside what Lighthouse measured on the home in the page's language, from
+ * src/data/lighthouse.json (scripts/lighthouse.mjs writes it from the reports, with their
+ * provenance). `npm run budgets` checks every page against the same ceilings after each build.
+ */
+import lighthouse from '../../data/lighthouse.json';
+import { BUDGETS, KB, LCP_CEILING_MS, type BudgetId } from '../../lib/budgets';
+import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const measured = lighthouse.pages.find((page) => page.locale === locale && page.route === 'home');
+if (!measured) throw new Error(`No Lighthouse measurement of the ${locale} home`);
+const { provenance } = lighthouse;
+
+// Ceilings as they were set (40 KiB, 2.5 s); measurements to one decimal.
+const decimal = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const round = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
+const kib = (bytes: number, format = decimal) => fill(tr('notebook.weight.kib'), { n: format.format(bytes / KB) });
+const seconds = (ms: number, format = decimal) => fill(tr('notebook.weight.seconds'), { n: format.format(ms / 1000) });
+const ceiling = (id: BudgetId) => {
+  const budget = BUDGETS.find((b) => b.id === id);
+  if (!budget) throw new Error(`No budget ${id}`);
+  return budget.bytes;
+};
+const rows: { key: UiKey; limit: string; value: string }[] = [
+  { key: 'notebook.weight.script', limit: kib(ceiling('home-script'), round), value: kib(measured.bytes.script) },
+  { key: 'notebook.weight.fonts', limit: kib(ceiling('fonts'), round), value: kib(measured.bytes.font) },
+  { key: 'notebook.weight.total', limit: kib(ceiling('first-load'), round), value: kib(measured.bytes.total) },
+  { key: 'notebook.weight.lcp', limit: seconds(LCP_CEILING_MS, round), value: seconds(measured.lcpMs) },
+];
+const date = new Intl.DateTimeFormat(locale, { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${provenance.measured}T00:00:00Z`));
+const source = fill(tr('notebook.weight.source'), {
+  version: provenance.version,
+  date,
+  device: provenance.device,
+  cpu: provenance.cpuSlowdownMultiplier,
+  runs: provenance.runs,
+});
+---
+
+<table class="weight">
+  <caption>{tr('notebook.weight.caption')}</caption>
+  <thead>
+    <tr>
+      <th scope="col"><span class="visually-hidden">{tr('notebook.weight.what')}</span></th>
+      <th scope="col">{tr('notebook.weight.limit')}</th>
+      <th scope="col">{tr('notebook.weight.measured')}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      rows.map(({ key, limit, value }) => (
+        <tr>
+          <th scope="row">{tr(key)}</th>
+          <td>{limit}</td>
+          <td class="weight__measured">{value}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+<p class="table-source">{source}</p>
+
+<style>
+  .weight__measured {
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .weight td {
+    white-space: nowrap;
+  }
+</style>

@@ -1,0 +1,46 @@
+{
+  "provenance": {
+    "tool": "Lighthouse",
+    "version": "13.5.0",
+    "measured": "2026-10-01",
+    "served": "npm run preview",
+    "formFactor": "mobile",
+    "device": "moto g power (2022)",
+    "throttlingMethod": "simulate",
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "cpuSlowdownMultiplier": 4,
+    "runs": 3,
+    "statistic": "median run by LCP"
+  },
+  "pages": [
+    {
+      "locale": "en",
+      "route": "home",
+      "lcpMs": 2110,
+      "fcpMs": 1660,
+      "tbtMs": 46,
+      "cls": 0,
+      "score": 0.98,
+      "bytes": {
+        "script": 16005,
+        "font": 122364,
+        "total": 216202
+      }
+    },
+    {
+      "locale": "es",
+      "route": "home",
+      "lcpMs": 2110,
+      "fcpMs": 1660,
+      "tbtMs": 33,
+      "cls": 0,
+      "score": 0.98,
+      "bytes": {
+        "script": 16005,
+        "font": 122364,
+        "total": 217260
+      }
+    }
+  ]
+}

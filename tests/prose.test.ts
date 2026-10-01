@@ -154,14 +154,15 @@ describe('voice', () => {
     }
   });
 
-  it('marks unwritten content only with TODO(launch), the engine link of step 8, and TODO(P6) for the measured performance', () => {
+  it('marks unwritten content only with TODO(launch), the engine link of step 8', () => {
     for (const file of subpageFiles) {
       const phases = [...file.body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1] ?? '');
-      const allowed = file.name === 'how-its-built' ? ['launch', 'P6'] : ['launch'];
-      expect(phases.every((phase) => allowed.includes(phase)), `${file.locale}/${file.name}`).toBe(true);
+      expect(phases.every((phase) => phase === 'launch'), `${file.locale}/${file.name}`).toBe(true);
     }
-    // /how-its-built waits for P6 in one place only: the weight budgets and the Lighthouse report.
-    for (const locale of LOCALES) expect(bySubpage(locale, 'how-its-built')?.body.match(/TODO\(P6\)/g)).toHaveLength(1);
+  });
+
+  it("gives /how-its-built's measured weight and speed in its table, not in the prose", () => {
+    for (const locale of LOCALES) expect(bySubpage(locale, 'how-its-built')?.body).toContain('<!-- slot:weight -->');
   });
 });
 

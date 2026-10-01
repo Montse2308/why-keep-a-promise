@@ -20,6 +20,7 @@ npm run check    # astro check + tsc
 npm test         # vitest
 npm run build    # sitio estático en dist/
 npm run verify:dist  # nada bloqueado llegó a dist/
+npm run budgets      # cada página dentro de su presupuesto de peso
 ```
 
 Hecho con Astro, TypeScript y SVG. Inglés en `/`, español en `/es/`.

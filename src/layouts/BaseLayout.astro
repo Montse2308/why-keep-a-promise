@@ -5,7 +5,10 @@ import LanguageSwitch from '../components/LanguageSwitch.astro';
 import Notebook from '../components/notebook/Notebook.astro';
 import NotebookFooter from '../components/notebook/NotebookFooter.astro';
 import { FILM } from '../lib/design/film';
+import { AWAY_KEYS, THREADS } from '../lib/details';
 import { DEFAULT_LOCALE, LOCALES, t, type Locale } from '../lib/i18n';
+import { POSTER, posterPath } from '../lib/posters/poster';
+import { fill } from '../lib/template';
 import { absoluteHref, assetHref, href, type Route } from '../lib/routes';
 
 interface Props {
@@ -28,7 +31,13 @@ const site = Astro.site ?? new URL('https://montse2308.github.io');
 // not tag subsets. Preload what the first screen draws: the title in Fraunces italic, the text in Nunito.
 const titleFont = fontData['--font-display']?.find((font) => font.style === 'italic')?.src[0];
 const textFont = fontData['--font-body']?.find((font) => font.style === 'normal')?.src[0];
-// TODO(F5): description and Open Graph tags.
+// The page's poster for a shared link (ADR 0025), drawn by src/pages/posters/.
+const poster = new URL(assetHref(posterPath(locale, route)), site).href;
+const posterAlt = fill(t(locale, 'poster.alt'), { title });
+// The tab's line while the visitor is away, by the thread's state, and the console's note (src/lib/details.ts).
+const away = JSON.stringify(Object.fromEntries(THREADS.map((thread) => [thread, t(locale, AWAY_KEYS[thread])])));
+const consoleLine = fill(t(locale, 'console.line'), { url: absoluteHref(site, locale, 'how-its-built') });
+// TODO(F5): each page's description.
 ---
 
 <!doctype html>
@@ -41,6 +50,15 @@ const textFont = fontData['--font-body']?.find((font) => font.style === 'normal'
     {LOCALES.map((alt) => <link rel="alternate" hreflang={alt} href={absoluteHref(site, alt, route)} />)}
     <link rel="alternate" hreflang="x-default" href={absoluteHref(site, DEFAULT_LOCALE, route)} />
     <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:url" content={absoluteHref(site, locale, route)} />
+    <meta property="og:image" content={poster} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content={String(POSTER.width)} />
+    <meta property="og:image:height" content={String(POSTER.height)} />
+    <meta property="og:image:alt" content={posterAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
     {film && <script is:inline>document.documentElement.classList.add('js');</script>}
     {titleFont && <link rel="preload" href={titleFont.url} as="font" type="font/woff2" crossorigin />}
     {textFont && <link rel="preload" href={textFont.url} as="font" type="font/woff2" crossorigin />}
@@ -49,7 +67,7 @@ const textFont = fontData['--font-body']?.find((font) => font.style === 'normal'
     {codeFont && <Font cssVariable="--font-jetbrains-mono" />}
     <meta name="generator" content={Astro.generator} />
   </head>
-  <body>
+  <body data-away={away} data-console={consoleLine} data-name={t(locale, 'poster.name')}>
     <a class="skip-link visually-hidden" href={href(locale, route, 'main')}>{t(locale, 'skip.link')}</a>
     <!-- No fixed strip: the corner of the first screen scrolls away; over the film, only the notebook's button stays. -->
     <header class:list={['corner', { 'corner--film': film }]}>
@@ -129,11 +147,16 @@ const textFont = fontData['--font-body']?.find((font) => font.style === 'normal'
     height: 1.5rem;
   }
 
-  /* Over the film's stage, in ink, out of the flow so the stage starts at the very top. */
+  /*
+   * Over the film's stage, in ink, out of the flow so the stage starts at the very top. The strip is
+   * as wide as the screen, so it lets clicks and taps through to the stage (the sound's button sits
+   * under it); its links, its button and the notebook's panel take them.
+   */
   .corner--film {
     position: absolute;
     inset: 0 0 auto;
     z-index: 5;
+    pointer-events: none;
     color: var(--film-ink);
     font-family: var(--font-body, system-ui, sans-serif);
     font-weight: 700;
@@ -146,6 +169,10 @@ const textFont = fontData['--font-body']?.find((font) => font.style === 'normal'
   }
 
   /* The film's language links keep the film's ink in either theme; its button floats, so leave its room. */
+  .corner--film :global(:is(a, button, dialog)) {
+    pointer-events: auto;
+  }
+
   .corner--film :global(.lang__current) {
     color: var(--film-card-muted);
   }

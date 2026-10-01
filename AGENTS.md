@@ -17,12 +17,12 @@ A portfolio piece in two layers (ADR 0021):
 
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
-**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P4 are closed;
-P5, the notebook, is built and waits for Montse's review; the next phase is P6, the polish. The
-film tells all nine chapters, chapter 7's finding behind the lock, and ends in chapter 8's credits.
-The notebook has its six pages, its panel on every page (with the finding's entry: its title and the
-status sentence), its magnifiers in the film and its footer. Nothing of the previous version is
-left on the site.
+**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P5 are closed;
+P6, the polish, is built and waits for Montse's review; next come F5 (QA) and F6 (launch). The
+film tells all nine chapters, chapter 7's finding behind the lock, and ends in chapter 8's credits;
+it has its sound, off until pressed. The notebook has its six pages, its panel on every page (with
+the finding's entry: its title and the status sentence), its magnifiers in the film and its footer.
+Every page has its poster for a shared link, and every build is weighed against the budgets.
 
 ## Reading order
 
@@ -53,11 +53,17 @@ not by reading test output.
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
 | `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence is off (ADR 0026) |
+| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load) |
 
-`check`, `test`, `build` and `verify:dist` must be green before every commit. CI
-(`.github/workflows/ci.yml`) runs install → check → test → build → verify:dist on every push and PR.
+`check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
+(`.github/workflows/ci.yml`) runs install → check → test → build → verify:dist → budgets on every
+push and PR.
 
-## Stack (ADR 0025)
+The LCP is measured apart, by hand, with Lighthouse pinned (not a dependency), three runs per home
+against `npm run preview`; `node scripts/lighthouse.mjs` turns the reports into
+`src/data/lighthouse.json`, which `/how-its-built` cites (the command is in the script's header).
+
+## Stack (ADR 0025, ADR 0028)
 
 - Astro, 100 % static output. TypeScript strict. No UI framework, no Tailwind.
 - Progressive enhancement: Astro renders a storyboard in HTML (each chapter as a still frame with
@@ -68,9 +74,12 @@ not by reading test output.
 - CSS with tokens (`src/styles/tokens.css`, mirroring `src/lib/design/palette.ts`). Self-hosted
   fonts: Fraunces and Nunito from P1 (ADR 0027), JetBrains Mono for code only.
 - Sound: optional, off by default, synthesised with Web Audio.
-- Budgets: home JS ≤ 40 KB gzipped, first load ≤ 450 KB, LCP ≤ 2.5 s on a mid-range phone.
+- Budgets: home JS ≤ 40 KiB gzipped (the two homes), fonts ≤ 160 KiB and first load ≤ 450 KiB (every
+  page), LCP ≤ 2.5 s on a mid-range phone. KiB, and which pages, by ADR 0028.
 - The only new dependency the plan allows is `@resvg/resvg-js`, as a dev dependency, for Open Graph
-  posters (P6). Anything else: ask first. Check current versions with the official tools; never pin
+  posters (in since P6). Anything else: ask first.
+- No `@types/node`: code that needs Node's API at build time is plain `.mjs` (`scripts/`,
+  `src/lib/posters/fonts.mjs`). Check current versions with the official tools; never pin
   versions from memory.
 - Hosting: GitHub Pages at `https://montse2308.github.io/why-keep-a-promise/`. Zero budget.
 
@@ -88,6 +97,7 @@ src/
   content/figures.ts     every figure and citation the prose may use, keyed to docs/sources.md;
                          /sources shows it
   data/curve.json        the engine's precomputed curve, copied with provenance; never edited (ADR 0010)
+  data/lighthouse.json   the home's Lighthouse measurement, with provenance (scripts/lighthouse.mjs)
   i18n/en.json, es.json  UI strings, flat keys, full parity
   lib/                   pure, tested modules
     i18n.ts              typed t(); fails check and build on key mismatch
@@ -104,7 +114,8 @@ src/
                          deck.ts, bet.ts (chapter 5's deck and bet); guess.ts, signs.ts (chapter 6);
                          finding.ts (chapter 7's beats past the envelope, stubbed while locked);
                          credits.ts (chapter 8's cast and the notebook pages its credits link);
-                         day.ts (/how-its-built's demonstration of the engine's sky)
+                         day.ts (/how-its-built's demonstration of the engine's sky);
+                         sound.ts (the score: every cue, what is seen with it, its envelopes)
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light
     notebook.ts          the notebook's six pages, their order, titles and lines, the chapter each
@@ -116,6 +127,11 @@ src/
                          palette.ts (the notebook's paper, day and night; tokens.css mirrors it),
                          colour maths
     subpages.ts          splits notebook prose at its slot and lock markers
+    budgets.ts           the weight budgets and how a built page is weighed against them
+    details.ts           the tab's title while away and the console's note
+    posters/             the Open Graph posters: poster.ts (the drawing, the lines set to fit),
+                         metrics.ts (advance widths from TrueType), render.ts + fonts.mjs (PNG
+                         with resvg at build time)
     table/               Vanberg's game: exact payoffs (PAYOFFS), the decision (chapter 3), the
                          recipients' beliefs and scale, real roll counts, exact fractions
     pd/                  the prisoner's dilemma: its payoffs, the one round of chapter 1 and the
@@ -124,24 +140,29 @@ src/
                          values.ts: chapter 7's numbers; film.ts: the curve on the film's paper;
                          finding.ts: guilt, θ, c and robustness for /finding; all behind the lock
     vanberg/             every cell of the switch treatment and the baselines, exact counts
-  assets/fonts/          self-hosted woff2, OFL licences, provenance
+  assets/fonts/          self-hosted woff2, OFL licences, provenance; posters/ static TrueType
+                         cuts for the posters only, never shipped
   styles/                tokens.css, base.css
   components/            film/ (Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
                          Voices, Signs, Engine, Magnifier, chapters/ one per chapter plus Finding,
-                         the locked part of chapter 7, film.ts);
-                         notebook/ (Notebook, the button and panel, with notebook.ts;
-                         NotebookFooter; Sources, Author, Day, Vignette);
+                         the locked part of chapter 7, film.ts, sound.ts the Web Audio player);
+                         notebook/ (Notebook, the button and panel, with notebook.ts and
+                         details.ts; NotebookFooter; Sources, Author, Day, Weight, Vignette);
                          curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
                          LanguageSwitch
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
-  pages/                 thin wrappers for each route and locale
+  pages/                 thin wrappers for each route and locale; posters/[locale]/[route].png.ts
+                         renders each page's poster
 scripts/verify-dist.mjs  checks dist/ against the lock, its links and the status sentence (ADR 0026)
+scripts/budgets.mjs      weighs dist/ against the budgets (ADR 0025)
+scripts/lighthouse.mjs   Lighthouse reports → src/data/lighthouse.json
 tests/                   repo-level tests (page parity, prose figures and budgets, rule (h), the
                          film's captions, forbidden phrases, curve and /finding figures,
-                         verify:dist markers, code quoted on /how-its-built)
+                         verify:dist markers, code quoted on /how-its-built, budgets, posters,
+                         the Lighthouse measurement)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy); archivo/ = history;
                          prototipo/ = the round-4 prototype
 scratch/                 local notes, git-ignored, never committed

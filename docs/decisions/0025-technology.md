@@ -2,6 +2,8 @@
 
 **Estado:** aceptada (P0). Reemplaza el ADR 0009 (archivado) y reescribe lo que sigue vigente de él.
 Reemplaza también los párrafos sobre el JavaScript del sitio de los ADR 0015 y 0017 (archivados).
+Precisado por el ADR 0028: los KB de los presupuestos de peso son KiB, y los de fuentes y primera
+carga valen en cada página.
 
 ## Contexto
 
