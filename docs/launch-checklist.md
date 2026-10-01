@@ -15,6 +15,14 @@ el paso 6.
       nombres de revista, correos, rutas de Drive y datos personales. Si aparece algo, se limpia
       el historial antes de seguir. Revisar también `dist/` (`grep -r "TODO(" dist/` vacío salvo
       `TODO(launch)`, que se resuelve en el paso 8).
+- [ ] **3b. Las cifras del hallazgo en `/sources`.** Antes de abrir el candado, decidir con un ADR
+      nuevo si `/sources` lista también las cifras del hallazgo (las de `/finding` y las del
+      capítulo 7) cuando el candado esté abierto. Hoy no las lista: el ADR 0024 le da a `/sources`
+      «Candado: —» y el ADR 0026 hace que todo lo que no cubre se vea igual en los dos estados, así
+      que con el candado abierto el «cada cifra de la página» del ADR 0024 deja fuera las del
+      hallazgo. Si el ADR dice que sí, `/sources` gana una parte bloqueada (θ y c siguen solo en
+      `/finding`) y `verify:dist` la suma a las páginas que llevan contenido bloqueado; si dice que
+      no, el ADR precisa el «cada cifra de la página» del 0024. El paso 4 no se da sin ese ADR.
 - [ ] **4. Estado del manuscrito.** Pasar `MANUSCRIPT_STATUS` en `src/config.ts` a
       `'under-review'` ("The manuscript is under review." / "El manuscrito está en revisión.").
       Cambiar el estado abre el candado (ADR 0026): el hallazgo del capítulo 7 con su curva y su
