@@ -3,6 +3,8 @@
 **Estado:** aceptada (P0). Reemplaza los ADR 0019 y 0020 (archivados). Precisa el ADR 0001 y el
 0012. El candado de la película está en el ADR 0026. Precisado por el ADR 0027: la promesa del
 visitante se ve como un hilo dorado, no como un diamante, y la dirección de arte es la del 0027.
+Precisado por el ADR 0029: lo que el visitante contesta no sale de la pestaña ni se envía, y la
+película lo recuerda en esa pestaña.
 
 ## Contexto
 

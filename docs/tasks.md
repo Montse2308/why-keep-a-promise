@@ -501,7 +501,7 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
         Axelrod invited programs…» / «Axelrod y Hamilton (1981) lo miden como la probabilidad de que
         los mismos dos vuelvan a encontrarse. Axelrod invitó a programas…», y «The condition comes
         from Axelrod and Hamilton (1981).» / «La condición viene de Axelrod y Hamilton (1981).».
-- [ ] **7.0.6** ADR 0029, la memoria de la película en la pestaña (precisa el 0023), con la frase del
+- [x] **7.0.6** ADR 0029, la memoria de la película en la pestaña (precisa el 0023), con la frase del
       capítulo 8 aprobada en 7.0.3.
 - [x] **7.0.7** Borrador de la lista cerrada de señales del sonido, cada una con lo que se ve.
 - [x] **7.0.8 (Montse)** Aprueba la lista de señales. Aprobó completa la de 7.0.7

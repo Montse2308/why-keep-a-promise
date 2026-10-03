@@ -2,7 +2,8 @@
 
 **Estado:** aceptada (P0). Reemplaza el ADR 0003 (archivado) y la parte de interacciones del ADR
 0017 (archivado). La regla (f) no cambia. Precisado por el ADR 0027: los botones son boletos de
-papel con la consecuencia, no gestos de manos.
+papel con la consecuencia, no gestos de manos. Precisado por el ADR 0029: «Nada se guarda ni se
+envía» se lee «nada sale de la pestaña ni se envía»; la película recuerda lo jugado en esa pestaña.
 
 ## Contexto
 
