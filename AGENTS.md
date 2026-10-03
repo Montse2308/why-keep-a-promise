@@ -17,10 +17,10 @@ A portfolio piece in two layers (ADR 0021):
 
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
-**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P5 are closed;
-P6, the polish, is built and waits for Montse's review. Next comes P7, the fixes from an external
-review, planned in small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and
-`docs/tasks.md`; then F5 (QA) and F6 (launch). The film tells all nine chapters, chapter 7's
+**Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
+(P6, the polish, with PR #9). The active phase is P7, the fixes from an external review, planned in
+small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`; it
+starts with P7.0, the decisions and documents. Then F5 (QA) and F6 (launch). The film tells all nine chapters, chapter 7's
 finding behind the lock, and ends in chapter 8's credits; it has its sound, off until pressed. The
 notebook has its six pages, its panel on every page (with the finding's entry: its title and the
 status sentence), its magnifiers in the film and its footer. Every page has its poster for a shared

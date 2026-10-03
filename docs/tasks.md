@@ -3,12 +3,11 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P6 (el pulido), construida y en espera de la revisión de Montse. P0 a P5
-cerradas: Montse las revisó (PR #1 a PR #8). P4 se cerró sin videos, como ella lo pidió: dio por
-hecho el de la película entera.
+**Fase activa:** P7, los ajustes de la revisión externa (`docs/p7-review-plan.md`), en pasos
+chicos, uno por sesión, empezando por P7.0. P0 a P6 cerradas: Montse las revisó (PR #1 a PR #9).
+P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** P7, los ajustes de la revisión externa (`docs/p7-review-plan.md`), en pasos
-chicos, uno por sesión. Empieza cuando se cierre la revisión de P6; solo 7.0.1 está hecho.
+**Fase siguiente:** F5, la QA, cuando se cierre P7.
 
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
 capítulo 8, con su sonido, apagado hasta que el visitante lo enciende; el cuaderno tiene sus seis
@@ -447,7 +446,7 @@ queda nada en el sitio.
       con el sonido encendido y las cinco señales; capturas del botón (apagado, encendido, celular,
       320 px, movimiento reducido, sin JavaScript), los 14 pósteres y la tabla de `/how-its-built` en
       claro y oscuro. En `scratch/p6-review/` (local, no se versiona).
-- [ ] Revisión de P6 por Montse (el PR).
+- [x] Revisión de P6 por Montse (el PR #9, mergeado).
 
 ## P7 · Ajustes de la revisión externa
 
