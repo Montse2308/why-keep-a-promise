@@ -117,9 +117,10 @@ Empieza cuando se cierre la revisión de P6. Cada subfase se cierra como toda fa
 
 ### P7.0 · Decisiones y documentos
 
-Los ADR 0029 (la memoria en la pestaña), 0030 (las señales del sonido) y 0031 (la tarjeta al
-costado); las decisiones de Montse sobre la tarjeta en la compu, el enlace EN/ES que conserva el
-capítulo, la autora en los pósteres y Axelrod (1984); los textos nuevos aprobados. No toca `src/`.
+Los ADR 0029 (la memoria en la pestaña), 0030 (las señales del sonido), 0031 (la tarjeta al
+costado), 0032 (la autora en los pósteres) y 0033 (la fuente del dilema: Axelrod y Hamilton, 1981);
+las decisiones de Montse sobre la tarjeta en la compu y el enlace EN/ES que conserva el capítulo (las
+dos, no); los textos nuevos aprobados. No toca `src/`.
 
 **Criterio de salida**
 
@@ -143,7 +144,8 @@ storyboard si el script falla; la memoria de la película en la pestaña (ADR 00
 ### P7.2 · Metadatos, SEO y datos (puntos 4, 13 y 6)
 
 Descripción y metadatos de idioma por página, la 404, `noindex` en `/finding` cerrado, el sitemap,
-`theme-color` y `apple-touch-icon`; Axelrod según la opción elegida y el cotejo de 70 y 68.
+`theme-color` y `apple-touch-icon`; Axelrod y Hamilton (1981) en lugar del libro de 1984 (ADR 0033) y
+el cotejo de 70 y 68.
 
 **Criterio de salida**
 
@@ -173,10 +175,10 @@ El acorde al encender y las señales nuevas del ADR 0030, cada una con su entrad
 - Video con sonido, sin silencios largos entre los capítulos 3 y 7.
 - Nada suena sin que el visitante lo haya encendido. Ninguna señal satura y todas suman a lo más 1.
 
-### P7.5 · Horizontal y transiciones (puntos 12, 16 en la compu y 15)
+### P7.5 · Horizontal y transiciones (puntos 12 y 15)
 
-La tarjeta al costado en horizontal (y en la compu, si el ADR 0031 lo aprobó), la cámara sobre el
-área libre, las transiciones del cuaderno y la salida animada del panel.
+La tarjeta al costado con el celular en horizontal (ADR 0031; en la compu siguen centradas), la
+cámara sobre el área libre, las transiciones del cuaderno y la salida animada del panel.
 
 **Criterio de salida**
 
@@ -187,8 +189,7 @@ La tarjeta al costado en horizontal (y en la compu, si el ADR 0031 lo aprobó), 
 ### P7.6 · Contenido, peso y pintura (el resto del punto 16 y el mínimo del 3)
 
 Las colinas sin filtro de sombra (el mínimo del punto 3), cuadros quietos más ligeros, las citas del capítulo 4 en su línea de cita, el enlace EN/ES en el
-panel y lo que Montse haya aprobado en P7.0 (el capítulo en el enlace EN/ES, la autora en los
-pósteres).
+panel y la autora en los pósteres (ADR 0032).
 
 **Criterio de salida**
 

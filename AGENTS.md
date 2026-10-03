@@ -19,8 +19,9 @@ It is **not** a simulator and **not** the instrument of a paper. Details: `docs/
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
 (P6, the polish, with PR #9). The active phase is P7, the fixes from an external review, planned in
-small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`; it
-starts with P7.0, the decisions and documents. Then F5 (QA) and F6 (launch). The film tells all nine chapters, chapter 7's
+small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`.
+P7.0, the decisions (ADR 0029–0033) and the approved texts, is written and waits for Montse's
+review; P7.1 comes next. Then F5 (QA) and F6 (launch). The film tells all nine chapters, chapter 7's
 finding behind the lock, and ends in chapter 8's credits; it has its sound, off until pressed. The
 notebook has its six pages, its panel on every page (with the finding's entry: its title and the
 status sentence), its magnifiers in the film and its footer. Every page has its poster for a shared
@@ -70,7 +71,7 @@ The LCP is measured apart, by hand, with Lighthouse pinned (not a dependency), t
 against `npm run preview`; `node scripts/lighthouse.mjs` turns the reports into
 `src/data/lighthouse.json`, which `/how-its-built` cites (the command is in the script's header).
 
-## Stack (ADR 0025, ADR 0028)
+## Stack (ADR 0025, ADR 0028, ADR 0029, ADR 0030)
 
 - Astro, 100 % static output. TypeScript strict. No UI framework, no Tailwind.
 - Progressive enhancement: Astro renders a storyboard in HTML (each chapter as a still frame with
@@ -80,7 +81,10 @@ against `npm run preview`; `node scripts/lighthouse.mjs` turns the reports into
 - Logic lives in pure modules with Vitest tests (`src/lib/`).
 - CSS with tokens (`src/styles/tokens.css`, mirroring `src/lib/design/palette.ts`). Self-hosted
   fonts: Fraunces and Nunito from P1 (ADR 0027), JetBrains Mono for code only.
-- Sound: optional, off by default, synthesised with Web Audio.
+- Sound: optional, off by default, synthesised with Web Audio; only the closed list of cues of
+  ADR 0030 sounds, each with what the stage shows.
+- Memory: the film remembers what was played only in `history.state` of its own tab entry
+  (ADR 0029). No `localStorage`, `sessionStorage`, IndexedDB, cookies or analytics; nothing is sent.
 - Budgets: home JS ≤ 40 KiB gzipped (the two homes), fonts ≤ 160 KiB and first load ≤ 450 KiB (every
   page), LCP ≤ 2.5 s on a mid-range phone. KiB, and which pages, by ADR 0028.
 - The only new dependency the plan allows is `@resvg/resvg-js`, as a dev dependency, for Open Graph

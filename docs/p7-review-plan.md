@@ -153,33 +153,34 @@ Se adapta el diseño en horizontal; no se bloquea la rotación:
 **Propuesta (ADR 0031):** con `(orientation: landscape) and (max-height: 500px)`, la tarjeta va a la
 izquierda (≈ 44 % del ancho, con scroll interno si no cabe) y la cámara encuadra el resto. Si Montse
 quiere también la tarjeta al costado en la compu (punto 16), se usa el mismo mecanismo con su propio
-punto de corte.
+punto de corte. Montse no lo quiso (7.0.4): en la compu siguen centradas.
 
-## Decisiones que P7.0 deja escritas
+## Decisiones que P7.0 dejó escritas
+
+Montse las tomó en 7.0.3 a 7.0.8; los textos y las listas aprobados están en `tasks.md` (P7.0).
 
 | ADR | Decide | Precisa |
 | --- | ------ | ------- |
-| 0029 | La memoria de la película en la pestaña: qué se guarda (las elecciones y sus resultados, incluida la cara del dado), dónde (`history.state`, en la entrada de la película), cuándo se borra (al cerrar la pestaña o con «Ver de nuevo»), qué nunca pasa (nada sale del navegador) y el texto nuevo del capítulo 8 | 0023 |
-| 0030 | Las señales del sonido: el acorde al encender y la lista cerrada de señales nuevas, cada una con lo que se ve | 0025 |
-| 0031 | La tarjeta al costado: en horizontal en el celular; en la compu solo si Montse lo aprueba (eso precisa el 0027). Registra por qué no se bloquea la rotación | 0027 (si va en la compu) |
+| 0029 | La memoria de la película en la pestaña: qué recuerda (las acciones y sus resultados, incluida la cara del dado), dónde (`history.state`, en la entrada de la película), cómo vuelve (por el mismo camino que un clic, sin animación ni sonido), cuándo se va (una pestaña nueva, «Ver de nuevo»; al cerrar la pestaña, con el matiz de la sesión restaurada), que nada sale de la pestaña, y la frase nueva del capítulo 8 | 0023 y 0021 |
+| 0030 | Las señales del sonido: la lista cerrada de trece (las cinco de P6 y ocho nuevas), cada una con lo que se ve, y sus reglas | 0025 |
+| 0031 | La tarjeta al costado con el celular en horizontal; en la compu siguen centradas. Por qué no se bloquea la rotación | 0027 |
+| 0032 | La autora en los pósteres, como firma con su nombre y nada más | 0021 |
+| 0033 | La fuente del dilema: Axelrod y Hamilton (1981) en lugar del libro de 1984 (la opción B del punto 6), cotejada, con sus páginas; «la sombra del futuro» sale de `/dilemma` | 0021 |
 
-Si Montse aprueba alguna de estas, cada una lleva su ADR (el número que siga); si no, se descarta y
-queda en «Preguntas cerradas» de `tasks.md`:
+**Lo que Montse no aprobó** (7.0.4), en «Preguntas cerradas» de `tasks.md`:
 
-- que el enlace EN/ES conserve el capítulo (precisa el ADR 0013; necesita JS);
-- el nombre de la autora en los pósteres (precisa el ADR 0021).
+- la tarjeta al costado en la compu (choca con el ADR 0027);
+- que el enlace EN/ES conserve el capítulo (precisaba el ADR 0013 y necesitaba JS; además, al cambiar
+  de idioma se abre otra entrada del historial, sin lo jugado).
 
-**Axelrod (1984), punto 6.** Las páginas no se pudieron verificar. Montse elige:
+**Axelrod, punto 6.** Montse eligió la B. No tenía acceso al artículo, así que el agente lo cotejó
+contra la copia de JSTOR en el sitio de Axelrod. Ahí están los pagos, T > R > P > S, la condición
+(escrita como R > (S + T)/2) y el torneo, pero no «la sombra del futuro». Por eso esa oración de
+`/dilemma` se reescribe (ADR 0033). La A y la C quedaron descartadas.
 
-- **B (recomendada):** citar los pagos y la condición `2R > T + S` de Axelrod y Hamilton (1981),
-  *Science* 211, con su figura. Antes hay que comprobar en el artículo que esas cifras y esa figura
-  están ahí. Es una fuente nueva: entra a `docs/sources.md` y al registro de cifras (regla (a)).
-- **A:** citar el capítulo del libro en vez de la página, verificado con el índice publicado.
-- **C:** citar la obra sin dónde está en la fuente. Requiere precisar en un ADR qué muestra
-  `/sources` en ese caso.
-
-**Textos que Montse aprueba antes de que entren**, en EN y ES: la descripción del home, «Ver de
-nuevo», el texto del progreso para lectores de pantalla y la frase nueva del capítulo 8.
+**Los textos nuevos**, aprobados en EN y ES: la descripción del home, «Watch again» / «Ver de nuevo»,
+el progreso como «Chapter {n} of 8» / «Capítulo {n} de 8» (con el número de la tarjeta, porque la
+película cuenta desde 0) y la frase nueva del capítulo 8.
 
 ## Orden y dependencias
 
@@ -190,7 +191,7 @@ nuevo», el texto del progreso para lectores de pantalla y la frase nueva del ca
 | P7.2 · Metadatos y datos | 4, 13, 6 | P7.0 | M |
 | P7.3 · Experiencia | 7, 9, 10, 11 | P7.1 | M |
 | P7.4 · Sonido | 8 | P7.1 y ADR 0030 | S–M |
-| P7.5 · Horizontal y transiciones | 12, 16 (compu), 15 | P7.3 y ADR 0031 | M–L |
+| P7.5 · Horizontal y transiciones | 12, 15 | P7.3 y ADR 0031 | M–L |
 | P7.6 · Contenido, peso y pintura | resto del 16, mínimo del 3 | P7.0 | M |
 | P7.7 · Cierre | 5, 6 (Lighthouse), revisión | todas | S |
 

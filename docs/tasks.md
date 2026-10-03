@@ -522,7 +522,7 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
       pagos del dilema de Axelrod (1984)». Hecho: ADR 0032 (la autora en los pósteres) y ADR 0033 (la
       fuente del dilema); la tarjeta en la compu y el enlace EN/ES con el capítulo, a «Preguntas
       cerradas».
-- [ ] **7.0.12** `docs/decisions/README.md` al día; revisar que ningún documento vigente contradiga a
+- [x] **7.0.12** `docs/decisions/README.md` al día; revisar que ningún documento vigente contradiga a
       otro.
 - [ ] **7.0.13 (Montse)** Revisión de P7.0 (el PR).
 
@@ -582,8 +582,9 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       `docs/sources.md` (verificada, con sus páginas), `src/content/figures.ts`, `src/lib/sources.ts`
       (sale de `UNVERIFIED`), la clave `sources.*` de los dos idiomas, los comentarios de
       `src/lib/pd/` y `src/lib/film/values.ts`, la prosa de `/dilemma` en EN y ES (las oraciones
-      aprobadas en 7.0.5) y sus tests. El candado de `deploy.yml` contra `data-unverified` se
-      queda.
+      aprobadas en 7.0.5) y sus tests, como dice el ADR 0033; el paso 9 de
+      `docs/launch-checklist.md` deja de nombrar a Axelrod (1984). El candado de `deploy.yml`
+      contra `data-unverified` se queda.
 - [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
       puede, decide cómo queda registrado.
 - [ ] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
@@ -622,14 +623,17 @@ de que ninguna satura y de que todas suman a lo más 1.
 
 - [ ] **7.4.1** El acorde corto al encender, con las dos notas del motivo del tema final.
 - [ ] **7.4.2** Las monedas (capítulos 1 y 3).
-- [ ] **7.4.3** El interruptor del apagón y la carta que vuela (capítulo 5).
-- [ ] **7.4.4** El letrero que se voltea (capítulo 6) y el hilo que se rompe.
-- [ ] **7.4.5** Lo que quede de la lista del ADR 0030, si hay más señales que las de arriba.
+- [ ] **7.4.3** El interruptor del apagón y del parpadeo, la luz que vuelve y la carta que vuela
+      (capítulo 5: `switch`, `lights-on` y `card`).
+- [ ] **7.4.4** El letrero que enciende su cifra (capítulo 6, `sign`) y el hilo que se rompe
+      (capítulo 3, `snap`, antes de las monedas).
+- [ ] **7.4.5** Las dos voces que llegan (capítulo 4, `voices`), y el test de que las señales del
+      capítulo 3 no se encimen.
 - [ ] **7.4.6** Video con sonido para Montse: sin silencios largos entre los capítulos 3 y 7, y nada
       suena sin encenderlo.
 - [ ] **7.4.7 (Montse)** Revisión de P7.4 (el PR).
 
-### P7.5 · Horizontal y transiciones (puntos 12, 16 en la compu y 15)
+### P7.5 · Horizontal y transiciones (puntos 12 y 15)
 
 Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pueden ir antes.
 
@@ -697,8 +701,8 @@ Dep.: todas las subfases anteriores.
   la referencia. Mientras tanto `/sources` dice «Páginas por verificar.» y el deploy no publica.
   Al verificarla: escribir `sources.at.axelrod-1984` en los dos idiomas y quitarla de `UNVERIFIED`.
   Las páginas no se pudieron verificar. Montse eligió en 7.0.5 la opción B: citar el artículo de
-  Axelrod y Hamilton (1981), ya cotejado, en lugar del libro. Se aplica en 7.2.8; al aplicarse, esta
-  pregunta pasa a «Preguntas cerradas».
+  Axelrod y Hamilton (1981), ya cotejado, en lugar del libro (ADR 0033). Se aplica en 7.2.8; al
+  aplicarse, esta pregunta pasa a «Preguntas cerradas».
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
 - **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0026 dice que
