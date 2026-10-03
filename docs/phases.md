@@ -2,7 +2,8 @@
 
 Cada sesión de trabajo autoriza una fase. Las fases anteriores (F0–F4 y el rediseño R0–R4) están en
 `docs/archivo/fases-anteriores.md`. F5 (QA) y F6 (lanzamiento) conservan su nombre porque el
-checklist y varios ADR los citan.
+checklist y varios ADR los citan. P7, los ajustes de la revisión externa, va entre P6 y F5, partida
+en subfases (P7.0 a P7.7).
 
 **Toda fase se cierra con:**
 
@@ -106,6 +107,107 @@ El sonido, los detalles (el título de la pestaña y la consola), los pósteres 
 - Video con sonido.
 - El script de presupuestos en verde.
 - Un informe de Lighthouse con LCP ≤ 2.5 s en celular emulado, citado en `/how-its-built`.
+
+## P7 · Ajustes de la revisión externa
+
+Los puntos de la revisión externa que Montse eligió (1, 2A, 4–13, 15 y 16, y el mínimo del 3). El porqué, el orden y
+los riesgos están en `docs/p7-review-plan.md`; los pasos, uno por sesión, en `docs/tasks.md`.
+Empieza cuando se cierre la revisión de P6. Cada subfase se cierra como toda fase: en verde
+(también `budgets`), con paridad EN/ES y con capturas o video a 360 y 1440 px para Montse.
+
+### P7.0 · Decisiones y documentos
+
+Los ADR 0029 (la memoria en la pestaña), 0030 (las señales del sonido) y 0031 (la tarjeta al
+costado); las decisiones de Montse sobre la tarjeta en la compu, el enlace EN/ES que conserva el
+capítulo, la autora en los pósteres y Axelrod (1984); los textos nuevos aprobados. No toca `src/`.
+
+**Criterio de salida**
+
+- `docs/decisions/README.md` lista exactamente los ADR que hay en `docs/decisions/`.
+- Ningún documento vigente contradice a otro.
+- Montse aprobó los textos y las decisiones.
+
+### P7.1 · Cimientos: robustez y refactor (puntos 16 `film.ts`, 1 y 2A)
+
+`film.ts` partido en un controlador por capítulo, sin cambiar nada de lo que hace; el respaldo al
+storyboard si el script falla; la memoria de la película en la pestaña (ADR 0029).
+
+**Criterio de salida**
+
+- Prometer, jugar y abrir una lupa; luego volver con Atrás, recargar y volver por el enlace: las
+  10 interacciones siguen igual en los tres casos.
+- Una pestaña nueva empieza vacía.
+- Sin JS y con el script bloqueado se ve el storyboard.
+- El JS del home sigue lejos de su techo de 40 KiB.
+
+### P7.2 · Metadatos, SEO y datos (puntos 4, 13 y 6)
+
+Descripción y metadatos de idioma por página, la 404, `noindex` en `/finding` cerrado, el sitemap,
+`theme-color` y `apple-touch-icon`; Axelrod según la opción elegida y el cotejo de 70 y 68.
+
+**Criterio de salida**
+
+- `verify:dist` en verde en los dos estados del candado (`under-review` en local, sin commit), y
+  revisa el sitemap, el `noindex` y las descripciones.
+- Las cabeceras de las 14 páginas revisadas.
+- `/sources` sin «por verificar».
+
+### P7.3 · La película: experiencia (puntos 7, 9, 10 y 11)
+
+El chat en orden, el progreso pasivo, la vida en reposo, «Ver de nuevo» y el final que se funde con
+el pie.
+
+**Criterio de salida**
+
+- Video del recorrido a 360 y 1440 px.
+- Teclado completo; el progreso no recibe el foco.
+- Con movimiento reducido no hay balanceo ni parpadeo.
+- Los tests de la coreografía en verde, incluido el reloj de la luz.
+
+### P7.4 · Sonido (punto 8)
+
+El acorde al encender y las señales nuevas del ADR 0030, cada una con su entrada en `CUE_SIGHT`.
+
+**Criterio de salida**
+
+- Video con sonido, sin silencios largos entre los capítulos 3 y 7.
+- Nada suena sin que el visitante lo haya encendido. Ninguna señal satura y todas suman a lo más 1.
+
+### P7.5 · Horizontal y transiciones (puntos 12, 16 en la compu y 15)
+
+La tarjeta al costado en horizontal (y en la compu, si el ADR 0031 lo aprobó), la cámara sobre el
+área libre, las transiciones del cuaderno y la salida animada del panel.
+
+**Criterio de salida**
+
+- Capturas a 740×360, 844×390, 1024×768 y 1440×900.
+- Sin scroll horizontal a 320 px.
+- Los presupuestos de peso en verde.
+
+### P7.6 · Contenido, peso y pintura (el resto del punto 16 y el mínimo del 3)
+
+Las colinas sin filtro de sombra (el mínimo del punto 3), cuadros quietos más ligeros, las citas del capítulo 4 en su línea de cita, el enlace EN/ES en el
+panel y lo que Montse haya aprobado en P7.0 (el capítulo en el enlace EN/ES, la autora en los
+pósteres).
+
+**Criterio de salida**
+
+- El storyboard sin JS se ve igual que antes, comparado con capturas, salvo la sombra de las
+  colinas, que Montse aprobó por capturas.
+- La primera carga del home pesa menos.
+- La regla (h) y la paridad de idiomas siguen en verde.
+
+### P7.7 · Cierre y entrega a F5 (punto 5 y el resto del 6)
+
+Los README, Lighthouse otra vez sobre el commit final y una revisión completa.
+
+**Criterio de salida**
+
+- `src/data/lighthouse.json` medido sobre el commit final; `/how-its-built` coincide con
+  `npm run budgets`.
+- La revisión completa hecha: 1440, 360 y 320 px, horizontal, EN/ES, teclado, movimiento reducido,
+  sin JS, script bloqueado y axe en las 14 páginas en claro y oscuro.
+- El PR de P7 revisado por Montse. Al cerrarse, empieza F5.
 
 ## F5 · QA
 

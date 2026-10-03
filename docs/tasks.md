@@ -7,6 +7,9 @@ Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, 
 cerradas: Montse las revisó (PR #1 a PR #8). P4 se cerró sin videos, como ella lo pidió: dio por
 hecho el de la película entera.
 
+**Fase siguiente:** P7, los ajustes de la revisión externa (`docs/p7-review-plan.md`), en pasos
+chicos, uno por sesión. Empieza cuando se cierre la revisión de P6; solo 7.0.1 está hecho.
+
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
 capítulo 8, con su sonido, apagado hasta que el visitante lo enciende; el cuaderno tiene sus seis
 páginas, su panel en todas las páginas, sus lupas en la película y su pie. Cada página tiene su
@@ -446,6 +449,197 @@ queda nada en el sitio.
       claro y oscuro. En `scratch/p6-review/` (local, no se versiona).
 - [ ] Revisión de P6 por Montse (el PR).
 
+## P7 · Ajustes de la revisión externa
+
+El porqué de cada paso está en `docs/p7-review-plan.md`; la evidencia (archivos, líneas y
+mediciones), en `docs/p7-external-review.md`. Cada paso cabe en una sesión corta,
+termina en verde (`check`, `test`, `build`, `verify:dist` y `budgets`) y deja el sitio entero: se
+puede parar después de cualquiera. El número del paso (`7.1.3`) va en el commit. Un paso
+**(Montse)** es una decisión o aprobación suya: el agente prepara borradores, capturas u opciones,
+pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más que el anterior.
+
+### P7.0 · Decisiones y documentos (no toca `src/`)
+
+- [x] **7.0.1** El plan en el repo: `docs/p7-review-plan.md`, la revisión copiada en
+      `docs/p7-external-review.md`, P7 en `phases.md` y en este archivo, y `AGENTS.md` al día.
+- [ ] **7.0.2** Borradores en EN y ES de los cuatro textos nuevos: la descripción del home, «Ver de
+      nuevo», el progreso para lectores de pantalla («Capítulo 5 de 9») y la frase nueva del
+      capítulo 8 (reemplaza a `film.closing.private`). En `scratch/`, para Montse.
+- [ ] **7.0.3 (Montse)** Aprueba o corrige los cuatro textos.
+- [ ] **7.0.4 (Montse)** Decide sí o no: la tarjeta al costado también en la compu; el enlace EN/ES
+      que conserva el capítulo; la autora en los pósteres.
+- [ ] **7.0.5 (Montse)** Elige la opción de Axelrod (1984): B (recomendada), A o C. Con B, comprueba
+      en el artículo de 1981 que los pagos, `2R > T + S` y la figura están ahí.
+- [ ] **7.0.6** ADR 0029, la memoria de la película en la pestaña (precisa el 0023), con la frase del
+      capítulo 8 aprobada en 7.0.3.
+- [ ] **7.0.7** Borrador de la lista cerrada de señales del sonido, cada una con lo que se ve.
+- [ ] **7.0.8 (Montse)** Aprueba la lista de señales.
+- [ ] **7.0.9** ADR 0030, las señales del sonido (precisa el 0025).
+- [ ] **7.0.10** ADR 0031, la tarjeta al costado (precisa el 0027 si va en la compu), con el porqué de
+      no bloquear la rotación (WCAG 1.3.4).
+- [ ] **7.0.11** Lo que 7.0.4 aprobó lleva su ADR (el número que siga); lo que no, pasa a «Preguntas
+      cerradas». Si 7.0.5 eligió C, también su ADR.
+- [ ] **7.0.12** `docs/decisions/README.md` al día; revisar que ningún documento vigente contradiga a
+      otro.
+- [ ] **7.0.13 (Montse)** Revisión de P7.0 (el PR).
+
+### P7.1 · Cimientos: robustez y refactor (puntos 16 `film.ts`, 1 y 2A)
+
+Partir `film.ts` (7.1.1 a 7.1.4) y el respaldo (7.1.5 y 7.1.6) no chocan con ningún ADR: pueden
+empezar en cuanto se cierre P6, sin esperar a P7.0.
+
+- [ ] **7.1.1** Referencia «antes»: recorrer la película entera con clics reales a 360 y 1440 px,
+      con las capturas y la lista de pasos en `scratch/p7-1/` (no se versiona).
+- [ ] **7.1.2** Sacar de `film.ts` los controladores de los capítulos 0 a 2 (`arrival`, `two-rooms`,
+      `talk`) a `src/components/film/chapters/*.ts`, junto a su `.astro`. El ciclo de
+      `requestAnimationFrame` y el estado se quedan en `film.ts`. Comportamiento idéntico.
+- [ ] **7.1.3** Lo mismo con los capítulos 3 a 5 (`fold`, `two-voices`, `blackout`).
+- [ ] **7.1.4** Lo mismo con los capítulos 6 a 8 (`real-people`, `my-research`, `closing`). Recorrido
+      «después» igual a la referencia de 7.1.1.
+- [ ] **7.1.5** Respaldo, parte 1: `BaseLayout.astro` pone la clase `js` solo si el navegador corre
+      módulos.
+- [ ] **7.1.6** Respaldo, parte 2: `start()` marca `data-film-ready` y, si lanza un error, quita
+      `js`; un temporizador de unos 4 s quita `js` si la película nunca arrancó. Verificar
+      bloqueando el script del build: se ve el storyboard, no la escena rota.
+- [ ] **7.1.7** `src/lib/film/memory.ts`, puro y con tests: el registro de acciones (prometer, la
+      ronda, cada columna, el mensaje, la decisión con su cara del dado, cada carta, la apuesta, las
+      dos adivinanzas y las dos respuestas finales), con versión y validación al leer (lo raro se
+      ignora). Todavía sin conectar. Dep.: ADR 0029 (7.0.6).
+- [ ] **7.1.8** Cada controlador anota su acción con `history.replaceState`.
+- [ ] **7.1.9** Al cargar, las acciones guardadas se reproducen sin animación por el mismo camino
+      de código que un clic: boletos, salidas `aria-live`, carrete, mazo y escala quedan igual.
+- [ ] **7.1.10** En las páginas del cuaderno, si el visitante llegó desde la película, «Volver a la
+      película» y «← Volver a …» hacen `history.back()`. Va en el script del panel (sin script
+      nuevo, ADR 0025); sin JS siguen siendo enlaces normales.
+- [ ] **7.1.11** El capítulo 8 con la frase nueva del ADR 0029, en EN y ES.
+- [ ] **7.1.12** Verificación de salida (los tres caminos de vuelta, pestaña nueva vacía, sin JS,
+      script bloqueado, peso del JS) y capturas para Montse.
+- [ ] **7.1.13 (Montse)** Revisión de P7.1 (el PR).
+
+### P7.2 · Metadatos, SEO y datos (puntos 4, 13 y 6)
+
+Dep.: P7.0. Puede ir en paralelo a P7.1.
+
+- [ ] **7.2.1** `<meta name="description">` y `og:description` por página e idioma: las del cuaderno
+      salen de su línea del panel; la del home, de la clave nueva (7.0.3); `/finding` cerrado lleva
+      la pregunta del sitio, no la frase de estado. Quita el `TODO(F5)` de `BaseLayout.astro`.
+- [ ] **7.2.2** `og:locale`, `og:locale:alternate` y `og:site_name`.
+- [ ] **7.2.3** Test: las 14 páginas llevan descripción, en paridad y sin frases prohibidas;
+      `verify:dist` revisa que la descripción no filtre el candado.
+- [ ] **7.2.4** `src/pages/404.astro`, bilingüe en una sola página (GitHub Pages sirve un único
+      `404.html`), con el escenario y los dos enlaces de vuelta.
+- [ ] **7.2.5** `noindex` en `/finding` según `findingUnlocked()`; `verify:dist` lo exige con el
+      candado cerrado y lo prohíbe con el candado abierto.
+- [ ] **7.2.6** `src/pages/sitemap.xml.ts`, propio y sin dependencias, con las alternativas de
+      idioma; con el candado cerrado no lista `/finding`, y `verify:dist` lo comprueba. Sin
+      `robots.txt` (un sitio de proyecto no está en la raíz del dominio).
+- [ ] **7.2.7** `theme-color` y `apple-touch-icon` en PNG de 180 px, con el mismo proceso de resvg que
+      los pósteres.
+- [ ] **7.2.8** Axelrod según 7.0.5: `docs/sources.md`, `src/content/figures.ts`, `UNVERIFIED` en
+      `src/lib/sources.ts` y sus tests. El candado de `deploy.yml` contra `data-unverified` se
+      queda.
+- [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
+      puede, decide cómo queda registrado.
+- [ ] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
+      revisión de las 14 cabeceras y capturas para Montse.
+- [ ] **7.2.11 (Montse)** Revisión de P7.2 (el PR).
+
+### P7.3 · La película: experiencia (puntos 7, 9, 10 y 11)
+
+Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
+
+- [ ] **7.3.1** El chat en orden: al elegir aparece tu burbuja azul a la derecha y los boletos se van
+      (sale la regla de `Talk.astro` que esconde `.bubble--you` con JS). Orden: pregunta, tu
+      mensaje, respuesta, como en el storyboard.
+- [ ] **7.3.2** El progreso, la lógica: función pura sobre los tramos de `timeline.ts` (capítulo y
+      cuánto se llenó cada cuenta), con test.
+- [ ] **7.3.3** El progreso, a la vista: un hilo fino con 9 cuentas que se llenan con el scroll.
+      Pasivo y sin foco (ADR 0024); texto oculto «Capítulo 5 de 9» para lectores de pantalla.
+      Revisado a 320 px junto al carrete, el sonido y el cuaderno.
+- [ ] **7.3.4** Vida en reposo, el mecanismo: sin un ciclo siempre encendido; se pausa durante el
+      scroll, con la pestaña oculta y con movimiento reducido, y no obliga a repintar los filtros
+      SVG del escenario (riesgo del punto 3). Primero el parpadeo cada pocos segundos.
+- [ ] **7.3.5** El leve balanceo del dado, y la mirada del cuadrado mientras espera: al círculo y
+      luego al boleto.
+- [ ] **7.3.6** La llegada: algo cambia a la mitad del tramo, sin cambiar su largo de 3 pantallas
+      (el reloj de la luz, ADR 0027).
+- [ ] **7.3.7** «Ver de nuevo» al pie de los créditos: un enlace simple que también borra la memoria.
+- [ ] **7.3.8** La escena se funde con el papel del pie, en vez de irse y dejar el suelo vacío.
+- [ ] **7.3.9** Verificación de salida (teclado, movimiento reducido, tests de la coreografía) y
+      video del recorrido a 360 y 1440 px.
+- [ ] **7.3.10 (Montse)** Revisión de P7.3 (el PR).
+
+### P7.4 · Sonido (punto 8)
+
+Dep.: P7.1 y ADR 0030 (7.0.9). Cada señal nueva lleva su entrada en `CUE_SIGHT`, y siguen los tests
+de que ninguna satura y de que todas suman a lo más 1.
+
+- [ ] **7.4.1** El acorde corto al encender, con las dos notas del motivo del tema final.
+- [ ] **7.4.2** Las monedas (capítulos 1 y 3).
+- [ ] **7.4.3** El interruptor del apagón y la carta que vuela (capítulo 5).
+- [ ] **7.4.4** El letrero que se voltea (capítulo 6) y el hilo que se rompe.
+- [ ] **7.4.5** Lo que quede de la lista del ADR 0030, si hay más señales que las de arriba.
+- [ ] **7.4.6** Video con sonido para Montse: sin silencios largos entre los capítulos 3 y 7, y nada
+      suena sin encenderlo.
+- [ ] **7.4.7 (Montse)** Revisión de P7.4 (el PR).
+
+### P7.5 · Horizontal y transiciones (puntos 12, 16 en la compu y 15)
+
+Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pueden ir antes.
+
+- [ ] **7.5.1** `camera.ts` recibe el área libre en vez de la pantalla entera, con test del encuadre.
+- [ ] **7.5.2** La tarjeta al costado con `(orientation: landscape) and (max-height: 500px)`: a la
+      izquierda, ≈ 44 % del ancho, con scroll interno si no cabe; la cámara encuadra el resto.
+- [ ] **7.5.3** El título del capítulo 0 deja de encimarse con las cabezas en horizontal.
+- [ ] **7.5.4** Solo si el ADR 0031 lo aprobó: el mismo mecanismo en la compu, con su punto de corte.
+- [ ] **7.5.5** Transiciones entre las páginas del cuaderno, solo con CSS:
+      `@view-transition { navigation: auto; }` bajo `prefers-reduced-motion: no-preference`, y
+      `view-transition-name` en la viñeta y el título. El home queda fuera.
+- [ ] **7.5.6** Salida animada al cerrar el panel, simétrica a la entrada.
+- [ ] **7.5.7** Capturas a 740×360, 844×390, 1024×768 y 1440×900; sin scroll horizontal a 320 px;
+      presupuestos en verde.
+- [ ] **7.5.8 (Montse)** Revisión de P7.5 (el PR).
+
+### P7.6 · Contenido, peso y pintura (el resto del punto 16 y el mínimo del 3)
+
+Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en cualquier momento.
+
+- [ ] **7.6.1** Punto 3, solo el mínimo: quitar el filtro de sombra (`filter`) de las dos colinas en
+      `World.astro` (`hill-far` y `hill-near`), que son los trazos más grandes que se repintan al
+      mover la cámara. El sol, las nubes, la pared, la lámpara y los personajes conservan su
+      sombra. Capturas antes y después (con JS y sin JS, 360 y 1440 px) para Montse. Sin medir en
+      teléfonos reales y sin cambiar las demás sombras.
+
+- [ ] **7.6.2** Referencia: medir el HTML del home y los nodos de cada cuadro quieto (hoy unos 460 de
+      los 540 KB del HTML y 4 985 nodos) y sacar capturas sin JS de los 9 cuadros, en `scratch/`.
+- [ ] **7.6.3** Cuadros quietos 0 a 2 con solo lo que se ve en su pose; capturas iguales a la
+      referencia.
+- [ ] **7.6.4** Lo mismo con los cuadros 3 a 5.
+- [ ] **7.6.5** Lo mismo con los cuadros 6 a 8.
+- [ ] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La
+      regla (k) se cumple igual: las citas se quedan, solo cambia dónde.
+- [ ] **7.6.7** El enlace EN/ES entra al panel del cuaderno.
+- [ ] **7.6.8** Solo si se aprobó en 7.0.4: el enlace EN/ES conserva el capítulo.
+- [ ] **7.6.9** Solo si se aprobó en 7.0.4: la autora en los pósteres.
+- [ ] **7.6.10** Verificación de salida (storyboard igual, primera carga menor, regla (h) y paridad) y
+      capturas para Montse.
+- [ ] **7.6.11 (Montse)** Revisión de P7.6 (el PR).
+
+### P7.7 · Cierre y entrega a F5 (punto 5 y el resto del 6)
+
+Dep.: todas las subfases anteriores.
+
+- [ ] **7.7.1** `README.md`: sin «Work in progress»; tres o cuatro puntos fuertes (el storyboard, el
+      motor propio, el candado con `verify:dist`, los presupuestos y los tests); el enlace a
+      `/how-its-built`; el enlace al sitio como `TODO(launch)`. `README.es.md`, su copia.
+- [ ] **7.7.2** Una captura o un GIF ligero para los dos README.
+- [ ] **7.7.3** Lighthouse otra vez sobre el commit final; regenerar `src/data/lighthouse.json` para
+      que `/how-its-built` coincida con `npm run budgets`.
+- [ ] **7.7.4** Revisión completa, parte 1: 1440, 360 y 320 px, horizontal, EN/ES.
+- [ ] **7.7.5** Revisión completa, parte 2: teclado, movimiento reducido, sin JS y script bloqueado.
+- [ ] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
+- [ ] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
+
 ## Preguntas abiertas
 
 - **Axelrod (1984):** verificar antes del lanzamiento la página de los pagos del dilema, de la
@@ -454,6 +648,8 @@ queda nada en el sitio.
   buscan en esa. Si solo se tiene otra edición (la revisada de 2006), hay que decidir antes si cambia
   la referencia. Mientras tanto `/sources` dice «Páginas por verificar.» y el deploy no publica.
   Al verificarla: escribir `sources.at.axelrod-1984` en los dos idiomas y quitarla de `UNVERIFIED`.
+  Las páginas no se pudieron verificar: Montse elige entre tres opciones en el paso 7.0.5, y se
+  aplica en 7.2.8 (`docs/p7-review-plan.md`).
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
 - **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0026 dice que

@@ -18,11 +18,13 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P5 are closed;
-P6, the polish, is built and waits for Montse's review; next come F5 (QA) and F6 (launch). The
-film tells all nine chapters, chapter 7's finding behind the lock, and ends in chapter 8's credits;
-it has its sound, off until pressed. The notebook has its six pages, its panel on every page (with
-the finding's entry: its title and the status sentence), its magnifiers in the film and its footer.
-Every page has its poster for a shared link, and every build is weighed against the budgets.
+P6, the polish, is built and waits for Montse's review. Next comes P7, the fixes from an external
+review, planned in small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and
+`docs/tasks.md`; then F5 (QA) and F6 (launch). The film tells all nine chapters, chapter 7's
+finding behind the lock, and ends in chapter 8's credits; it has its sound, off until pressed. The
+notebook has its six pages, its panel on every page (with the finding's entry: its title and the
+status sentence), its magnifiers in the film and its footer. Every page has its poster for a shared
+link, and every build is weighed against the budgets.
 
 ## Reading order
 
@@ -30,9 +32,14 @@ Read these before changing anything, in this order:
 
 1. `docs/plan.md`: what the page is (decided; do not reopen).
 2. `docs/content-rules.md`: what may and may not be written, anywhere.
-3. `docs/phases.md`: phases P0–P6, then F5 (QA) and F6 (launch), with their exit criteria.
-4. `docs/tasks.md`: current tasks; only work on the active phase.
-5. `docs/decisions/README.md` and the ADRs it lists. Every ADR in `docs/decisions/` is in force in
+3. `docs/phases.md`: phases P0–P7, then F5 (QA) and F6 (launch), with their exit criteria.
+4. `docs/tasks.md`: current tasks; only work on the active phase. P7 is split into numbered steps
+   (`7.1.3`), each small enough for one short session and left green; when asked to continue P7,
+   take the first open step whose dependencies are met, and stop at steps marked **(Montse)**.
+5. `docs/p7-review-plan.md`, while P7 is open: why each P7 step exists, in what order, and what was
+   left out and must not be reopened. Read it before any P7 step. `docs/p7-external-review.md` is
+   the review it comes from: evidence (files, lines, measurements), not rules.
+6. `docs/decisions/README.md` and the ADRs it lists. Every ADR in `docs/decisions/` is in force in
    full. A decision changes only through a new ADR; a superseded ADR moves to `docs/archivo/`.
 
 `docs/archivo/` is history: never follow it as a rule. `docs/prototipo/` holds the round-4 prototype
