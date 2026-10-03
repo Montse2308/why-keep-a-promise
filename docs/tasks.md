@@ -517,9 +517,11 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
 - [x] **7.0.9** ADR 0030, las señales del sonido (precisa el 0025).
 - [x] **7.0.10** ADR 0031, la tarjeta al costado (precisa el 0027 si va en la compu), con el porqué de
       no bloquear la rotación (WCAG 1.3.4).
-- [ ] **7.0.11** Lo que 7.0.4 aprobó lleva su ADR (el número que siga); lo que no, pasa a «Preguntas
+- [x] **7.0.11** Lo que 7.0.4 aprobó lleva su ADR (el número que siga); lo que no, pasa a «Preguntas
       cerradas». 7.0.5 eligió B: el mismo ADR, u otro, precisa la línea del ADR 0021 que nombra «los
-      pagos del dilema de Axelrod (1984)».
+      pagos del dilema de Axelrod (1984)». Hecho: ADR 0032 (la autora en los pósteres) y ADR 0033 (la
+      fuente del dilema); la tarjeta en la compu y el enlace EN/ES con el capítulo, a «Preguntas
+      cerradas».
 - [ ] **7.0.12** `docs/decisions/README.md` al día; revisar que ningún documento vigente contradiga a
       otro.
 - [ ] **7.0.13 (Montse)** Revisión de P7.0 (el PR).
@@ -635,7 +637,8 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
 - [ ] **7.5.2** La tarjeta al costado con `(orientation: landscape) and (max-height: 500px)`: a la
       izquierda, ≈ 44 % del ancho, con scroll interno si no cabe; la cámara encuadra el resto.
 - [ ] **7.5.3** El título del capítulo 0 deja de encimarse con las cabezas en horizontal.
-- [ ] **7.5.4** Solo si el ADR 0031 lo aprobó: el mismo mecanismo en la compu, con su punto de corte.
+- ~~**7.5.4** Solo si el ADR 0031 lo aprobó: el mismo mecanismo en la compu, con su punto de
+  corte.~~ No se hace: en la compu las tarjetas siguen centradas (7.0.4, ADR 0031).
 - [ ] **7.5.5** Transiciones entre las páginas del cuaderno, solo con CSS:
       `@view-transition { navigation: auto; }` bajo `prefers-reduced-motion: no-preference`, y
       `view-transition-name` en la viñeta y el título. El home queda fuera.
@@ -663,8 +666,9 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
 - [ ] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La
       regla (k) se cumple igual: las citas se quedan, solo cambia dónde.
 - [ ] **7.6.7** El enlace EN/ES entra al panel del cuaderno.
-- [ ] **7.6.8** Solo si se aprobó en 7.0.4: el enlace EN/ES conserva el capítulo.
-- [ ] **7.6.9** Solo si se aprobó en 7.0.4: la autora en los pósteres.
+- ~~**7.6.8** Solo si se aprobó en 7.0.4: el enlace EN/ES conserva el capítulo.~~ No se hace
+  (7.0.4).
+- [ ] **7.6.9** La autora en los pósteres, como firma (ADR 0032).
 - [ ] **7.6.10** Verificación de salida (storyboard igual, primera carga menor, regla (h) y paridad) y
       capturas para Montse.
 - [ ] **7.6.11 (Montse)** Revisión de P7.6 (el PR).
@@ -705,6 +709,11 @@ Dep.: todas las subfases anteriores.
 
 ## Preguntas cerradas
 
+- ~~¿La tarjeta al costado también en la compu?~~ No: en la computadora las tarjetas siguen
+  centradas, como dice el ADR 0027 (decisión de Montse en 7.0.4; el ADR 0031 lo registra).
+- ~~¿El enlace EN/ES conserva el capítulo?~~ No: necesitaba JavaScript y precisar el ADR 0013, y al
+  cambiar de idioma se abre otra entrada del historial, sin lo jugado (ADR 0029). El enlace sigue
+  siendo simple (decisión de Montse en 7.0.4).
 - ~~¿Los KB de los presupuestos son de 1000 o de 1024 bytes?~~ KiB, 1024 bytes, como Lighthouse; el
   techo de JS vale en los dos home y los de fuentes y primera carga en cada página (ADR 0028,
   decisión de Montse en la revisión de P6).
