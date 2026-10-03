@@ -464,7 +464,19 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
 - [x] **7.0.2** Borradores en EN y ES de los cuatro textos nuevos: la descripción del home, «Ver de
       nuevo», el progreso para lectores de pantalla («Capítulo 5 de 9») y la frase nueva del
       capítulo 8 (reemplaza a `film.closing.private`). En `scratch/`, para Montse.
-- [ ] **7.0.3 (Montse)** Aprueba o corrige los cuatro textos.
+- [x] **7.0.3 (Montse)** Aprueba o corrige los cuatro textos. Aprobó la opción A de cada uno
+      (`scratch/p7-0/textos.md`):
+      - la descripción del home: «An illustrated film you scroll through: why people keep promises
+        that no longer pay, from the prisoner’s dilemma to Vanberg’s experiment (2008).» / «Una
+        película ilustrada que avanza con el scroll: por qué la gente cumple promesas que ya no le
+        convienen, del dilema del prisionero al experimento de Vanberg (2008).»;
+      - «Watch again» / «Ver de nuevo»;
+      - el progreso, con el número de la tarjeta sobre 8, no «de 9» (la película cuenta desde 0):
+        «Chapter {n} of 8» / «Capítulo {n} de 8»;
+      - la frase del capítulo 8: «Everything you chose stays in this tab: nothing is sent
+        anywhere.» / «Todo lo que elegiste se queda en esta pestaña: nada se envía a ningún lado.»
+        No promete que se borre al cerrar la pestaña: el navegador puede devolver `history.state`
+        al reabrirla o al restaurar la sesión, y el ADR 0029 lo dice con ese matiz.
 - [ ] **7.0.4 (Montse)** Decide sí o no: la tarjeta al costado también en la compu; el enlace EN/ES
       que conserva el capítulo; la autora en los pósteres.
 - [ ] **7.0.5 (Montse)** Elige la opción de Axelrod (1984): B (recomendada), A o C. Con B, comprueba
