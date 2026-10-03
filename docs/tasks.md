@@ -484,7 +484,16 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
 - [ ] **7.0.6** ADR 0029, la memoria de la película en la pestaña (precisa el 0023), con la frase del
       capítulo 8 aprobada en 7.0.3.
 - [x] **7.0.7** Borrador de la lista cerrada de señales del sonido, cada una con lo que se ve.
-- [ ] **7.0.8 (Montse)** Aprueba la lista de señales.
+- [x] **7.0.8 (Montse)** Aprueba la lista de señales. Aprobó completa la de 7.0.7
+      (`scratch/p7-0/senales.md`): las cinco de P6 y ocho nuevas, cada una con lo que se ve:
+      - `on`: el acorde al encender el sonido;
+      - `coins`: las monedas, en los capítulos 1 y 3;
+      - `snap`: el hilo que se rompe en el capítulo 3, antes de las monedas, no encima;
+      - `switch`: el interruptor del apagón y del parpadeo;
+      - `card`: la carta que vuela, salvo con movimiento reducido;
+      - `sign`: el letrero que enciende su cifra; se enciende, no se voltea, y no juzga la adivinanza;
+      - `voices`: las dos voces que llegan en el capítulo 4;
+      - `lights-on`: la luz que vuelve después del apagón.
 - [ ] **7.0.9** ADR 0030, las señales del sonido (precisa el 0025).
 - [ ] **7.0.10** ADR 0031, la tarjeta al costado (precisa el 0027 si va en la compu), con el porqué de
       no bloquear la rotación (WCAG 1.3.4).
