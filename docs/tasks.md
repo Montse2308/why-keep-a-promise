@@ -461,7 +461,7 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
 
 - [x] **7.0.1** El plan en el repo: `docs/p7-review-plan.md`, la revisión copiada en
       `docs/p7-external-review.md`, P7 en `phases.md` y en este archivo, y `AGENTS.md` al día.
-- [ ] **7.0.2** Borradores en EN y ES de los cuatro textos nuevos: la descripción del home, «Ver de
+- [x] **7.0.2** Borradores en EN y ES de los cuatro textos nuevos: la descripción del home, «Ver de
       nuevo», el progreso para lectores de pantalla («Capítulo 5 de 9») y la frase nueva del
       capítulo 8 (reemplaza a `film.closing.private`). En `scratch/`, para Montse.
 - [ ] **7.0.3 (Montse)** Aprueba o corrige los cuatro textos.
