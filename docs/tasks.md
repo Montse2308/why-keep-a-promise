@@ -484,8 +484,23 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
         Necesitaba JS, y al cambiar de idioma se abre otra entrada del historial, sin lo jugado;
       - la autora en los pósteres: **sí**, una firma pequeña con `author.name` y nada más (precisa
         el ADR 0021; 7.6.9).
-- [ ] **7.0.5 (Montse)** Elige la opción de Axelrod (1984): B (recomendada), A o C. Con B, comprueba
-      en el artículo de 1981 que los pagos, `2R > T + S` y la figura están ahí.
+- [x] **7.0.5 (Montse)** Elige la opción de Axelrod (1984): B (recomendada), A o C. Con B, comprueba
+      en el artículo de 1981 que los pagos, `2R > T + S` y la figura están ahí. Eligió **B**. Montse no
+      tenía acceso al artículo; el agente lo cotejó contra la copia de JSTOR en el sitio de Axelrod
+      (<https://websites.umich.edu/~axe/research/Axelrod%20and%20Hamilton%20EC%201981.pdf>):
+      - Axelrod, R. y Hamilton, W. D. (1981). The Evolution of Cooperation. *Science*, 211(4489),
+        1390–1396;
+      - la figura 1 (p. 1392) da R = 3, S = 0, T = 5 y P = 1, solo el pago del jugador A (los pares
+        del sitio salen por simetría), y su pie define el juego por T > R > P > S y R > (S + T)/2;
+      - la condición está escrita como R > (S + T)/2, la misma que `2R > T + S`; la nota 17 (p. 1396)
+        dice que descarta que turnarse para explotarse sea mejor que cooperar;
+      - el torneo y Tit-for-Tat, que ganó las dos rondas: p. 1393;
+      - «la sombra del futuro» no está: el artículo habla de la probabilidad *w* de volver a
+        encontrarse. Por eso esa oración de `/dilemma` cambia (7.2.8), con el texto que Montse
+        aprobó: «Axelrod and Hamilton (1981) model it as the chance that the same two meet again.
+        Axelrod invited programs…» / «Axelrod y Hamilton (1981) lo miden como la probabilidad de que
+        los mismos dos vuelvan a encontrarse. Axelrod invitó a programas…», y «The condition comes
+        from Axelrod and Hamilton (1981).» / «La condición viene de Axelrod y Hamilton (1981).».
 - [ ] **7.0.6** ADR 0029, la memoria de la película en la pestaña (precisa el 0023), con la frase del
       capítulo 8 aprobada en 7.0.3.
 - [x] **7.0.7** Borrador de la lista cerrada de señales del sonido, cada una con lo que se ve.
@@ -503,7 +518,8 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
 - [ ] **7.0.10** ADR 0031, la tarjeta al costado (precisa el 0027 si va en la compu), con el porqué de
       no bloquear la rotación (WCAG 1.3.4).
 - [ ] **7.0.11** Lo que 7.0.4 aprobó lleva su ADR (el número que siga); lo que no, pasa a «Preguntas
-      cerradas». Si 7.0.5 eligió C, también su ADR.
+      cerradas». 7.0.5 eligió B: el mismo ADR, u otro, precisa la línea del ADR 0021 que nombra «los
+      pagos del dilema de Axelrod (1984)».
 - [ ] **7.0.12** `docs/decisions/README.md` al día; revisar que ningún documento vigente contradiga a
       otro.
 - [ ] **7.0.13 (Montse)** Revisión de P7.0 (el PR).
@@ -560,8 +576,11 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       `robots.txt` (un sitio de proyecto no está en la raíz del dominio).
 - [ ] **7.2.7** `theme-color` y `apple-touch-icon` en PNG de 180 px, con el mismo proceso de resvg que
       los pósteres.
-- [ ] **7.2.8** Axelrod según 7.0.5: `docs/sources.md`, `src/content/figures.ts`, `UNVERIFIED` en
-      `src/lib/sources.ts` y sus tests. El candado de `deploy.yml` contra `data-unverified` se
+- [ ] **7.2.8** Axelrod según 7.0.5 (B): Axelrod y Hamilton (1981) reemplaza al libro de 1984 en
+      `docs/sources.md` (verificada, con sus páginas), `src/content/figures.ts`, `src/lib/sources.ts`
+      (sale de `UNVERIFIED`), la clave `sources.*` de los dos idiomas, los comentarios de
+      `src/lib/pd/` y `src/lib/film/values.ts`, la prosa de `/dilemma` en EN y ES (las oraciones
+      aprobadas en 7.0.5) y sus tests. El candado de `deploy.yml` contra `data-unverified` se
       queda.
 - [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
       puede, decide cómo queda registrado.
@@ -673,8 +692,9 @@ Dep.: todas las subfases anteriores.
   buscan en esa. Si solo se tiene otra edición (la revisada de 2006), hay que decidir antes si cambia
   la referencia. Mientras tanto `/sources` dice «Páginas por verificar.» y el deploy no publica.
   Al verificarla: escribir `sources.at.axelrod-1984` en los dos idiomas y quitarla de `UNVERIFIED`.
-  Las páginas no se pudieron verificar: Montse elige entre tres opciones en el paso 7.0.5, y se
-  aplica en 7.2.8 (`docs/p7-review-plan.md`).
+  Las páginas no se pudieron verificar. Montse eligió en 7.0.5 la opción B: citar el artículo de
+  Axelrod y Hamilton (1981), ya cotejado, en lugar del libro. Se aplica en 7.2.8; al aplicarse, esta
+  pregunta pasa a «Preguntas cerradas».
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
 - **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0026 dice que
