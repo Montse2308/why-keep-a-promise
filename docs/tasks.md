@@ -471,7 +471,7 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
       en el artículo de 1981 que los pagos, `2R > T + S` y la figura están ahí.
 - [ ] **7.0.6** ADR 0029, la memoria de la película en la pestaña (precisa el 0023), con la frase del
       capítulo 8 aprobada en 7.0.3.
-- [ ] **7.0.7** Borrador de la lista cerrada de señales del sonido, cada una con lo que se ve.
+- [x] **7.0.7** Borrador de la lista cerrada de señales del sonido, cada una con lo que se ve.
 - [ ] **7.0.8 (Montse)** Aprueba la lista de señales.
 - [ ] **7.0.9** ADR 0030, las señales del sonido (precisa el 0025).
 - [ ] **7.0.10** ADR 0031, la tarjeta al costado (precisa el 0027 si va en la compu), con el porqué de
