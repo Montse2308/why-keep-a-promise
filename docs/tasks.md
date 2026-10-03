@@ -477,8 +477,13 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
         anywhere.» / «Todo lo que elegiste se queda en esta pestaña: nada se envía a ningún lado.»
         No promete que se borre al cerrar la pestaña: el navegador puede devolver `history.state`
         al reabrirla o al restaurar la sesión, y el ADR 0029 lo dice con ese matiz.
-- [ ] **7.0.4 (Montse)** Decide sí o no: la tarjeta al costado también en la compu; el enlace EN/ES
-      que conserva el capítulo; la autora en los pósteres.
+- [x] **7.0.4 (Montse)** Decide sí o no: la tarjeta al costado también en la compu; el enlace EN/ES
+      que conserva el capítulo; la autora en los pósteres. Decidió:
+      - la tarjeta al costado en la compu: **no** (sigue centrada, ADR 0027; 7.5.4 no se hace);
+      - el enlace EN/ES que conserva el capítulo: **no** (ADR 0013 sin cambios; 7.6.8 no se hace).
+        Necesitaba JS, y al cambiar de idioma se abre otra entrada del historial, sin lo jugado;
+      - la autora en los pósteres: **sí**, una firma pequeña con `author.name` y nada más (precisa
+        el ADR 0021; 7.6.9).
 - [ ] **7.0.5 (Montse)** Elige la opción de Axelrod (1984): B (recomendada), A o C. Con B, comprueba
       en el artículo de 1981 que los pagos, `2R > T + S` y la figura están ahí.
 - [ ] **7.0.6** ADR 0029, la memoria de la película en la pestaña (precisa el 0023), con la frase del
