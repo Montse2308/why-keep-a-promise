@@ -514,7 +514,7 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
       - `sign`: el letrero que enciende su cifra; se enciende, no se voltea, y no juzga la adivinanza;
       - `voices`: las dos voces que llegan en el capítulo 4;
       - `lights-on`: la luz que vuelve después del apagón.
-- [ ] **7.0.9** ADR 0030, las señales del sonido (precisa el 0025).
+- [x] **7.0.9** ADR 0030, las señales del sonido (precisa el 0025).
 - [ ] **7.0.10** ADR 0031, la tarjeta al costado (precisa el 0027 si va en la compu), con el porqué de
       no bloquear la rotación (WCAG 1.3.4).
 - [ ] **7.0.11** Lo que 7.0.4 aprobó lleva su ADR (el número que siga); lo que no, pasa a «Preguntas
