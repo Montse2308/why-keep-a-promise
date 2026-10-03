@@ -2,7 +2,8 @@
 
 **Estado:** aceptada (P1). Reemplaza el ADR 0022 (archivado) y reescribe lo que sigue vigente de él.
 Precisa los ADR 0021 y 0023 en cómo se ven dos cosas: la promesa del visitante es un hilo dorado,
-no un diamante, y las decisiones se toman con boletos, no con gestos de manos.
+no un diamante, y las decisiones se toman con boletos, no con gestos de manos. Precisado por el
+ADR 0031: con el celular en horizontal, la tarjeta va al costado.
 
 ## Contexto
 
