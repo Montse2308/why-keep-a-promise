@@ -24,10 +24,13 @@ P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10)
 script split by chapter, the fallback to the storyboard and the memory in the tab, is closed
 (PR #11). P7.2 (each page's description and Open Graph metadata, the 404 page, `noindex` on the
 locked /finding, the sitemap, the touch icon, Axelrod and Hamilton (1981) as the dilemma's source)
-is done and waits for Montse's two steps: checking 70 and 68 against `switch.dat` (7.2.9) and the
-review (7.2.11). Then the rest of P7, F5 (QA) and F6 (launch). The film tells all nine chapters,
-chapter 7's finding behind the lock, and ends in chapter 8's credits; it has its sound, off until
-pressed, and remembers what was played in its tab entry. The notebook has its six pages, its panel
+is merged (PR #12); Montse's two steps, checking 70 and 68 against `switch.dat` (7.2.9) and
+confirming its new texts (7.2.11), are still open. P7.3 (the chat in order, the progress beads,
+life at rest, the arrival halfway, «Watch again» and the end melting into the footer) is done and
+waits for Montse's review (7.3.10). Then the rest of P7, F5 (QA) and F6 (launch). The film tells
+all nine chapters, chapter 7's finding behind the lock, and ends in chapter 8's credits, with
+«Watch again» under them; it has its sound, off until pressed, its progress under the spool, its
+cast alive at rest, and remembers what was played in its tab entry. The notebook has its six pages, its panel
 on every page (with the finding's entry: its title and the status sentence), its magnifiers in the
 film and its footer. Every page has its description, its poster for a shared link and its place in
 the sitemap (/finding only behind the lock), and every build is weighed against the budgets.
@@ -133,7 +136,9 @@ src/
                          day.ts (/how-its-built's demonstration of the engine's sky);
                          sound.ts (the score: every cue, what is seen with it, its envelopes);
                          memory.ts (the memory in the tab: the actions, their version and how a
-                         record is read back, ADR 0029)
+                         record is read back, ADR 0029); progress.ts (the chapter on stage and
+                         the beads under the spool); idle.ts (life at rest: blinks, the square's
+                         glances, the waiting die's rock, asked by the frame loop)
     back.ts              when a notebook link back to the film goes back in the tab's history
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light

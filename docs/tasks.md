@@ -686,8 +686,16 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       Cuando el escenario sube, su borde ya es el papel del pie. Solo cambia la opacidad de una capa
       propia, bajo las tarjetas y la esquina: no obliga a repintar el escenario. Sale el degradado
       `film__fade` con JS, que quedaba tapado por el escenario; sin JS se queda.
-- [ ] **7.3.9** Verificación de salida (teclado, movimiento reducido, tests de la coreografía) y
+- [x] **7.3.9** Verificación de salida (teclado, movimiento reducido, tests de la coreografía) y
       video del recorrido a 360 y 1440 px.
+      Teclado solo (1440 EN, 360 ES y 1440 con movimiento reducido): 17 boletos jugados con Enter, el
+      foco nunca entra al progreso, nunca se pierde y siempre queda en pantalla; «Ver de nuevo» se
+      alcanza con Tab. Con clics y toques reales, la película entera se juega y la memoria vuelve igual
+      al recargar, con Atrás y con «Volver a la película» (como carga nueva, sin la caché del
+      navegador). Con movimiento reducido no hay parpadeo, mirada ni balanceo, y 0 cuadros en reposo.
+      Los tests de la coreografía y del reloj de la luz, en verde; las cinco puertas, también con el
+      candado abierto (`under-review` en local, sin commit). Sin scroll horizontal a 320 px. Videos y
+      capturas en `scratch/p7-3/review/` (local, no se versiona), con un README.
 - [ ] **7.3.10 (Montse)** Revisión de P7.3 (el PR).
 
 ### P7.4 · Sonido (punto 8)
