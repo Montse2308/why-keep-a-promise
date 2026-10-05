@@ -27,13 +27,17 @@ locked /finding, the sitemap, the touch icon, Axelrod and Hamilton (1981) as the
 is merged (PR #12); Montse's two steps, checking 70 and 68 against `switch.dat` (7.2.9) and
 confirming its new texts (7.2.11), are still open. P7.3 (the chat in order, the progress beads,
 life at rest, the arrival halfway, «Watch again» and the end melting into the footer) is done and
-waits for Montse's review (7.3.10). Then the rest of P7, F5 (QA) and F6 (launch). The film tells
-all nine chapters, chapter 7's finding behind the lock, and ends in chapter 8's credits, with
-«Watch again» under them; it has its sound, off until pressed, its progress under the spool, its
-cast alive at rest, and remembers what was played in its tab entry. The notebook has its six pages, its panel
-on every page (with the finding's entry: its title and the status sentence), its magnifiers in the
-film and its footer. Every page has its description, its poster for a shared link and its place in
-the sitemap (/finding only behind the lock), and every build is weighed against the budgets.
+waits for Montse's review (7.3.10). P7.4 (the new sound cues) and P7.5 (the side card with a phone
+held sideways, the notebook's transitions) are closed. P7.6 (the hills without a shadow filter,
+still frames that draw only what their pose shows, chapter 4's citation line, the EN/ES switch in
+the notebook's panel, the author's signature on the posters) is done and waits for Montse's review
+(7.6.11). Then P7.7, F5 (QA) and F6 (launch). The film tells all nine chapters, chapter 7's finding
+behind the lock, and ends in chapter 8's credits, with «Watch again» under them; it has its sound,
+off until pressed, its progress under the spool, its cast alive at rest, and remembers what was
+played in its tab entry. The notebook has its six pages, its panel on every page (with the finding's
+entry: its title and the status sentence, and the EN/ES switch), its magnifiers in the film and its
+footer. Every page has its description, its signed poster for a shared link and its place in the
+sitemap (/finding only behind the lock), and every build is weighed against the budgets.
 
 ## Reading order
 

@@ -885,8 +885,12 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
       title, signed by {author}: {title}» / «…junto al título de la página, con la firma de
       {author}: {title}». Tests: la firma en los 14, que cabe, sus glifos en el corte TrueType y el
       texto alternativo.
-- [ ] **7.6.10** Verificación de salida (storyboard igual, primera carga menor, regla (h) y paridad) y
-      capturas para Montse.
+- [x] **7.6.10** Verificación de salida (storyboard igual, primera carga menor, regla (h) y paridad) y
+      capturas para Montse. Hecho sobre el último commit: el SVG de los 9 cuadros, dibujado aparte,
+      es idéntico a la referencia en los 36 casos, y la película con JS también; la primera carga del
+      home baja de 214,4 a 175,2 KiB (ES: de 215,5 a 175,8); la regla (h) y la paridad, en verde
+      con los demás tests. Capturas y README en `scratch/p7-6/review/`; el README termina con lo que
+      Montse tiene que decidir en 7.6.11.
 - [ ] **7.6.11 (Montse)** Revisión de P7.6 (el PR).
 
 ### P7.7 · Cierre y entrega a F5 (punto 5 y el resto del 6)
