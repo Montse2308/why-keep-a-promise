@@ -8,7 +8,7 @@ import { FACES, MOODS, TRIANGLE_MOODS } from './faces';
 import { outcomeOf, type DecisionState } from '../table/decision';
 import { PAYOFFS, type Face } from '../table/game';
 import { DECK } from './deck';
-import { LOCKED_BEATS } from '../chapters';
+import { chapter, LOCKED_BEATS } from '../chapters';
 import { SIGN } from './signs';
 import {
   AWAY,
@@ -33,6 +33,7 @@ import {
   threadBetween,
   threadPath,
   threadState,
+  WAITING,
   WORLD,
   type StageState,
 } from './stage';
@@ -97,6 +98,23 @@ describe('chapter 0, the arrival (ADR 0021)', () => {
       Array.from({ length: 41 }, (_, i) => (i / 40) * next * 0.999).map((screens) => stageAt(at(screens), { promised: null }, false, true).shot.width),
     );
     expect(shots.size).toBe(2);
+  });
+
+  it('changes halfway: the other, still waiting for an answer, brings up its bubble, and it goes with the rooms', () => {
+    const [from, to] = WAITING;
+    const waiting = (screens: number, promised: boolean | null = null, reduced = false) => stageAt(at(screens), { promised }, false, reduced).bubbles.other;
+    expect(waiting(from - 0.3)).toBe(0);
+    expect(waiting(to + 0.1)).toBe(1);
+    // Halfway through the chapter's three screens, which the light keeps (ADR 0027).
+    expect(from).toBeGreaterThanOrEqual(chapter('arrival').screens * 0.4);
+    expect(to).toBeLessThanOrEqual(chapter('arrival').screens * 0.7);
+    expect(waiting(beatRange('two-rooms', 'rooms').from)).toBe(0);
+    // Once answered, it no longer waits.
+    expect(waiting(to + 0.1, true)).toBe(0);
+    expect(waiting(to + 0.1, false)).toBe(0);
+    // With reduced motion it comes as a cut, and stays until chapter 1 cuts in.
+    expect(waiting(from - 0.05, null, true)).toBe(0);
+    for (const screens of [from + 0.01, to, to + 0.3]) expect(waiting(screens, null, true)).toBe(1);
   });
 
   it('brings the characters closer on a phone', () => {

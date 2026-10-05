@@ -668,8 +668,12 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       más 7°, sobre la esquina de abajo hacia la que se inclina. El cuadrado, mientras el capítulo 0
       espera la respuesta, mira al círculo, luego a los boletos y vuelve, en un ciclo de 7.2 s. Los
       dos, solo en reposo y nunca con movimiento reducido.
-- [ ] **7.3.6** La llegada: algo cambia a la mitad del tramo, sin cambiar su largo de 3 pantallas
+- [x] **7.3.6** La llegada: algo cambia a la mitad del tramo, sin cambiar su largo de 3 pantallas
       (el reloj de la luz, ADR 0027).
+      Si el visitante no ha contestado, cuando la cámara termina de acercarse (1.8 a 2.05 pantallas)
+      sube la burbuja del cuadrado con sus tres puntos: sigue esperando la respuesta. Se va cuando
+      llegan los cuartos, y no sale si ya contestó. Con movimiento reducido llega con un corte propio.
+      Sin texto nuevo; el cuadro del storyboard (con la promesa hecha) no cambia.
 - [ ] **7.3.7** «Ver de nuevo» al pie de los créditos: un enlace simple que también borra la memoria.
 - [ ] **7.3.8** La escena se funde con el papel del pie, en vez de irse y dejar el suelo vacío.
 - [ ] **7.3.9** Verificación de salida (teclado, movimiento reducido, tests de la coreografía) y
