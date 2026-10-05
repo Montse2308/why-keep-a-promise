@@ -10,7 +10,9 @@
 // the credits link to it only behind the lock.
 //
 // In both states it also checks the status sentence (docs/content-rules.md, rule (b)): the active one
-// appears exactly `STATUS_ON_HOME` times on each home page, and the other one appears nowhere.
+// appears exactly `STATUS_ON_HOME` times on each home page, and the other one appears nowhere. And
+// every page has its description, the same in Open Graph, without the status sentence and, while
+// locked, without a mark of the locked content.
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
@@ -176,6 +178,56 @@ export function lockedLinkProblems(pages) {
     });
 }
 
+/** @param {string} text an attribute's value as HTML writes it */
+function decodeAttribute(text) {
+  const named = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>' };
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (entity, name) => {
+    if (name[0] !== '#') return named[/** @type {keyof typeof named} */ (name.toLowerCase())] ?? entity;
+    return String.fromCodePoint(name[1].toLowerCase() === 'x' ? parseInt(name.slice(2), 16) : Number(name.slice(1)));
+  });
+}
+
+/**
+ * A page's description and its Open Graph copy (src/lib/meta.ts), as its head carries them; `null`
+ * for one that is missing.
+ * @param {string} html
+ * @returns {{ name: string | null, og: string | null }}
+ */
+export function descriptionsOf(html) {
+  /** @param {RegExp} pattern */
+  const read = (pattern) => {
+    const value = pattern.exec(html)?.[1];
+    return value === undefined ? null : decodeAttribute(value);
+  };
+  return {
+    name: read(/<meta\s+name="description"\s+content="([^"]*)"/i),
+    og: read(/<meta\s+property="og:description"\s+content="([^"]*)"/i),
+  };
+}
+
+/**
+ * Problems with the pages' descriptions, a new place for the lock to leak through (point 4 of the
+ * external review): every page has one, the same in `og:description`; none repeats a status sentence
+ * (rule (b): the home says it exactly twice, /finding carries the site's question), and while the
+ * lock is closed, none carries a mark of the locked content.
+ * @param {'in-preparation' | 'under-review'} status
+ * @param {Record<string, Record<string, string>>} dictionaries the UI strings, by locale
+ * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
+ * @returns {string[]}
+ */
+export function descriptionProblems(status, dictionaries, pages) {
+  const sentences = Object.values(dictionaries).flatMap((dictionary) => STATUSES.map((state) => dictionary[`manuscript.status.${state}`] ?? ''));
+  return Object.entries(pages).flatMap(([page, html]) => {
+    const { name, og } = descriptionsOf(html);
+    if (!name?.trim()) return [`${page}: no description`];
+    if (og !== name) return [`${page}: og:description is not its description`];
+    const problems = [];
+    if (sentences.some((sentence) => sentence && normalize(name).includes(normalize(sentence)))) problems.push(`${page}: the description repeats the status sentence`);
+    if (status === 'in-preparation') problems.push(...findMarks(name).map((mark) => `${page}: the description carries locked content: ${mark}`));
+    return problems;
+  });
+}
+
 /**
  * Every text file under a directory.
  * @param {string} dir
@@ -212,6 +264,12 @@ function main() {
     console.error(`verify:dist: the manuscript status sentence is off (rule (b)):\n  ${problems.join('\n  ')}`);
     process.exit(1);
   }
+  const descriptions = descriptionProblems(status, dictionaries, pages);
+  if (descriptions.length > 0) {
+    console.error(`verify:dist: the pages' descriptions are off:\n  ${descriptions.join('\n  ')}`);
+    process.exit(1);
+  }
+  const described = Object.keys(pages).length;
 
   if (status === 'in-preparation') {
     const leaks = files.flatMap((file) => findMarks(readFileSync(file, 'utf8')).map((mark) => `${relative(root, file)}: ${mark}`));
@@ -225,7 +283,7 @@ function main() {
       process.exit(1);
     }
     console.log(
-      `verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page links to /finding, and the status sentence appears ${STATUS_ON_HOME} times on each home page.`,
+      `verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page links to /finding, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
     );
     return;
   }
@@ -240,7 +298,7 @@ function main() {
     process.exit(1);
   }
   console.log(
-    `verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content, and the status sentence appears ${STATUS_ON_HOME} times on each home page.`,
+    `verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
   );
 }
 

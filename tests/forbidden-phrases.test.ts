@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { LOCALES } from '../src/lib/i18n';
+import { description } from '../src/lib/meta';
+import { ROUTES } from '../src/lib/routes';
 
 /**
  * Phrases that must never appear in the site or its sources, in any language or case
@@ -36,6 +39,13 @@ describe('forbidden phrases', () => {
     const found = FORBIDDEN.filter((phrase) => normalize(text).includes(normalize(phrase)));
     expect(found).toEqual([]);
   });
+
+  it.each(LOCALES.flatMap((locale) => ROUTES.map((route) => [`${locale} ${route}`, description(locale, route)] as const)))(
+    "the description of %s contains none",
+    (_page, text) => {
+      expect(FORBIDDEN.filter((phrase) => normalize(text).includes(normalize(phrase)))).toEqual([]);
+    },
+  );
 
   it('matches regardless of case and accents written as one character', () => {
     const hits = (text: string) => FORBIDDEN.filter((phrase) => normalize(text).includes(normalize(phrase)));

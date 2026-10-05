@@ -580,8 +580,10 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
 - [x] **7.2.2** `og:locale`, `og:locale:alternate` y `og:site_name`. El nombre es el de los
       pósteres («I promise» / «Te lo prometo»); los idiomas, `en_US` y `es_MX` (Open Graph pide
       idioma y territorio; Montse lo confirma en 7.2.11).
-- [ ] **7.2.3** Test: las 14 páginas llevan descripción, en paridad y sin frases prohibidas;
-      `verify:dist` revisa que la descripción no filtre el candado.
+- [x] **7.2.3** Test: las 14 páginas llevan descripción, en paridad y sin frases prohibidas;
+      `verify:dist` revisa que la descripción no filtre el candado. `tests/meta.test.ts`; `verify:dist`
+      exige en los dos estados una descripción en cada página, igual en `og:description` y sin la
+      frase de estado, y con el candado cerrado sin sus marcas.
 - [ ] **7.2.4** `src/pages/404.astro`, bilingüe en una sola página (GitHub Pages sirve un único
       `404.html`), con el escenario y los dos enlaces de vuelta.
 - [ ] **7.2.5** `noindex` en `/finding` según `findingUnlocked()`; `verify:dist` lo exige con el
