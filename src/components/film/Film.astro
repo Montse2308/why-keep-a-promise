@@ -243,10 +243,12 @@ const of = (id: ChapterId) => {
    * The progress: a thin thread with a bead per chapter, under the spool's words. Each bead fills from
    * the left as the film goes through its chapter (./film.ts sets `--fill`).
    */
+  /* As wide as its beads, so the thread ends at the last one even under a label on two lines. */
   .film__beads {
     position: relative;
     display: flex;
     gap: 3px;
+    width: max-content;
   }
 
   .film__beads::before {
