@@ -9,7 +9,7 @@ import { AWAY_KEYS, THREADS } from '../lib/details';
 import { MANUSCRIPT_STATUS } from '../config';
 import { DEFAULT_LOCALE, LOCALES, t, type Locale } from '../lib/i18n';
 import { findingUnlocked } from '../lib/lock';
-import { description, OG_LOCALES } from '../lib/meta';
+import { description, OG_LOCALES, themeColors } from '../lib/meta';
 import { POSTER, posterPath } from '../lib/posters/poster';
 import { fill } from '../lib/template';
 import { absoluteHref, assetHref, href, type Route } from '../lib/routes';
@@ -58,6 +58,8 @@ const noindex = route === 'finding' && !findingUnlocked(MANUSCRIPT_STATUS, impor
     {LOCALES.map((alt) => <link rel="alternate" hreflang={alt} href={absoluteHref(site, alt, route)} />)}
     <link rel="alternate" hreflang="x-default" href={absoluteHref(site, DEFAULT_LOCALE, route)} />
     <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
+    <link rel="apple-touch-icon" href={assetHref('apple-touch-icon.png')} />
+    {themeColors(film).map(({ color, media }) => <meta name="theme-color" content={color} media={media} />)}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={t(locale, 'poster.name')} />
     <meta property="og:locale" content={OG_LOCALES[locale]} />

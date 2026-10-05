@@ -597,8 +597,10 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       `robots.txt` (un sitio de proyecto no está en la raíz del dominio). El XML sale de
       `src/lib/sitemap.ts`; `verify:dist` revisa además que cada URL sea una página del build, que no
       falte ninguna y que la 404 no esté.
-- [ ] **7.2.7** `theme-color` y `apple-touch-icon` en PNG de 180 px, con el mismo proceso de resvg que
-      los pósteres.
+- [x] **7.2.7** `theme-color` y `apple-touch-icon` en PNG de 180 px, con el mismo proceso de resvg que
+      los pósteres. `theme-color`: sobre la película, su cielo del amanecer; en el cuaderno y la 404,
+      el brillo de arriba del papel, de día o de noche según el tema. El ícono es el de la pestaña,
+      forma por forma (un test lo compara con `public/favicon.svg`), sobre el cielo del amanecer.
 - [ ] **7.2.8** Axelrod según 7.0.5 (B): Axelrod y Hamilton (1981) reemplaza al libro de 1984 en
       `docs/sources.md` (verificada, con sus páginas), `src/content/figures.ts`, `src/lib/sources.ts`
       (sale de `UNVERIFIED`), la clave `sources.*` de los dos idiomas, los comentarios de

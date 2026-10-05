@@ -10,6 +10,7 @@ import '../styles/base.css';
 import Character from '../components/film/Character.astro';
 import { FILM, LIGHT_POINTS } from '../lib/design/film';
 import { DEFAULT_LOCALE, otherLocale, t } from '../lib/i18n';
+import { themeColors } from '../lib/meta';
 import { assetHref, href } from '../lib/routes';
 
 const dawn = LIGHT_POINTS[0]!.colours;
@@ -26,6 +27,8 @@ const shadow = 'not-found';
     <title>{locales.map((locale) => t(locale, 'notfound.title')).join(' · ')}</title>
     <meta name="robots" content="noindex" />
     <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
+    <link rel="apple-touch-icon" href={assetHref('apple-touch-icon.png')} />
+    {themeColors(false).map(({ color, media }) => <meta name="theme-color" content={color} media={media} />)}
     <Font cssVariable="--font-display" />
     <Font cssVariable="--font-body" />
     <meta name="generator" content={Astro.generator} />
