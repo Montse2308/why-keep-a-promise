@@ -743,9 +743,18 @@ de que ninguna satura y de que todas suman a lo más 1.
       combinaciones de dado e hilo: el giro acaba antes de `ROLL_MS`, y cada señal de `foldCues`
       empieza cuando acaba la anterior. `CUES` es ya la lista cerrada del ADR 0030, las trece, y
       quien solo hace scroll oye algo en los capítulos 4, 5 y 6 antes del sello del 7.
-- [ ] **7.4.6** Video con sonido para Montse: sin silencios largos entre los capítulos 3 y 7, y nada
+- [x] **7.4.6** Video con sonido para Montse: sin silencios largos entre los capítulos 3 y 7, y nada
       suena sin encenderlo.
-- [ ] **7.4.7 (Montse)** Revisión de P7.4 (el PR).
+      Montse la dio por hecha sin video. La prueba fue un recorrido en Chrome headless
+      (`scratch/tools/cues-probe.mjs`, local) que nombra cada señal por sus frecuencias. A 1440 px EN
+      y a 360 px ES suenan `voices` (14.7 pantallas), el apagón (17.4), la luz (18.25), las cartas,
+      el parpadeo (22.75), el letrero (26.9), el sello (31.1) y el tema (35.3). `snap` va en 0 s y
+      las monedas a +0.27 s; de las seis cartas suenan cinco, y al volver con el scroll nada se
+      repite. Sin encender el sonido no suena nada, y no hubo errores de JS.
+- [x] **7.4.7 (Montse)** Revisión de P7.4 (el PR).
+      Montse aprobó las señales y que con movimiento reducido no suenen `switch`, `lights-on` ni
+      `card`: los cortes saltan el apagón, la luz nunca se va y la carta no vuela. Queda que mergee
+      el PR.
 
 ### P7.5 · Horizontal y transiciones (puntos 12 y 15)
 
