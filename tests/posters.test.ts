@@ -10,7 +10,7 @@ import es from '../src/i18n/es.json';
 import { FILM, LIGHT_POINTS } from '../src/lib/design/film';
 import { LOCALES } from '../src/lib/locales';
 import { hasGlyph, lineWidth, readMetrics, type FontMetrics } from '../src/lib/posters/metrics';
-import { balance, CARD, cutout, escapeXml, fit, POSTER, POSTER_FONTS, POSTER_SCENES, posterPath, posterSvg, wrap, type PosterFont } from '../src/lib/posters/poster';
+import { balance, CARD, cutout, escapeXml, fit, POSTER, POSTER_FONTS, POSTER_SCENES, posterPath, posterSvg, SIGNATURE_WIDTH, wrap, type PosterFont } from '../src/lib/posters/poster';
 import { readPosterFont } from '../src/lib/posters/fonts.mjs';
 import { ICON_SHAPES, TOUCH_ICON, touchIconSvg } from '../src/lib/posters/icon';
 import { posterLayout, posterMetrics, posterPng, posterText, touchIconPng } from '../src/lib/posters/render';
@@ -62,6 +62,7 @@ describe("the posters' fonts", () => {
         ['label', text.name.toLocaleUpperCase()],
         ['title', text.title],
         ['subtitle', text.subtitle ?? ''],
+        ['label', text.author],
       ];
       for (const [font, words] of set) {
         for (const char of words.replace(/\s/g, '')) expect(hasGlyph(fontBytes(font), char), `${locale}/${route} ${font} "${char}"`).toBe(true);
@@ -77,8 +78,8 @@ describe("the posters' fonts", () => {
 
 describe('each poster', () => {
   it('says the project’s name and the page’s title, and the site’s question under a notebook page’s', () => {
-    expect(posterText('en', 'home')).toEqual({ name: en['poster.name'], title: en['site.title'] });
-    expect(posterText('es', 'vanberg')).toEqual({ name: es['poster.name'], title: es['notebook.vanberg.title'], subtitle: es['site.title'] });
+    expect(posterText('en', 'home')).toEqual({ name: en['poster.name'], title: en['site.title'], author: en['author.name'] });
+    expect(posterText('es', 'vanberg')).toEqual({ name: es['poster.name'], title: es['notebook.vanberg.title'], subtitle: es['site.title'], author: es['author.name'] });
     expect([en['poster.name'], es['poster.name']]).toEqual(['I promise', 'Te lo prometo']);
   });
 
@@ -87,6 +88,21 @@ describe('each poster', () => {
     const dictionary: Record<string, string> = locale === 'en' ? en : es;
     for (const key of ['manuscript.status.in-preparation', 'manuscript.status.under-review']) expect(text).not.toContain(dictionary[key]);
     expect(text).not.toMatch(/\d/);
+  });
+
+  it.each(PAGES)('%s/%s is signed with the author’s full name, and only that, apart from the title (ADR 0032)', (locale, route) => {
+    const dictionary: Record<string, string> = locale === 'en' ? en : es;
+    const set = posterLayout(locale, route);
+    expect(set.signature).toBe(dictionary['author.name']);
+    expect(posterSvg(route, set)).toContain(`>${escapeXml(dictionary['author.name'] ?? '')}</text>`);
+    expect(set.title.lines.join(' ')).not.toContain(set.signature);
+    expect(lineWidth(set.signature, posterMetrics().label, 20)).toBeLessThanOrEqual(SIGNATURE_WIDTH);
+  });
+
+  it.each(LOCALES)('%s: the poster’s alternative text names the author, as the poster shows', (locale) => {
+    const dictionary: Record<string, string> = locale === 'en' ? en : es;
+    expect(dictionary['poster.alt']).toContain('{author}');
+    expect(baseLayout).toContain("author: t(locale, 'author.name')");
   });
 
   it.each(PAGES)('%s/%s fits its card', (locale, route) => {

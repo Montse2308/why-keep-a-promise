@@ -80,6 +80,13 @@ const { id, screens, caption, opening = false, cardClass, roll = false } = Astro
     font-weight: 800;
   }
 
+  /* A citation line under its paragraph, smaller, so the paragraph reads without it (rule (k)). */
+  .card__caption :global(.card__cite) {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--film-card-muted);
+  }
+
   /* What every chapter's card may carry besides its caption. */
   .card :global(.card__chapter) {
     font-size: 0.8rem;

@@ -7,9 +7,10 @@ title: Dos voces
 
 ### ¿Por qué cumplir, entonces? Contestan dos voces.
 
-Una es lo que el otro espera: te duele defraudarlo. Charness y Dufwenberg (2006) y Battigalli y
-Dufwenberg (2007) le llaman aversión a la culpa. La otra es tu palabra: te duele romperla, espere lo
-que espere el otro.
+Una es lo que el otro espera: te duele defraudarlo. Se le llama aversión a la culpa. La otra es tu
+palabra: te duele romperla, espere lo que espere el otro.
+
+<p class="card__cite">Aversión a la culpa: Charness y Dufwenberg (2006); Battigalli y Dufwenberg (2007).</p>
 
 <!-- beat:together -->
 

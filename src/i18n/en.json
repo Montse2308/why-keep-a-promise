@@ -284,7 +284,7 @@
   "film.closing.credits.end": "The end",
   "film.closing.again": "Watch again",
   "poster.name": "I promise",
-  "poster.alt": "The film’s circle and square, tied by a golden thread, beside the page’s title: {title}",
+  "poster.alt": "The film’s circle and square, tied by a golden thread, beside the page’s title, signed by {author}: {title}",
   "tab.away.none": "A promise is waiting for you.",
   "tab.away.tied": "You promised. Come back.",
   "tab.away.kept": "You kept your promise.",

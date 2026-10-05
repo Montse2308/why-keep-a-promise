@@ -3,8 +3,9 @@
  * SVG with the film's palette and turned into PNG at build time (src/pages/posters/), because
  * LinkedIn and other networks do not take SVG for Open Graph. A poster is a piece of the stage in the
  * day's light: a paper card with the project's name (ADR 0021: «I promise» / «Te lo prometo») and
- * the page's title, and the circle and the square tied by the golden thread. It carries nothing else:
- * no status sentence, nothing behind the lock (ADR 0026), no figure.
+ * the page's title, the author's name as a small signature after the golden stroke under the
+ * project's name (ADR 0032), and the circle and the square tied by the golden thread. It carries
+ * nothing else: no status sentence, nothing behind the lock (ADR 0026), no figure.
  *
  * The renderer does not wrap text, so titles are broken into lines here, measured with the fonts'
  * own advance widths (./metrics.ts), at the largest size that fits the card.
@@ -52,6 +53,8 @@ export interface PosterText {
   readonly title: string;
   /** The site's question under a notebook page's title; none on the home, whose title it is. */
   readonly subtitle?: string;
+  /** The author's full name, the poster's signature (ADR 0032). */
+  readonly author: string;
 }
 
 /** The card's text box, in poster pixels. */
@@ -59,6 +62,11 @@ export const CARD = { x: 56, y: 56, width: 648, height: 518, padding: 52 } as co
 const TEXT_X = CARD.x + CARD.padding;
 const TEXT_WIDTH = CARD.width - 2 * CARD.padding;
 const LABEL = { size: 26, spacing: 4.5, y: CARD.y + CARD.padding + 26 } as const;
+/** The golden stroke under the project's name, and the signature that follows it on its line. */
+const STROKE = { y: LABEL.y + 22, length: 84 } as const;
+const SIGNATURE = { size: 20, x: TEXT_X + STROKE.length + 18, y: STROKE.y + 7 } as const;
+/** The room for the signature, from where it starts to the card's text edge. */
+export const SIGNATURE_WIDTH = TEXT_X + TEXT_WIDTH - SIGNATURE.x;
 const TITLE = { top: LABEL.y + 74, sizes: [84, 78, 72, 68, 64, 60, 56, 52, 48], leading: 1.08 } as const;
 const SUBTITLE = { size: 28, leading: 1.25, maxLines: 2, bottom: CARD.y + CARD.height - CARD.padding } as const;
 
@@ -116,6 +124,7 @@ export interface PosterLayout {
   readonly title: Fitted;
   readonly titleTop: number;
   readonly subtitle: Fitted | null;
+  readonly signature: string;
 }
 
 export function layout(text: PosterText, metrics: Record<PosterFont, FontMetrics>): PosterLayout {
@@ -129,7 +138,8 @@ export function layout(text: PosterText, metrics: Record<PosterFont, FontMetrics
   if (!title) throw new Error(`The poster's title does not fit: "${text.title}"`);
   const label = text.name.toLocaleUpperCase();
   if (lineWidth(label, metrics.label, LABEL.size, LABEL.spacing) > TEXT_WIDTH) throw new Error(`The poster's name does not fit: "${label}"`);
-  return { label, title, titleTop: TITLE.top, subtitle };
+  if (lineWidth(text.author, metrics.label, SIGNATURE.size) > SIGNATURE_WIDTH) throw new Error(`The poster's signature does not fit: "${text.author}"`);
+  return { label, title, titleTop: TITLE.top, subtitle, signature: text.author };
 }
 
 /** Text as XML character data. */
@@ -227,7 +237,8 @@ export function posterSvg(route: Route, set: PosterLayout): string {
     '</g>',
     `<g filter="url(#paper)"><rect x="${CARD.x}" y="${CARD.y}" width="${CARD.width}" height="${CARD.height}" rx="28" fill="${FILM.card}"/></g>`,
     `<text x="${TEXT_X}" y="${LABEL.y}" font-size="${LABEL.size}" ${fontAttributes('label')} letter-spacing="${LABEL.spacing}" fill="${FILM['thread-edge']}">${escapeXml(set.label)}</text>`,
-    `<path d="M${TEXT_X} ${LABEL.y + 22} H ${TEXT_X + 84}" stroke="${FILM.thread}" stroke-width="6" stroke-linecap="round"/>`,
+    `<path d="M${TEXT_X} ${STROKE.y} H ${TEXT_X + STROKE.length}" stroke="${FILM.thread}" stroke-width="6" stroke-linecap="round"/>`,
+    `<text x="${SIGNATURE.x}" y="${SIGNATURE.y}" font-size="${SIGNATURE.size}" ${fontAttributes('label')} fill="${FILM['card-muted']}">${escapeXml(set.signature)}</text>`,
     titleLines,
     subtitleLines,
     '</svg>',

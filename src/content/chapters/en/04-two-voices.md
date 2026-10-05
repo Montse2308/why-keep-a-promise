@@ -7,9 +7,10 @@ title: Two voices
 
 ### Why keep your word, then? Two voices answer.
 
-One is what the other expects: letting them down hurts. Charness and Dufwenberg (2006) and
-Battigalli and Dufwenberg (2007) call it guilt aversion. The other is your word: breaking it hurts,
-whatever the other expects.
+One is what the other expects: letting them down hurts. It is called guilt aversion. The other is
+your word: breaking it hurts, whatever the other expects.
+
+<p class="card__cite">Guilt aversion: Charness and Dufwenberg (2006); Battigalli and Dufwenberg (2007).</p>
 
 <!-- beat:together -->
 

@@ -12,35 +12,43 @@ import type { StageView } from '../../lib/film/stage';
 interface Props {
   engine: StageView['engine'];
   shadow: string;
+  /** A still frame: draw only what this pose shows, since no script will change it. */
+  lean?: boolean;
 }
 
-const { engine, shadow } = Astro.props;
+const { engine, shadow, lean = false } = Astro.props;
+/** Whether a part with this opacity is drawn: a still frame leaves out what it does not show. */
+const shows = (opacity: number) => !lean || opacity > 0;
 const body = 'M-72 -46 H72 A14 14 0 0 1 86 -32 V44 A14 14 0 0 1 72 58 H-72 A14 14 0 0 1 -86 44 V-32 A14 14 0 0 1 -72 -46 Z';
 ---
 
-<g data-part="engine" transform={engineTransform(engine.shown)} opacity={engine.shown > 0.01 ? 1 : 0}>
-  <g filter={`url(#${shadow})`}>
-    <rect x="-28" y="-66" width="56" height="30" rx="3" fill={FILM.card} stroke={FILM.ink} stroke-width="3" />
-    <path d="M-18 -58 H18 M-18 -50 H10" stroke={FILM['card-muted']} stroke-width="2.5" stroke-linecap="round" />
-    <path d={body} fill={FILM.ink} stroke={FILM.ink} stroke-width="13" stroke-linejoin="round" />
-    <path d={body} fill={FILM.rim} stroke={FILM.rim} stroke-width="7" stroke-linejoin="round" />
-  </g>
-  <path d="M-34 -46 H34" stroke={FILM.ink} stroke-width="5" stroke-linecap="round" />
-  {
-    GEARS.map((gear, i) => (
-      <g data-part={`gear-${i}`} transform={gearTransform(gear, engine.turn)}>
-        <path d={gearPath(gear.radius, gear.teeth)} fill={FILM['table-top']} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
-        <circle r={gear.radius * 0.32} fill={FILM.rim} stroke={FILM.ink} stroke-width="3" />
+{
+  shows(engine.shown > 0.01 ? 1 : 0) && (
+    <g data-part="engine" transform={engineTransform(engine.shown)} opacity={engine.shown > 0.01 ? 1 : 0}>
+      <g filter={`url(#${shadow})`}>
+        <rect x="-28" y="-66" width="56" height="30" rx="3" fill={FILM.card} stroke={FILM.ink} stroke-width="3" />
+        <path d="M-18 -58 H18 M-18 -50 H10" stroke={FILM['card-muted']} stroke-width="2.5" stroke-linecap="round" />
+        <path d={body} fill={FILM.ink} stroke={FILM.ink} stroke-width="13" stroke-linejoin="round" />
+        <path d={body} fill={FILM.rim} stroke={FILM.rim} stroke-width="7" stroke-linejoin="round" />
       </g>
-    ))
-  }
-  <rect x="28" y="-28" width="46" height="36" rx="6" fill={FILM.card} stroke={FILM.ink} stroke-width="3" />
-  <text x="51" y="-2" text-anchor="middle" class="engine__code" fill={FILM.ink}>{'{ }'}</text>
-  <circle cx="40" cy="32" r="6" fill={FILM.lamp} stroke={FILM.ink} stroke-width="2.5" />
-  <circle cx="60" cy="32" r="6" fill={FILM['voice-expects']} stroke={FILM.ink} stroke-width="2.5" />
-  <path d="M86 6 H100 V-14" fill="none" stroke={FILM.ink} stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-  <circle cx="100" cy="-18" r="7" fill={FILM['table-front']} stroke={FILM.ink} stroke-width="3" />
-</g>
+      <path d="M-34 -46 H34" stroke={FILM.ink} stroke-width="5" stroke-linecap="round" />
+      {
+        GEARS.map((gear, i) => (
+          <g data-part={`gear-${i}`} transform={gearTransform(gear, engine.turn)}>
+            <path d={gearPath(gear.radius, gear.teeth)} fill={FILM['table-top']} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
+            <circle r={gear.radius * 0.32} fill={FILM.rim} stroke={FILM.ink} stroke-width="3" />
+          </g>
+        ))
+      }
+      <rect x="28" y="-28" width="46" height="36" rx="6" fill={FILM.card} stroke={FILM.ink} stroke-width="3" />
+      <text x="51" y="-2" text-anchor="middle" class="engine__code" fill={FILM.ink}>{'{ }'}</text>
+      <circle cx="40" cy="32" r="6" fill={FILM.lamp} stroke={FILM.ink} stroke-width="2.5" />
+      <circle cx="60" cy="32" r="6" fill={FILM['voice-expects']} stroke={FILM.ink} stroke-width="2.5" />
+      <path d="M86 6 H100 V-14" fill="none" stroke={FILM.ink} stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="100" cy="-18" r="7" fill={FILM['table-front']} stroke={FILM.ink} stroke-width="3" />
+    </g>
+  )
+}
 
 <style>
   .engine__code {

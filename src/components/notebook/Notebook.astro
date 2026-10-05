@@ -8,6 +8,9 @@
  * The finding's entry carries the status sentence in both states of the lock, standing alone in its
  * element: on the home it is the second one, after chapter 7's stamp (rule (b), ADR 0026). While the
  * lock is closed its title is plain text, and the panel links neither to /finding nor to the engine.
+ *
+ * Under its title, the EN/ES switch (ADR 0013): past the film's first screen the corner one is
+ * gone, and the panel is a tap away from any frame.
  */
 import { MANUSCRIPT_STATUS } from '../../config';
 import { FILM } from '../../lib/design/film';
@@ -15,6 +18,7 @@ import { useTranslations, type Locale } from '../../lib/i18n';
 import { findingUnlocked, statusKey } from '../../lib/lock';
 import { NOTEBOOK, NOTEBOOK_PAGES_ID } from '../../lib/notebook';
 import { href, type Route } from '../../lib/routes';
+import LanguageSwitch from '../LanguageSwitch.astro';
 
 interface Props {
   locale: Locale;
@@ -57,6 +61,9 @@ const label = tr('notebook.label');
         </svg>
         <span class="visually-hidden">{tr('notebook.close')}</span>
       </button>
+    </div>
+    <div class="notebook__lang">
+      <LanguageSwitch locale={locale} route={route} landmark={false} />
     </div>
     <nav aria-labelledby="notebook-title">
       <ol class="notebook__entries" role="list">
@@ -281,6 +288,11 @@ const label = tr('notebook.label');
     font-size: var(--step-2);
     font-style: italic;
     font-weight: 900;
+  }
+
+  /* Tucked under the title, on any width: the head keeps only the title and the close button. */
+  .notebook__lang {
+    margin: calc(-1 * var(--space-4)) 0 var(--space-1);
   }
 
   .notebook__close {

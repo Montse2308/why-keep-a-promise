@@ -824,27 +824,76 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
 
 Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en cualquier momento.
 
-- [ ] **7.6.1** Punto 3, solo el mínimo: quitar el filtro de sombra (`filter`) de las dos colinas en
+- [x] **7.6.1** Punto 3, solo el mínimo: quitar el filtro de sombra (`filter`) de las dos colinas en
       `World.astro` (`hill-far` y `hill-near`), que son los trazos más grandes que se repintan al
       mover la cámara. El sol, las nubes, la pared, la lámpara y los personajes conservan su
       sombra. Capturas antes y después (con JS y sin JS, 360 y 1440 px) para Montse. Sin medir en
-      teléfonos reales y sin cambiar las demás sombras.
+      teléfonos reales y sin cambiar las demás sombras. Hecho: los 9 cuadros quietos cambian solo
+      en el borde de las colinas (delta máximo 7 de 255); las capturas están en
+      `scratch/p7-6/review/7.6.1-*`.
 
-- [ ] **7.6.2** Referencia: medir el HTML del home y los nodos de cada cuadro quieto (hoy unos 460 de
+- [x] **7.6.2** Referencia: medir el HTML del home y los nodos de cada cuadro quieto (hoy unos 460 de
       los 540 KB del HTML y 4 985 nodos) y sacar capturas sin JS de los 9 cuadros, en `scratch/`.
-- [ ] **7.6.3** Cuadros quietos 0 a 2 con solo lo que se ve en su pose; capturas iguales a la
-      referencia.
-- [ ] **7.6.4** Lo mismo con los cuadros 3 a 5.
-- [ ] **7.6.5** Lo mismo con los cuadros 6 a 8.
-- [ ] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La
-      regla (k) se cumple igual: las citas se quedan, solo cambia dónde.
-- [ ] **7.6.7** El enlace EN/ES entra al panel del cuaderno.
+      Medido después de 7.6.1, con el candado cerrado: el home en inglés pesa 544 497 B (68 176 B
+      con gzip) y tiene 5 013 nodos; los 9 cuadros quietos suman 418 087 B y 3 672 nodos, 408 cada
+      uno, porque cada cuadro dibuja el mundo entero. En español, 545 138 B (69 256 con gzip). Con
+      el candado abierto, 565 731 B y 5 248 nodos, con los mismos cuadros. Las capturas (EN y ES,
+      360 y 1440 px, los dos estados del candado) están en `scratch/p7-6/ref/`.
+- [x] **7.6.3** Cuadros quietos 0 a 2 con solo lo que se ve en su pose; capturas iguales a la
+      referencia. Hecho: `World.astro` dibuja en un cuadro quieto solo las partes con opacidad
+      mayor que 0 (el escenario vivo las sigue dibujando todas, para que el script las muestre), y
+      en este paso lo aplican las piezas que llegan en los capítulos 0 a 2: el hilo, la pared, los
+      focos, los globos, la mesa, el dado y sus puntos, las monedas, el tablero con sus marcas y lo
+      que la cara de cada personaje esconde. Los 9 cuadros pasan de 3 672 a 2 396 nodos y el home,
+      de 544 497 a 380 367 B (de 68 176 a 41 093 con gzip). El SVG de cada cuadro, dibujado aparte,
+      es idéntico a la referencia en los 36 casos (EN y ES, los dos estados del candado), y la
+      película con JS (movimiento reducido, 360 y 1440 px) también. En la página, Chrome cambia el
+      suavizado de los bordes de algunas figuras al quitar un texto invisible del cuadro (delta de
+      hasta 100 en píxeles de borde): no se ve, y el dibujo es el mismo.
+- [x] **7.6.4** Lo mismo con los cuadros 3 a 5. Hecho con las piezas que llegan en los capítulos 3
+      a 5: las dos voces (su resplandor y su degradado, los globos con la cara del otro), el
+      cuadrado y el triángulo con sus sombras cuando no están, y el apagón con los ojos. Los 9
+      cuadros bajan a 1 597 nodos y el home, a 312 533 B (31 309 con gzip). Los 36 SVG aparte y la
+      película con JS, iguales a la referencia (salvo 17 píxeles de delta 1 en un texto).
+- [x] **7.6.5** Lo mismo con los cuadros 6 a 8. Hecho con las piezas que llegan en los capítulos 6
+      a 8: los letreros (cada cifra o su signo de pregunta, y las nubes de lo esperado), el motor,
+      la lámpara de papel, su luz con su degradado y las estrellas; y los dos comentarios del mundo,
+      que se repetían en los 10 dibujos, ya no salen en el HTML. Cada cuadro tiene ahora de 67 a 153
+      nodos (eran 408): 1 057 en total. El home en inglés pasa de 544 497 a 238 393 B (de 68 176 a
+      28 482 con gzip) y de 5 013 a 2 398 nodos. Los 36 SVG aparte y la película con JS, iguales a
+      la referencia (los mismos 17 píxeles de delta 1 en un texto).
+- [x] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La
+      regla (k) se cumple igual: las citas se quedan, solo cambia dónde. Hecho: el párrafo dice «It
+      is called guilt aversion.» / «Se le llama aversión a la culpa.», y debajo va la línea de cita
+      (`card__cite`, más pequeña y en el tono apagado de la tarjeta): «Guilt aversion: Charness and
+      Dufwenberg (2006); Battigalli and Dufwenberg (2007).» / «Aversión a la culpa: Charness y
+      Dufwenberg (2006); Battigalli y Dufwenberg (2007).». Un test exige las dos citas en esa línea
+      y solo Vanberg (2008) en los párrafos. Los textos nuevos los confirma Montse en 7.6.11.
+- [x] **7.6.7** El enlace EN/ES entra al panel del cuaderno. Hecho: va en su propia línea bajo el
+      título del panel, con los dos idiomas en todos los anchos (en la cabecera, junto al botón de
+      cerrar, no cabía a 320 px); es un grupo, no otro landmark, como el del pie. El orden con
+      teclado es cerrar, idioma y las entradas. Las reglas del rincón para su selector (sus colores
+      sobre la película y, en el teléfono, ocultar el idioma actual) ahora valen solo para el del
+      rincón: el panel vive dentro del rincón y las heredaba. Probado con toques y clics reales a
+      320, 360, 844×390 y 1440 px, en claro y oscuro: abre la misma página en el otro idioma.
 - ~~**7.6.8** Solo si se aprobó en 7.0.4: el enlace EN/ES conserva el capítulo.~~ No se hace
   (7.0.4).
-- [ ] **7.6.9** La autora en los pósteres, como firma (ADR 0032).
-- [ ] **7.6.10** Verificación de salida (storyboard igual, primera carga menor, regla (h) y paridad) y
-      capturas para Montse.
-- [ ] **7.6.11 (Montse)** Revisión de P7.6 (el PR).
+- [x] **7.6.9** La autora en los pósteres, como firma (ADR 0032). Hecho: el nombre completo
+      (`author.name`) va en Nunito a 20 px, en el tono apagado de la tarjeta, a continuación del
+      trazo dorado que subraya «I PROMISE» / «TE LO PROMETO»: no toca el lugar del título ni el del
+      subtítulo. Si no cupiera, el build falla. El texto alternativo la nombra: «…beside the page’s
+      title, signed by {author}: {title}» / «…junto al título de la página, con la firma de
+      {author}: {title}». Tests: la firma en los 14, que cabe, sus glifos en el corte TrueType y el
+      texto alternativo.
+- [x] **7.6.10** Verificación de salida (storyboard igual, primera carga menor, regla (h) y paridad) y
+      capturas para Montse. Hecho sobre el último commit: el SVG de los 9 cuadros, dibujado aparte,
+      es idéntico a la referencia en los 36 casos, y la película con JS también; la primera carga del
+      home baja de 214,4 a 175,2 KiB (ES: de 215,5 a 175,8); la regla (h) y la paridad, en verde
+      con los demás tests. Capturas y README en `scratch/p7-6/review/`; el README termina con lo que
+      Montse tiene que decidir en 7.6.11.
+- [x] **7.6.11 (Montse)** Revisión de P7.6 (el PR).
+      Montse aprobó todo: las colinas sin sombra, los textos nuevos del capítulo 4, EN/ES bajo el
+      título del panel y la firma de los pósteres con su texto alternativo. Queda que mergee el PR.
 
 ### P7.7 · Cierre y entrega a F5 (punto 5 y el resto del 6)
 
