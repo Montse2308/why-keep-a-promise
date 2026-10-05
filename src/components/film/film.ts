@@ -14,7 +14,7 @@
  */
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
-import { blinking, blinkTransform } from '../../lib/film/idle';
+import { blinking, blinkTransform, GAZE_LOOK, gazeAt, rockAt, rockTransform } from '../../lib/film/idle';
 import { noteFor } from '../../lib/film/board';
 import {
   boardOpacity,
@@ -298,7 +298,9 @@ function run(): void {
     const rest = still ? -1 : now - restSince;
     const look: readonly [number, number] = still ? [0, 0] : pointer;
     applyMood(parts.you, view.moods.you, look, blinking(rest, 'you'));
-    applyMood(parts.other, view.moods.other, look, blinking(rest, 'other'));
+    // While it waits for the visitor's answer, the square glances at the circle, then at the tickets.
+    const gaze = view.beat.chapter === 'arrival' && state.promised == null ? gazeAt(rest) : null;
+    applyMood(parts.other, view.moods.other, gaze ? GAZE_LOOK[gaze] : look, blinking(rest, 'other'));
     applyMood(parts.partner, view.moods.partner, look, blinking(rest, 'partner'));
     const cast = { you: view.cast.you, other: other.at };
 
@@ -329,7 +331,9 @@ function run(): void {
     const turn = view.die.rolling && !still ? 720 * (1 - (1 - spun) ** 3) : view.die.floating && !still ? Math.sin(now / 900) * 12 : 0;
     set(parts.die, 'transform', `translate(800 ${(view.die.y + float + jump).toFixed(2)})`);
     set(parts.die, 'opacity', view.die.opacity.toFixed(3));
-    set(parts.dieSpin, 'transform', `rotate(${turn.toFixed(2)})`);
+    // Waiting on the table for the decision, it rocks now and then, as if nudged.
+    const waits = !still && view.beat.chapter === 'fold' && view.beat.id === 'decide' && !view.die.rolling && (state.decision?.phase ?? 'idle') === 'idle';
+    set(parts.dieSpin, 'transform', waits ? rockTransform(rockAt(rest)) : `rotate(${turn.toFixed(2)})`);
     const face: Face = view.die.rolling && !still ? (DIE_FACES[Math.floor(now / 90) % DIE_FACES.length] ?? view.die.face) : view.die.face;
     for (const pip of pips) set(pip, 'visibility', PIPS[face].includes(pip.dataset.pip as Pip) ? 'visible' : 'hidden');
 

@@ -661,8 +661,13 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       reloj (cada 3 a 5 s, nunca dos a la vez). Además, con movimiento reducido el ciclo ya no pide
       cuadros si nada se mueve (antes corría siempre): 0 cuadros en 9 s quieto, y las pupilas dejan de
       seguir al puntero.
-- [ ] **7.3.5** El leve balanceo del dado, y la mirada del cuadrado mientras espera: al círculo y
+- [x] **7.3.5** El leve balanceo del dado, y la mirada del cuadrado mientras espera: al círculo y
       luego al boleto.
+      En el capítulo 0 el dado ya flotaba y giraba; el que se quedaba quieto era el que espera sobre
+      la mesa la decisión del capítulo 3: ese se balancea, cada 3.6 s, dos vaivenes que se apagan, a lo
+      más 7°, sobre la esquina de abajo hacia la que se inclina. El cuadrado, mientras el capítulo 0
+      espera la respuesta, mira al círculo, luego a los boletos y vuelve, en un ciclo de 7.2 s. Los
+      dos, solo en reposo y nunca con movimiento reducido.
 - [ ] **7.3.6** La llegada: algo cambia a la mitad del tramo, sin cambiar su largo de 3 pantallas
       (el reloj de la luz, ADR 0027).
 - [ ] **7.3.7** «Ver de nuevo» al pie de los créditos: un enlace simple que también borra la memoria.

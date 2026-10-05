@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BLINK_GAPS, BLINK_MS, BLINK_OFFSET, blinking, blinkTransform, REST_MS, type Blinker } from './idle';
+import { BLINK_GAPS, BLINK_MS, BLINK_OFFSET, blinking, blinkTransform, GAZE_LOOK, gazeAt, GAZES, REST_MS, ROCK_DEG, ROCK_EVERY, rockAt, rockTransform, type Blinker, type Gaze } from './idle';
 
 const WHO: readonly Blinker[] = ['you', 'other', 'partner'];
 /** A minute at rest, in steps of 10 ms. */
@@ -45,6 +45,47 @@ describe('life at rest', () => {
 
   it('never has two of the cast blink as one', () => {
     for (const t of minute) expect(WHO.filter((who) => blinking(t, who)).length).toBeLessThanOrEqual(1);
+  });
+
+  it('has the waiting square glance at the circle, then at the tickets, then back, over and over', () => {
+    for (let t = 0; t < REST_MS + (GAZES[1]?.from ?? 0); t += 10) expect(gazeAt(t)).toBeNull();
+    const seen: (Gaze | null)[] = [];
+    for (const t of minute) {
+      const gaze = gazeAt(t);
+      if (seen.at(-1) !== gaze) seen.push(gaze);
+    }
+    expect(seen.slice(0, 7)).toEqual([null, 'circle', 'ticket', null, 'circle', 'ticket', null]);
+    expect(gazeAt(-1)).toBeNull();
+  });
+
+  it('keeps every glance inside the eye', () => {
+    // An eye is 14 by 16 units around its centre and a pupil 7 across (Character.astro).
+    for (const [x, y] of Object.values(GAZE_LOOK)) {
+      expect(Math.abs(x)).toBeLessThanOrEqual(7);
+      expect(Math.abs(y)).toBeLessThanOrEqual(9);
+    }
+  });
+
+  it('rocks the waiting die now and then, a little, and leaves it level in between', () => {
+    expect(rockAt(-1)).toBe(0);
+    for (let t = 0; t < REST_MS; t += 10) expect(rockAt(t)).toBe(0);
+    let rocks = 0;
+    let level = true;
+    for (const t of minute) {
+      const degrees = rockAt(t);
+      expect(Math.abs(degrees)).toBeLessThanOrEqual(ROCK_DEG);
+      if (degrees !== 0 && level) rocks++;
+      level = degrees === 0;
+    }
+    expect(rocks).toBeGreaterThanOrEqual(12);
+    // It starts and ends each rock level, so it never jumps.
+    for (let t = REST_MS; t < REST_MS + 2 * ROCK_EVERY; t += 1) expect(Math.abs(rockAt(t + 1) - rockAt(t))).toBeLessThan(0.2);
+  });
+
+  it('tips the die over the corner it leans to', () => {
+    expect(rockTransform(0)).toBe('rotate(0)');
+    expect(rockTransform(5)).toBe('rotate(5.00 34 34)');
+    expect(rockTransform(-5)).toBe('rotate(-5.00 -34 34)');
   });
 
   it('shuts the eyes to a sliver, and opens them with no transform at all', () => {

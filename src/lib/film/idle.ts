@@ -4,7 +4,8 @@
  * own: the film's frame loop (src/components/film/film.ts), which already runs while the film is on
  * screen, asks it what to show from how long the scroll has rested. So it waits while the page
  * scrolls, stops with the tab hidden (no frames come), and with reduced motion it is never asked.
- * It moves only the cast's eyes, which carry no shadow filter (Character.astro), never the scene.
+ * It moves the cast's eyes, which carry no shadow filter (Character.astro), and the die, small, in a
+ * short rock every few seconds; never the scene's large shapes.
  */
 
 /** How long the scroll rests before the cast comes to life, in ms. */
@@ -39,4 +40,58 @@ export function blinking(rest: number, who: Blinker): boolean {
 /** A blink as the eyes' transform: shut to a sliver around their middle (Character.astro), or open. */
 export function blinkTransform(shut: boolean): string {
   return shut ? 'translate(0 -10) scale(1 0.12) translate(0 10)' : '';
+}
+
+/** Where the square looks while it waits for the visitor's answer in chapter 0. */
+export type Gaze = 'circle' | 'ticket';
+
+/**
+ * The square's glances while it waits, over and over: at the circle it asked, then down at the
+ * tickets the answer is on, then back to the visitor. In ms after the scroll rests.
+ */
+export const GAZES: readonly { readonly from: number; readonly gaze: Gaze | null }[] = [
+  { from: 0, gaze: null },
+  { from: 900, gaze: 'circle' },
+  { from: 2700, gaze: 'ticket' },
+  { from: 4700, gaze: null },
+];
+
+/** How long one round of glances lasts, in ms. */
+export const GAZE_CYCLE = 7200;
+
+/** Where the pupils go for each glance, in the face's units: left to the circle, down left to the tickets. */
+export const GAZE_LOOK: Readonly<Record<Gaze, readonly [number, number]>> = { circle: [-7, 1], ticket: [-4, 8] };
+
+/** Where the square looks, `rest` ms after the scroll last moved: nowhere in particular until it rests. */
+export function gazeAt(rest: number): Gaze | null {
+  const since = rest - REST_MS;
+  if (!(since >= 0)) return null;
+  const at = since % GAZE_CYCLE;
+  let gaze: Gaze | null = null;
+  for (const step of GAZES) if (at >= step.from) gaze = step.gaze;
+  return gaze;
+}
+
+/** The die waiting on the table rocks every so often, as if nudged; in ms. */
+export const ROCK_EVERY = 3600;
+export const ROCK_MS = 900;
+/** How far it tips, at most, in degrees. */
+export const ROCK_DEG = 7;
+/** Half the die's side (World.astro): it tips over the edge of its bottom face. */
+const DIE_HALF = 34;
+
+/** How far the waiting die tips, in degrees, `rest` ms after the scroll last moved: two swings that settle. */
+export function rockAt(rest: number): number {
+  const since = rest - REST_MS - 600;
+  if (!(since >= 0)) return 0;
+  const t = since % ROCK_EVERY;
+  if (t >= ROCK_MS) return 0;
+  return ROCK_DEG * Math.sin((4 * Math.PI * t) / ROCK_MS) * (1 - t / ROCK_MS);
+}
+
+/** The rock as the die's transform: it tips over the bottom corner on the side it leans to. */
+export function rockTransform(degrees: number): string {
+  if (degrees === 0) return 'rotate(0)';
+  const corner = degrees > 0 ? DIE_HALF : -DIE_HALF;
+  return `rotate(${degrees.toFixed(2)} ${corner} ${DIE_HALF})`;
 }
