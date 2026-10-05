@@ -78,6 +78,10 @@ const of = (id: ChapterId) => {
     <div class="film__paper" aria-hidden="true" data-paper></div>
     <!-- What the cards leave free of the stage; ./film.ts has the camera frame the shot in it. -->
     <div class="film__free" aria-hidden="true" data-free></div>
+  </div>
+
+  <!-- The film's corner, over the stage and the chapters, so a card leaving at the top passes under it. -->
+  <div class="film__corner">
     <div class="film__controls">
       <div class="film__spool">
         <svg viewBox="-24 -24 48 48" aria-hidden="true" data-spool="none">
@@ -174,7 +178,7 @@ const of = (id: ChapterId) => {
 
   /*
    * The chapters lie over the whole stage, mostly transparent: they let a click or a tap through to
-   * the stage, where the sound's button is, and only their cards take them (Beat.astro).
+   * the stage, and only their cards take them (Beat.astro).
    */
   :global(html.js) .film__chapters {
     position: relative;
@@ -246,12 +250,32 @@ const of = (id: ChapterId) => {
     }
   }
 
-  /* The film's own corner: the spool, and the sound beside it. */
+  /*
+   * The film's own corner: the spool, and the sound beside it. Its layer sticks like the stage and
+   * lies over the chapters, so a card on its way out at the top slides under the corner, as under the
+   * notebook's button; the layer lets every click through but the sound's.
+   */
+  .film__corner {
+    display: none;
+  }
+
+  :global(html.js) .film__corner {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 100vh;
+    height: 100svh;
+    margin-top: -100vh;
+    margin-top: -100svh;
+    pointer-events: none;
+  }
+
   .film__controls {
     position: absolute;
     top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
     left: var(--gutter);
-    z-index: 2;
+    pointer-events: auto;
     display: flex;
     align-items: center;
     gap: var(--space-2);

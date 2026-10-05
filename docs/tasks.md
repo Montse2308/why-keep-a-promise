@@ -936,8 +936,17 @@ Dep.: todas las subfases anteriores.
       ES) ni a 320 (53 y 59); se desliza dentro de su recuadro, se ve cortada y no se alcanza con el
       teclado (sin `tabindex`). (2) En el celular, una tarjeta que sale por arriba pasa sobre el
       carrete y el sonido (el cuaderno queda encima). Con la tarjeta quieta en su lugar nada tapa el
-      tablero. Capturas y README en `scratch/p7-7/review/`; el README termina con lo que Montse
-      tiene que decidir de cada hallazgo.
+      tablero. Capturas y README en `scratch/p7-7/review/`.
+      Montse pidió aplicar lo recomendado en los dos: (1) en pantallas angostas (≤ 30rem) la tabla
+      deja que el nombre de cada fila ocupe dos líneas, con menos margen en el recuadro y las celdas
+      y las etiquetas con esquinas redondeadas en vez de óvalo: cabe entera a 320 y 360 px, en EN y
+      ES, y a 1440 no cambia. (2) El carrete y el sonido salen del escenario a una capa propia
+      (`.film__corner`), pegada como él y encima de los capítulos, que deja pasar los clics salvo
+      los de sus controles: la tarjeta que sale pasa por debajo, como bajo el botón del cuaderno. Se
+      volvió a jugar la película a 320 × 640 y 844 × 390 (21/21), el sonido toma el toque real en
+      todo el recorrido, la esquina se va con el escenario al final y sin JS no aparece. El home pesa
+      0.1 KiB más (175.3), y `src/data/weight.json` se reescribió. Antes y después, en
+      `scratch/p7-7/review/fixed-*.png` y `after-fix/`.
 - [ ] **7.7.5** Revisión completa, parte 2: teclado, movimiento reducido, sin JS y script bloqueado.
 - [ ] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
 - [ ] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
