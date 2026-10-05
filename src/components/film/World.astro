@@ -88,10 +88,11 @@ const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
     <g data-part="stars" opacity={view.stars}>
       {STARS.map(([x, y, size]) => <path d={star} transform={`translate(${x} ${y}) scale(${size})`} fill="#fff4c2" />)}
     </g>
-    <path d="M-2000 640 C -600 420, 200 520, 700 470 S 1700 380, 3600 560 L 3600 3000 L -2000 3000 Z" fill={view.light['hill-far']} filter={`url(#${shadow})`} data-part="hill-far" />
+    {/* The hills carry no shadow filter: they are the largest shapes, repainted whenever the camera moves. */}
+    <path d="M-2000 640 C -600 420, 200 520, 700 470 S 1700 380, 3600 560 L 3600 3000 L -2000 3000 Z" fill={view.light['hill-far']} data-part="hill-far" />
   </g>
   <g data-part="near">
-    <path d="M-2000 660 C -300 560, 500 600, 900 560 S 2000 520, 3600 640 L 3600 3000 L -2000 3000 Z" fill={view.light['hill-near']} filter={`url(#${shadow})`} data-part="hill-near" />
+    <path d="M-2000 660 C -300 560, 500 600, 900 560 S 2000 520, 3600 640 L 3600 3000 L -2000 3000 Z" fill={view.light['hill-near']} data-part="hill-near" />
   </g>
   <rect x="-4000" y={WORLD.floor} width="9600" height="5000" fill={view.light.floor} data-part="floor" />
   <rect x="200" y="200" width="1200" height="700" fill={`url(#${lamp})`} opacity={view.lamp} data-part="lamp" />

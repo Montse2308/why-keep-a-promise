@@ -824,11 +824,13 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
 
 Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en cualquier momento.
 
-- [ ] **7.6.1** Punto 3, solo el mínimo: quitar el filtro de sombra (`filter`) de las dos colinas en
+- [x] **7.6.1** Punto 3, solo el mínimo: quitar el filtro de sombra (`filter`) de las dos colinas en
       `World.astro` (`hill-far` y `hill-near`), que son los trazos más grandes que se repintan al
       mover la cámara. El sol, las nubes, la pared, la lámpara y los personajes conservan su
       sombra. Capturas antes y después (con JS y sin JS, 360 y 1440 px) para Montse. Sin medir en
-      teléfonos reales y sin cambiar las demás sombras.
+      teléfonos reales y sin cambiar las demás sombras. Hecho: los 9 cuadros quietos cambian solo
+      en el borde de las colinas (delta máximo 7 de 255); las capturas están en
+      `scratch/p7-6/review/7.6.1-*`.
 
 - [ ] **7.6.2** Referencia: medir el HTML del home y los nodos de cada cuadro quieto (hoy unos 460 de
       los 540 KB del HTML y 4 985 nodos) y sacar capturas sin JS de los 9 cuadros, en `scratch/`.
