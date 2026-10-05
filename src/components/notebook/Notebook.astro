@@ -212,26 +212,45 @@ const label = tr('notebook.label');
     overscroll-behavior: contain;
   }
 
+  /*
+   * In and out the same way: the sheet slides in from the right edge as the backdrop dims, and slides
+   * back out as it clears. Closing, the dialog stays in the top layer until the slide ends
+   * (`overlay`, `display`); a browser without them closes it at once. With reduced motion the
+   * durations are 0 (tokens.css): it simply opens and closes.
+   */
+  .notebook {
+    transform: translateX(100%);
+    transition:
+      transform var(--duration-slow) var(--ease-standard),
+      overlay var(--duration-slow) allow-discrete,
+      display var(--duration-slow) allow-discrete;
+  }
+
   .notebook[open] {
-    animation: notebook-in var(--duration-slow) var(--ease-standard);
+    transform: none;
   }
 
-  .notebook::backdrop {
-    background: rgb(29 27 58 / 0.5);
-  }
-
-  .notebook[open]::backdrop {
-    animation: notebook-dim var(--duration-slow) var(--ease-standard);
-  }
-
-  @keyframes notebook-in {
-    from {
+  @starting-style {
+    .notebook[open] {
       transform: translateX(100%);
     }
   }
 
-  @keyframes notebook-dim {
-    from {
+  .notebook::backdrop {
+    background: rgb(29 27 58 / 0.5);
+    opacity: 0;
+    transition:
+      opacity var(--duration-slow) var(--ease-standard),
+      overlay var(--duration-slow) allow-discrete,
+      display var(--duration-slow) allow-discrete;
+  }
+
+  .notebook[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .notebook[open]::backdrop {
       opacity: 0;
     }
   }

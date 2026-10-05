@@ -800,7 +800,14 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
       tests) dice qué página es una URL. Sin JS el error vuelve, solo en la consola. Probado con
       clics reales en Chrome (`pagereveal`): entre páginas del cuaderno, desde el panel y al cambiar
       de idioma, sí; del home y hacia él y con movimiento reducido, no; sin errores en la consola.
-- [ ] **7.5.6** Salida animada al cerrar el panel, simétrica a la entrada.
+- [x] **7.5.6** Salida animada al cerrar el panel, simétrica a la entrada.
+      La entrada y la salida son ahora la misma transición de CSS (`Notebook.astro`): la hoja entra
+      desde el borde derecho mientras el fondo se oscurece, y sale igual mientras se aclara, en
+      `--duration-slow`. Al cerrar, el diálogo sigue en la capa superior hasta que termina de salir
+      (`@starting-style` y `allow-discrete` en `overlay` y `display`); un navegador sin `overlay`
+      (Firefox) lo cierra de golpe, como antes. Sin JS nuevo. Probado con clics reales a 1440 y
+      360 px, en una página del cuaderno y en el home: por el botón de cerrar, el fondo y Esc, sale
+      deslizándose y el foco vuelve al botón; con movimiento reducido abre y cierra sin moverse.
 - [ ] **7.5.7** Capturas a 740×360, 844×390, 1024×768 y 1440×900; sin scroll horizontal a 320 px;
       presupuestos en verde.
 - [ ] **7.5.8 (Montse)** Revisión de P7.5 (el PR).
