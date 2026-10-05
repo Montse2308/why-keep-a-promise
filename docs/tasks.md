@@ -584,8 +584,11 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       `verify:dist` revisa que la descripción no filtre el candado. `tests/meta.test.ts`; `verify:dist`
       exige en los dos estados una descripción en cada página, igual en `og:description` y sin la
       frase de estado, y con el candado cerrado sin sus marcas.
-- [ ] **7.2.4** `src/pages/404.astro`, bilingüe en una sola página (GitHub Pages sirve un único
-      `404.html`), con el escenario y los dos enlaces de vuelta.
+- [x] **7.2.4** `src/pages/404.astro`, bilingüe en una sola página (GitHub Pages sirve un único
+      `404.html`), con el escenario y los dos enlaces de vuelta. El escenario al amanecer con el
+      círculo y el cuadrado preocupados; el título y una línea en cada idioma, con su `lang`
+      (`notfound.*`, textos nuevos que Montse revisa en 7.2.11), y «Volver a la película» en cada uno.
+      Lleva `noindex`, y `verify:dist` no le pide descripción.
 - [ ] **7.2.5** `noindex` en `/finding` según `findingUnlocked()`; `verify:dist` lo exige con el
       candado cerrado y lo prohíbe con el candado abierto.
 - [ ] **7.2.6** `src/pages/sitemap.xml.ts`, propio y sin dependencias, con las alternativas de

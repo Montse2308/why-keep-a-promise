@@ -70,6 +70,9 @@ export const STATUS_ON_HOME = 2;
 /** /finding itself, in both languages: the only pages that may link to it while locked (its language switch). */
 export const FINDING_PAGES = ['finding/index.html', 'es/finding/index.html'];
 
+/** The page GitHub Pages serves for a missing address (src/pages/404.astro): it has no description, since nothing indexes it. */
+export const NOT_FOUND_PAGE = '404.html';
+
 /** The two manuscript states (docs/content-rules.md, rule (b)). */
 export const STATUSES = /** @type {const} */ (['in-preparation', 'under-review']);
 
@@ -218,6 +221,7 @@ export function descriptionsOf(html) {
 export function descriptionProblems(status, dictionaries, pages) {
   const sentences = Object.values(dictionaries).flatMap((dictionary) => STATUSES.map((state) => dictionary[`manuscript.status.${state}`] ?? ''));
   return Object.entries(pages).flatMap(([page, html]) => {
+    if (page === NOT_FOUND_PAGE) return [];
     const { name, og } = descriptionsOf(html);
     if (!name?.trim()) return [`${page}: no description`];
     if (og !== name) return [`${page}: og:description is not its description`];
@@ -269,7 +273,7 @@ function main() {
     console.error(`verify:dist: the pages' descriptions are off:\n  ${descriptions.join('\n  ')}`);
     process.exit(1);
   }
-  const described = Object.keys(pages).length;
+  const described = Object.keys(pages).filter((page) => page !== NOT_FOUND_PAGE).length;
 
   if (status === 'in-preparation') {
     const leaks = files.flatMap((file) => findMarks(readFileSync(file, 'utf8')).map((mark) => `${relative(root, file)}: ${mark}`));

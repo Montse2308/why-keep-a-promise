@@ -1,0 +1,125 @@
+---
+/**
+ * The page GitHub Pages serves for any address it does not have (point 13 of the external review).
+ * It serves one 404.html for the whole site, whatever the language of the address, so this page is
+ * both languages at once: a small stage at dawn, the two of the cast looking for the page, and a link
+ * back to the film in each language. It stays out of search engines and of the sitemap.
+ */
+import { Font } from 'astro:assets';
+import '../styles/base.css';
+import Character from '../components/film/Character.astro';
+import { FILM, LIGHT_POINTS } from '../lib/design/film';
+import { DEFAULT_LOCALE, otherLocale, t } from '../lib/i18n';
+import { assetHref, href } from '../lib/routes';
+
+const dawn = LIGHT_POINTS[0]!.colours;
+// The page's own language first, then the other one.
+const locales = [DEFAULT_LOCALE, otherLocale(DEFAULT_LOCALE)];
+const shadow = 'not-found';
+---
+
+<!doctype html>
+<html lang={DEFAULT_LOCALE}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{locales.map((locale) => t(locale, 'notfound.title')).join(' · ')}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
+    <Font cssVariable="--font-display" />
+    <Font cssVariable="--font-body" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <main class="container not-found">
+      <svg class="not-found__stage" viewBox="-170 -96 340 192" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="not-found-sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color={dawn['sky-top']} />
+            <stop offset="1" stop-color={dawn['sky-bottom']} />
+          </linearGradient>
+          <clipPath id="not-found-frame">
+            <rect x="-170" y="-96" width="340" height="192" rx="18" />
+          </clipPath>
+          <filter id={shadow} x="-40%" y="-40%" width="180%" height="190%">
+            <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#281e3c" flood-opacity="0.25" />
+          </filter>
+        </defs>
+        <g clip-path="url(#not-found-frame)">
+          <rect x="-170" y="-96" width="340" height="192" fill="url(#not-found-sky)" />
+          <path d="M-170 30 C -100 4, -20 10, 50 24 S 140 12, 170 20 V 96 H -170 Z" fill={dawn['hill-far']} />
+          <path d="M-170 56 C -80 40, 20 42, 90 52 S 150 44, 170 48 V 96 H -170 Z" fill={dawn['hill-near']} />
+          <rect x="-170" y="70" width="340" height="26" fill={dawn.floor} />
+        </g>
+        <g transform="translate(-74 30) scale(0.62)">
+          <Character kind="circle" mood="worried" shadow={shadow} />
+        </g>
+        <g transform="translate(74 30) scale(0.62)">
+          <Character kind="square" mood="worried" shadow={shadow} />
+        </g>
+        <rect x="-170" y="-96" width="340" height="192" rx="18" fill="none" stroke={FILM.ink} stroke-width="5" />
+      </svg>
+      <h1>
+        {
+          locales.map((locale, i) => (
+            <>
+              {i > 0 && ' '}
+              <span class="not-found__title" lang={locale}>
+                {t(locale, 'notfound.title')}
+              </span>
+            </>
+          ))
+        }
+      </h1>
+      {
+        locales.map((locale) => (
+          <p class="not-found__line" lang={locale}>
+            {t(locale, 'notfound.line')} <a href={href(locale, 'home')}>{t(locale, 'notebook.film')}</a>
+          </p>
+        ))
+      }
+    </main>
+  </body>
+</html>
+
+<style>
+  .not-found {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-4);
+    padding-block: var(--space-8);
+    text-align: center;
+  }
+
+  .not-found__stage {
+    display: block;
+    width: min(26rem, 100%);
+    height: auto;
+    overflow: visible;
+  }
+
+  .not-found h1 {
+    margin: 0;
+  }
+
+  .not-found__title {
+    display: block;
+  }
+
+  .not-found__title + .not-found__title {
+    font-size: 0.6em;
+    color: var(--color-muted);
+  }
+
+  .not-found__line {
+    margin: 0;
+  }
+
+  .not-found__line a {
+    display: inline-block;
+    min-height: var(--target-min);
+    padding-block: var(--space-2);
+    font-family: var(--font-ui);
+    font-weight: 800;
+  }
+</style>

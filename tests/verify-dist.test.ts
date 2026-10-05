@@ -45,6 +45,7 @@ import {
   HOME_PAGES,
   lockedLinkProblems,
   MARKERS,
+  NOT_FOUND_PAGE,
   readStatus,
   STATUS_ON_HOME,
   statusProblems,
@@ -310,6 +311,11 @@ describe('verify:dist (ADR 0026)', () => {
     it('passes pages that each carry their own, the same twice', () => {
       const pages = { 'index.html': head(en['site.description']), 'finding/index.html': head(en['site.title']) };
       expect(descriptionProblems('in-preparation', dictionaries, pages)).toEqual([]);
+    });
+
+    it('leaves out the 404 page, which nothing indexes', () => {
+      expect(NOT_FOUND_PAGE).toBe('404.html');
+      expect(descriptionProblems('in-preparation', dictionaries, { '404.html': '<head></head>' })).toEqual([]);
     });
 
     it('fails a page without one, an empty one, or one Open Graph does not repeat', () => {
