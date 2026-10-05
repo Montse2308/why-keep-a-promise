@@ -107,8 +107,8 @@ describe('playing it', () => {
   it('plays each cue from the film’s script, where the stage shows it', () => {
     for (const cue of CUES) expect(played(cue) || film.includes(`'${cue}', 0.75)`), cue).toBe(true);
     // The seal and the credits' last line sound when they come into view, once.
-    expect(film).toContain("onSight(envelope?.querySelector('.envelope__seal'), 'stamp', 0.75);");
-    expect(film).toContain("onSight(film.querySelector('.credits__end'), 'theme', 0.75);");
+    expect(film).toContain("film.onSight(film.root.querySelector('[data-envelope] .envelope__seal'), 'stamp', 0.75);");
+    expect(film).toContain("film.onSight(film.root.querySelector('.credits__end'), 'theme', 0.75);");
     expect(film).toContain("play('roll');");
     expect(film).toContain("if (decision.phase === 'outcome' && decision.face !== null) film.play('land');");
     expect(film).toContain("play('bubbles');");

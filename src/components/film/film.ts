@@ -3,11 +3,12 @@
  * never captures it, and applies what src/lib/film/stage.ts says the stage shows at that point: the
  * camera, the day's light, the cast and their moods, the rooms, the board, the coins, the die, the
  * golden thread, the two voices, the blackout, chapter 6's signs, chapter 7's night (the stars,
- * the lamp, the engine and the envelope) and chapter 8's return to the first table. It also handles
- * the chapters' choices, which are plain buttons, sliders and, on the deck, a swipe that stands for
- * a button: every line a choice leads to was resolved at build time, so the script only shows it.
- * Nothing is stored or sent (ADR 0023). With the sound on (./sound.ts), the die, the chat's bubbles,
- * the seal and the end of the credits sound as the stage shows them (ADR 0025).
+ * the lamp, the engine and the envelope) and chapter 8's return to the first table. Each chapter's
+ * choices, which are plain buttons, sliders and, on the deck, a swipe that stands for a button, are
+ * wired by its controller (./chapters/*.ts, through ./context.ts): every line a choice leads to was
+ * resolved at build time, so the script only shows it. Nothing is stored or sent (ADR 0023). With
+ * the sound on (./sound.ts), the die, the chat's bubbles, the seal and the end of the credits sound
+ * as the stage shows them (ADR 0025).
  */
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
@@ -37,18 +38,19 @@ import { brokenBetween, stageAt, threadBetween, type Place, type StageState, typ
 import { scrollPosition } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
 import { START as NO_PICKS, type CellKey, type Tag } from '../../lib/pd/bestReply';
-import { guessOf, type GuessId } from '../../lib/film/guess';
-import { fill } from '../../lib/template';
 import type { Cue } from '../../lib/film/sound';
 import { createSound } from './sound';
-import { ROLL_MS, settle, settled, type Clock, type FilmContext, type Thread } from './context';
+import { ROLL_MS, type Clock, type FilmContext, type Thread } from './context';
 import { arrival } from './chapters/arrival';
 import { blackout } from './chapters/blackout';
+import { closing } from './chapters/closing';
 import { fold } from './chapters/fold';
+import { myResearch } from './chapters/my-research';
+import { realPeople } from './chapters/real-people';
 import { talk } from './chapters/talk';
 import { twoRooms } from './chapters/two-rooms';
 import { UNDECIDED } from '../../lib/table/decision';
-import { DIE_FACES, type Choice, type Face } from '../../lib/table/game';
+import { DIE_FACES, type Face } from '../../lib/table/game';
 
 const DRAW_MS = 800;
 const COUNT_MS = 450;
@@ -181,8 +183,6 @@ export function start(): void {
     );
     watch.observe(element);
   };
-  onSight(envelope?.querySelector('.envelope__seal'), 'stamp', 0.75);
-  onSight(film.querySelector('.credits__end'), 'theme', 0.75);
 
   let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null, guesses: {}, now: null, pageKept: null };
   /** When each of the stage's animations last started (context.ts). */
@@ -431,59 +431,9 @@ export function start(): void {
   talk(context);
   fold(context);
   blackout(context);
-
-  // Chapter 6: guess before seeing. The bar is the visitor's; the figure is set beside it, and the
-  // sign over the table turns it on. Nothing judges the guess (ADR 0023).
-  film.querySelectorAll<HTMLElement>('[data-guess]').forEach((box) => {
-    const id = box.dataset.guess as GuessId;
-    const range = box.querySelector<HTMLInputElement>('[data-guess-range]');
-    const see = box.querySelector<HTMLButtonElement>('[data-guess-see]');
-    const yours = see?.querySelector('small');
-    const out = box.querySelector<HTMLElement>('[data-guess-out]');
-    const value = (): number => guessOf(Number(range?.value));
-    range?.addEventListener('input', () => {
-      range.setAttribute('aria-valuetext', fill(range.dataset.percent ?? '{n}%', { n: value() }));
-      if (yours) yours.textContent = fill(see?.dataset.yours ?? '{n}', { n: value() });
-    });
-    see?.addEventListener('click', () => {
-      if (settled(see)) return;
-      const guess = value();
-      state = { ...state, guesses: { ...state.guesses, [id]: guess } };
-      settle(box.querySelector('[data-guess-tickets]'), see);
-      if (range) range.disabled = true;
-      box.dataset.seen = '';
-      if (out) out.textContent = (out.dataset.said ?? '').replace('{guess}', String(guess));
-      request();
-    });
-  });
-
-  // Chapter 8: the other asks one last time. It is only an answer: the promise of chapter 0 is
-  // settled with it, and nothing is paid.
-  const nowTickets = film.querySelector('[data-now-tickets]');
-  const nowOut = film.querySelector<HTMLElement>('[data-now-out]');
-  film.querySelectorAll<HTMLButtonElement>('[data-now]').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (settled(button) || state.now) return;
-      state = { ...state, now: button.dataset.now as Choice };
-      settle(nowTickets, button);
-      promiseTickets?.querySelectorAll('button').forEach((ticket) => ticket.setAttribute('aria-disabled', 'true'));
-      if (nowOut) nowOut.textContent = button.dataset.said ?? '';
-      request();
-    });
-  });
-
-  // Chapter 8: whether the page kept its own promise, the one it made at the arrival.
-  const pageTickets = film.querySelector('[data-page-tickets]');
-  const pageOut = film.querySelector<HTMLElement>('[data-page-out]');
-  film.querySelectorAll<HTMLButtonElement>('[data-page-kept]').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (settled(button) || state.pageKept != null) return;
-      state = { ...state, pageKept: button.dataset.pageKept === 'yes' };
-      settle(pageTickets, button);
-      if (pageOut) pageOut.textContent = button.dataset.said ?? '';
-      request();
-    });
-  });
+  realPeople(context);
+  myResearch(context);
+  closing(context);
 
   request();
 }
