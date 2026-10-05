@@ -8,7 +8,7 @@
 // fails if the locked content is missing from any page that carries it, so a broken unlock is caught
 // too. While locked, no page links to /finding either: chapter 7, the notebook's panel, its footer and
 // the credits link to it only behind the lock; and /finding asks not to be indexed, which it stops
-// asking once unlocked.
+// asking once unlocked. The sitemap lists every page but the 404, and /finding only once unlocked.
 //
 // In both states it also checks the status sentence (docs/content-rules.md, rule (b)): the active one
 // appears exactly `STATUS_ON_HOME` times on each home page, and the other one appears nowhere. And
@@ -259,6 +259,49 @@ export function noindexProblems(status, pages) {
   return problems;
 }
 
+/** The sitemap's path in dist/ (src/pages/sitemap.xml.ts). */
+export const SITEMAP = 'sitemap.xml';
+
+/**
+ * The site's root URL, base included, as the English home names itself in its canonical link.
+ * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
+ * @returns {string | null}
+ */
+export function siteRoot(pages) {
+  const value = /<link\s+rel="canonical"\s+href="([^"]+)"/i.exec(pages['index.html'] ?? '')?.[1];
+  return value === undefined ? null : decodeAttribute(value);
+}
+
+/**
+ * Problems with the sitemap, a new place for the lock to leak through: every URL it names is a page
+ * of dist/ under the site's root, not the 404 page; it lists every page; and while the lock is
+ * closed it leaves /finding out, in either language and as an alternate too.
+ * @param {'in-preparation' | 'under-review'} status
+ * @param {string | undefined} xml the sitemap
+ * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
+ * @returns {string[]}
+ */
+export function sitemapProblems(status, xml, pages) {
+  if (xml === undefined) return [`${SITEMAP}: missing`];
+  const root = siteRoot(pages);
+  if (!root) return ['index.html: no canonical link to read the site from'];
+  const locked = status === 'in-preparation';
+  const listed = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map((match) => decodeAttribute(match[1]));
+  const named = [...listed, ...[...xml.matchAll(/<xhtml:link\b[^>]*\bhref="([^"]*)"/g)].map((match) => decodeAttribute(match[1]))];
+  /** @param {string} url */
+  const pageOf = (url) => (url.startsWith(root) ? `${url.slice(root.length)}index.html` : null);
+  const problems = [...new Set(named)].flatMap((url) => {
+    const page = pageOf(url);
+    if (page === null || page === NOT_FOUND_PAGE || pages[page] === undefined) return [`${SITEMAP}: ${url} is not a page of the site`];
+    if (locked && FINDING_PAGES.includes(page)) return [`${SITEMAP}: names ${url} while the lock is closed`];
+    return [];
+  });
+  const expected = Object.keys(pages).filter((page) => page !== NOT_FOUND_PAGE && !(locked && FINDING_PAGES.includes(page)));
+  const pagesListed = new Set(listed.map(pageOf));
+  for (const page of expected) if (!pagesListed.has(page)) problems.push(`${SITEMAP}: leaves out ${page}`);
+  return problems;
+}
+
 /**
  * Every text file under a directory.
  * @param {string} dir
@@ -306,6 +349,13 @@ function main() {
     console.error(`verify:dist: noindex is off:\n  ${indexing.join('\n  ')}`);
     process.exit(1);
   }
+  const sitemapFile = join(dist, SITEMAP);
+  const sitemap = files.includes(sitemapFile) ? readFileSync(sitemapFile, 'utf8') : undefined;
+  const mapping = sitemapProblems(status, sitemap, pages);
+  if (mapping.length > 0) {
+    console.error(`verify:dist: the sitemap is off:\n  ${mapping.join('\n  ')}`);
+    process.exit(1);
+  }
 
   if (status === 'in-preparation') {
     const leaks = files.flatMap((file) => findMarks(readFileSync(file, 'utf8')).map((mark) => `${relative(root, file)}: ${mark}`));
@@ -319,7 +369,7 @@ function main() {
       process.exit(1);
     }
     console.log(
-      `verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page links to /finding and it is noindex, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
+      `verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page or the sitemap links to /finding and it is noindex, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
     );
     return;
   }
@@ -334,7 +384,7 @@ function main() {
     process.exit(1);
   }
   console.log(
-    `verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content and /finding is indexed, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
+    `verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content and /finding is indexed and in the sitemap, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
   );
 }
 

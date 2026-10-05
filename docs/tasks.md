@@ -592,9 +592,11 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
 - [x] **7.2.5** `noindex` en `/finding` según `findingUnlocked()`; `verify:dist` lo exige con el
       candado cerrado y lo prohíbe con el candado abierto. También exige `noindex` en la 404 y lo
       prohíbe en cualquier otra página.
-- [ ] **7.2.6** `src/pages/sitemap.xml.ts`, propio y sin dependencias, con las alternativas de
+- [x] **7.2.6** `src/pages/sitemap.xml.ts`, propio y sin dependencias, con las alternativas de
       idioma; con el candado cerrado no lista `/finding`, y `verify:dist` lo comprueba. Sin
-      `robots.txt` (un sitio de proyecto no está en la raíz del dominio).
+      `robots.txt` (un sitio de proyecto no está en la raíz del dominio). El XML sale de
+      `src/lib/sitemap.ts`; `verify:dist` revisa además que cada URL sea una página del build, que no
+      falte ninguna y que la 404 no esté.
 - [ ] **7.2.7** `theme-color` y `apple-touch-icon` en PNG de 180 px, con el mismo proceso de resvg que
       los pósteres.
 - [ ] **7.2.8** Axelrod según 7.0.5 (B): Axelrod y Hamilton (1981) reemplaza al libro de 1984 en
