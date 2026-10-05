@@ -914,8 +914,16 @@ Dep.: todas las subfases anteriores.
       primera mesa de noche), con texto alternativo. Se tomaron del build cerrado a 1440×900 con
       movimiento reducido, en las pantallas 0, 6, 20.7 y 33, y se guardaron como WebP:
       `.github/readme/film-en.webp` (81 KiB) y `film-es.webp` (83 KiB). Ninguno muestra el sello.
-- [ ] **7.7.3** Lighthouse otra vez sobre el commit final; regenerar `src/data/lighthouse.json` para
+- [x] **7.7.3** Lighthouse otra vez sobre el commit final; regenerar `src/data/lighthouse.json` para
       que `/how-its-built` coincida con `npm run budgets`.
+      Lighthouse 13.5.0, tres corridas por home contra `npm run preview` sobre el build de P7 (el
+      código no cambió desde el merge de P7.6): LCP de 1.96 s en `/` y en `/es/` (antes 2.11),
+      rendimiento 0.99. `/how-its-built` dice ahora 19.1 KiB de JS, 119.5 KiB de fuentes y 178.0 KiB
+      de primera carga (en ES, 178.5); `npm run budgets` da 20.1, 118.6 y 175.2 (175.8). La
+      diferencia que queda es de método, no de cifras viejas: `budgets` suma al JS del home los dos
+      scripts que van dentro del HTML (1.3 KiB), que Lighthouse cuenta con el documento, y
+      Lighthouse suma las cabeceras HTTP de cada petición. Los informes, en
+      `scratch/p7-7/lighthouse/`.
 - [ ] **7.7.4** Revisión completa, parte 1: 1440, 360 y 320 px, horizontal, EN/ES.
 - [ ] **7.7.5** Revisión completa, parte 2: teclado, movimiento reducido, sin JS y script bloqueado.
 - [ ] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
