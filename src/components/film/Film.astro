@@ -128,6 +128,12 @@ const of = (id: ChapterId) => {
     background: linear-gradient(#ffc58f, #ffe6cf);
   }
 
+  /* While the film plays its memory back (ADR 0029), the choices are simply there: nothing moves. */
+  .film[data-film-replaying] :global(*) {
+    transition: none !important;
+    animation: none !important;
+  }
+
   /* Storyboard (no JavaScript): the chapters, one after another; no live stage. */
   .film__stage {
     display: none;

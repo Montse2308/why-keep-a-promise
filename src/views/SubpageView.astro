@@ -80,7 +80,7 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
     {
       back && !lockedWhole && (
         <p class="subpage__back">
-          <a href={href(locale, 'home', page.film ?? undefined)}>{back}</a>
+          <a href={href(locale, 'home', page.film ?? undefined)} data-film-back>{back}</a>
         </p>
       )
     }

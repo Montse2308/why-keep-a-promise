@@ -524,39 +524,48 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
       cerradas».
 - [x] **7.0.12** `docs/decisions/README.md` al día; revisar que ningún documento vigente contradiga a
       otro.
-- [ ] **7.0.13 (Montse)** Revisión de P7.0 (el PR).
+- [x] **7.0.13 (Montse)** Revisión de P7.0 (el PR #10, mergeado).
 
 ### P7.1 · Cimientos: robustez y refactor (puntos 16 `film.ts`, 1 y 2A)
 
 Partir `film.ts` (7.1.1 a 7.1.4) y el respaldo (7.1.5 y 7.1.6) no chocan con ningún ADR: pueden
 empezar en cuanto se cierre P6, sin esperar a P7.0.
 
-- [ ] **7.1.1** Referencia «antes»: recorrer la película entera con clics reales a 360 y 1440 px,
+- [x] **7.1.1** Referencia «antes»: recorrer la película entera con clics reales a 360 y 1440 px,
       con las capturas y la lista de pasos en `scratch/p7-1/` (no se versiona).
-- [ ] **7.1.2** Sacar de `film.ts` los controladores de los capítulos 0 a 2 (`arrival`, `two-rooms`,
+- [x] **7.1.2** Sacar de `film.ts` los controladores de los capítulos 0 a 2 (`arrival`, `two-rooms`,
       `talk`) a `src/components/film/chapters/*.ts`, junto a su `.astro`. El ciclo de
       `requestAnimationFrame` y el estado se quedan en `film.ts`. Comportamiento idéntico.
-- [ ] **7.1.3** Lo mismo con los capítulos 3 a 5 (`fold`, `two-voices`, `blackout`).
-- [ ] **7.1.4** Lo mismo con los capítulos 6 a 8 (`real-people`, `my-research`, `closing`). Recorrido
-      «después» igual a la referencia de 7.1.1.
-- [ ] **7.1.5** Respaldo, parte 1: `BaseLayout.astro` pone la clase `js` solo si el navegador corre
+- [x] **7.1.3** Lo mismo con los capítulos 3 a 5 (`fold`, `two-voices`, `blackout`). El capítulo 4 no
+      tiene elecciones: no lleva controlador.
+- [x] **7.1.4** Lo mismo con los capítulos 6 a 8 (`real-people`, `my-research`, `closing`). Recorrido
+      «después» igual a la referencia de 7.1.1: los 21 pasos con el mismo estado a 1440 y 360 px, y con
+      movimiento reducido las mismas capturas, byte a byte.
+- [x] **7.1.5** Respaldo, parte 1: `BaseLayout.astro` pone la clase `js` solo si el navegador corre
       módulos.
-- [ ] **7.1.6** Respaldo, parte 2: `start()` marca `data-film-ready` y, si lanza un error, quita
+- [x] **7.1.6** Respaldo, parte 2: `start()` marca `data-film-ready` y, si lanza un error, quita
       `js`; un temporizador de unos 4 s quita `js` si la película nunca arrancó. Verificar
-      bloqueando el script del build: se ve el storyboard, no la escena rota.
-- [ ] **7.1.7** `src/lib/film/memory.ts`, puro y con tests: el registro de acciones (prometer, la
+      bloqueando el script del build: se ve el storyboard, no la escena rota. También se revisa al
+      terminar de leer la página (`DOMContentLoaded`, cuando el módulo ya corrió o falló), así que un
+      script bloqueado cae al storyboard enseguida; y si el script llega después de los 4 s, la
+      película no arranca encima del storyboard. Verificado bloqueado, roto y tardío.
+- [x] **7.1.7** `src/lib/film/memory.ts`, puro y con tests: el registro de acciones (prometer, la
       ronda, cada columna, el mensaje, la decisión con su cara del dado, cada carta, la apuesta, las
       dos adivinanzas y las dos respuestas finales), con versión y validación al leer (lo raro se
       ignora). Todavía sin conectar. Dep.: ADR 0029 (7.0.6).
-- [ ] **7.1.8** Cada controlador anota su acción con `history.replaceState`.
-- [ ] **7.1.9** Al cargar, las acciones guardadas se reproducen sin animación por el mismo camino
+- [x] **7.1.8** Cada controlador anota su acción con `history.replaceState`.
+- [x] **7.1.9** Al cargar, las acciones guardadas se reproducen sin animación por el mismo camino
       de código que un clic: boletos, salidas `aria-live`, carrete, mazo y escala quedan igual.
-- [ ] **7.1.10** En las páginas del cuaderno, si el visitante llegó desde la película, «Volver a la
+- [x] **7.1.10** En las páginas del cuaderno, si el visitante llegó desde la película, «Volver a la
       película» y «← Volver a …» hacen `history.back()`. Va en el script del panel (sin script
       nuevo, ADR 0025); sin JS siguen siendo enlaces normales.
-- [ ] **7.1.11** El capítulo 8 con la frase nueva del ADR 0029, en EN y ES.
-- [ ] **7.1.12** Verificación de salida (los tres caminos de vuelta, pestaña nueva vacía, sin JS,
-      script bloqueado, peso del JS) y capturas para Montse.
+- [x] **7.1.11** El capítulo 8 con la frase nueva del ADR 0029, en EN y ES.
+- [x] **7.1.12** Verificación de salida (los tres caminos de vuelta, pestaña nueva vacía, sin JS,
+      script bloqueado, peso del JS) y capturas para Montse. Con clics y toques reales, a 1440 px (EN)
+      y 360 px (ES): recargar, Atrás (sin la caché del navegador) y «← Volver a …» devuelven el estado
+      jugado completo; una pestaña nueva empieza vacía; sin JS, con el script bloqueado, con error o
+      tardío se ve el storyboard; el JS del home pesa 17.7 KiB de 40. Capturas en `scratch/p7-1/review/`
+      (local, no se versiona).
 - [ ] **7.1.13 (Montse)** Revisión de P7.1 (el PR).
 
 ### P7.2 · Metadatos, SEO y datos (puntos 4, 13 y 6)

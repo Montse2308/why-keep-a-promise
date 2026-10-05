@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import adr from '../../../docs/decisions/0025-technology.md?raw';
-import film from '../../components/film/film.ts?raw';
 import filmComponent from '../../components/film/Film.astro?raw';
 import player from '../../components/film/sound.ts?raw';
 import beatComponent from '../../components/film/Beat.astro?raw';
@@ -20,6 +19,11 @@ import {
   THEME_TONIC,
   type Cue,
 } from './sound';
+
+// The film's script and its chapters' controllers, read as one.
+const film = Object.values(
+  import.meta.glob<string>(['../../components/film/film.ts', '../../components/film/context.ts', '../../components/film/chapters/*.ts'], { query: '?raw', import: 'default', eager: true }),
+).join('\n');
 
 const voices = CUES.flatMap((cue) => SCORE[cue].map((voice) => [cue, voice] as const));
 
@@ -65,7 +69,7 @@ describe('the score', () => {
 
   it('keeps the effects short and the theme brief', () => {
     for (const cue of ['land', 'bubbles', 'stamp'] as const) expect(cueLength(cue)).toBeLessThanOrEqual(0.5);
-    // The die spins for a second in the air (ROLL_MS in film.ts): its sound ends with the spin.
+    // The die spins for a second in the air (ROLL_MS in context.ts): its sound ends with the spin.
     expect(cueLength('roll')).toBeLessThanOrEqual(1);
     expect(film).toContain('const ROLL_MS = 1000;');
     expect(cueLength('theme')).toBeLessThanOrEqual(5);
@@ -103,10 +107,10 @@ describe('playing it', () => {
   it('plays each cue from the film’s script, where the stage shows it', () => {
     for (const cue of CUES) expect(played(cue) || film.includes(`'${cue}', 0.75)`), cue).toBe(true);
     // The seal and the credits' last line sound when they come into view, once.
-    expect(film).toContain("onSight(envelope?.querySelector('.envelope__seal'), 'stamp', 0.75);");
-    expect(film).toContain("onSight(film.querySelector('.credits__end'), 'theme', 0.75);");
+    expect(film).toContain("film.onSight(film.root.querySelector('[data-envelope] .envelope__seal'), 'stamp', 0.75);");
+    expect(film).toContain("film.onSight(film.root.querySelector('.credits__end'), 'theme', 0.75);");
     expect(film).toContain("play('roll');");
-    expect(film).toContain("if (decision.phase === 'outcome' && decision.face !== null) play('land');");
+    expect(film).toContain("if (decision.phase === 'outcome' && decision.face !== null) film.play('land');");
     expect(film).toContain("play('bubbles');");
   });
 

@@ -42,7 +42,7 @@ const pages = linkable(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));
     <div class="footer__end">
       {
         route !== 'home' && (
-          <a class="footer__film" href={href(locale, 'home')}>
+          <a class="footer__film" href={href(locale, 'home')} data-film-back>
             {tr('notebook.film')}
           </a>
         )

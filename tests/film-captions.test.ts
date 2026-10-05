@@ -302,9 +302,11 @@ describe('chapter 8, closing (ADR 0021, ADR 0023, ADR 0024)', () => {
     expect(closing).toContain("data-promise-line data-yes={tr('film.closing.ask.promised')}");
   });
 
-  it.each(LOCALES)('%s: leaves the why to the visitor, and says nothing is stored or sent (ADR 0023)', (locale) => {
+  it.each(LOCALES)('%s: leaves the why to the visitor, and says what was chosen stays in the tab, nothing sent (ADR 0029)', (locale) => {
     expect(text(locale)).toMatch(locale === 'en' ? /only you know why/ : /solo tú sabes por qué/);
-    expect(dictionaries[locale]['film.closing.private']).toMatch(locale === 'en' ? /nothing is stored or sent/ : /nada se guarda ni se envía/);
+    expect(dictionaries[locale]['film.closing.private']).toBe(
+      locale === 'en' ? 'Everything you chose stays in this tab: nothing is sent anywhere.' : 'Todo lo que elegiste se queda en esta pestaña: nada se envía a ningún lado.',
+    );
   });
 
   it.each(LOCALES)('%s: credits the experiment the film is based on, and the author by her key only', (locale) => {
