@@ -572,9 +572,11 @@ empezar en cuanto se cierre P6, sin esperar a P7.0.
 
 Dep.: P7.0. Puede ir en paralelo a P7.1.
 
-- [ ] **7.2.1** `<meta name="description">` y `og:description` por página e idioma: las del cuaderno
+- [x] **7.2.1** `<meta name="description">` y `og:description` por página e idioma: las del cuaderno
       salen de su línea del panel; la del home, de la clave nueva (7.0.3); `/finding` cerrado lleva
       la pregunta del sitio, no la frase de estado. Quita el `TODO(F5)` de `BaseLayout.astro`.
+      Hecho en `src/lib/meta.ts`, con la clave `site.description`. `/finding` lleva la pregunta del
+      sitio también con el candado abierto: no hay texto aprobado que hable del hallazgo.
 - [ ] **7.2.2** `og:locale`, `og:locale:alternate` y `og:site_name`.
 - [ ] **7.2.3** Test: las 14 páginas llevan descripción, en paridad y sin frases prohibidas;
       `verify:dist` revisa que la descripción no filtre el candado.
