@@ -6,7 +6,9 @@ import Notebook from '../components/notebook/Notebook.astro';
 import NotebookFooter from '../components/notebook/NotebookFooter.astro';
 import { FILM } from '../lib/design/film';
 import { AWAY_KEYS, THREADS } from '../lib/details';
+import { MANUSCRIPT_STATUS } from '../config';
 import { DEFAULT_LOCALE, LOCALES, t, type Locale } from '../lib/i18n';
+import { findingUnlocked } from '../lib/lock';
 import { description, OG_LOCALES } from '../lib/meta';
 import { POSTER, posterPath } from '../lib/posters/poster';
 import { fill } from '../lib/template';
@@ -40,6 +42,8 @@ const away = JSON.stringify(Object.fromEntries(THREADS.map((thread) => [thread, 
 const consoleLine = fill(t(locale, 'console.line'), { url: absoluteHref(site, locale, 'how-its-built') });
 // What the page says of itself, for search engines and shared links (src/lib/meta.ts).
 const summary = description(locale, route);
+// /finding is a title and the status sentence while locked: nothing to index until it opens (ADR 0026).
+const noindex = route === 'finding' && !findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
 ---
 
 <!doctype html>
@@ -49,6 +53,7 @@ const summary = description(locale, route);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={summary} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={absoluteHref(site, locale, route)} />
     {LOCALES.map((alt) => <link rel="alternate" hreflang={alt} href={absoluteHref(site, alt, route)} />)}
     <link rel="alternate" hreflang="x-default" href={absoluteHref(site, DEFAULT_LOCALE, route)} />

@@ -589,8 +589,9 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       círculo y el cuadrado preocupados; el título y una línea en cada idioma, con su `lang`
       (`notfound.*`, textos nuevos que Montse revisa en 7.2.11), y «Volver a la película» en cada uno.
       Lleva `noindex`, y `verify:dist` no le pide descripción.
-- [ ] **7.2.5** `noindex` en `/finding` según `findingUnlocked()`; `verify:dist` lo exige con el
-      candado cerrado y lo prohíbe con el candado abierto.
+- [x] **7.2.5** `noindex` en `/finding` según `findingUnlocked()`; `verify:dist` lo exige con el
+      candado cerrado y lo prohíbe con el candado abierto. También exige `noindex` en la 404 y lo
+      prohíbe en cualquier otra página.
 - [ ] **7.2.6** `src/pages/sitemap.xml.ts`, propio y sin dependencias, con las alternativas de
       idioma; con el candado cerrado no lista `/finding`, y `verify:dist` lo comprueba. Sin
       `robots.txt` (un sitio de proyecto no está en la raíz del dominio).

@@ -7,7 +7,8 @@
 // timeline names) or a key phrase of its prose and charts. Once the status is 'under-review', it
 // fails if the locked content is missing from any page that carries it, so a broken unlock is caught
 // too. While locked, no page links to /finding either: chapter 7, the notebook's panel, its footer and
-// the credits link to it only behind the lock.
+// the credits link to it only behind the lock; and /finding asks not to be indexed, which it stops
+// asking once unlocked.
 //
 // In both states it also checks the status sentence (docs/content-rules.md, rule (b)): the active one
 // appears exactly `STATUS_ON_HOME` times on each home page, and the other one appears nowhere. And
@@ -233,6 +234,32 @@ export function descriptionProblems(status, dictionaries, pages) {
 }
 
 /**
+ * Whether a page asks search engines not to index it.
+ * @param {string} html
+ */
+export function isNoindex(html) {
+  return /<meta\s+name="robots"\s+content="[^"]*\bnoindex\b[^"]*"/i.test(html);
+}
+
+/**
+ * Problems with `noindex` (point 13 of the external review): while the lock is closed, /finding is a
+ * title and the status sentence and carries it; once open, /finding is indexed like any page. The
+ * 404 page always carries it, and no other page ever does.
+ * @param {'in-preparation' | 'under-review'} status
+ * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
+ * @returns {string[]}
+ */
+export function noindexProblems(status, pages) {
+  const hidden = [NOT_FOUND_PAGE, ...(status === 'in-preparation' ? FINDING_PAGES : [])];
+  const problems = hidden.filter((page) => pages[page] !== undefined && !isNoindex(pages[page])).map((page) => `${page}: no noindex while the status is '${status}'`);
+  for (const [page, html] of Object.entries(pages)) {
+    if (!hidden.includes(page) && isNoindex(html)) problems.push(`${page}: noindex while the status is '${status}'`);
+  }
+  for (const page of FINDING_PAGES.filter((page) => pages[page] === undefined)) problems.push(`${page}: missing`);
+  return problems;
+}
+
+/**
  * Every text file under a directory.
  * @param {string} dir
  * @returns {string[]}
@@ -274,6 +301,11 @@ function main() {
     process.exit(1);
   }
   const described = Object.keys(pages).filter((page) => page !== NOT_FOUND_PAGE).length;
+  const indexing = noindexProblems(status, pages);
+  if (indexing.length > 0) {
+    console.error(`verify:dist: noindex is off:\n  ${indexing.join('\n  ')}`);
+    process.exit(1);
+  }
 
   if (status === 'in-preparation') {
     const leaks = files.flatMap((file) => findMarks(readFileSync(file, 'utf8')).map((mark) => `${relative(root, file)}: ${mark}`));
@@ -287,7 +319,7 @@ function main() {
       process.exit(1);
     }
     console.log(
-      `verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page links to /finding, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
+      `verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page links to /finding and it is noindex, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
     );
     return;
   }
@@ -302,7 +334,7 @@ function main() {
     process.exit(1);
   }
   console.log(
-    `verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
+    `verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content and /finding is indexed, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
   );
 }
 

@@ -43,8 +43,10 @@ import {
   findingLinks,
   findMarks,
   HOME_PAGES,
+  isNoindex,
   lockedLinkProblems,
   MARKERS,
+  noindexProblems,
   NOT_FOUND_PAGE,
   readStatus,
   STATUS_ON_HOME,
@@ -345,6 +347,51 @@ describe('verify:dist (ADR 0026)', () => {
         'finding/index.html: the description carries locked content: background trust',
       ]);
       expect(descriptionProblems('under-review', dictionaries, pages)).toEqual([]);
+    });
+  });
+
+  describe('noindex on /finding (point 13 of the external review)', () => {
+    const tag = '<meta name="robots" content="noindex">';
+    const site = (finding: boolean, extra: Record<string, string> = {}) => ({
+      'index.html': '<head></head>',
+      'finding/index.html': finding ? tag : '<head></head>',
+      'es/finding/index.html': finding ? tag : '<head></head>',
+      '404.html': tag,
+      ...extra,
+    });
+
+    it('reads the robots tag', () => {
+      expect(isNoindex(tag)).toBe(true);
+      expect(isNoindex('<meta name="robots" content="noindex, nofollow">')).toBe(true);
+      expect(isNoindex('<meta name="description" content="noindex">')).toBe(false);
+    });
+
+    it('wants /finding hidden while locked and indexed once open; the 404 page always hidden', () => {
+      expect(noindexProblems('in-preparation', site(true))).toEqual([]);
+      expect(noindexProblems('under-review', site(false))).toEqual([]);
+    });
+
+    it('fails /finding indexed while locked, or hidden once open', () => {
+      expect(noindexProblems('in-preparation', site(false))).toEqual([
+        "finding/index.html: no noindex while the status is 'in-preparation'",
+        "es/finding/index.html: no noindex while the status is 'in-preparation'",
+      ]);
+      expect(noindexProblems('under-review', site(true))).toEqual([
+        "finding/index.html: noindex while the status is 'under-review'",
+        "es/finding/index.html: noindex while the status is 'under-review'",
+      ]);
+    });
+
+    it('fails any other page that asks not to be indexed, and a 404 page that does not', () => {
+      expect(noindexProblems('in-preparation', site(true, { 'vanberg/index.html': tag, '404.html': '<head></head>' }))).toEqual([
+        "404.html: no noindex while the status is 'in-preparation'",
+        "vanberg/index.html: noindex while the status is 'in-preparation'",
+      ]);
+    });
+
+    it('sets it in the layout by the lock, on /finding only', () => {
+      expect(baseLayout).toContain("const noindex = route === 'finding' && !findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);");
+      expect(baseLayout).toContain('{noindex && <meta name="robots" content="noindex" />}');
     });
   });
 
