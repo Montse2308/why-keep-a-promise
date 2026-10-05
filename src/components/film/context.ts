@@ -39,6 +39,25 @@ export interface FilmContext {
   readonly settlePromise: () => void;
   /** Notes what the visitor just did in the film's memory, which lives in the tab's history entry (ADR 0029). */
   readonly note: (action: Action) => void;
+  /**
+   * How to play an action of this type back when the film loads with a memory: the same press the
+   * visitor made, through the same code. While it plays back, the film is quiet: no sound, no
+   * animation, no wait and no focus moved.
+   */
+  readonly onReplay: <T extends Action['type']>(type: T, run: (action: Extract<Action, { type: T }>) => void) => void;
+  /** Runs `next` after `ms`, or at once while the film plays its memory back. */
+  readonly later: (next: () => void, ms: number) => void;
+  /** Moves the focus, except while the film plays its memory back. */
+  readonly focus: (element: HTMLElement | null | undefined, options?: FocusOptions) => void;
+  /** Whether the film is playing its memory back. */
+  readonly quiet: () => boolean;
+}
+
+/** A slider set as the visitor would set it: its value, then the same `input` event. */
+export function slide(range: HTMLInputElement | null | undefined, value: number): void {
+  if (!range) return;
+  range.value = String(value);
+  range.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 /** A choice made once: the chosen ticket stays pressed, and every ticket of the group stays focusable but inert. */

@@ -5,7 +5,7 @@
  */
 import { guessOf, type GuessId } from '../../../lib/film/guess';
 import { fill } from '../../../lib/template';
-import { settle, settled, type FilmContext } from '../context';
+import { settle, settled, slide, type FilmContext } from '../context';
 
 export function realPeople(film: FilmContext): void {
   film.root.querySelectorAll<HTMLElement>('[data-guess]').forEach((box) => {
@@ -30,5 +30,10 @@ export function realPeople(film: FilmContext): void {
       film.note({ type: 'guess', id, guess });
       film.request();
     });
+  });
+  film.onReplay('guess', ({ id, guess }) => {
+    const box = film.root.querySelector(`[data-guess="${id}"]`);
+    slide(box?.querySelector<HTMLInputElement>('[data-guess-range]'), guess);
+    box?.querySelector<HTMLButtonElement>('[data-guess-see]')?.click();
   });
 }

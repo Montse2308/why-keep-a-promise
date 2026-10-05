@@ -20,4 +20,5 @@ export function arrival(film: FilmContext): void {
       film.request();
     });
   });
+  film.onReplay('promise', ({ promised }) => film.root.querySelector<HTMLButtonElement>(`[data-promise="${promised ? 'yes' : 'no'}"]`)?.click());
 }

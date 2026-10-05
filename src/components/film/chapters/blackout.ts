@@ -8,7 +8,7 @@
 import { BET_START, isBet, type Bet } from '../../../lib/film/bet';
 import { current as waiting, DEALT, decide as decideCard, tally, type DeckState } from '../../../lib/film/deck';
 import type { Choice } from '../../../lib/table/game';
-import { settle, settled, type FilmContext } from '../context';
+import { settle, settled, slide, type FilmContext } from '../context';
 
 /** How long a decided card stays before the next one comes. */
 const CARD_MS = 1100;
@@ -38,14 +38,14 @@ function deck(film: FilmContext): void {
     // The last card stays, decided, with the tally under it.
     if (!next) return;
     card.dataset.gone = choice;
-    setTimeout(
+    film.later(
       () => {
         card.hidden = true;
         next.hidden = false;
-        next.dataset.arriving = '';
+        if (!film.quiet()) next.dataset.arriving = '';
         film.update({ deck: { choices: deck.choices, at: i + 1 } });
         film.begin('turn');
-        next.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
+        film.focus(next.querySelector<HTMLButtonElement>('button'), { preventScroll: true });
         film.request();
       },
       film.reduced.matches ? CARD_MS / 2 : CARD_MS,
@@ -95,6 +95,7 @@ function deck(film: FilmContext): void {
     card.addEventListener('pointerup', release);
     card.addEventListener('pointercancel', release);
   });
+  film.onReplay('card', ({ card, choice }) => cards[card]?.querySelector<HTMLButtonElement>(`[data-deck-choice="${choice}"]`)?.click());
 }
 
 function bet(film: FilmContext): void {
@@ -133,5 +134,9 @@ function bet(film: FilmContext): void {
     if (text) text.textContent = bet?.label ?? '';
     film.note({ type: 'bet', bet: value });
     film.request();
+  });
+  film.onReplay('bet', ({ bet }) => {
+    slide(range, bet);
+    place?.click();
   });
 }

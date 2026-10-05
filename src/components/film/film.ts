@@ -41,7 +41,7 @@ import { START as NO_PICKS, type CellKey, type Tag } from '../../lib/pd/bestRepl
 import type { Cue } from '../../lib/film/sound';
 import { createSound } from './sound';
 import { ROLL_MS, type Clock, type FilmContext, type Thread } from './context';
-import { EMPTY, remember, withMemory, type Memory } from '../../lib/film/memory';
+import { EMPTY, memoryOf, remember, withMemory, type Action, type Memory } from '../../lib/film/memory';
 import { arrival } from './chapters/arrival';
 import { blackout } from './chapters/blackout';
 import { closing } from './chapters/closing';
@@ -183,7 +183,11 @@ function run(): void {
     soundButton.hidden = false;
     soundButton.addEventListener('click', () => soundButton.setAttribute('aria-pressed', String(sound.toggle())));
   }
-  const play = (cue: Cue): void => sound?.play(cue);
+  /** While the film plays its memory back (ADR 0029), nothing sounds, moves or waits. */
+  let replaying = false;
+  const play = (cue: Cue): void => {
+    if (!replaying) sound?.play(cue);
+  };
   /**
    * A cue for something that comes into view: it sounds the first time it is seen with the sound on.
    * Most of it in view, not all: a card moving with the scroll may never report exactly 1.
@@ -426,6 +430,7 @@ function run(): void {
 
   // The film's memory (ADR 0029): what the visitor did, written into this tab's entry after each action.
   let memory: Memory = EMPTY;
+  const replayers = new Map<Action['type'], (action: Action) => void>();
   const keep = (): void => {
     try {
       history.replaceState(withMemory(history.state, memory), '');
@@ -443,7 +448,7 @@ function run(): void {
       state = { ...state, ...patch };
     },
     begin: (clock) => {
-      clocks[clock] = performance.now();
+      clocks[clock] = replaying ? -Infinity : performance.now();
     },
     request,
     play,
@@ -453,8 +458,17 @@ function run(): void {
     settlePromise: () => promiseTickets?.querySelectorAll('button').forEach((ticket) => ticket.setAttribute('aria-disabled', 'true')),
     note: (action) => {
       memory = remember(memory, action);
-      keep();
+      if (!replaying) keep();
     },
+    onReplay: (type, run) => replayers.set(type, run as (action: Action) => void),
+    later: (next, ms) => {
+      if (replaying) next();
+      else setTimeout(next, ms);
+    },
+    focus: (element, options) => {
+      if (!replaying) element?.focus(options);
+    },
+    quiet: () => replaying,
   };
 
   arrival(context);
@@ -465,6 +479,26 @@ function run(): void {
   realPeople(context);
   myResearch(context);
   closing(context);
+
+  // A memory in this entry (a reload, a Back, a return from the notebook): every action plays again,
+  // in order, through the same press as before, with nothing moving. Then the entry keeps it as read.
+  const saved = memoryOf(history.state);
+  if (saved.actions.length > 0) {
+    replaying = true;
+    film.dataset.filmReplaying = '';
+    try {
+      for (const action of saved.actions) replayers.get(action.type)?.(action);
+    } finally {
+      replaying = false;
+    }
+    // Let the page take the new state with its transitions off before they come back.
+    void film.offsetHeight;
+    requestAnimationFrame(() => requestAnimationFrame(() => delete film.dataset.filmReplaying));
+    keep();
+  }
+  // An in-page link or a Back within the page opens another entry: it gets the memory too.
+  addEventListener('hashchange', keep);
+  addEventListener('popstate', keep);
 
   request();
   film.dataset.filmReady = '';

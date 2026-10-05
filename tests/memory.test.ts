@@ -14,6 +14,15 @@ describe("the film's memory in the tab", () => {
     for (const type of TYPES) expect(film, type).toContain(`film.note({ type: '${type}'`);
   });
 
+  it('plays every action back through a press, quietly: no sound, no wait, no focus moved, nothing moving', () => {
+    for (const type of TYPES) expect(film, type).toContain(`film.onReplay('${type}'`);
+    expect(film).toContain('if (!replaying) sound?.play(cue);');
+    expect(film).toContain('if (replaying) next();');
+    expect(film).toContain('if (!replaying) element?.focus(options);');
+    expect(film).toContain("clocks[clock] = replaying ? -Infinity : performance.now();");
+    expect(film).not.toMatch(/setTimeout\(land|\.focus\(\{ preventScroll|button'\)\?\.focus\(\)/);
+  });
+
   it('is written only into the history entry, with the rest of its state kept', () => {
     expect(film).toContain("history.replaceState(withMemory(history.state, memory), '');");
     expect(film.match(/history\.(replaceState|pushState)\(/g)).toHaveLength(1);

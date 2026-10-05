@@ -23,6 +23,8 @@ export function closing(film: FilmContext): void {
     });
   });
 
+  film.onReplay('now', ({ choice }) => film.root.querySelector<HTMLButtonElement>(`[data-now="${choice}"]`)?.click());
+
   const pageTickets = film.root.querySelector('[data-page-tickets]');
   const pageOut = film.root.querySelector<HTMLElement>('[data-page-out]');
   film.root.querySelectorAll<HTMLButtonElement>('[data-page-kept]').forEach((button) => {
@@ -36,6 +38,7 @@ export function closing(film: FilmContext): void {
       film.request();
     });
   });
+  film.onReplay('page', ({ kept }) => film.root.querySelector<HTMLButtonElement>(`[data-page-kept="${kept ? 'yes' : 'no'}"]`)?.click());
 
   film.onSight(film.root.querySelector('.credits__end'), 'theme', 0.75);
 }

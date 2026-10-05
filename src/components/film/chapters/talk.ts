@@ -29,4 +29,5 @@ export function talk(film: FilmContext): void {
       film.request();
     });
   });
+  film.onReplay('message', ({ message }) => film.root.querySelector<HTMLButtonElement>(`[data-message="${message}"]`)?.click());
 }

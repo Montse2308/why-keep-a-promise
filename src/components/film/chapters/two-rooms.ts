@@ -23,6 +23,8 @@ export function twoRooms(film: FilmContext): void {
     });
   });
 
+  film.onReplay('round', ({ move }) => film.root.querySelector<HTMLButtonElement>(`[data-round="${move}"]`)?.click());
+
   const steps = [...film.root.querySelectorAll<HTMLElement>('[data-column]')];
   const columnsOut = film.root.querySelector<HTMLElement>('[data-columns-out]');
   steps.forEach((step, i) => {
@@ -39,7 +41,7 @@ export function twoRooms(film: FilmContext): void {
         if (next) {
           // One step at a time, so the card keeps its size: the board keeps the finished column.
           next.hidden = false;
-          next.querySelector<HTMLButtonElement>('button')?.focus();
+          film.focus(next.querySelector<HTMLButtonElement>('button'));
           step.hidden = true;
         }
         film.note({ type: 'column', column: i, move });
@@ -47,4 +49,5 @@ export function twoRooms(film: FilmContext): void {
       });
     });
   });
+  film.onReplay('column', ({ column, move }) => steps[column]?.querySelector<HTMLButtonElement>(`[data-pick="${move}"]`)?.click());
 }
