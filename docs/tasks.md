@@ -850,7 +850,11 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
       película con JS (movimiento reducido, 360 y 1440 px) también. En la página, Chrome cambia el
       suavizado de los bordes de algunas figuras al quitar un texto invisible del cuadro (delta de
       hasta 100 en píxeles de borde): no se ve, y el dibujo es el mismo.
-- [ ] **7.6.4** Lo mismo con los cuadros 3 a 5.
+- [x] **7.6.4** Lo mismo con los cuadros 3 a 5. Hecho con las piezas que llegan en los capítulos 3
+      a 5: las dos voces (su resplandor y su degradado, los globos con la cara del otro), el
+      cuadrado y el triángulo con sus sombras cuando no están, y el apagón con los ojos. Los 9
+      cuadros bajan a 1 597 nodos y el home, a 312 533 B (31 309 con gzip). Los 36 SVG aparte y la
+      película con JS, iguales a la referencia (salvo 17 píxeles de delta 1 en un texto).
 - [ ] **7.6.5** Lo mismo con los cuadros 6 a 8.
 - [ ] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La
       regla (k) se cumple igual: las citas se quedan, solo cambia dónde.

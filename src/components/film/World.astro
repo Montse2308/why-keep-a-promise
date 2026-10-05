@@ -129,8 +129,8 @@ const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
   }
 
   <ellipse cx="0" cy="0" rx="70" ry="12" fill="#140f28" opacity="0.2" transform={shadowTransform({ at: cast.you, scale: 1, opacity: 1 })} data-part="shadow-you" />
-  <ellipse cx="0" cy="0" rx="76" ry="12" fill="#140f28" opacity={0.2 * cast.other.opacity} transform={shadowTransform(cast.other)} data-part="shadow-other" />
-  <ellipse cx="0" cy="0" rx="70" ry="12" fill="#140f28" opacity={0.2 * cast.partner.opacity} transform={shadowTransform(cast.partner)} data-part="shadow-partner" />
+  {shows(cast.other.opacity) && <ellipse cx="0" cy="0" rx="76" ry="12" fill="#140f28" opacity={0.2 * cast.other.opacity} transform={shadowTransform(cast.other)} data-part="shadow-other" />}
+  {shows(cast.partner.opacity) && <ellipse cx="0" cy="0" rx="70" ry="12" fill="#140f28" opacity={0.2 * cast.partner.opacity} transform={shadowTransform(cast.partner)} data-part="shadow-partner" />}
 
   {
     shows(view.thread.state === 'tied' ? view.thread.shown : 0) && (
@@ -157,14 +157,22 @@ const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
   <g transform={`translate(${youX} ${youY})`} data-part="you">
     <Character kind="circle" mood={view.moods.you} shadow={shadow} lean={!live} />
   </g>
-  <g transform={placeTransform(cast.other)} opacity={cast.other.opacity} data-part="other">
-    <Character kind="square" mood={view.moods.other} shadow={shadow} lean={!live} />
-  </g>
-  <g transform={placeTransform(cast.partner)} opacity={cast.partner.opacity} data-part="partner">
-    <Character kind="triangle" mood={view.moods.partner} shadow={shadow} lean={!live} />
-  </g>
+  {
+    shows(cast.other.opacity) && (
+      <g transform={placeTransform(cast.other)} opacity={cast.other.opacity} data-part="other">
+        <Character kind="square" mood={view.moods.other} shadow={shadow} lean={!live} />
+      </g>
+    )
+  }
+  {
+    shows(cast.partner.opacity) && (
+      <g transform={placeTransform(cast.partner)} opacity={cast.partner.opacity} data-part="partner">
+        <Character kind="triangle" mood={view.moods.partner} shadow={shadow} lean={!live} />
+      </g>
+    )
+  }
 
-  <Voices voices={view.voices} shadow={shadow} uid={uid} />
+  <Voices voices={view.voices} shadow={shadow} uid={uid} lean={!live} />
 
   {
     ([['you', youX], ['other', otherX]] as const).filter(([who]) => shows(view.bubbles[who])).map(([who, x]) => (
@@ -208,9 +216,9 @@ const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
   <Coins part="coins-other" x={otherX} n={view.coins.other} shown={view.coins.shown} lean={!live} />
 
   <!-- The blackout (chapter 5): the stage goes dark but for the cast's eyes. -->
-  <rect x="-4000" y="-4000" width="9600" height="9600" fill={FILM.ink} opacity={view.dark} data-part="dark" />
+  {shows(view.dark) && <rect x="-4000" y="-4000" width="9600" height="9600" fill={FILM.ink} opacity={view.dark} data-part="dark" />}
   {
-    ([['you', { at: cast.you, scale: 1, opacity: 1 }, 'circle'], ['other', cast.other, 'square'], ['partner', cast.partner, 'triangle']] as const).map(([who, place, kind]) => (
+    ([['you', { at: cast.you, scale: 1, opacity: 1 }, 'circle'], ['other', cast.other, 'square'], ['partner', cast.partner, 'triangle']] as const).filter(([, place]) => shows(view.dark * place.opacity)).map(([who, place, kind]) => (
       <g data-part={`eyes-${who}`} transform={eyesTransform(place, kind)} opacity={view.dark * place.opacity}>
         <ellipse cx="-21" cy="-10" rx="14" ry="16" fill="#fff" />
         <ellipse cx="21" cy="-10" rx="14" ry="16" fill="#fff" />
