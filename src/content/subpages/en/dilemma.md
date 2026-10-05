@@ -20,15 +20,16 @@ off at (3, 3), and neither can get there alone.
 The payoffs also meet a second condition, 2R > T + S. Per round, it reads 3 > 2.5: cooperating
 every time pays more than taking turns at defecting, where one player gets 5 and the other 0, round
 after round. Without it, two players could beat cooperation by alternating. The condition comes from
-Axelrod (1984).
+Axelrod and Hamilton (1981).
 
 ## The repeated dilemma
 
 When two people will meet again, the future weighs on every round: defecting today can cost you the
-other's cooperation tomorrow. Axelrod (1984) calls this the shadow of the future. He invited
-programs to play the repeated dilemma against one another in a tournament, and the winner was
-Tit-for-Tat: cooperate first, then copy whatever the other did last. To play the repeated game, the
-place is [*The Evolution of Trust*](https://ncase.me/trust/), by Case (2017).
+other's cooperation tomorrow. Axelrod and Hamilton (1981) model it as the chance that the same two
+meet again. Axelrod invited programs to play the repeated dilemma against one another in a
+tournament, and the winner was Tit-for-Tat: cooperate first, then copy whatever the other did last.
+To play the repeated game, the place is [*The Evolution of Trust*](https://ncase.me/trust/), by
+Case (2017).
 
 ## Cheap talk
 

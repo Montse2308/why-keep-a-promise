@@ -8,7 +8,7 @@
  */
 
 export const SOURCE_KEYS = [
-  'axelrod-1984',
+  'axelrod-hamilton-1981',
   'charness-dufwenberg-2006',
   'battigalli-dufwenberg-2007',
   'vanberg-2008',
@@ -40,10 +40,10 @@ export interface Figure {
 
 export const FIGURES: readonly Figure[] = [
   // Prisoner's dilemma payoffs: chapter 1, /dilemma.
-  { value: '3', source: 'axelrod-1984', what: 'R, both cooperate' },
-  { value: '5', source: 'axelrod-1984', what: 'T, defect on a cooperator' },
-  { value: '1', source: 'axelrod-1984', what: 'P, both defect' },
-  { value: '0', source: 'axelrod-1984', what: 'S, cooperate with a defector' },
+  { value: '3', source: 'axelrod-hamilton-1981', what: 'R, both cooperate' },
+  { value: '5', source: 'axelrod-hamilton-1981', what: 'T, defect on a cooperator' },
+  { value: '1', source: 'axelrod-hamilton-1981', what: 'P, both defect' },
+  { value: '0', source: 'axelrod-hamilton-1981', what: 'S, cooperate with a defector' },
   // Vanberg's game: chapters 3 and 5.
   { value: '10', source: 'vanberg-payoffs', what: 'dictator after Roll; recipient expected after Roll' },
   { value: '14', source: 'vanberg-payoffs', what: "dictator after Don't Roll" },
@@ -76,8 +76,8 @@ export const FIGURES: readonly Figure[] = [
   { value: '5', source: 'curve', what: 'grid step around the personal guilt window' },
   { value: '38', source: 'curve', what: 'background trust at which personal guilt weighs most' },
   // /dilemma: the dilemma's conditions.
-  { value: '2', source: 'axelrod-1984', what: 'the 2 of 2R > T + S' },
-  { value: '2.5', source: 'axelrod-1984', what: '(T + S) / 2, the average per round of taking turns at defecting' },
+  { value: '2', source: 'axelrod-hamilton-1981', what: 'the 2 of 2R > T + S' },
+  { value: '2.5', source: 'axelrod-hamilton-1981', what: '(T + S) / 2, the average per round of taking turns at defecting' },
   // /vanberg: the whole design, the guesses, every cell and the baseline treatments.
   { value: '8', source: 'vanberg-procedure', what: 'rounds; one of them is paid' },
   { value: '65', source: 'vanberg-guessing', what: "cents to the recipient for a sure guess that turned out right" },
@@ -153,7 +153,7 @@ export interface Citation {
 }
 
 export const CITATIONS: readonly Citation[] = [
-  { authors: ['Axelrod'], year: 1984, source: 'axelrod-1984' },
+  { authors: ['Axelrod', 'Hamilton'], year: 1981, source: 'axelrod-hamilton-1981' },
   { authors: ['Charness', 'Dufwenberg'], year: 2006, source: 'charness-dufwenberg-2006' },
   { authors: ['Battigalli', 'Dufwenberg'], year: 2007, source: 'battigalli-dufwenberg-2007' },
   { authors: ['Vanberg'], year: 2008, source: 'vanberg-2008' },

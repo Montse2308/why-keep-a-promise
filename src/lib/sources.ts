@@ -16,7 +16,7 @@ import type { Subpage } from './routes';
 /** A place where a figure is used: a chapter of the film, or a page of the notebook. */
 export type Place = { readonly chapter: ChapterId } | { readonly page: Subpage };
 
-export type WorkId = 'axelrod-1984' | 'case-2017' | 'vanberg-2008' | 'charness-dufwenberg-2006' | 'battigalli-dufwenberg-2007';
+export type WorkId = 'axelrod-hamilton-1981' | 'case-2017' | 'vanberg-2008' | 'charness-dufwenberg-2006' | 'battigalli-dufwenberg-2007';
 
 export interface Link {
   /** As a bibliography writes it; `*…*` marks the italics of a title. */
@@ -36,9 +36,12 @@ export interface Work {
 
 export const WORKS: readonly Work[] = [
   {
-    id: 'axelrod-1984',
-    cite: 'Axelrod (1984)',
-    reference: { text: 'Axelrod, R. (1984). *The Evolution of Cooperation*. Basic Books.' },
+    id: 'axelrod-hamilton-1981',
+    cite: 'Axelrod and Hamilton (1981)',
+    reference: {
+      text: 'Axelrod, R., & Hamilton, W. D. (1981). The Evolution of Cooperation. *Science*, 211(4489), 1390–1396.',
+      url: 'https://doi.org/10.1126/science.7466396',
+    },
   },
   {
     id: 'case-2017',
@@ -85,7 +88,7 @@ const page = (id: Subpage): Place => ({ page: id });
 
 /** Every source key that the page shows in both states of the lock, in the order the film meets them. */
 export const ENTRIES: readonly Entry[] = [
-  { source: 'axelrod-1984', work: 'axelrod-1984', places: [chapter('two-rooms'), page('dilemma')] },
+  { source: 'axelrod-hamilton-1981', work: 'axelrod-hamilton-1981', places: [chapter('two-rooms'), page('dilemma')] },
   { source: 'case-2017', work: 'case-2017', places: [chapter('two-rooms'), page('dilemma')] },
   {
     source: 'vanberg-2008',
@@ -117,7 +120,7 @@ export const FINDING: readonly SourceKey[] = ['kawagoe-narita-2014', 'vanberg-se
  * deploy refuses a dist/ that still carries that mark (.github/workflows/deploy.yml). Once a key's
  * pages are verified, take it out of here and write its `sources.at.<key>`.
  */
-export const UNVERIFIED: readonly SourceKey[] = ['axelrod-1984'];
+export const UNVERIFIED: readonly SourceKey[] = [];
 
 /**
  * Keys of the register no part of the page uses any more (docs/sources.md: "ya no se muestra"):

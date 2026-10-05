@@ -601,13 +601,17 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       los pósteres. `theme-color`: sobre la película, su cielo del amanecer; en el cuaderno y la 404,
       el brillo de arriba del papel, de día o de noche según el tema. El ícono es el de la pestaña,
       forma por forma (un test lo compara con `public/favicon.svg`), sobre el cielo del amanecer.
-- [ ] **7.2.8** Axelrod según 7.0.5 (B): Axelrod y Hamilton (1981) reemplaza al libro de 1984 en
+- [x] **7.2.8** Axelrod según 7.0.5 (B): Axelrod y Hamilton (1981) reemplaza al libro de 1984 en
       `docs/sources.md` (verificada, con sus páginas), `src/content/figures.ts`, `src/lib/sources.ts`
       (sale de `UNVERIFIED`), la clave `sources.*` de los dos idiomas, los comentarios de
       `src/lib/pd/` y `src/lib/film/values.ts`, la prosa de `/dilemma` en EN y ES (las oraciones
       aprobadas en 7.0.5) y sus tests, como dice el ADR 0033; el paso 9 de
       `docs/launch-checklist.md` deja de nombrar a Axelrod (1984). El candado de `deploy.yml`
       contra `data-unverified` se queda.
+      Hecho con la clave `axelrod-hamilton-1981` y su DOI (cotejado en Crossref). `sources.at.*`
+      dice dónde está cada cosa en el artículo, con las páginas impresas en *Science*: la figura 1,
+      su pie y *w* (la probabilidad de volver a encontrarse), p. 1392; el torneo, p. 1393; la nota
+      17, p. 1396. La página de *w* no estaba en el ADR 0033: se tomó de la misma copia de JSTOR.
 - [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
       puede, decide cómo queda registrado.
 - [ ] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
@@ -717,15 +721,6 @@ Dep.: todas las subfases anteriores.
 
 ## Preguntas abiertas
 
-- **Axelrod (1984):** verificar antes del lanzamiento la página de los pagos del dilema, de la
-  condición `2R > T + S`, de la sombra del futuro y del torneo. La prosa ya la usa y sigue «por
-  verificar» en `docs/sources.md`. Se cita la edición original, Basic Books, 1984: las páginas se
-  buscan en esa. Si solo se tiene otra edición (la revisada de 2006), hay que decidir antes si cambia
-  la referencia. Mientras tanto `/sources` dice «Páginas por verificar.» y el deploy no publica.
-  Al verificarla: escribir `sources.at.axelrod-1984` en los dos idiomas y quitarla de `UNVERIFIED`.
-  Las páginas no se pudieron verificar. Montse eligió en 7.0.5 la opción B: citar el artículo de
-  Axelrod y Hamilton (1981), ya cotejado, en lugar del libro (ADR 0033). Se aplica en 7.2.8; al
-  aplicarse, esta pregunta pasa a «Preguntas cerradas».
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
 - **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0026 dice que
@@ -736,6 +731,10 @@ Dep.: todas las subfases anteriores.
 
 ## Preguntas cerradas
 
+- ~~Axelrod (1984): ¿en qué páginas están los pagos, `2R > T + S`, la sombra del futuro y el
+  torneo?~~ No se pudo revisar el libro. Montse eligió en 7.0.5 citar el artículo de Axelrod y
+  Hamilton (1981), cotejado (ADR 0033); se aplicó en 7.2.8, y `/sources` ya no dice «Páginas por
+  verificar.».
 - ~~¿La tarjeta al costado también en la compu?~~ No: en la computadora las tarjetas siguen
   centradas, como dice el ADR 0027 (decisión de Montse en 7.0.4; el ADR 0031 lo registra).
 - ~~¿El enlace EN/ES conserva el capítulo?~~ No: necesitaba JavaScript y precisar el ADR 0013, y al

@@ -20,15 +20,16 @@ mejor en (3, 3), y ninguno puede llegar ahí solo.
 Los pagos cumplen además una segunda condición, 2R > T + S. Por ronda, se lee 3 > 2.5: cooperar
 siempre deja más que turnarse para traicionar, con uno que se lleva 5 y el otro 0, ronda tras
 ronda. Sin ella, dos jugadores podrían superar a la cooperación alternándose. La condición viene de
-Axelrod (1984).
+Axelrod y Hamilton (1981).
 
 ## El dilema repetido
 
 Cuando dos personas van a volver a encontrarse, el futuro pesa en cada ronda: traicionar hoy puede
-costarte la cooperación del otro mañana. Axelrod (1984) lo llama la sombra del futuro. Invitó a
-programas a jugar el dilema repetido unos contra otros en un torneo, y ganó Tit-for-Tat («toma y
-daca»): coopera primero y luego copia lo que el otro hizo la última vez. Para jugar el dilema
-repetido, el lugar es [*The Evolution of Trust*](https://ncase.me/trust/), de Case (2017).
+costarte la cooperación del otro mañana. Axelrod y Hamilton (1981) lo miden como la probabilidad de
+que los mismos dos vuelvan a encontrarse. Axelrod invitó a programas a jugar el dilema repetido unos
+contra otros en un torneo, y ganó Tit-for-Tat («toma y daca»): coopera primero y luego copia lo que
+el otro hizo la última vez. Para jugar el dilema repetido, el lugar es
+[*The Evolution of Trust*](https://ncase.me/trust/), de Case (2017).
 
 ## *Cheap talk*
 

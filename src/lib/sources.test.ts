@@ -40,7 +40,7 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
   it('says "pages to be verified" exactly for the keys docs/sources.md still has to verify', () => {
     const pending = ENTRIES.map((entry) => entry.source).filter((key) => blocks(key).some((block) => /Por verificar; bloquea el lanzamiento/.test(block)));
     expect(UNVERIFIED).toEqual(pending);
-    expect(UNVERIFIED).toEqual(['axelrod-1984']);
+    expect(UNVERIFIED).toEqual([]);
     // A key is either still to be verified or has its place in the source written, never both.
     for (const key of UNVERIFIED) {
       expect(Object.hasOwn(en, `sources.at.${key}`), key).toBe(false);
@@ -93,7 +93,7 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
   });
 
   it('meets the works in the order the film does', () => {
-    expect(worksOf().map((group) => group.work.id)).toEqual(['axelrod-1984', 'case-2017', 'vanberg-2008', 'charness-dufwenberg-2006', 'battigalli-dufwenberg-2007']);
+    expect(worksOf().map((group) => group.work.id)).toEqual(['axelrod-hamilton-1981', 'case-2017', 'vanberg-2008', 'charness-dufwenberg-2006', 'battigalli-dufwenberg-2007']);
     expect(worksOf().flatMap((group) => group.entries)).toHaveLength(ENTRIES.length);
   });
 
