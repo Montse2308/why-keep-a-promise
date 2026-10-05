@@ -20,9 +20,11 @@ It is **not** a simulator and **not** the instrument of a paper. Details: `docs/
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
 (P6, the polish, with PR #9). The active phase is P7, the fixes from an external review, planned in
 small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`.
-P7.0, the decisions (ADR 0029–0033) and the approved texts, is written and waits for Montse's
-review; P7.1 comes next. Then F5 (QA) and F6 (launch). The film tells all nine chapters, chapter 7's
-finding behind the lock, and ends in chapter 8's credits; it has its sound, off until pressed. The
+P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1 (the film's
+script split by chapter, the fallback to the storyboard, the memory in the tab) is done and waits
+for Montse's review (7.1.13). Then the rest of P7, F5 (QA) and F6 (launch). The film tells all nine
+chapters, chapter 7's finding behind the lock, and ends in chapter 8's credits; it has its sound, off
+until pressed, and remembers what was played in its tab entry. The
 notebook has its six pages, its panel on every page (with the finding's entry: its title and the
 status sentence), its magnifiers in the film and its footer. Every page has its poster for a shared
 link, and every build is weighed against the budgets.
@@ -126,7 +128,10 @@ src/
                          finding.ts (chapter 7's beats past the envelope, stubbed while locked);
                          credits.ts (chapter 8's cast and the notebook pages its credits link);
                          day.ts (/how-its-built's demonstration of the engine's sky);
-                         sound.ts (the score: every cue, what is seen with it, its envelopes)
+                         sound.ts (the score: every cue, what is seen with it, its envelopes);
+                         memory.ts (the memory in the tab: the actions, their version and how a
+                         record is read back, ADR 0029)
+    back.ts              when a notebook link back to the film goes back in the tab's history
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light
     notebook.ts          the notebook's six pages, their order, titles and lines, the chapter each
@@ -155,10 +160,13 @@ src/
                          cuts for the posters only, never shipped
   styles/                tokens.css, base.css
   components/            film/ (Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
-                         Voices, Signs, Engine, Magnifier, chapters/ one per chapter plus Finding,
-                         the locked part of chapter 7, film.ts, sound.ts the Web Audio player);
-                         notebook/ (Notebook, the button and panel, with notebook.ts and
-                         details.ts; NotebookFooter; Sources, Author, Day, Weight, Vignette);
+                         Voices, Signs, Engine, Magnifier, chapters/ one .astro per chapter plus
+                         Finding, the locked part of chapter 7, and beside each its controller
+                         (arrival.ts, two-rooms.ts, …: its choices, noted and played back);
+                         film.ts the frame loop and the stage's state, context.ts what it hands
+                         the controllers, sound.ts the Web Audio player);
+                         notebook/ (Notebook, the button and panel, with notebook.ts, details.ts
+                         and back.ts; NotebookFooter; Sources, Author, Day, Weight, Vignette);
                          curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
@@ -173,7 +181,7 @@ scripts/lighthouse.mjs   Lighthouse reports → src/data/lighthouse.json
 tests/                   repo-level tests (page parity, prose figures and budgets, rule (h), the
                          film's captions, forbidden phrases, curve and /finding figures,
                          verify:dist markers, code quoted on /how-its-built, budgets, posters,
-                         the Lighthouse measurement)
+                         the Lighthouse measurement, the film's fallback and its memory)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy); archivo/ = history;
                          prototipo/ = the round-4 prototype
 scratch/                 local notes, git-ignored, never committed

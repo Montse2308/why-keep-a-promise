@@ -560,8 +560,12 @@ empezar en cuanto se cierre P6, sin esperar a P7.0.
       película» y «← Volver a …» hacen `history.back()`. Va en el script del panel (sin script
       nuevo, ADR 0025); sin JS siguen siendo enlaces normales.
 - [x] **7.1.11** El capítulo 8 con la frase nueva del ADR 0029, en EN y ES.
-- [ ] **7.1.12** Verificación de salida (los tres caminos de vuelta, pestaña nueva vacía, sin JS,
-      script bloqueado, peso del JS) y capturas para Montse.
+- [x] **7.1.12** Verificación de salida (los tres caminos de vuelta, pestaña nueva vacía, sin JS,
+      script bloqueado, peso del JS) y capturas para Montse. Con clics y toques reales, a 1440 px (EN)
+      y 360 px (ES): recargar, Atrás (sin la caché del navegador) y «← Volver a …» devuelven el estado
+      jugado completo; una pestaña nueva empieza vacía; sin JS, con el script bloqueado, con error o
+      tardío se ve el storyboard; el JS del home pesa 17.7 KiB de 40. Capturas en `scratch/p7-1/review/`
+      (local, no se versiona).
 - [ ] **7.1.13 (Montse)** Revisión de P7.1 (el PR).
 
 ### P7.2 · Metadatos, SEO y datos (puntos 4, 13 y 6)
