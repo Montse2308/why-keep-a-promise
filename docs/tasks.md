@@ -577,7 +577,9 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       la pregunta del sitio, no la frase de estado. Quita el `TODO(F5)` de `BaseLayout.astro`.
       Hecho en `src/lib/meta.ts`, con la clave `site.description`. `/finding` lleva la pregunta del
       sitio también con el candado abierto: no hay texto aprobado que hable del hallazgo.
-- [ ] **7.2.2** `og:locale`, `og:locale:alternate` y `og:site_name`.
+- [x] **7.2.2** `og:locale`, `og:locale:alternate` y `og:site_name`. El nombre es el de los
+      pósteres («I promise» / «Te lo prometo»); los idiomas, `en_US` y `es_MX` (Open Graph pide
+      idioma y territorio; Montse lo confirma en 7.2.11).
 - [ ] **7.2.3** Test: las 14 páginas llevan descripción, en paridad y sin frases prohibidas;
       `verify:dist` revisa que la descripción no filtre el candado.
 - [ ] **7.2.4** `src/pages/404.astro`, bilingüe en una sola página (GitHub Pages sirve un único

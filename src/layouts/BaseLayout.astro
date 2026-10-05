@@ -7,7 +7,7 @@ import NotebookFooter from '../components/notebook/NotebookFooter.astro';
 import { FILM } from '../lib/design/film';
 import { AWAY_KEYS, THREADS } from '../lib/details';
 import { DEFAULT_LOCALE, LOCALES, t, type Locale } from '../lib/i18n';
-import { description } from '../lib/meta';
+import { description, OG_LOCALES } from '../lib/meta';
 import { POSTER, posterPath } from '../lib/posters/poster';
 import { fill } from '../lib/template';
 import { absoluteHref, assetHref, href, type Route } from '../lib/routes';
@@ -54,6 +54,9 @@ const summary = description(locale, route);
     <link rel="alternate" hreflang="x-default" href={absoluteHref(site, DEFAULT_LOCALE, route)} />
     <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={t(locale, 'poster.name')} />
+    <meta property="og:locale" content={OG_LOCALES[locale]} />
+    {LOCALES.filter((alt) => alt !== locale).map((alt) => <meta property="og:locale:alternate" content={OG_LOCALES[alt]} />)}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={summary} />
     <meta property="og:url" content={absoluteHref(site, locale, route)} />
