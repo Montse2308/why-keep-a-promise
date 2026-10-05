@@ -680,7 +680,12 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       Chrome conserva `history.state` al navegar a la misma URL. Con Ctrl, Mayús o la rueda (otra
       pestaña), esta pestaña conserva lo jugado. Probado con clic y toque reales: vuelve arriba, sin
       promesa, en el capítulo 0, y reemplaza la entrada en vez de sumar otra.
-- [ ] **7.3.8** La escena se funde con el papel del pie, en vez de irse y dejar el suelo vacío.
+- [x] **7.3.8** La escena se funde con el papel del pie, en vez de irse y dejar el suelo vacío.
+      En los últimos 0.6 pantallas antes de que el escenario se vaya, el suelo se funde, de debajo de
+      los personajes hacia abajo, con el papel de la página (su color y su grano, de día o de noche).
+      Cuando el escenario sube, su borde ya es el papel del pie. Solo cambia la opacidad de una capa
+      propia, bajo las tarjetas y la esquina: no obliga a repintar el escenario. Sale el degradado
+      `film__fade` con JS, que quedaba tapado por el escenario; sin JS se queda.
 - [ ] **7.3.9** Verificación de salida (teclado, movimiento reducido, tests de la coreografía) y
       video del recorrido a 360 y 1440 px.
 - [ ] **7.3.10 (Montse)** Revisión de P7.3 (el PR).

@@ -75,6 +75,7 @@ const of = (id: ChapterId) => {
 >
   <div class="film__stage">
     <World locale={locale} uid="live" view={stageAt(0, { promised: null }, false, false)} live />
+    <div class="film__paper" aria-hidden="true" data-paper></div>
     <div class="film__controls">
       <div class="film__spool">
         <svg viewBox="-24 -24 48 48" aria-hidden="true" data-spool="none">
@@ -194,8 +195,27 @@ const of = (id: ChapterId) => {
     height: 100svh;
   }
 
+  /* With the film, the stage's own paper takes the fade's place (below). */
   :global(html.js) .film__fade {
-    background: linear-gradient(var(--film-fade-from, #86ae98), var(--color-bg));
+    display: none;
+  }
+
+  /*
+   * The end: over the film's last screen the floor melts into the page's paper, grain and all, from
+   * under the cast down, so the stage leaves the footer's paper behind and not a strip of empty floor.
+   * ./film.ts sets its opacity; only that changes, on its own layer, so the scene is not painted
+   * again for it. It lies under the cards and the corner.
+   */
+  .film__paper {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background-color: var(--color-bg);
+    background-image: var(--paper-grain);
+    -webkit-mask-image: linear-gradient(transparent 56%, #000 95%);
+    mask-image: linear-gradient(transparent 56%, #000 95%);
+    will-change: opacity;
   }
 
   /* The film's own corner: the spool, and the sound beside it. */

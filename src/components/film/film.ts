@@ -62,6 +62,8 @@ const DRAW_MS = 800;
 const COUNT_MS = 450;
 /** How long a card's person takes to slide into the seat. */
 const SLIDE_MS = 520;
+/** Over how much of the last scroll, in screens, the stage melts into the footer's paper before it goes. */
+const END_SCREENS = 0.6;
 
 /** Sets an attribute only when it changes, so a still frame costs the page nothing. */
 const cache = new WeakMap<Element, Map<string, string>>();
@@ -181,6 +183,7 @@ function run(): void {
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
   const title = film.querySelector<HTMLElement>('[data-title]');
   const envelope = film.querySelector<HTMLElement>('[data-envelope]');
+  const paper = film.querySelector<HTMLElement>('[data-paper]');
   const beads = [...film.querySelectorAll<HTMLElement>('[data-bead]')];
   const progressLabel = film.querySelector<HTMLElement>('[data-progress-label]');
   let chapterShown = 0;
@@ -270,7 +273,6 @@ function run(): void {
     set(parts.hillNear, 'fill', view.light['hill-near']);
     set(parts.floor, 'fill', view.light.floor);
     set(parts.lamp, 'opacity', view.lamp.toFixed(3));
-    film.style.setProperty('--film-fade-from', view.light.floor);
     // The far hills and the sky move slower than the set: a little depth when the camera moves.
     const drift = (box.x + box.width / 2 - 800) * 0.4;
     set(parts.far, 'transform', `translate(${drift.toFixed(2)} ${((box.y - 200) * 0.3).toFixed(2)})`);
@@ -402,6 +404,10 @@ function run(): void {
     envelope?.style.setProperty('--opened', view.envelope.toFixed(3));
 
     title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
+    // The end: over the film's last stretch of scroll, before the stage goes, its floor melts into
+    // the footer's paper (Film.astro).
+    const left = film.getBoundingClientRect().bottom - innerHeight;
+    set(paper, 'style', `opacity: ${clamp(1 - left / (innerHeight * END_SCREENS), 0, 1).toFixed(3)}`);
     // On a phone the sound's button waits under the spool until the title has gone (Film.astro).
     set(film, 'data-title', view.titleGone < 0.6 ? 'shown' : 'gone');
 
