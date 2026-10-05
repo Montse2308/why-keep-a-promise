@@ -674,7 +674,12 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       sube la burbuja del cuadrado con sus tres puntos: sigue esperando la respuesta. Se va cuando
       llegan los cuartos, y no sale si ya contestó. Con movimiento reducido llega con un corte propio.
       Sin texto nuevo; el cuadro del storyboard (con la promesa hecha) no cambia.
-- [ ] **7.3.7** «Ver de nuevo» al pie de los créditos: un enlace simple que también borra la memoria.
+- [x] **7.3.7** «Ver de nuevo» al pie de los créditos: un enlace simple que también borra la memoria.
+      Bajo «Fin», a `href('/')`, con el texto aprobado en 7.0.3 (`film.closing.again`). Con un clic
+      normal, antes de irse deja la memoria vacía en la entrada de la pestaña: hacía falta, porque
+      Chrome conserva `history.state` al navegar a la misma URL. Con Ctrl, Mayús o la rueda (otra
+      pestaña), esta pestaña conserva lo jugado. Probado con clic y toque reales: vuelve arriba, sin
+      promesa, en el capítulo 0, y reemplaza la entrada en vez de sumar otra.
 - [ ] **7.3.8** La escena se funde con el papel del pie, en vez de irse y dejar el suelo vacío.
 - [ ] **7.3.9** Verificación de salida (teclado, movimiento reducido, tests de la coreografía) y
       video del recorrido a 360 y 1440 px.

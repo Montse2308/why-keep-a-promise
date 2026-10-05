@@ -496,6 +496,10 @@ function run(): void {
       memory = remember(memory, action);
       if (!replaying) keep();
     },
+    forget: () => {
+      memory = EMPTY;
+      keep();
+    },
     onReplay: (type, run) => replayers.set(type, run as (action: Action) => void),
     later: (next, ms) => {
       if (replaying) next();
