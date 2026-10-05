@@ -87,9 +87,33 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
   </article>
 </BaseLayout>
 
+<style is:global>
+  /*
+   * From one page of the notebook to another (P7.5, point 15): the browser's own transition between
+   * documents, CSS only. Both pages must ask for it, so the home, which does not, always cuts. The
+   * vignette and the title move into the next page's; the rest fades. With reduced motion, a cut.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+      navigation: auto;
+    }
+
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation-duration: var(--duration-slow);
+      animation-timing-function: var(--ease-standard);
+    }
+  }
+</style>
+
 <style>
   .subpage {
     padding-block: var(--space-8) var(--space-12);
+  }
+
+  .subpage__head :global(.vignette) {
+    view-transition-name: notebook-vignette;
   }
 
   .subpage__head {
@@ -101,6 +125,7 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
 
   .subpage__head h1 {
     margin: 0;
+    view-transition-name: notebook-title;
   }
 
   .subpage :global(h2) {

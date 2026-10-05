@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, type Locale } from './locales';
+import { DEFAULT_LOCALE, isLocale, type Locale } from './locales';
 
 /** The notebook's pages (ADR 0024), in its order (src/lib/notebook.ts). */
 export const SUBPAGES = ['dilemma', 'vanberg', 'finding', 'how-its-built', 'sources', 'about'] as const;
@@ -36,4 +36,20 @@ export function absoluteHref(site: URL | string, locale: Locale, route: Route): 
 /** URL for a file in `public/`, respecting `base`. */
 export function assetHref(path: string): string {
   return `${normalizeBase(import.meta.env.BASE_URL)}${path.replace(/^\/+/, '')}`;
+}
+
+/**
+ * The route a path of this site leads to, in either locale, or null when it leads elsewhere: a
+ * file, a page that does not exist, or outside `base`.
+ */
+export function routeOf(base: string, pathname: string): Route | null {
+  const root = normalizeBase(base);
+  if (`${pathname}/` === root) return 'home';
+  if (!pathname.startsWith(root)) return null;
+  const segments = pathname.slice(root.length).split('/').filter(Boolean);
+  const [first] = segments;
+  if (first !== undefined && first !== DEFAULT_LOCALE && isLocale(first)) segments.shift();
+  if (segments.length === 0) return 'home';
+  const [page] = segments;
+  return segments.length === 1 && (SUBPAGES as readonly string[]).includes(page ?? '') ? (page as Subpage) : null;
 }

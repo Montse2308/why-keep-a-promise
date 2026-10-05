@@ -34,7 +34,7 @@ describe("the film's memory in the tab", () => {
   it("comes back from the notebook's two links to the film, from the panel's own script", () => {
     expect(subpage).toMatch(/<a href=\{href\(locale, 'home', page\.film \?\? undefined\)\} data-film-back>\{back\}<\/a>/);
     expect(footer).toMatch(/<a class="footer__film" href=\{href\(locale, 'home'\)\} data-film-back>/);
-    expect(notebook).toMatch(/<script>\s*import \{ back \} from '\.\/back';[\s\S]*back\(\);\s*<\/script>/);
+    expect(notebook).toMatch(/<script>\s*import \{ back \} from '\.\/back';[\s\S]*\n\s*back\(\);[\s\S]*<\/script>/);
     expect(notebook.match(/<script/g)).toHaveLength(1);
   });
 

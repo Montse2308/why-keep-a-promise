@@ -788,9 +788,18 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
       su nombre para lectores de pantalla, como en el celular vertical.
 - ~~**7.5.4** Solo si el ADR 0031 lo aprobó: el mismo mecanismo en la compu, con su punto de
   corte.~~ No se hace: en la compu las tarjetas siguen centradas (7.0.4, ADR 0031).
-- [ ] **7.5.5** Transiciones entre las páginas del cuaderno, solo con CSS:
+- [x] **7.5.5** Transiciones entre las páginas del cuaderno, solo con CSS:
       `@view-transition { navigation: auto; }` bajo `prefers-reduced-motion: no-preference`, y
       `view-transition-name` en la viñeta y el título. El home queda fuera.
+      La transición es CSS, en `SubpageView.astro`: la viñeta y el título pasan a los de la página
+      nueva y lo demás se funde, en `--duration-slow`. Como el home no la pide, no hay transición
+      hacia ni desde la película. Una sola cosa necesitó JS: si una página del cuaderno pide la
+      transición y la siguiente no (la película), Chrome la aborta y deja un error rojo en la
+      consola. `transitions.ts` (en el script del cuaderno, que ya cargaba cada página) la suelta en
+      `pageswap` cuando el destino no es una página del cuaderno; `routeOf` (en `routes.ts`, con
+      tests) dice qué página es una URL. Sin JS el error vuelve, solo en la consola. Probado con
+      clics reales en Chrome (`pagereveal`): entre páginas del cuaderno, desde el panel y al cambiar
+      de idioma, sí; del home y hacia él y con movimiento reducido, no; sin errores en la consola.
 - [ ] **7.5.6** Salida animada al cerrar el panel, simétrica a la entrada.
 - [ ] **7.5.7** Capturas a 740×360, 844×390, 1024×768 y 1440×900; sin scroll horizontal a 320 px;
       presupuestos en verde.
