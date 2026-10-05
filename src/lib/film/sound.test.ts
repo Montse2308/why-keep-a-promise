@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import adr from '../../../docs/decisions/0025-technology.md?raw';
-import film from '../../components/film/film.ts?raw';
 import filmComponent from '../../components/film/Film.astro?raw';
 import player from '../../components/film/sound.ts?raw';
 import beatComponent from '../../components/film/Beat.astro?raw';
@@ -20,6 +19,11 @@ import {
   THEME_TONIC,
   type Cue,
 } from './sound';
+
+// The film's script and its chapters' controllers, read as one.
+const film = Object.values(
+  import.meta.glob<string>(['../../components/film/film.ts', '../../components/film/chapters/*.ts'], { query: '?raw', import: 'default', eager: true }),
+).join('\n');
 
 const voices = CUES.flatMap((cue) => SCORE[cue].map((voice) => [cue, voice] as const));
 

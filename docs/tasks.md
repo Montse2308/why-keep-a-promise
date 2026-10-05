@@ -524,16 +524,16 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
       cerradas».
 - [x] **7.0.12** `docs/decisions/README.md` al día; revisar que ningún documento vigente contradiga a
       otro.
-- [ ] **7.0.13 (Montse)** Revisión de P7.0 (el PR).
+- [x] **7.0.13 (Montse)** Revisión de P7.0 (el PR #10, mergeado).
 
 ### P7.1 · Cimientos: robustez y refactor (puntos 16 `film.ts`, 1 y 2A)
 
 Partir `film.ts` (7.1.1 a 7.1.4) y el respaldo (7.1.5 y 7.1.6) no chocan con ningún ADR: pueden
 empezar en cuanto se cierre P6, sin esperar a P7.0.
 
-- [ ] **7.1.1** Referencia «antes»: recorrer la película entera con clics reales a 360 y 1440 px,
+- [x] **7.1.1** Referencia «antes»: recorrer la película entera con clics reales a 360 y 1440 px,
       con las capturas y la lista de pasos en `scratch/p7-1/` (no se versiona).
-- [ ] **7.1.2** Sacar de `film.ts` los controladores de los capítulos 0 a 2 (`arrival`, `two-rooms`,
+- [x] **7.1.2** Sacar de `film.ts` los controladores de los capítulos 0 a 2 (`arrival`, `two-rooms`,
       `talk`) a `src/components/film/chapters/*.ts`, junto a su `.astro`. El ciclo de
       `requestAnimationFrame` y el estado se quedan en `film.ts`. Comportamiento idéntico.
 - [ ] **7.1.3** Lo mismo con los capítulos 3 a 5 (`fold`, `two-voices`, `blackout`).

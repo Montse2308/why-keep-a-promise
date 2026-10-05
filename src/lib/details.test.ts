@@ -2,10 +2,14 @@ import { describe, expect, it } from 'vitest';
 import baseLayout from '../layouts/BaseLayout.astro?raw';
 import details from '../components/notebook/details.ts?raw';
 import notebookComponent from '../components/notebook/Notebook.astro?raw';
-import film from '../components/film/film.ts?raw';
 import en from '../i18n/en.json';
 import es from '../i18n/es.json';
 import { AWAY_KEYS, consoleNote, THREADS, threadOf } from './details';
+
+// The film's script and its chapters' controllers, read as one.
+const film = Object.values(
+  import.meta.glob<string>(['../components/film/film.ts', '../components/film/chapters/*.ts'], { query: '?raw', import: 'default', eager: true }),
+).join('\n');
 
 describe("the tab's title", () => {
   it('has a line about the promise for every state of the thread, in both languages', () => {

@@ -36,16 +36,17 @@ import { lookAt } from '../../lib/film/voices';
 import { brokenBetween, stageAt, threadBetween, type Place, type StageState, type StageView } from '../../lib/film/stage';
 import { scrollPosition } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
-import { reduce as pick, START as NO_PICKS, isDone, type CellKey, type Tag } from '../../lib/pd/bestReply';
-import type { Move } from '../../lib/pd/game';
-import { playRound } from '../../lib/pd/round';
-import { write, type Message } from '../../lib/film/talk';
+import { START as NO_PICKS, type CellKey, type Tag } from '../../lib/pd/bestReply';
 import { BET_START, isBet, type Bet } from '../../lib/film/bet';
 import { current as waiting, DEALT, decide as decideCard, tally, type DeckState } from '../../lib/film/deck';
 import { guessOf, type GuessId } from '../../lib/film/guess';
 import { fill } from '../../lib/template';
 import type { Cue } from '../../lib/film/sound';
 import { createSound } from './sound';
+import { settle, settled, type Clock, type FilmContext, type Thread } from './context';
+import { arrival } from './chapters/arrival';
+import { talk } from './chapters/talk';
+import { twoRooms } from './chapters/two-rooms';
 import { decide, UNDECIDED, type DecisionState } from '../../lib/table/decision';
 import { DIE_FACES, type Choice, type Face } from '../../lib/table/game';
 
@@ -82,16 +83,6 @@ function applyMood(root: Element | null, mood: Mood, pointer: readonly [number, 
   at('.face__tear', 'opacity', face.tear ? '1' : '0');
   at('.face__pupils', 'transform', `translate(${(face.look[0] + pointer[0]).toFixed(1)} ${(face.look[1] + pointer[1]).toFixed(1)})`);
 }
-
-/** A choice made once: the chosen ticket stays pressed, and every ticket of the group stays focusable but inert. */
-function settle(group: Element | null, chosen: HTMLButtonElement): void {
-  group?.querySelectorAll<HTMLButtonElement>('button').forEach((button) => {
-    button.setAttribute('aria-pressed', String(button === chosen));
-    button.setAttribute('aria-disabled', 'true');
-  });
-}
-
-const settled = (button: HTMLButtonElement): boolean => button.getAttribute('aria-disabled') === 'true';
 
 export function start(): void {
   const film = document.querySelector<HTMLElement>('[data-film]');
@@ -197,10 +188,8 @@ export function start(): void {
   onSight(film.querySelector('.credits__end'), 'theme', 0.75);
 
   let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null, guesses: {}, now: null, pageKept: null };
-  let drawStart = 0;
-  let rollStart = 0;
-  let countStart = 0;
-  let turnStart = -Infinity;
+  /** When each of the stage's animations last started (context.ts). */
+  const clocks: Record<Clock, number> = { draw: 0, count: 0, roll: 0, turn: -Infinity };
   let pointer: [number, number] = [0, 0];
   let visible = true;
   let frameRequested = false;
@@ -259,7 +248,7 @@ export function start(): void {
     set(parts.near, 'transform', `translate(${(drift * 0.4).toFixed(2)} 0)`);
 
     // On the deck, each new card's person slides into the seat.
-    const arriving = still || view.beat.id !== 'deck' ? 1 : easeInOut(clamp((now - turnStart) / SLIDE_MS, 0, 1));
+    const arriving = still || view.beat.id !== 'deck' ? 1 : easeInOut(clamp((now - clocks.turn) / SLIDE_MS, 0, 1));
     const seated = (place: Place): Place =>
       arriving >= 1 || place.opacity < 0.5 ? place : { ...place, at: [place.at[0] + (1 - arriving) * 240, place.at[1]], opacity: place.opacity * arriving };
     const you: Place = { at: view.cast.you, scale: 1, opacity: 1 };
@@ -303,7 +292,7 @@ export function start(): void {
     // The die floats in chapter 0; in chapter 3 it jumps and spins while it rolls, faces flashing,
     // then lands on the face the decision drew.
     const float = view.die.floating && !still ? Math.sin(now / 520) * 7 : 0;
-    const spun = view.die.rolling && !still ? clamp((now - rollStart) / ROLL_MS, 0, 1) : 0;
+    const spun = view.die.rolling && !still ? clamp((now - clocks.roll) / ROLL_MS, 0, 1) : 0;
     const jump = view.die.rolling && !still ? -110 * Math.sin(Math.PI * spun) : 0;
     const turn = view.die.rolling && !still ? 720 * (1 - (1 - spun) ** 3) : view.die.floating && !still ? Math.sin(now / 900) * 12 : 0;
     set(parts.die, 'transform', `translate(800 ${(view.die.y + float + jump).toFixed(2)})`);
@@ -313,7 +302,7 @@ export function start(): void {
     for (const pip of pips) set(pip, 'visibility', PIPS[face].includes(pip.dataset.pip as Pip) ? 'visible' : 'hidden');
 
     paintBoard(view.board);
-    const counted = still ? 1 : easeInOut(clamp((now - countStart) / COUNT_MS, 0, 1));
+    const counted = still ? 1 : easeInOut(clamp((now - clocks.count) / COUNT_MS, 0, 1));
     paintCoins(parts.coinsYou, cast.you[0], view.coins.you, view.coins.shown, counted);
     paintCoins(parts.coinsOther, cast.other[0], view.coins.other, view.coins.shown, counted);
 
@@ -326,7 +315,7 @@ export function start(): void {
     }
 
     const path = threadBetween(view.cast.you, other);
-    const drawn = view.thread.state === 'tied' ? (still ? 1 : easeInOut(clamp((now - drawStart) / DRAW_MS, 0, 1))) : 0;
+    const drawn = view.thread.state === 'tied' ? (still ? 1 : easeInOut(clamp((now - clocks.draw) / DRAW_MS, 0, 1))) : 0;
     for (const line of [parts.threadEdge, parts.threadLine]) {
       set(line, 'd', path);
       set(line, 'stroke-dashoffset', (1 - drawn).toFixed(3));
@@ -404,7 +393,7 @@ export function start(): void {
   );
 
   /** The spool in the corner: the thread's state, in words too. */
-  function spoolAs(thread: 'tied' | 'kept' | 'broken' | 'none'): void {
+  function spoolAs(thread: Thread): void {
     spool?.setAttribute('data-spool', thread === 'kept' ? 'tied' : thread);
     if (film) film.dataset.thread = thread;
     const label = { tied: film?.dataset.threadTied, kept: film?.dataset.threadKept, broken: film?.dataset.threadBroken, none: film?.dataset.threadNone }[thread];
@@ -421,86 +410,28 @@ export function start(): void {
   };
   remind();
 
-  // Chapter 0: promise or not. The answer can change until the decision of chapter 3.
   const promiseTickets = film.querySelector('#arrival .tickets');
-  const promiseOut = film.querySelector<HTMLElement>('#arrival [data-out]');
-  film.querySelectorAll<HTMLButtonElement>('[data-promise]').forEach((button, _i, all) => {
-    button.addEventListener('click', () => {
-      if (settled(button)) return;
-      const promised = button.dataset.promise === 'yes';
-      state = { ...state, promised };
-      drawStart = performance.now();
-      all.forEach((other) => other.setAttribute('aria-pressed', String(other === button)));
-      if (promiseOut) promiseOut.textContent = (promised ? promiseOut.dataset.outYes : promiseOut.dataset.outNo) ?? '';
-      spoolAs(promised ? 'tied' : 'none');
-      remind();
-      request();
-    });
-  });
+  const context: FilmContext = {
+    root: film,
+    reduced,
+    state: () => state,
+    update: (patch) => {
+      state = { ...state, ...patch };
+    },
+    begin: (clock) => {
+      clocks[clock] = performance.now();
+    },
+    request,
+    play,
+    onSight,
+    spoolAs,
+    remind,
+    settlePromise: () => promiseTickets?.querySelectorAll('button').forEach((ticket) => ticket.setAttribute('aria-disabled', 'true')),
+  };
 
-  // Chapter 1: one round of the dilemma, played once.
-  const roundTickets = film.querySelector('[data-round-tickets]');
-  const roundOut = film.querySelector<HTMLElement>('[data-round-out]');
-  film.querySelectorAll<HTMLButtonElement>('[data-round]').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (settled(button) || state.round) return;
-      state = { ...state, round: playRound(state.round ?? null, button.dataset.round as Move) };
-      countStart = performance.now();
-      settle(roundTickets, button);
-      if (roundOut) roundOut.textContent = button.dataset.said ?? '';
-      request();
-    });
-  });
-
-  // Chapter 1: the two columns, one after the other.
-  const steps = [...film.querySelectorAll<HTMLElement>('[data-column]')];
-  const columnsOut = film.querySelector<HTMLElement>('[data-columns-out]');
-  steps.forEach((step, i) => {
-    step.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((button) => {
-      button.addEventListener('click', () => {
-        if (settled(button)) return;
-        const columns = pick(state.columns ?? NO_PICKS, { type: 'pick', move: button.dataset.pick as Move });
-        state = { ...state, columns };
-        settle(step, button);
-        const next = steps[i + 1];
-        const said = button.dataset.said ?? '';
-        if (columnsOut) columnsOut.textContent = isDone(columns) ? `${said} ${columnsOut.dataset.both ?? ''}` : said;
-        if (next) {
-          // One step at a time, so the card keeps its size: the board keeps the finished column.
-          next.hidden = false;
-          next.querySelector<HTMLButtonElement>('button')?.focus();
-          step.hidden = true;
-        }
-        request();
-      });
-    });
-  });
-
-  // Chapter 2: one message, already written; the other answers.
-  const chatTickets = film.querySelector('[data-chat-tickets]');
-  const chatOut = film.querySelector<HTMLElement>('[data-chat-out]');
-  const mine = film.querySelector<HTMLElement>('[data-chat-mine]');
-  const answer = film.querySelector<HTMLElement>('[data-chat-answer]');
-  film.querySelectorAll<HTMLButtonElement>('[data-message]').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (settled(button) || state.chat) return;
-      state = { ...state, chat: write(state.chat ?? null, button.dataset.message as Message) };
-      settle(chatTickets, button);
-      // The chosen ticket stays, pressed and focused, as the message; the others go.
-      chatTickets?.querySelectorAll<HTMLButtonElement>('button').forEach((other) => (other.hidden = other !== button));
-      for (const [bubble, text] of [
-        [mine, button.dataset.says],
-        [answer, button.dataset.answer],
-      ] as const) {
-        if (!bubble) continue;
-        bubble.querySelector('[data-text]')?.replaceChildren(text ?? '');
-        bubble.dataset.shown = '';
-      }
-      if (chatOut) chatOut.textContent = button.dataset.said ?? '';
-      play('bubbles');
-      request();
-    });
-  });
+  arrival(context);
+  twoRooms(context);
+  talk(context);
 
   // Chapter 3: keep the money or roll the die, once. The promise of chapter 0 is settled with it.
   const decisionTickets = film.querySelector('[data-decision-tickets]');
@@ -517,7 +448,7 @@ export function start(): void {
       const land = (): void => {
         const decision: DecisionState = decide(state.decision ?? UNDECIDED, { type: 'settle' }, Math.random);
         state = { ...state, decision };
-        countStart = performance.now();
+        clocks.count = performance.now();
         if (decision.phase === 'outcome' && decision.face !== null) play('land');
         if (decision.phase === 'outcome') {
           const said = decision.face === null ? button.dataset.said : (JSON.parse(button.dataset.said ?? '{}') as Record<string, string>)[decision.face];
@@ -528,7 +459,7 @@ export function start(): void {
         request();
       };
       if (choice === 'roll' && !reduced.matches) {
-        rollStart = performance.now();
+        clocks.roll = performance.now();
         play('roll');
         setTimeout(land, ROLL_MS);
       } else {
@@ -565,7 +496,7 @@ export function start(): void {
         next.hidden = false;
         next.dataset.arriving = '';
         state = { ...state, deck: { choices: deck.choices, at: i + 1 } };
-        turnStart = performance.now();
+        clocks.turn = performance.now();
         next.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
         request();
       },
