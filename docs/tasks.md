@@ -779,7 +779,13 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
       de la carta y no el de la pantalla (una consulta de contenedor), así que de lado no se aprietan.
       Recorrido completo con toques reales a 740 × 360: las 21 acciones se alcanzan, la del capítulo 6
       después de bajar dentro de su tarjeta.
-- [ ] **7.5.3** El título del capítulo 0 deja de encimarse con las cabezas en horizontal.
+- [x] **7.5.3** El título del capítulo 0 deja de encimarse con las cabezas en horizontal.
+      De lado, el título va sobre el área libre, a la derecha de la tarjeta, más chico
+      (`clamp(1.35rem, 3.6vw, 2.1rem)`), entre la fila de arriba y las cabezas; sigue pegado y se
+      desvanece igual al acercarse la cámara. Probado a 568 × 320, 667 × 375, 740 × 360, 844 × 390 y
+      932 × 430, en EN y ES (el título en español ocupa tres líneas y tampoco toca las cabezas). Para
+      que la fila de arriba quepa con el enlace de idioma, el botón de sonido va solo con su dibujo,
+      su nombre para lectores de pantalla, como en el celular vertical.
 - ~~**7.5.4** Solo si el ADR 0031 lo aprobó: el mismo mecanismo en la compu, con su punto de
   corte.~~ No se hace: en la compu las tarjetas siguen centradas (7.0.4, ADR 0031).
 - [ ] **7.5.5** Transiciones entre las páginas del cuaderno, solo con CSS:

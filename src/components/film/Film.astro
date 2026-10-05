@@ -399,6 +399,22 @@ const of = (id: ChapterId) => {
     }
   }
 
+  /* A phone held sideways (ADR 0031): the top row also holds the language link; the sound is drawn alone. */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .film__sound {
+      padding: 0;
+    }
+
+    .film__sound-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
   /* A narrow phone: the spool's words take two lines, so the corner's language link and the notebook fit beside it. */
   @media (max-width: 24rem) {
     .film__spool [data-spool-label] {
