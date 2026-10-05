@@ -4,6 +4,8 @@
 
 <!-- TODO(launch): link to the site, https://montse2308.github.io/why-keep-a-promise/, once step 9 of docs/launch-checklist.md has deployed it. -->
 
+![Four frames of the film as the day goes by: the title at dawn, the prisoner's dilemma at midday, a new partner at the table in the afternoon while the thread of the promise still runs to the one who left, and the first table again at night.](.github/readme/film-en.webp)
+
 The outreach page of a personal research project on why people keep promises that no longer pay
 them. The home is a short scroll-driven film in nine chapters, from the prisoner's dilemma to the
 partner-switching game of Vanberg (2008), and a notebook one tap away holds the depth.

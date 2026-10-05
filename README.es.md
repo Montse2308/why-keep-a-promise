@@ -4,6 +4,8 @@
 
 <!-- TODO(launch): enlace al sitio, https://montse2308.github.io/why-keep-a-promise/es/, cuando el paso 9 de docs/launch-checklist.md lo haya publicado. -->
 
+![Cuatro cuadros de la película a lo largo del día: el título al amanecer, el dilema del prisionero a mediodía, una pareja nueva en la mesa por la tarde mientras el hilo de la promesa sigue yendo a quien se fue, y otra vez la primera mesa de noche.](.github/readme/film-es.webp)
+
 La página de divulgación de un proyecto personal de investigación sobre por qué la gente cumple
 promesas que ya no le convienen. El home es una película corta ligada al scroll, en nueve
 capítulos, del dilema del prisionero al juego de cambio de pareja de Vanberg (2008), y un cuaderno

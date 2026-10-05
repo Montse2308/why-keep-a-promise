@@ -907,7 +907,13 @@ Dep.: todas las subfases anteriores.
       simulación no dicen nada (regla (j)). El enlace a `/how-its-built` va a su URL en Pages, cada
       README a su idioma; el enlace al sitio es un comentario `TODO(launch)` arriba, y el paso 8
       de `docs/launch-checklist.md` ahora lo nombra, porque su `grep` solo mira `src/`.
-- [ ] **7.7.2** Una captura o un GIF ligero para los dos README.
+- [x] **7.7.2** Una captura o un GIF ligero para los dos README.
+      Una captura, no un GIF: aquí no hay con qué codificarlo sin agregar dependencias. Cada README
+      lleva cuatro cuadros de la película en su idioma, en una rejilla de 2×2 que sigue la luz del
+      día (el título al amanecer, el dilema, la pareja nueva con el hilo que va a quien se fue y la
+      primera mesa de noche), con texto alternativo. Se tomaron del build cerrado a 1440×900 con
+      movimiento reducido, en las pantallas 0, 6, 20.7 y 33, y se guardaron como WebP:
+      `.github/readme/film-en.webp` (81 KiB) y `film-es.webp` (83 KiB). Ninguno muestra el sello.
 - [ ] **7.7.3** Lighthouse otra vez sobre el commit final; regenerar `src/data/lighthouse.json` para
       que `/how-its-built` coincida con `npm run budgets`.
 - [ ] **7.7.4** Revisión completa, parte 1: 1440, 360 y 320 px, horizontal, EN/ES.
