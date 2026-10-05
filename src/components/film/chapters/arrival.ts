@@ -16,6 +16,7 @@ export function arrival(film: FilmContext): void {
       if (promiseOut) promiseOut.textContent = (promised ? promiseOut.dataset.outYes : promiseOut.dataset.outNo) ?? '';
       film.spoolAs(promised ? 'tied' : 'none');
       film.remind();
+      film.note({ type: 'promise', promised });
       film.request();
     });
   });

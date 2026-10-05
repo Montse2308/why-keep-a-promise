@@ -1,9 +1,11 @@
 /**
  * What the film's script (./film.ts) hands each chapter's controller (./chapters/*.ts): the page,
- * the stage's state and the clocks of its animations, the sound, and the few things more than one
- * chapter touches (the spool in the corner, chapter 0's promise). The frame loop and the state stay
- * in film.ts; a controller only wires its chapter's choices and says what changed.
+ * the stage's state and the clocks of its animations, the sound, the film's memory, and the few
+ * things more than one chapter touches (the spool in the corner, chapter 0's promise). The frame
+ * loop and the state stay in film.ts; a controller only wires its chapter's choices, says what
+ * changed and notes what the visitor did.
  */
+import type { Action } from '../../lib/film/memory';
 import type { Cue } from '../../lib/film/sound';
 import type { StageState } from '../../lib/film/stage';
 
@@ -35,6 +37,8 @@ export interface FilmContext {
   readonly remind: () => void;
   /** Chapter 0's answer is settled: its tickets stay focusable but inert. */
   readonly settlePromise: () => void;
+  /** Notes what the visitor just did in the film's memory, which lives in the tab's history entry (ADR 0029). */
+  readonly note: (action: Action) => void;
 }
 
 /** A choice made once: the chosen ticket stays pressed, and every ticket of the group stays focusable but inert. */

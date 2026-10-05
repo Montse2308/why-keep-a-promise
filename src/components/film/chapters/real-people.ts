@@ -27,6 +27,7 @@ export function realPeople(film: FilmContext): void {
       if (range) range.disabled = true;
       box.dataset.seen = '';
       if (out) out.textContent = (out.dataset.said ?? '').replace('{guess}', String(guess));
+      film.note({ type: 'guess', id, guess });
       film.request();
     });
   });

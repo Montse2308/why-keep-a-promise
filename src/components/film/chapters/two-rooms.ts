@@ -13,10 +13,12 @@ export function twoRooms(film: FilmContext): void {
   film.root.querySelectorAll<HTMLButtonElement>('[data-round]').forEach((button) => {
     button.addEventListener('click', () => {
       if (settled(button) || film.state().round) return;
-      film.update({ round: playRound(film.state().round ?? null, button.dataset.round as Move) });
+      const move = button.dataset.round as Move;
+      film.update({ round: playRound(film.state().round ?? null, move) });
       film.begin('count');
       settle(roundTickets, button);
       if (roundOut) roundOut.textContent = button.dataset.said ?? '';
+      film.note({ type: 'round', move });
       film.request();
     });
   });
@@ -27,7 +29,8 @@ export function twoRooms(film: FilmContext): void {
     step.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((button) => {
       button.addEventListener('click', () => {
         if (settled(button)) return;
-        const columns = pick(film.state().columns ?? NO_PICKS, { type: 'pick', move: button.dataset.pick as Move });
+        const move = button.dataset.pick as Move;
+        const columns = pick(film.state().columns ?? NO_PICKS, { type: 'pick', move });
         film.update({ columns });
         settle(step, button);
         const next = steps[i + 1];
@@ -39,6 +42,7 @@ export function twoRooms(film: FilmContext): void {
           next.querySelector<HTMLButtonElement>('button')?.focus();
           step.hidden = true;
         }
+        film.note({ type: 'column', column: i, move });
         film.request();
       });
     });

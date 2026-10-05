@@ -553,7 +553,7 @@ empezar en cuanto se cierre P6, sin esperar a P7.0.
       ronda, cada columna, el mensaje, la decisión con su cara del dado, cada carta, la apuesta, las
       dos adivinanzas y las dos respuestas finales), con versión y validación al leer (lo raro se
       ignora). Todavía sin conectar. Dep.: ADR 0029 (7.0.6).
-- [ ] **7.1.8** Cada controlador anota su acción con `history.replaceState`.
+- [x] **7.1.8** Cada controlador anota su acción con `history.replaceState`.
 - [ ] **7.1.9** Al cargar, las acciones guardadas se reproducen sin animación por el mismo camino
       de código que un clic: boletos, salidas `aria-live`, carrete, mazo y escala quedan igual.
 - [ ] **7.1.10** En las páginas del cuaderno, si el visitante llegó desde la película, «Volver a la

@@ -10,7 +10,8 @@ export function talk(film: FilmContext): void {
   film.root.querySelectorAll<HTMLButtonElement>('[data-message]').forEach((button) => {
     button.addEventListener('click', () => {
       if (settled(button) || film.state().chat) return;
-      film.update({ chat: write(film.state().chat ?? null, button.dataset.message as Message) });
+      const message = button.dataset.message as Message;
+      film.update({ chat: write(film.state().chat ?? null, message) });
       settle(chatTickets, button);
       // The chosen ticket stays, pressed and focused, as the message; the others go.
       chatTickets?.querySelectorAll<HTMLButtonElement>('button').forEach((other) => (other.hidden = other !== button));
@@ -23,6 +24,7 @@ export function talk(film: FilmContext): void {
         bubble.dataset.shown = '';
       }
       if (chatOut) chatOut.textContent = button.dataset.said ?? '';
+      film.note({ type: 'message', message });
       film.play('bubbles');
       film.request();
     });

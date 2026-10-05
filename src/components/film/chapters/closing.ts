@@ -13,10 +13,12 @@ export function closing(film: FilmContext): void {
   film.root.querySelectorAll<HTMLButtonElement>('[data-now]').forEach((button) => {
     button.addEventListener('click', () => {
       if (settled(button) || film.state().now) return;
-      film.update({ now: button.dataset.now as Choice });
+      const choice = button.dataset.now as Choice;
+      film.update({ now: choice });
       settle(nowTickets, button);
       film.settlePromise();
       if (nowOut) nowOut.textContent = button.dataset.said ?? '';
+      film.note({ type: 'now', choice });
       film.request();
     });
   });
@@ -26,9 +28,11 @@ export function closing(film: FilmContext): void {
   film.root.querySelectorAll<HTMLButtonElement>('[data-page-kept]').forEach((button) => {
     button.addEventListener('click', () => {
       if (settled(button) || film.state().pageKept != null) return;
-      film.update({ pageKept: button.dataset.pageKept === 'yes' });
+      const kept = button.dataset.pageKept === 'yes';
+      film.update({ pageKept: kept });
       settle(pageTickets, button);
       if (pageOut) pageOut.textContent = button.dataset.said ?? '';
+      film.note({ type: 'page', kept });
       film.request();
     });
   });

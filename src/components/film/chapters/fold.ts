@@ -14,9 +14,12 @@ export function fold(film: FilmContext): void {
       if (settled(button) || film.state().decision?.phase !== 'idle') return;
       const choice = button.dataset.choice as Choice;
       const chosen = decide(UNDECIDED, { type: 'choose', choice }, Math.random);
-      film.update({ decision: choice === 'roll' ? decide(chosen, { type: 'throw' }, Math.random) : chosen });
+      const thrown = choice === 'roll' ? decide(chosen, { type: 'throw' }, Math.random) : chosen;
+      film.update({ decision: thrown });
       settle(decisionTickets, button);
       film.settlePromise();
+      // The die's face is noted with the choice, before it lands: the memory brings back the same roll.
+      film.note({ type: 'decision', choice, face: thrown.phase === 'die' ? thrown.face : null });
 
       const land = (): void => {
         const decision: DecisionState = decide(film.state().decision ?? UNDECIDED, { type: 'settle' }, Math.random);

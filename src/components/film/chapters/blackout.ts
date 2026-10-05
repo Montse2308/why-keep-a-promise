@@ -30,6 +30,7 @@ function deck(film: FilmContext): void {
     const button = card.querySelector<HTMLButtonElement>(`[data-deck-choice="${choice}"]`);
     if (button) settle(card, button);
     film.update({ deck: { choices: deck.choices, at: i } });
+    film.note({ type: 'card', card: i, choice });
     const said = button?.dataset.said ?? '';
     const next = cards[i + 1];
     if (deckOut) deckOut.textContent = next ? said : `${said} ${tallies[String(tally(deck).kept)] ?? ''}`;
@@ -130,6 +131,7 @@ function bet(film: FilmContext): void {
     if (label) label.hidden = false;
     const text = film.root.querySelector('[data-scale-yours-text]');
     if (text) text.textContent = bet?.label ?? '';
+    film.note({ type: 'bet', bet: value });
     film.request();
   });
 }

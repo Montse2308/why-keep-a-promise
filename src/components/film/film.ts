@@ -6,9 +6,9 @@
  * the lamp, the engine and the envelope) and chapter 8's return to the first table. Each chapter's
  * choices, which are plain buttons, sliders and, on the deck, a swipe that stands for a button, are
  * wired by its controller (./chapters/*.ts, through ./context.ts): every line a choice leads to was
- * resolved at build time, so the script only shows it. Nothing is stored or sent (ADR 0023). With
- * the sound on (./sound.ts), the die, the chat's bubbles, the seal and the end of the credits sound
- * as the stage shows them (ADR 0025).
+ * resolved at build time, so the script only shows it. What the visitor did stays in this tab's
+ * history entry, and nothing is sent (ADR 0029). With the sound on (./sound.ts), the die, the
+ * chat's bubbles, the seal and the end of the credits sound as the stage shows them (ADR 0025).
  */
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
@@ -41,6 +41,7 @@ import { START as NO_PICKS, type CellKey, type Tag } from '../../lib/pd/bestRepl
 import type { Cue } from '../../lib/film/sound';
 import { createSound } from './sound';
 import { ROLL_MS, type Clock, type FilmContext, type Thread } from './context';
+import { EMPTY, remember, withMemory, type Memory } from '../../lib/film/memory';
 import { arrival } from './chapters/arrival';
 import { blackout } from './chapters/blackout';
 import { closing } from './chapters/closing';
@@ -423,6 +424,16 @@ function run(): void {
   };
   remind();
 
+  // The film's memory (ADR 0029): what the visitor did, written into this tab's entry after each action.
+  let memory: Memory = EMPTY;
+  const keep = (): void => {
+    try {
+      history.replaceState(withMemory(history.state, memory), '');
+    } catch {
+      // A browser may refuse a history write (too many, too fast): the film plays on without it.
+    }
+  };
+
   const promiseTickets = film.querySelector('#arrival .tickets');
   const context: FilmContext = {
     root: film,
@@ -440,6 +451,10 @@ function run(): void {
     spoolAs,
     remind,
     settlePromise: () => promiseTickets?.querySelectorAll('button').forEach((ticket) => ticket.setAttribute('aria-disabled', 'true')),
+    note: (action) => {
+      memory = remember(memory, action);
+      keep();
+    },
   };
 
   arrival(context);
