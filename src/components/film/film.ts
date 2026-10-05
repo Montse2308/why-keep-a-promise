@@ -83,7 +83,23 @@ function applyMood(root: Element | null, mood: Mood, pointer: readonly [number, 
   at('.face__pupils', 'transform', `translate(${(face.look[0] + pointer[0]).toFixed(1)} ${(face.look[1] + pointer[1]).toFixed(1)})`);
 }
 
+/**
+ * Starts the film over the storyboard. Once it runs, it marks `data-film-ready`; if it fails, it
+ * takes `html.js` away, and the storyboard is the page (BaseLayout.astro). If that fallback already
+ * came, because the script arrived too late, the film does not start over it.
+ */
 export function start(): void {
+  const root = document.documentElement;
+  if (!root.classList.contains('js')) return;
+  try {
+    run();
+  } catch (error) {
+    root.classList.remove('js');
+    throw error;
+  }
+}
+
+function run(): void {
   const film = document.querySelector<HTMLElement>('[data-film]');
   const world = film?.querySelector<SVGSVGElement>('[data-world="live"]');
   const chapters = film?.querySelector<HTMLElement>('.film__chapters');
@@ -436,4 +452,5 @@ export function start(): void {
   closing(context);
 
   request();
+  film.dataset.filmReady = '';
 }

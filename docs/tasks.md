@@ -543,9 +543,12 @@ empezar en cuanto se cierre P6, sin esperar a P7.0.
       movimiento reducido las mismas capturas, byte a byte.
 - [x] **7.1.5** Respaldo, parte 1: `BaseLayout.astro` pone la clase `js` solo si el navegador corre
       módulos.
-- [ ] **7.1.6** Respaldo, parte 2: `start()` marca `data-film-ready` y, si lanza un error, quita
+- [x] **7.1.6** Respaldo, parte 2: `start()` marca `data-film-ready` y, si lanza un error, quita
       `js`; un temporizador de unos 4 s quita `js` si la película nunca arrancó. Verificar
-      bloqueando el script del build: se ve el storyboard, no la escena rota.
+      bloqueando el script del build: se ve el storyboard, no la escena rota. También se revisa al
+      terminar de leer la página (`DOMContentLoaded`, cuando el módulo ya corrió o falló), así que un
+      script bloqueado cae al storyboard enseguida; y si el script llega después de los 4 s, la
+      película no arranca encima del storyboard. Verificado bloqueado, roto y tardío.
 - [ ] **7.1.7** `src/lib/film/memory.ts`, puro y con tests: el registro de acciones (prometer, la
       ronda, cada columna, el mensaje, la decisión con su cara del dado, cada carta, la apuesta, las
       dos adivinanzas y las dos respuestas finales), con versión y validación al leer (lo raro se
