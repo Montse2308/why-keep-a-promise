@@ -633,9 +633,12 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
 
 Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
 
-- [ ] **7.3.1** El chat en orden: al elegir aparece tu burbuja azul a la derecha y los boletos se van
+- [x] **7.3.1** El chat en orden: al elegir aparece tu burbuja azul a la derecha y los boletos se van
       (sale la regla de `Talk.astro` que esconde `.bubble--you` con JS). Orden: pregunta, tu
       mensaje, respuesta, como en el storyboard.
+      Se van también los tres boletos y «No te cuesta nada»; el foco pasa a tu burbuja (que no entra
+      en el orden de tabulación), y la respuesta llega un momento después, sin animación con
+      movimiento reducido.
 - [ ] **7.3.2** El progreso, la lógica: función pura sobre los tramos de `timeline.ts` (capítulo y
       cuánto se llenó cada cuenta), con test.
 - [ ] **7.3.3** El progreso, a la vista: un hilo fino con 9 cuentas que se llenan con el scroll.
