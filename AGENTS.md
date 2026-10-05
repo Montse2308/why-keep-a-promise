@@ -22,7 +22,9 @@ It is **not** a simulator and **not** the instrument of a paper. Details: `docs/
 small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`.
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1 (the film's
 script split by chapter, the fallback to the storyboard, the memory in the tab) is done and waits
-for Montse's review (7.1.13). Then the rest of P7, F5 (QA) and F6 (launch). The film tells all nine
+for Montse's review (7.1.13). P7.2 (each page's description and Open Graph metadata, the 404 page,
+`noindex` on the locked /finding, the sitemap, the touch icon, Axelrod and Hamilton (1981) as the
+dilemma's source) is done up to Montse's steps (7.2.9 and 7.2.11). Then the rest of P7, F5 (QA) and F6 (launch). The film tells all nine
 chapters, chapter 7's finding behind the lock, and ends in chapter 8's credits; it has its sound, off
 until pressed, and remembers what was played in its tab entry. The
 notebook has its six pages, its panel on every page (with the finding's entry: its title and the
@@ -62,7 +64,7 @@ not by reading test output.
 | `npm test`        | Vitest, once                                      |
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
-| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence is off (ADR 0026) |
+| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0026) |
 | `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load) |
 
 `check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
@@ -143,11 +145,14 @@ src/
                          palette.ts (the notebook's paper, day and night; tokens.css mirrors it),
                          colour maths
     subpages.ts          splits notebook prose at its slot and lock markers
+    meta.ts              what each page says of itself in its head: its description, its language
+                         for Open Graph and the colour of the browser bar
+    sitemap.ts           the sitemap, with each page's languages; /finding only behind the lock
     budgets.ts           the weight budgets and how a built page is weighed against them
     details.ts           the tab's title while away and the console's note
     posters/             the Open Graph posters: poster.ts (the drawing, the lines set to fit),
                          metrics.ts (advance widths from TrueType), render.ts + fonts.mjs (PNG
-                         with resvg at build time)
+                         with resvg at build time); icon.ts, the home-screen icon
     table/               Vanberg's game: exact payoffs (PAYOFFS), the decision (chapter 3), the
                          recipients' beliefs and scale, real roll counts, exact fractions
     pd/                  the prisoner's dilemma: its payoffs, the one round of chapter 1 and the
@@ -174,14 +179,17 @@ src/
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale; posters/[locale]/[route].png.ts
-                         renders each page's poster
-scripts/verify-dist.mjs  checks dist/ against the lock, its links and the status sentence (ADR 0026)
+                         renders each page's poster; 404.astro (one page, both
+                         languages), sitemap.xml.ts and apple-touch-icon.png.ts
+scripts/verify-dist.mjs  checks dist/ against the lock, its links, the status sentence, the
+                         descriptions, noindex and the sitemap (ADR 0026)
 scripts/budgets.mjs      weighs dist/ against the budgets (ADR 0025)
 scripts/lighthouse.mjs   Lighthouse reports → src/data/lighthouse.json
 tests/                   repo-level tests (page parity, prose figures and budgets, rule (h), the
                          film's captions, forbidden phrases, curve and /finding figures,
                          verify:dist markers, code quoted on /how-its-built, budgets, posters,
-                         the Lighthouse measurement, the film's fallback and its memory)
+                         the Lighthouse measurement, the film's fallback and its memory, the
+                         pages' heads, the 404 page and the sitemap)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy); archivo/ = history;
                          prototipo/ = the round-4 prototype
 scratch/                 local notes, git-ignored, never committed

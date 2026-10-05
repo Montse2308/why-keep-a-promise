@@ -614,8 +614,11 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       17, p. 1396. La página de *w* no estaba en el ADR 0033: se tomó de la misma copia de JSTOR.
 - [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
       puede, decide cómo queda registrado.
-- [ ] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
-      revisión de las 14 cabeceras y capturas para Montse.
+- [x] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
+      revisión de las 14 cabeceras y capturas para Montse. En los dos estados pasan `check`, `test`,
+      `build`, `verify:dist` y `budgets`; abierto, `/finding` pierde el `noindex` y entra al sitemap
+      (14 entradas; cerrado, 12). Las 15 cabeceras (las 14 y la 404) y las capturas a 360 y 1440 px,
+      en `scratch/p7-2/review/` (local, no se versiona), con un README.
 - [ ] **7.2.11 (Montse)** Revisión de P7.2 (el PR).
 
 ### P7.3 · La película: experiencia (puntos 7, 9, 10 y 11)
