@@ -134,7 +134,9 @@ src/
                          finding.ts (chapter 7's beats past the envelope, stubbed while locked);
                          credits.ts (chapter 8's cast and the notebook pages its credits link);
                          day.ts (/how-its-built's demonstration of the engine's sky);
-                         sound.ts (the score: every cue, what is seen with it, its envelopes);
+                         sound.ts (the score: every cue, what is seen with it, its envelopes,
+                         chapter 3's cues in a row); sights.ts (what the scroll brings that
+                         sounds, once a visit: the voices, the blackout, the light, the signs);
                          memory.ts (the memory in the tab: the actions, their version and how a
                          record is read back, ADR 0029); progress.ts (the chapter on stage and
                          the beads under the spool); idle.ts (life at rest: blinks, the square's

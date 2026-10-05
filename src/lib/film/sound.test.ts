@@ -39,8 +39,7 @@ describe('the score', () => {
     expect(adr).toContain('el dado, el sello, las burbujas, un tema corto al final');
     expect(adr).toContain('Precisado por el ADR 0030');
     expect(closedList).toHaveLength(13);
-    for (const cue of ['roll', 'land', 'bubbles', 'stamp', 'theme'] as const) expect(CUES).toContain(cue);
-    for (const cue of CUES) expect(closedList, cue).toContain(cue);
+    expect([...CUES].sort()).toEqual([...closedList].sort());
   });
 
   it('pairs every cue with something the stage shows (ADR 0025: everything that sounds is also seen)', () => {
@@ -169,6 +168,23 @@ describe('playing it', () => {
       ['land', 0],
       ['coins', cueLength('land')],
     ]);
+  });
+
+  it('never sounds two of chapter 3’s cues on top of each other (ADR 0030, rule 4)', () => {
+    // The die spins for ROLL_MS before it lands: its sound is over by then.
+    const rollMs = Number(/const ROLL_MS = (\d+);/.exec(film)?.[1]);
+    expect(cueLength('roll')).toBeLessThanOrEqual(rollMs / 1000);
+    for (const thrown of [false, true]) {
+      for (const snapped of [false, true]) {
+        const cues = foldCues(thrown, snapped);
+        expect(cues.at(-1)?.[0]).toBe('coins');
+        expect(cues[0]?.[1]).toBe(0);
+        cues.forEach(([cue, after], i) => {
+          const next = cues[i + 1];
+          if (next) expect(next[1], `${cue} then ${next[0]}`).toBeGreaterThanOrEqual(after + cueLength(cue));
+        });
+      }
+    }
   });
 
   it('snaps the thread before the coins, not on top of them, when the visitor promised and kept the money', () => {

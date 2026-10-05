@@ -9,9 +9,9 @@
 /**
  * The cues: the die in the air and on the table, the chat's bubbles, the seal and a short theme at
  * the end (P6); the chord when the sound is turned on, the coins, chapter 5's switch, light and
- * cards, chapter 6's sign and chapter 3's thread snapping (ADR 0030).
+ * cards, chapter 6's sign, chapter 3's thread snapping and chapter 4's two voices (ADR 0030).
  */
-export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme', 'on', 'coins', 'switch', 'lights-on', 'card', 'sign', 'snap'] as const;
+export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme', 'on', 'coins', 'switch', 'lights-on', 'card', 'sign', 'snap', 'voices'] as const;
 export type Cue = (typeof CUES)[number];
 
 /** What the visitor sees while each cue sounds. */
@@ -28,6 +28,7 @@ export const CUE_SIGHT: Record<Cue, string> = {
   card: 'chapter 5: the decided card flies off to one side, and the next person comes',
   sign: 'chapter 6: on the sign, the figure turns on where the question mark was',
   snap: 'chapter 3: the golden thread breaks, its ends curl, and the spool says it is broken',
+  voices: 'chapter 4: the two voices, the cloud and the scroll, come to float over the circle',
 };
 
 interface Envelope {
@@ -173,6 +174,13 @@ export const SCORE: Record<Cue, readonly Voice[]> = {
     { kind: 'noise', filter: 'highpass', frequency: 2400, q: 0.9, at: 0, attack: 0.001, duration: 0.04, gain: 0.3 },
     { kind: 'tone', wave: 'triangle', from: 880, to: 330, at: 0, attack: 0.002, duration: 0.22, gain: 0.16 },
     { kind: 'tone', wave: 'triangle', from: 660, to: 247, at: 0.03, attack: 0.002, duration: 0.24, gain: 0.12 },
+  ],
+  // The two voices come to float over the circle: a soft rising note each, the cloud's and then
+  // the scroll's, and the air they ride on.
+  voices: [
+    { kind: 'tone', wave: 'sine', from: midiToHz(72), to: midiToHz(74), at: 0, attack: 0.06, duration: 0.4, gain: 0.18 },
+    { kind: 'tone', wave: 'sine', from: midiToHz(76), to: midiToHz(79), at: 0.2, attack: 0.06, duration: 0.45, gain: 0.16 },
+    { kind: 'noise', filter: 'bandpass', frequency: 1200, q: 0.6, at: 0, attack: 0.2, duration: 0.6, gain: 0.04 },
   ],
   // The credits end on a short phrase, and a low C under its last note.
   theme: [

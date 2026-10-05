@@ -7,8 +7,9 @@
  * choices, which are plain buttons, sliders and, on the deck, a swipe that stands for a button, are
  * wired by its controller (./chapters/*.ts, through ./context.ts): every line a choice leads to was
  * resolved at build time, so the script only shows it. What the visitor did stays in this tab's
- * history entry, and nothing is sent (ADR 0029). With the sound on (./sound.ts), the die, the
- * chat's bubbles, the seal and the end of the credits sound as the stage shows them (ADR 0025). While
+ * history entry, and nothing is sent (ADR 0029). With the sound on (./sound.ts), the cues of
+ * ADR 0030 sound as the stage shows them: what the visitor plays, each time; what the scroll brings
+ * (src/lib/film/sights.ts and the seal and the credits' end), once a visit. While
  * the scroll rests, the cast comes to life (src/lib/film/idle.ts); with reduced motion nothing moves,
  * and the frames stop until the page asks for one.
  */

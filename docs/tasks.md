@@ -734,8 +734,15 @@ de que ninguna satura y de que todas suman a lo más 1.
       scroll no enciende nada y no suena. `snap`: el chasquido del hilo y sus dos puntas que se
       recogen. `foldCues` pone en fila las señales del capítulo 3: el golpe del dado o el hilo, y
       después las monedas.
-- [ ] **7.4.5** Las dos voces que llegan (capítulo 4, `voices`), y el test de que las señales del
+- [x] **7.4.5** Las dos voces que llegan (capítulo 4, `voices`), y el test de que las señales del
       capítulo 3 no se encimen.
+      `voices`: una nota suave que sube por cada voz, la nube y luego el pergamino, con el aire en
+      que flotan; suena con el scroll, una vez (`voices` en `sights.ts`). Con movimiento reducido
+      tampoco suena `lights-on`: los cortes saltan el apagón, así que la luz nunca se fue (un test
+      comprueba que el escenario reducido nunca oscurece). El test del capítulo 3 recorre las cuatro
+      combinaciones de dado e hilo: el giro acaba antes de `ROLL_MS`, y cada señal de `foldCues`
+      empieza cuando acaba la anterior. `CUES` es ya la lista cerrada del ADR 0030, las trece, y
+      quien solo hace scroll oye algo en los capítulos 4, 5 y 6 antes del sello del 7.
 - [ ] **7.4.6** Video con sonido para Montse: sin silencios largos entre los capítulos 3 y 7, y nada
       suena sin encenderlo.
 - [ ] **7.4.7 (Montse)** Revisión de P7.4 (el PR).

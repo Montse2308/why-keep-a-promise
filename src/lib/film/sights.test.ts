@@ -10,6 +10,7 @@ const STATE: StageState = { promised: null, round: null, columns: NO_PICKS, chat
 
 /** What the stage shows while each sight is in view (ADR 0030: everything that sounds is also seen). */
 const SHOWS: Record<Sight, (view: StageView) => boolean> = {
+  voices: (view) => view.voices.shown > 0.5,
   blackout: (view) => view.dark > 0.4,
   flicker: (view) => view.dark > 0.4,
   // The light is mostly back, and the triangle sits in the square's seat.
@@ -28,6 +29,7 @@ describe('what the scroll brings that sounds', () => {
     expect(SIGHT_CUE.flicker).toBe('switch');
     expect(SIGHT_CUE['lights-on']).toBe('lights-on');
     expect(SIGHT_CUE.signs).toBe('sign');
+    expect(SIGHT_CUE.voices).toBe('voices');
   });
 
   it.each([false, true])('sounds only what the stage shows (reduced motion: %s)', (reduced) => {
@@ -50,10 +52,20 @@ describe('what the scroll brings that sounds', () => {
     expect([...seen].sort()).toEqual([...SIGHTS].sort());
   });
 
-  it('with reduced motion, does not sound the blackout and the flicker its cuts skip', () => {
+  it('with reduced motion, does not sound the blackout and the flicker its cuts skip, nor the light that never went, and sounds the rest', () => {
+    // The cuts skip the dark: the stage never goes more dark than lit.
+    for (let i = 0; i <= STEPS; i++) expect(stageAt(i / STEPS, STATE, false, true).dark).toBeLessThan(0.4);
     const seen = new Set(everywhere(true).flatMap(({ sights }) => [...sights]));
     expect(seen.has('blackout')).toBe(false);
     expect(seen.has('flicker')).toBe(false);
+    expect(seen.has('lights-on')).toBe(false);
+    expect(seen.has('voices')).toBe(true);
+    expect(seen.has('signs')).toBe(true);
+  });
+
+  it('brings a cue to whoever only scrolls, in chapters 4, 5 and 6, before chapter 7’s seal', () => {
+    const chapters = new Set(SIGHTS.map((sight) => stageAt((SIGHT_SPANS[sight][0] + 0.01) / TOTAL_SCREENS, STATE, false, false).beat.chapter));
+    expect([...chapters]).toEqual(['two-voices', 'blackout', 'real-people']);
   });
 
   it('turns the signs on with the scroll while a figure is not guessed, once for both', () => {

@@ -180,7 +180,7 @@ const TRAP = entering('two-rooms', 'trap');
 const CHAT = entering('talk', 'chat');
 const OUT_OF_ROOMS = entering('fold', 'fold');
 const DECIDE = entering('fold', 'decide');
-const VOICES_IN = entering('two-voices', 'voices');
+export const VOICES_IN = entering('two-voices', 'voices');
 /**
  * Chapter 5. The lights go out as the blackout's card comes up; in the dark the square leaves its
  * seat for another table and the triangle sits down; then the lights come back.
