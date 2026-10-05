@@ -8,7 +8,7 @@ import { AWAY_KEYS, consoleNote, THREADS, threadOf } from './details';
 
 // The film's script and its chapters' controllers, read as one.
 const film = Object.values(
-  import.meta.glob<string>(['../components/film/film.ts', '../components/film/chapters/*.ts'], { query: '?raw', import: 'default', eager: true }),
+  import.meta.glob<string>(['../components/film/film.ts', '../components/film/context.ts', '../components/film/chapters/*.ts'], { query: '?raw', import: 'default', eager: true }),
 ).join('\n');
 
 describe("the tab's title", () => {

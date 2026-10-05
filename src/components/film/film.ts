@@ -37,26 +37,23 @@ import { brokenBetween, stageAt, threadBetween, type Place, type StageState, typ
 import { scrollPosition } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
 import { START as NO_PICKS, type CellKey, type Tag } from '../../lib/pd/bestReply';
-import { BET_START, isBet, type Bet } from '../../lib/film/bet';
-import { current as waiting, DEALT, decide as decideCard, tally, type DeckState } from '../../lib/film/deck';
 import { guessOf, type GuessId } from '../../lib/film/guess';
 import { fill } from '../../lib/template';
 import type { Cue } from '../../lib/film/sound';
 import { createSound } from './sound';
-import { settle, settled, type Clock, type FilmContext, type Thread } from './context';
+import { ROLL_MS, settle, settled, type Clock, type FilmContext, type Thread } from './context';
 import { arrival } from './chapters/arrival';
+import { blackout } from './chapters/blackout';
+import { fold } from './chapters/fold';
 import { talk } from './chapters/talk';
 import { twoRooms } from './chapters/two-rooms';
-import { decide, UNDECIDED, type DecisionState } from '../../lib/table/decision';
+import { UNDECIDED } from '../../lib/table/decision';
 import { DIE_FACES, type Choice, type Face } from '../../lib/table/game';
 
 const DRAW_MS = 800;
 const COUNT_MS = 450;
-/** How long the die spins in the air before it lands. */
-const ROLL_MS = 1000;
-/** How long a card's person takes to slide into the seat, and how long a decided card stays. */
+/** How long a card's person takes to slide into the seat. */
 const SLIDE_MS = 520;
-const CARD_MS = 1100;
 
 /** Sets an attribute only when it changes, so a still frame costs the page nothing. */
 const cache = new WeakMap<Element, Map<string, string>>();
@@ -432,158 +429,8 @@ export function start(): void {
   arrival(context);
   twoRooms(context);
   talk(context);
-
-  // Chapter 3: keep the money or roll the die, once. The promise of chapter 0 is settled with it.
-  const decisionTickets = film.querySelector('[data-decision-tickets]');
-  const decisionOut = film.querySelector<HTMLElement>('[data-decision-out]');
-  film.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (settled(button) || state.decision?.phase !== 'idle') return;
-      const choice = button.dataset.choice as Choice;
-      const chosen = decide(UNDECIDED, { type: 'choose', choice }, Math.random);
-      state = { ...state, decision: choice === 'roll' ? decide(chosen, { type: 'throw' }, Math.random) : chosen };
-      settle(decisionTickets, button);
-      promiseTickets?.querySelectorAll('button').forEach((ticket) => ticket.setAttribute('aria-disabled', 'true'));
-
-      const land = (): void => {
-        const decision: DecisionState = decide(state.decision ?? UNDECIDED, { type: 'settle' }, Math.random);
-        state = { ...state, decision };
-        clocks.count = performance.now();
-        if (decision.phase === 'outcome' && decision.face !== null) play('land');
-        if (decision.phase === 'outcome') {
-          const said = decision.face === null ? button.dataset.said : (JSON.parse(button.dataset.said ?? '{}') as Record<string, string>)[decision.face];
-          const thread = state.promised === true ? (decision.choice === 'dont' ? decisionOut?.dataset.broken : decisionOut?.dataset.kept) : undefined;
-          if (decisionOut) decisionOut.textContent = [said, thread].filter(Boolean).join(' ');
-          if (state.promised === true) spoolAs(decision.choice === 'dont' ? 'broken' : 'kept');
-        }
-        request();
-      };
-      if (choice === 'roll' && !reduced.matches) {
-        clocks.roll = performance.now();
-        play('roll');
-        setTimeout(land, ROLL_MS);
-      } else {
-        land();
-      }
-      request();
-    });
-  });
-
-  // Chapter 5: the deck, one card at a time, each a different person, each decided once. The card
-  // flies off, the stage shows what the decision did, and the next person slides into the seat.
-  // Swiping the card is a shortcut for its tickets; a vertical drag still scrolls the page.
-  const cards = [...film.querySelectorAll<HTMLElement>('[data-card]')];
-  const deckOut = film.querySelector<HTMLElement>('[data-deck-out]');
-  const tallies = JSON.parse(deckOut?.dataset.tally ?? '{}') as Record<string, string>;
-  let deck: DeckState = DEALT;
-  const onCard = (i: number, choice: Choice): void => {
-    const card = cards[i];
-    if (!card || waiting(deck) !== i) return;
-    deck = decideCard(deck, choice);
-    const button = card.querySelector<HTMLButtonElement>(`[data-deck-choice="${choice}"]`);
-    if (button) settle(card, button);
-    state = { ...state, deck: { choices: deck.choices, at: i } };
-    const said = button?.dataset.said ?? '';
-    const next = cards[i + 1];
-    if (deckOut) deckOut.textContent = next ? said : `${said} ${tallies[String(tally(deck).kept)] ?? ''}`;
-    request();
-    // The last card stays, decided, with the tally under it.
-    if (!next) return;
-    card.dataset.gone = choice;
-    setTimeout(
-      () => {
-        card.hidden = true;
-        next.hidden = false;
-        next.dataset.arriving = '';
-        state = { ...state, deck: { choices: deck.choices, at: i + 1 } };
-        clocks.turn = performance.now();
-        next.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
-        request();
-      },
-      reduced.matches ? CARD_MS / 2 : CARD_MS,
-    );
-  };
-  cards.forEach((card, i) => {
-    card.querySelectorAll<HTMLButtonElement>('[data-deck-choice]').forEach((button) => {
-      button.addEventListener('click', () => {
-        if (!settled(button)) onCard(i, button.dataset.deckChoice as Choice);
-      });
-    });
-    let pointerId: number | null = null;
-    let start: [number, number] = [0, 0];
-    let dx = 0;
-    let dragging = false;
-    card.addEventListener('pointerdown', (event) => {
-      if (waiting(deck) !== i || (event.pointerType === 'mouse' && event.button !== 0)) return;
-      pointerId = event.pointerId;
-      start = [event.clientX, event.clientY];
-      dx = 0;
-      dragging = false;
-    });
-    card.addEventListener('pointermove', (event) => {
-      if (event.pointerId !== pointerId) return;
-      const x = event.clientX - start[0];
-      const y = event.clientY - start[1];
-      if (!dragging) {
-        // A mostly vertical move is the page scrolling: let it go.
-        if (Math.abs(y) > 12 && Math.abs(y) > Math.abs(x)) pointerId = null;
-        if (Math.abs(x) < 12 || Math.abs(x) < Math.abs(y)) return;
-        dragging = true;
-        card.setPointerCapture(event.pointerId);
-        card.dataset.dragging = '';
-      }
-      dx = x;
-      card.style.transform = `translateX(${dx.toFixed(1)}px) rotate(${(dx / 28).toFixed(2)}deg)`;
-    });
-    const release = (event: PointerEvent): void => {
-      if (event.pointerId !== pointerId) return;
-      pointerId = null;
-      if (!dragging) return;
-      dragging = false;
-      delete card.dataset.dragging;
-      card.style.transform = '';
-      if (Math.abs(dx) > Math.min(110, card.offsetWidth * 0.3)) onCard(i, dx > 0 ? 'roll' : 'dont');
-    };
-    card.addEventListener('pointerup', release);
-    card.addEventListener('pointercancel', release);
-  });
-
-  // Chapter 5: as the one who receives, the visitor bets on the recipients' five-point scale.
-  const betBox = film.querySelector<HTMLElement>('[data-bet]');
-  const bets = JSON.parse(betBox?.dataset.bet ?? '{}') as Record<string, { label: string; said: string; at: number }>;
-  const range = film.querySelector<HTMLInputElement>('[data-bet-range]');
-  const betOut = film.querySelector<HTMLElement>('[data-bet-out]');
-  const place = film.querySelector<HTMLButtonElement>('[data-bet-place]');
-  const betNow = place?.querySelector('small');
-  const betAt = (): Bet => {
-    const value = Number(range?.value ?? BET_START);
-    return isBet(value) ? value : BET_START;
-  };
-  range?.addEventListener('input', () => {
-    const bet = bets[String(betAt())];
-    if (!bet) return;
-    range.setAttribute('aria-valuetext', bet.label);
-    if (betNow) betNow.textContent = bet.label;
-    state = { ...state, bet: null };
-  });
-  place?.addEventListener('click', () => {
-    if (settled(place)) return;
-    const value = betAt();
-    const bet = bets[String(value)];
-    state = { ...state, bet: value };
-    settle(film.querySelector('[data-bet-tickets]'), place);
-    if (range) range.disabled = true;
-    if (betOut) betOut.textContent = bet?.said ?? '';
-    // The reveal's scale shows the bet next to the real recipients' bets.
-    const yours = film.querySelector<SVGElement>('[data-scale-yours]');
-    yours?.style.setProperty('--at', String(bet?.at ?? 50));
-    yours?.setAttribute('data-shown', '');
-    const label = film.querySelector<HTMLElement>('[data-scale-yours-label]');
-    if (label) label.hidden = false;
-    const text = film.querySelector('[data-scale-yours-text]');
-    if (text) text.textContent = bet?.label ?? '';
-    request();
-  });
+  fold(context);
+  blackout(context);
 
   // Chapter 6: guess before seeing. The bar is the visitor's; the figure is set beside it, and the
   // sign over the table turns it on. Nothing judges the guess (ADR 0023).

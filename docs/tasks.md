@@ -536,7 +536,8 @@ empezar en cuanto se cierre P6, sin esperar a P7.0.
 - [x] **7.1.2** Sacar de `film.ts` los controladores de los capítulos 0 a 2 (`arrival`, `two-rooms`,
       `talk`) a `src/components/film/chapters/*.ts`, junto a su `.astro`. El ciclo de
       `requestAnimationFrame` y el estado se quedan en `film.ts`. Comportamiento idéntico.
-- [ ] **7.1.3** Lo mismo con los capítulos 3 a 5 (`fold`, `two-voices`, `blackout`).
+- [x] **7.1.3** Lo mismo con los capítulos 3 a 5 (`fold`, `two-voices`, `blackout`). El capítulo 4 no
+      tiene elecciones: no lleva controlador.
 - [ ] **7.1.4** Lo mismo con los capítulos 6 a 8 (`real-people`, `my-research`, `closing`). Recorrido
       «después» igual a la referencia de 7.1.1.
 - [ ] **7.1.5** Respaldo, parte 1: `BaseLayout.astro` pone la clase `js` solo si el navegador corre

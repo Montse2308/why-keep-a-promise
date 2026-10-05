@@ -46,3 +46,6 @@ export function settle(group: Element | null, chosen: HTMLButtonElement): void {
 }
 
 export const settled = (button: HTMLButtonElement): boolean => button.getAttribute('aria-disabled') === 'true';
+
+/** How long the die spins in the air before it lands (chapter 3); the stage spins it for as long. */
+export const ROLL_MS = 1000;
