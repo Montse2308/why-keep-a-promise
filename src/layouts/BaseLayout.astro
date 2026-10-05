@@ -210,11 +210,12 @@ const noindex = route === 'finding' && !findingUnlocked(MANUSCRIPT_STATUS, impor
     pointer-events: auto;
   }
 
-  .corner--film :global(.lang__current) {
+  /* Only the corner's own switch: the notebook's panel, inside the corner, has its own and follows the theme. */
+  .corner--film .corner__end > :global(.lang .lang__current) {
     color: var(--film-card-muted);
   }
 
-  .corner--film :global(.lang a:focus-visible) {
+  .corner--film .corner__end > :global(.lang a:focus-visible) {
     outline-color: var(--film-ink);
   }
 
@@ -228,7 +229,7 @@ const noindex = route === 'finding' && !findingUnlocked(MANUSCRIPT_STATUS, impor
     }
 
     /* A phone: the language you are reading needs no label; the other one stays. */
-    .corner :global(.lang__current) {
+    .corner__end > :global(.lang .lang__current) {
       position: absolute;
       width: 1px;
       height: 1px;

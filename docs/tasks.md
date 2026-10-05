@@ -869,7 +869,13 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
       Dufwenberg (2006); Battigalli and Dufwenberg (2007).» / «Aversión a la culpa: Charness y
       Dufwenberg (2006); Battigalli y Dufwenberg (2007).». Un test exige las dos citas en esa línea
       y solo Vanberg (2008) en los párrafos. Los textos nuevos los confirma Montse en 7.6.11.
-- [ ] **7.6.7** El enlace EN/ES entra al panel del cuaderno.
+- [x] **7.6.7** El enlace EN/ES entra al panel del cuaderno. Hecho: va en su propia línea bajo el
+      título del panel, con los dos idiomas en todos los anchos (en la cabecera, junto al botón de
+      cerrar, no cabía a 320 px); es un grupo, no otro landmark, como el del pie. El orden con
+      teclado es cerrar, idioma y las entradas. Las reglas del rincón para su selector (sus colores
+      sobre la película y, en el teléfono, ocultar el idioma actual) ahora valen solo para el del
+      rincón: el panel vive dentro del rincón y las heredaba. Probado con toques y clics reales a
+      320, 360, 844×390 y 1440 px, en claro y oscuro: abre la misma página en el otro idioma.
 - ~~**7.6.8** Solo si se aprobó en 7.0.4: el enlace EN/ES conserva el capítulo.~~ No se hace
   (7.0.4).
 - [ ] **7.6.9** La autora en los pósteres, como firma (ADR 0032).
