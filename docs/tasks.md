@@ -839,8 +839,17 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
       uno, porque cada cuadro dibuja el mundo entero. En español, 545 138 B (69 256 con gzip). Con
       el candado abierto, 565 731 B y 5 248 nodos, con los mismos cuadros. Las capturas (EN y ES,
       360 y 1440 px, los dos estados del candado) están en `scratch/p7-6/ref/`.
-- [ ] **7.6.3** Cuadros quietos 0 a 2 con solo lo que se ve en su pose; capturas iguales a la
-      referencia.
+- [x] **7.6.3** Cuadros quietos 0 a 2 con solo lo que se ve en su pose; capturas iguales a la
+      referencia. Hecho: `World.astro` dibuja en un cuadro quieto solo las partes con opacidad
+      mayor que 0 (el escenario vivo las sigue dibujando todas, para que el script las muestre), y
+      en este paso lo aplican las piezas que llegan en los capítulos 0 a 2: el hilo, la pared, los
+      focos, los globos, la mesa, el dado y sus puntos, las monedas, el tablero con sus marcas y lo
+      que la cara de cada personaje esconde. Los 9 cuadros pasan de 3 672 a 2 396 nodos y el home,
+      de 544 497 a 380 367 B (de 68 176 a 41 093 con gzip). El SVG de cada cuadro, dibujado aparte,
+      es idéntico a la referencia en los 36 casos (EN y ES, los dos estados del candado), y la
+      película con JS (movimiento reducido, 360 y 1440 px) también. En la página, Chrome cambia el
+      suavizado de los bordes de algunas figuras al quitar un texto invisible del cuadro (delta de
+      hasta 100 en píxeles de borde): no se ve, y el dibujo es el mismo.
 - [ ] **7.6.4** Lo mismo con los cuadros 3 a 5.
 - [ ] **7.6.5** Lo mismo con los cuadros 6 a 8.
 - [ ] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La

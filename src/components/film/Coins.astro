@@ -13,17 +13,23 @@ interface Props {
   x: number;
   n: number;
   shown: number;
+  /** A still frame: draw only what this pose shows, since no script will change it. */
+  lean?: boolean;
 }
 
-const { part, x, n, shown } = Astro.props;
-const coins = Array.from({ length: STACK_MAX }, (_, i) => i);
+const { part, x, n, shown, lean = false } = Astro.props;
+const coins = Array.from({ length: lean ? n : STACK_MAX }, (_, i) => i);
 ---
 
-<g data-part={part} transform={coinsTransform(x)} opacity={shown}>
-  <ellipse data-coin-empty cx="0" cy="0" rx="26" ry="9" fill="none" stroke={FILM.ink} stroke-width="2.5" stroke-dasharray="6 5" opacity={n === 0 ? 0.7 : 0} />
-  {coins.map((i) => <ellipse data-coin={i} cx="0" cy={-i * COIN_STEP} rx="26" ry="9" fill={FILM.thread} stroke={FILM['thread-edge']} stroke-width="3" visibility={i < n ? 'visible' : 'hidden'} />)}
-  <text data-coin-count x="0" y={coinCountY(n)} text-anchor="middle" class="coins__count" fill={FILM.ink} stroke={FILM.rim} stroke-width="6" paint-order="stroke">{n}</text>
-</g>
+{
+  !(lean && shown === 0) && (
+    <g data-part={part} transform={coinsTransform(x)} opacity={shown}>
+      {(!lean || n === 0) && <ellipse data-coin-empty cx="0" cy="0" rx="26" ry="9" fill="none" stroke={FILM.ink} stroke-width="2.5" stroke-dasharray="6 5" opacity={n === 0 ? 0.7 : 0} />}
+      {coins.map((i) => <ellipse data-coin={i} cx="0" cy={-i * COIN_STEP} rx="26" ry="9" fill={FILM.thread} stroke={FILM['thread-edge']} stroke-width="3" visibility={i < n ? 'visible' : 'hidden'} />)}
+      <text data-coin-count x="0" y={coinCountY(n)} text-anchor="middle" class="coins__count" fill={FILM.ink} stroke={FILM.rim} stroke-width="6" paint-order="stroke">{n}</text>
+    </g>
+  )
+}
 
 <style>
   .coins__count {

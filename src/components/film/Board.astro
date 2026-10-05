@@ -18,9 +18,11 @@ interface Props {
   locale: Locale;
   board: StageView['board'];
   shadow: string;
+  /** A still frame: draw only what this pose shows, since no script will change it. */
+  lean?: boolean;
 }
 
-const { locale, board, shadow } = Astro.props;
+const { locale, board, shadow, lean = false } = Astro.props;
 const tr = useTranslations(locale);
 const row = { cooperate: tr('film.board.you.cooperate'), defect: tr('film.board.you.defect') };
 const column = { cooperate: tr('film.board.other.cooperate'), defect: tr('film.board.other.defect') };
@@ -29,57 +31,64 @@ const note = { equilibrium: tr('film.board.note.equilibrium'), better: tr('film.
 const cells = MOVES.flatMap((you) => MOVES.map((other) => ({ you, other, key: cellKey(you, other), box: cellBox(you, other), pay: payoff(you, other) })));
 const { card } = BOARD;
 const columnX = (other: Move) => cellBox('cooperate', other).x;
+const opacity = boardOpacity(board.shown, board.folded);
+/** Whether a mark with this opacity is drawn: a still frame leaves out what it does not show. */
+const shows = (o: number) => !lean || o > 0;
 ---
 
-<g data-part="board" opacity={boardOpacity(board.shown, board.folded)} transform={boardTransform(board.shown, board.folded)}>
-  <rect x={card.x} y={card.y} width={card.width} height={card.height} rx="18" fill={FILM.card} stroke={FILM.ink} stroke-width="4" filter={`url(#${shadow})`} />
-  {
-    MOVES.map((other) => (
-      <rect data-band={other} x={columnX(other) - 8} y={card.y + 8} width={BOARD.cell.width + 16} height={card.height - 16} rx="12" fill={FILM.ink} opacity={board.column === other ? 0.1 : 0} />
-    ))
-  }
-  {
-    MOVES.map((other) => (
-      <g>
-        <rect x={columnX(other) + 10} y={BOARD.header - 17} width="18" height="18" rx="3" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" />
-        <text x={columnX(other) + 36} y={BOARD.header} class="board__label" fill={FILM.ink}>{column[other]}</text>
-      </g>
-    ))
-  }
-  {
-    MOVES.map((you) => {
-      const y = cellBox(you, 'cooperate').y + BOARD.cell.height / 2;
-      return (
-        <g>
-          <circle cx={BOARD.rowLabel - 18} cy={y} r="10" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" />
-          <text x={BOARD.rowLabel} y={y + 7} class="board__label" fill={FILM.ink}>{row[you]}</text>
-        </g>
-      );
-    })
-  }
-  {
-    cells.map(({ key, box, pay }) => {
-      const cx = box.x + box.width / 2;
-      const cy = box.y + box.height / 2;
-      return (
-        <g data-cell={key}>
-          <rect x={box.x} y={box.y} width={box.width} height={box.height} rx="10" fill={FILM.rim} stroke={FILM.ink} stroke-width="3" />
-          <rect data-tag="best" x={box.x} y={box.y} width={box.width} height={box.height} rx="10" fill={FILM.thread} opacity={tagged(key, 'best') ? 0.45 : 0} />
-          <rect data-tag="equilibrium" x={box.x} y={box.y} width={box.width} height={box.height} rx="10" fill={FILM.thread} opacity={tagged(key, 'equilibrium') ? 1 : 0} />
-          <circle cx={cx - 58} cy={cy} r="12" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" />
-          <text x={cx - 38} y={cy + 13} class="board__number" fill={FILM.ink}>{pay.you}</text>
-          <rect x={cx + 10} y={cy - 12} width="24" height="24" rx="3" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" />
-          <text x={cx + 42} y={cy + 13} class="board__number" fill={FILM.ink}>{pay.other}</text>
-          {NOTES.map((n) => (
-            <text data-note={n} x={cx} y={cy + 38} text-anchor="middle" class="board__note" fill={FILM.ink} opacity={noteFor(board.tags[key]) === n ? 1 : 0}>{note[n]}</text>
-          ))}
-          <rect data-tag="better" x={box.x + 7} y={box.y + 7} width={box.width - 14} height={box.height - 14} rx="7" fill="none" stroke={FILM.ink} stroke-width="3" stroke-dasharray="9 7" opacity={tagged(key, 'better') ? 1 : 0} />
-          <rect data-tag="pick" x={box.x} y={box.y} width={box.width} height={box.height} rx="10" fill="none" stroke={FILM.ink} stroke-width="7" opacity={tagged(key, 'pick') ? 1 : 0} />
-        </g>
-      );
-    })
-  }
-</g>
+{
+  shows(opacity) && (
+    <g data-part="board" opacity={opacity} transform={boardTransform(board.shown, board.folded)}>
+      <rect x={card.x} y={card.y} width={card.width} height={card.height} rx="18" fill={FILM.card} stroke={FILM.ink} stroke-width="4" filter={`url(#${shadow})`} />
+      {
+        MOVES.filter((other) => shows(board.column === other ? 0.1 : 0)).map((other) => (
+          <rect data-band={other} x={columnX(other) - 8} y={card.y + 8} width={BOARD.cell.width + 16} height={card.height - 16} rx="12" fill={FILM.ink} opacity={board.column === other ? 0.1 : 0} />
+        ))
+      }
+      {
+        MOVES.map((other) => (
+          <g>
+            <rect x={columnX(other) + 10} y={BOARD.header - 17} width="18" height="18" rx="3" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" />
+            <text x={columnX(other) + 36} y={BOARD.header} class="board__label" fill={FILM.ink}>{column[other]}</text>
+          </g>
+        ))
+      }
+      {
+        MOVES.map((you) => {
+          const y = cellBox(you, 'cooperate').y + BOARD.cell.height / 2;
+          return (
+            <g>
+              <circle cx={BOARD.rowLabel - 18} cy={y} r="10" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" />
+              <text x={BOARD.rowLabel} y={y + 7} class="board__label" fill={FILM.ink}>{row[you]}</text>
+            </g>
+          );
+        })
+      }
+      {
+        cells.map(({ key, box, pay }) => {
+          const cx = box.x + box.width / 2;
+          const cy = box.y + box.height / 2;
+          return (
+            <g data-cell={key}>
+              <rect x={box.x} y={box.y} width={box.width} height={box.height} rx="10" fill={FILM.rim} stroke={FILM.ink} stroke-width="3" />
+              {shows(tagged(key, 'best') ? 0.45 : 0) && <rect data-tag="best" x={box.x} y={box.y} width={box.width} height={box.height} rx="10" fill={FILM.thread} opacity={tagged(key, 'best') ? 0.45 : 0} />}
+              {shows(tagged(key, 'equilibrium') ? 1 : 0) && <rect data-tag="equilibrium" x={box.x} y={box.y} width={box.width} height={box.height} rx="10" fill={FILM.thread} opacity={tagged(key, 'equilibrium') ? 1 : 0} />}
+              <circle cx={cx - 58} cy={cy} r="12" fill={FILM.you} stroke={FILM.ink} stroke-width="2.5" />
+              <text x={cx - 38} y={cy + 13} class="board__number" fill={FILM.ink}>{pay.you}</text>
+              <rect x={cx + 10} y={cy - 12} width="24" height="24" rx="3" fill={FILM.other} stroke={FILM.ink} stroke-width="2.5" />
+              <text x={cx + 42} y={cy + 13} class="board__number" fill={FILM.ink}>{pay.other}</text>
+              {NOTES.filter((n) => shows(noteFor(board.tags[key]) === n ? 1 : 0)).map((n) => (
+                <text data-note={n} x={cx} y={cy + 38} text-anchor="middle" class="board__note" fill={FILM.ink} opacity={noteFor(board.tags[key]) === n ? 1 : 0}>{note[n]}</text>
+              ))}
+              {shows(tagged(key, 'better') ? 1 : 0) && <rect data-tag="better" x={box.x + 7} y={box.y + 7} width={box.width - 14} height={box.height - 14} rx="7" fill="none" stroke={FILM.ink} stroke-width="3" stroke-dasharray="9 7" opacity={tagged(key, 'better') ? 1 : 0} />}
+              {shows(tagged(key, 'pick') ? 1 : 0) && <rect data-tag="pick" x={box.x} y={box.y} width={box.width} height={box.height} rx="10" fill="none" stroke={FILM.ink} stroke-width="7" opacity={tagged(key, 'pick') ? 1 : 0} />}
+            </g>
+          );
+        })
+      }
+    </g>
+  )
+}
 
 <style>
   .board__label {
