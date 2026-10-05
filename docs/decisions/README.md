@@ -24,6 +24,11 @@ números no se reutilizan.
 | [0026](0026-the-lock.md) | El candado: qué cubre, cómo se cierra en el build, `verify:dist` y cómo se abre. |
 | [0027](0027-character-sheet.md) | Dirección de arte Papel y la hoja de personajes aprobada: la luz del día, el elenco y sus colores, las dos voces, el hilo dorado, los boletos y la tipografía. |
 | [0028](0028-budget-units.md) | Los presupuestos de peso del 0025 en KiB, y sobre qué páginas valen. |
+| [0029](0029-memory-in-the-tab.md) | La memoria de la película en la pestaña: qué recuerda, dónde, cómo vuelve y cuándo se va; nada sale de la pestaña. |
+| [0030](0030-sound-cues.md) | Las señales del sonido: la lista cerrada de trece, cada una con lo que se ve, y sus reglas. |
+| [0031](0031-side-card-landscape.md) | La tarjeta al costado con el celular en horizontal, centrada en la computadora; por qué no se bloquea la rotación. |
+| [0032](0032-author-on-posters.md) | La autora en los pósteres: una firma con su nombre y nada más. |
+| [0033](0033-dilemma-source.md) | La fuente del dilema: los pagos, `2R > T + S` y el torneo, de Axelrod y Hamilton (1981), con sus páginas. |
 
 Archivados (no rigen): 0002, 0003, 0004, 0009, 0014, 0015, 0017, 0018, 0019, 0020 y 0022, en
 [`docs/archivo/decisiones/`](../archivo/decisiones/).

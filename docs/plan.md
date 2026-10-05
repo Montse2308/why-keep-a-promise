@@ -45,7 +45,8 @@ Tiene que:
 - **Personajes:** tú (círculo), el otro (cuadrado), la pareja nueva (triángulo) y las dos voces.
 - **Dos hilos:** la promesa del visitante (el hilo dorado) y la promesa de la página.
 - **Cifras:** solo las de `docs/sources.md` (regla (a)).
-- **La autora:** su nombre va en el capítulo 7 y en los créditos. GitHub y LinkedIn, en `/about`.
+- **La autora:** su nombre va en el capítulo 7, en los créditos y como firma en los pósteres
+  (ADR 0032). GitHub y LinkedIn, en `/about`.
 - **La prosa:** leyendas y diálogos en `src/content/chapters/{en,es}/`, con paridad EN/ES.
 
 ## El cuaderno

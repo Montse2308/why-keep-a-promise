@@ -3,12 +3,11 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P6 (el pulido), construida y en espera de la revisión de Montse. P0 a P5
-cerradas: Montse las revisó (PR #1 a PR #8). P4 se cerró sin videos, como ella lo pidió: dio por
-hecho el de la película entera.
+**Fase activa:** P7, los ajustes de la revisión externa (`docs/p7-review-plan.md`), en pasos
+chicos, uno por sesión, empezando por P7.0. P0 a P6 cerradas: Montse las revisó (PR #1 a PR #9).
+P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** P7, los ajustes de la revisión externa (`docs/p7-review-plan.md`), en pasos
-chicos, uno por sesión. Empieza cuando se cierre la revisión de P6; solo 7.0.1 está hecho.
+**Fase siguiente:** F5, la QA, cuando se cierre P7.
 
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
 capítulo 8, con su sonido, apagado hasta que el visitante lo enciende; el cuaderno tiene sus seis
@@ -447,7 +446,7 @@ queda nada en el sitio.
       con el sonido encendido y las cinco señales; capturas del botón (apagado, encendido, celular,
       320 px, movimiento reducido, sin JavaScript), los 14 pósteres y la tabla de `/how-its-built` en
       claro y oscuro. En `scratch/p6-review/` (local, no se versiona).
-- [ ] Revisión de P6 por Montse (el PR).
+- [x] Revisión de P6 por Montse (el PR #9, mergeado).
 
 ## P7 · Ajustes de la revisión externa
 
@@ -462,24 +461,68 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
 
 - [x] **7.0.1** El plan en el repo: `docs/p7-review-plan.md`, la revisión copiada en
       `docs/p7-external-review.md`, P7 en `phases.md` y en este archivo, y `AGENTS.md` al día.
-- [ ] **7.0.2** Borradores en EN y ES de los cuatro textos nuevos: la descripción del home, «Ver de
+- [x] **7.0.2** Borradores en EN y ES de los cuatro textos nuevos: la descripción del home, «Ver de
       nuevo», el progreso para lectores de pantalla («Capítulo 5 de 9») y la frase nueva del
       capítulo 8 (reemplaza a `film.closing.private`). En `scratch/`, para Montse.
-- [ ] **7.0.3 (Montse)** Aprueba o corrige los cuatro textos.
-- [ ] **7.0.4 (Montse)** Decide sí o no: la tarjeta al costado también en la compu; el enlace EN/ES
-      que conserva el capítulo; la autora en los pósteres.
-- [ ] **7.0.5 (Montse)** Elige la opción de Axelrod (1984): B (recomendada), A o C. Con B, comprueba
-      en el artículo de 1981 que los pagos, `2R > T + S` y la figura están ahí.
-- [ ] **7.0.6** ADR 0029, la memoria de la película en la pestaña (precisa el 0023), con la frase del
+- [x] **7.0.3 (Montse)** Aprueba o corrige los cuatro textos. Aprobó la opción A de cada uno
+      (`scratch/p7-0/textos.md`):
+      - la descripción del home: «An illustrated film you scroll through: why people keep promises
+        that no longer pay, from the prisoner’s dilemma to Vanberg’s experiment (2008).» / «Una
+        película ilustrada que avanza con el scroll: por qué la gente cumple promesas que ya no le
+        convienen, del dilema del prisionero al experimento de Vanberg (2008).»;
+      - «Watch again» / «Ver de nuevo»;
+      - el progreso, con el número de la tarjeta sobre 8, no «de 9» (la película cuenta desde 0):
+        «Chapter {n} of 8» / «Capítulo {n} de 8»;
+      - la frase del capítulo 8: «Everything you chose stays in this tab: nothing is sent
+        anywhere.» / «Todo lo que elegiste se queda en esta pestaña: nada se envía a ningún lado.»
+        No promete que se borre al cerrar la pestaña: el navegador puede devolver `history.state`
+        al reabrirla o al restaurar la sesión, y el ADR 0029 lo dice con ese matiz.
+- [x] **7.0.4 (Montse)** Decide sí o no: la tarjeta al costado también en la compu; el enlace EN/ES
+      que conserva el capítulo; la autora en los pósteres. Decidió:
+      - la tarjeta al costado en la compu: **no** (sigue centrada, ADR 0027; 7.5.4 no se hace);
+      - el enlace EN/ES que conserva el capítulo: **no** (ADR 0013 sin cambios; 7.6.8 no se hace).
+        Necesitaba JS, y al cambiar de idioma se abre otra entrada del historial, sin lo jugado;
+      - la autora en los pósteres: **sí**, una firma pequeña con `author.name` y nada más (precisa
+        el ADR 0021; 7.6.9).
+- [x] **7.0.5 (Montse)** Elige la opción de Axelrod (1984): B (recomendada), A o C. Con B, comprueba
+      en el artículo de 1981 que los pagos, `2R > T + S` y la figura están ahí. Eligió **B**. Montse no
+      tenía acceso al artículo; el agente lo cotejó contra la copia de JSTOR en el sitio de Axelrod
+      (<https://websites.umich.edu/~axe/research/Axelrod%20and%20Hamilton%20EC%201981.pdf>):
+      - Axelrod, R. y Hamilton, W. D. (1981). The Evolution of Cooperation. *Science*, 211(4489),
+        1390–1396;
+      - la figura 1 (p. 1392) da R = 3, S = 0, T = 5 y P = 1, solo el pago del jugador A (los pares
+        del sitio salen por simetría), y su pie define el juego por T > R > P > S y R > (S + T)/2;
+      - la condición está escrita como R > (S + T)/2, la misma que `2R > T + S`; la nota 17 (p. 1396)
+        dice que descarta que turnarse para explotarse sea mejor que cooperar;
+      - el torneo y Tit-for-Tat, que ganó las dos rondas: p. 1393;
+      - «la sombra del futuro» no está: el artículo habla de la probabilidad *w* de volver a
+        encontrarse. Por eso esa oración de `/dilemma` cambia (7.2.8), con el texto que Montse
+        aprobó: «Axelrod and Hamilton (1981) model it as the chance that the same two meet again.
+        Axelrod invited programs…» / «Axelrod y Hamilton (1981) lo miden como la probabilidad de que
+        los mismos dos vuelvan a encontrarse. Axelrod invitó a programas…», y «The condition comes
+        from Axelrod and Hamilton (1981).» / «La condición viene de Axelrod y Hamilton (1981).».
+- [x] **7.0.6** ADR 0029, la memoria de la película en la pestaña (precisa el 0023), con la frase del
       capítulo 8 aprobada en 7.0.3.
-- [ ] **7.0.7** Borrador de la lista cerrada de señales del sonido, cada una con lo que se ve.
-- [ ] **7.0.8 (Montse)** Aprueba la lista de señales.
-- [ ] **7.0.9** ADR 0030, las señales del sonido (precisa el 0025).
-- [ ] **7.0.10** ADR 0031, la tarjeta al costado (precisa el 0027 si va en la compu), con el porqué de
+- [x] **7.0.7** Borrador de la lista cerrada de señales del sonido, cada una con lo que se ve.
+- [x] **7.0.8 (Montse)** Aprueba la lista de señales. Aprobó completa la de 7.0.7
+      (`scratch/p7-0/senales.md`): las cinco de P6 y ocho nuevas, cada una con lo que se ve:
+      - `on`: el acorde al encender el sonido;
+      - `coins`: las monedas, en los capítulos 1 y 3;
+      - `snap`: el hilo que se rompe en el capítulo 3, antes de las monedas, no encima;
+      - `switch`: el interruptor del apagón y del parpadeo;
+      - `card`: la carta que vuela, salvo con movimiento reducido;
+      - `sign`: el letrero que enciende su cifra; se enciende, no se voltea, y no juzga la adivinanza;
+      - `voices`: las dos voces que llegan en el capítulo 4;
+      - `lights-on`: la luz que vuelve después del apagón.
+- [x] **7.0.9** ADR 0030, las señales del sonido (precisa el 0025).
+- [x] **7.0.10** ADR 0031, la tarjeta al costado (precisa el 0027 si va en la compu), con el porqué de
       no bloquear la rotación (WCAG 1.3.4).
-- [ ] **7.0.11** Lo que 7.0.4 aprobó lleva su ADR (el número que siga); lo que no, pasa a «Preguntas
-      cerradas». Si 7.0.5 eligió C, también su ADR.
-- [ ] **7.0.12** `docs/decisions/README.md` al día; revisar que ningún documento vigente contradiga a
+- [x] **7.0.11** Lo que 7.0.4 aprobó lleva su ADR (el número que siga); lo que no, pasa a «Preguntas
+      cerradas». 7.0.5 eligió B: el mismo ADR, u otro, precisa la línea del ADR 0021 que nombra «los
+      pagos del dilema de Axelrod (1984)». Hecho: ADR 0032 (la autora en los pósteres) y ADR 0033 (la
+      fuente del dilema); la tarjeta en la compu y el enlace EN/ES con el capítulo, a «Preguntas
+      cerradas».
+- [x] **7.0.12** `docs/decisions/README.md` al día; revisar que ningún documento vigente contradiga a
       otro.
 - [ ] **7.0.13 (Montse)** Revisión de P7.0 (el PR).
 
@@ -535,9 +578,13 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       `robots.txt` (un sitio de proyecto no está en la raíz del dominio).
 - [ ] **7.2.7** `theme-color` y `apple-touch-icon` en PNG de 180 px, con el mismo proceso de resvg que
       los pósteres.
-- [ ] **7.2.8** Axelrod según 7.0.5: `docs/sources.md`, `src/content/figures.ts`, `UNVERIFIED` en
-      `src/lib/sources.ts` y sus tests. El candado de `deploy.yml` contra `data-unverified` se
-      queda.
+- [ ] **7.2.8** Axelrod según 7.0.5 (B): Axelrod y Hamilton (1981) reemplaza al libro de 1984 en
+      `docs/sources.md` (verificada, con sus páginas), `src/content/figures.ts`, `src/lib/sources.ts`
+      (sale de `UNVERIFIED`), la clave `sources.*` de los dos idiomas, los comentarios de
+      `src/lib/pd/` y `src/lib/film/values.ts`, la prosa de `/dilemma` en EN y ES (las oraciones
+      aprobadas en 7.0.5) y sus tests, como dice el ADR 0033; el paso 9 de
+      `docs/launch-checklist.md` deja de nombrar a Axelrod (1984). El candado de `deploy.yml`
+      contra `data-unverified` se queda.
 - [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
       puede, decide cómo queda registrado.
 - [ ] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
@@ -576,14 +623,17 @@ de que ninguna satura y de que todas suman a lo más 1.
 
 - [ ] **7.4.1** El acorde corto al encender, con las dos notas del motivo del tema final.
 - [ ] **7.4.2** Las monedas (capítulos 1 y 3).
-- [ ] **7.4.3** El interruptor del apagón y la carta que vuela (capítulo 5).
-- [ ] **7.4.4** El letrero que se voltea (capítulo 6) y el hilo que se rompe.
-- [ ] **7.4.5** Lo que quede de la lista del ADR 0030, si hay más señales que las de arriba.
+- [ ] **7.4.3** El interruptor del apagón y del parpadeo, la luz que vuelve y la carta que vuela
+      (capítulo 5: `switch`, `lights-on` y `card`).
+- [ ] **7.4.4** El letrero que enciende su cifra (capítulo 6, `sign`) y el hilo que se rompe
+      (capítulo 3, `snap`, antes de las monedas).
+- [ ] **7.4.5** Las dos voces que llegan (capítulo 4, `voices`), y el test de que las señales del
+      capítulo 3 no se encimen.
 - [ ] **7.4.6** Video con sonido para Montse: sin silencios largos entre los capítulos 3 y 7, y nada
       suena sin encenderlo.
 - [ ] **7.4.7 (Montse)** Revisión de P7.4 (el PR).
 
-### P7.5 · Horizontal y transiciones (puntos 12, 16 en la compu y 15)
+### P7.5 · Horizontal y transiciones (puntos 12 y 15)
 
 Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pueden ir antes.
 
@@ -591,7 +641,8 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
 - [ ] **7.5.2** La tarjeta al costado con `(orientation: landscape) and (max-height: 500px)`: a la
       izquierda, ≈ 44 % del ancho, con scroll interno si no cabe; la cámara encuadra el resto.
 - [ ] **7.5.3** El título del capítulo 0 deja de encimarse con las cabezas en horizontal.
-- [ ] **7.5.4** Solo si el ADR 0031 lo aprobó: el mismo mecanismo en la compu, con su punto de corte.
+- ~~**7.5.4** Solo si el ADR 0031 lo aprobó: el mismo mecanismo en la compu, con su punto de
+  corte.~~ No se hace: en la compu las tarjetas siguen centradas (7.0.4, ADR 0031).
 - [ ] **7.5.5** Transiciones entre las páginas del cuaderno, solo con CSS:
       `@view-transition { navigation: auto; }` bajo `prefers-reduced-motion: no-preference`, y
       `view-transition-name` en la viñeta y el título. El home queda fuera.
@@ -619,8 +670,9 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
 - [ ] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La
       regla (k) se cumple igual: las citas se quedan, solo cambia dónde.
 - [ ] **7.6.7** El enlace EN/ES entra al panel del cuaderno.
-- [ ] **7.6.8** Solo si se aprobó en 7.0.4: el enlace EN/ES conserva el capítulo.
-- [ ] **7.6.9** Solo si se aprobó en 7.0.4: la autora en los pósteres.
+- ~~**7.6.8** Solo si se aprobó en 7.0.4: el enlace EN/ES conserva el capítulo.~~ No se hace
+  (7.0.4).
+- [ ] **7.6.9** La autora en los pósteres, como firma (ADR 0032).
 - [ ] **7.6.10** Verificación de salida (storyboard igual, primera carga menor, regla (h) y paridad) y
       capturas para Montse.
 - [ ] **7.6.11 (Montse)** Revisión de P7.6 (el PR).
@@ -648,8 +700,9 @@ Dep.: todas las subfases anteriores.
   buscan en esa. Si solo se tiene otra edición (la revisada de 2006), hay que decidir antes si cambia
   la referencia. Mientras tanto `/sources` dice «Páginas por verificar.» y el deploy no publica.
   Al verificarla: escribir `sources.at.axelrod-1984` en los dos idiomas y quitarla de `UNVERIFIED`.
-  Las páginas no se pudieron verificar: Montse elige entre tres opciones en el paso 7.0.5, y se
-  aplica en 7.2.8 (`docs/p7-review-plan.md`).
+  Las páginas no se pudieron verificar. Montse eligió en 7.0.5 la opción B: citar el artículo de
+  Axelrod y Hamilton (1981), ya cotejado, en lugar del libro (ADR 0033). Se aplica en 7.2.8; al
+  aplicarse, esta pregunta pasa a «Preguntas cerradas».
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
 - **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0026 dice que
@@ -660,6 +713,11 @@ Dep.: todas las subfases anteriores.
 
 ## Preguntas cerradas
 
+- ~~¿La tarjeta al costado también en la compu?~~ No: en la computadora las tarjetas siguen
+  centradas, como dice el ADR 0027 (decisión de Montse en 7.0.4; el ADR 0031 lo registra).
+- ~~¿El enlace EN/ES conserva el capítulo?~~ No: necesitaba JavaScript y precisar el ADR 0013, y al
+  cambiar de idioma se abre otra entrada del historial, sin lo jugado (ADR 0029). El enlace sigue
+  siendo simple (decisión de Montse en 7.0.4).
 - ~~¿Los KB de los presupuestos son de 1000 o de 1024 bytes?~~ KiB, 1024 bytes, como Lighthouse; el
   techo de JS vale en los dos home y los de fuentes y primera carga en cada página (ADR 0028,
   decisión de Montse en la revisión de P6).

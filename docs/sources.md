@@ -253,6 +253,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 - **Clave:** `axelrod-1984`.
 - **Uso:** matriz del dilema del prisionero (capítulo 1 y `/dilemma`); contexto del dilema
   iterado (`/dilemma`).
+- **Reemplazo:** decidido en el ADR 0033: Axelrod y Hamilton (1981), cotejado, ocupa su lugar en el
+  paso 7.2.8. Hasta entonces esta entrada describe lo que el sitio cita hoy.
 - **Verificada:** no. Se cita la edición original (Basic Books, 1984); las páginas se buscan en esa.
   Mientras siga por verificar, `/sources` dice «Páginas por verificar.» donde iría su página
   (`UNVERIFIED` en `src/lib/sources.ts`), y `deploy.yml` no publica un `dist/` con esa marca.
