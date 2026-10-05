@@ -556,7 +556,7 @@ empezar en cuanto se cierre P6, sin esperar a P7.0.
 - [x] **7.1.8** Cada controlador anota su acción con `history.replaceState`.
 - [x] **7.1.9** Al cargar, las acciones guardadas se reproducen sin animación por el mismo camino
       de código que un clic: boletos, salidas `aria-live`, carrete, mazo y escala quedan igual.
-- [ ] **7.1.10** En las páginas del cuaderno, si el visitante llegó desde la película, «Volver a la
+- [x] **7.1.10** En las páginas del cuaderno, si el visitante llegó desde la película, «Volver a la
       película» y «← Volver a …» hacen `history.back()`. Va en el script del panel (sin script
       nuevo, ADR 0025); sin JS siguen siendo enlaces normales.
 - [ ] **7.1.11** El capítulo 8 con la frase nueva del ADR 0029, en EN y ES.

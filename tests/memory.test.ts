@@ -1,7 +1,10 @@
 // The film's memory in the tab (ADR 0029), as the film's code uses it: every action is noted, it is
 // written only into the tab's history entry, and nothing else keeps or sends it.
 import { describe, expect, it } from 'vitest';
+import notebook from '../src/components/notebook/Notebook.astro?raw';
+import footer from '../src/components/notebook/NotebookFooter.astro?raw';
 import memory from '../src/lib/film/memory.ts?raw';
+import subpage from '../src/views/SubpageView.astro?raw';
 import type { Action } from '../src/lib/film/memory';
 
 const sources = import.meta.glob<string>(['../src/components/film/*.ts', '../src/components/film/chapters/*.ts'], { query: '?raw', import: 'default', eager: true });
@@ -26,6 +29,13 @@ describe("the film's memory in the tab", () => {
   it('is written only into the history entry, with the rest of its state kept', () => {
     expect(film).toContain("history.replaceState(withMemory(history.state, memory), '');");
     expect(film.match(/history\.(replaceState|pushState)\(/g)).toHaveLength(1);
+  });
+
+  it("comes back from the notebook's two links to the film, from the panel's own script", () => {
+    expect(subpage).toMatch(/<a href=\{href\(locale, 'home', page\.film \?\? undefined\)\} data-film-back>\{back\}<\/a>/);
+    expect(footer).toMatch(/<a class="footer__film" href=\{href\(locale, 'home'\)\} data-film-back>/);
+    expect(notebook).toMatch(/<script>\s*import \{ back \} from '\.\/back';[\s\S]*back\(\);\s*<\/script>/);
+    expect(notebook.match(/<script/g)).toHaveLength(1);
   });
 
   it('uses no storage, no cookies and no network, in the film or in the memory', () => {
