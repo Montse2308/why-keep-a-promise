@@ -639,8 +639,11 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       Se van también los tres boletos y «No te cuesta nada»; el foco pasa a tu burbuja (que no entra
       en el orden de tabulación), y la respuesta llega un momento después, sin animación con
       movimiento reducido.
-- [ ] **7.3.2** El progreso, la lógica: función pura sobre los tramos de `timeline.ts` (capítulo y
+- [x] **7.3.2** El progreso, la lógica: función pura sobre los tramos de `timeline.ts` (capítulo y
       cuánto se llenó cada cuenta), con test.
+      `progressAt()` en `src/lib/film/progress.ts`: el capítulo cambia cuando sube su primera
+      tarjeta, igual que el tiempo del escenario (`LEAD`), y en ese momento la cuenta anterior está
+      llena. Las cuentas solo se llenan en orden y nunca se vacían al avanzar.
 - [ ] **7.3.3** El progreso, a la vista: un hilo fino con 9 cuentas que se llenan con el scroll.
       Pasivo y sin foco (ADR 0024); texto oculto «Capítulo 5 de 9» para lectores de pantalla.
       Revisado a 320 px junto al carrete, el sonido y el cuaderno.
