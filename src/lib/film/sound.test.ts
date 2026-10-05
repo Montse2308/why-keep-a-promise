@@ -141,7 +141,7 @@ describe('playing it', () => {
   const played = (cue: Cue) => film.includes(`play('${cue}')`);
 
   it('plays each cue from the film’s script, where the stage shows it', () => {
-    const fromFold = foldCues(true).map(([cue]) => cue);
+    const fromFold = [...foldCues(true, false), ...foldCues(false, true)].map(([cue]) => cue);
     const fromScroll = Object.values(SIGHT_CUE);
     for (const cue of CUES) expect(played(cue) || film.includes(`'${cue}', 0.75)`) || fromFold.includes(cue) || fromScroll.includes(cue), cue).toBe(true);
     // What the scroll brings sounds once, as it comes into view (./sights.ts).
@@ -150,8 +150,8 @@ describe('playing it', () => {
     expect(film).toContain("film.onSight(film.root.querySelector('[data-envelope] .envelope__seal'), 'stamp', 0.75);");
     expect(film).toContain("film.onSight(film.root.querySelector('.credits__end'), 'theme', 0.75);");
     expect(film).toContain("play('roll');");
-    // Chapter 3's decision lands: the die's knock if it was thrown, then the coins.
-    expect(film).toContain('for (const [cue, after] of foldCues(decision.face !== null)) film.play(cue, after);');
+    // Chapter 3's decision lands: the die's knock if it was thrown, the thread if it snapped, then the coins.
+    expect(film).toContain("for (const [cue, after] of foldCues(decision.face !== null, promised && decision.choice === 'dont')) film.play(cue, after);");
     expect(film).toContain("play('bubbles');");
   });
 
@@ -164,11 +164,22 @@ describe('playing it', () => {
   });
 
   it('plays chapter 3’s coins after the die’s knock, not on top of it', () => {
-    expect(foldCues(false)).toEqual([['coins', 0]]);
-    expect(foldCues(true)).toEqual([
+    expect(foldCues(false, false)).toEqual([['coins', 0]]);
+    expect(foldCues(true, false)).toEqual([
       ['land', 0],
       ['coins', cueLength('land')],
     ]);
+  });
+
+  it('snaps the thread before the coins, not on top of them, when the visitor promised and kept the money', () => {
+    expect(foldCues(false, true)).toEqual([
+      ['snap', 0],
+      ['coins', cueLength('snap')],
+    ]);
+  });
+
+  it('turns each sign’s figure on with its sound when the visitor asks to see it, every time', () => {
+    expect(film).toMatch(/see\?\.addEventListener\('click', \(\) => \{\s*if \(settled\(see\)\) return;[^]*?box\.dataset\.seen = '';\s*film\.play\('sign'\);/);
   });
 
   it('stays silent until the visitor presses the button, which shows only where Web Audio exists', () => {

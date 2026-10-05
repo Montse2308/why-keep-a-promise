@@ -14,10 +14,12 @@ const SHOWS: Record<Sight, (view: StageView) => boolean> = {
   flicker: (view) => view.dark > 0.4,
   // The light is mostly back, and the triangle sits in the square's seat.
   'lights-on': (view) => view.dark < 0.5 && view.cast.partner.opacity > 0.5,
+  // The signs hang over the table, their figures more on than off.
+  signs: (view) => view.signs.shown > 0.5 && view.signs.same > 0.5 && view.signs.switched > 0.5,
 };
 
 const STEPS = Math.round(TOTAL_SCREENS * 50);
-const everywhere = (reduced: boolean) => Array.from({ length: STEPS + 1 }, (_, i) => i / STEPS).map((p) => ({ p, sights: sightsAt(p, reduced) }));
+const everywhere = (reduced: boolean) => Array.from({ length: STEPS + 1 }, (_, i) => i / STEPS).map((p) => ({ p, sights: sightsAt(p, STATE, reduced) }));
 
 describe('what the scroll brings that sounds', () => {
   it('sounds only cues of the score', () => {
@@ -25,6 +27,7 @@ describe('what the scroll brings that sounds', () => {
     expect(SIGHT_CUE.blackout).toBe('switch');
     expect(SIGHT_CUE.flicker).toBe('switch');
     expect(SIGHT_CUE['lights-on']).toBe('lights-on');
+    expect(SIGHT_CUE.signs).toBe('sign');
   });
 
   it.each([false, true])('sounds only what the stage shows (reduced motion: %s)', (reduced) => {
@@ -51,6 +54,15 @@ describe('what the scroll brings that sounds', () => {
     const seen = new Set(everywhere(true).flatMap(({ sights }) => [...sights]));
     expect(seen.has('blackout')).toBe(false);
     expect(seen.has('flicker')).toBe(false);
+  });
+
+  it('turns the signs on with the scroll while a figure is not guessed, once for both', () => {
+    const at = everywhere(false).find(({ sights }) => sights.has('signs'))?.p;
+    if (at === undefined) throw new Error('the signs never turn on');
+    expect(sightsAt(at, { guesses: { same: 40 } }, false).has('signs')).toBe(true);
+    expect(sightsAt(at, { guesses: { switched: 40 } }, false).has('signs')).toBe(true);
+    // Both guessed: both figures are on already, and nothing turns on with the scroll.
+    expect(sightsAt(at, { guesses: { same: 40, switched: 60 } }, false).has('signs')).toBe(false);
   });
 
   it('sounds a sight as it comes into view, once a visit', () => {

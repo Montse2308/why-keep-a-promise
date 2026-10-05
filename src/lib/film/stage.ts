@@ -202,7 +202,7 @@ const REVEAL_SWAP = [FLICKER_OUT[1], FLICKER_ON[0]] as const;
  * visitor guesses it, and both do when the film reaches them. At the conclusion, my word glows.
  */
 const REAL_IN = entering('real-people', 'guess-same');
-const EXPECTED = entering('real-people', 'expected');
+export const EXPECTED = entering('real-people', 'expected');
 const CONCLUSION = entering('real-people', 'conclusion');
 /**
  * Chapter 7. Night has fallen: the signs go back up, and the lamp comes down over the table as the

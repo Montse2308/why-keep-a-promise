@@ -8,10 +8,10 @@
 
 /**
  * The cues: the die in the air and on the table, the chat's bubbles, the seal and a short theme at
- * the end (P6); the chord when the sound is turned on, the coins, and chapter 5's switch, light and
- * cards (ADR 0030).
+ * the end (P6); the chord when the sound is turned on, the coins, chapter 5's switch, light and
+ * cards, chapter 6's sign and chapter 3's thread snapping (ADR 0030).
  */
-export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme', 'on', 'coins', 'switch', 'lights-on', 'card'] as const;
+export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme', 'on', 'coins', 'switch', 'lights-on', 'card', 'sign', 'snap'] as const;
 export type Cue = (typeof CUES)[number];
 
 /** What the visitor sees while each cue sounds. */
@@ -26,6 +26,8 @@ export const CUE_SIGHT: Record<Cue, string> = {
   switch: 'chapter 5: the stage goes dark but for the eyes; later, the light flickers for the reveal',
   'lights-on': 'chapter 5: the light comes back after the blackout, with the triangle in the seat',
   card: 'chapter 5: the decided card flies off to one side, and the next person comes',
+  sign: 'chapter 6: on the sign, the figure turns on where the question mark was',
+  snap: 'chapter 3: the golden thread breaks, its ends curl, and the spool says it is broken',
 };
 
 interface Envelope {
@@ -160,6 +162,18 @@ export const SCORE: Record<Cue, readonly Voice[]> = {
     { kind: 'noise', filter: 'bandpass', frequency: 1300, q: 1.1, at: 0, attack: 0.12, duration: 0.34, gain: 0.22 },
     { kind: 'tone', wave: 'sine', from: 520, to: 260, at: 0.02, attack: 0.05, duration: 0.28, gain: 0.08 },
   ],
+  // The figure turns on in the sign: the filament's tick, and a bright note ringing as it glows.
+  sign: [
+    { kind: 'noise', filter: 'highpass', frequency: 3200, q: 0.8, at: 0, attack: 0.001, duration: 0.02, gain: 0.14 },
+    { kind: 'tone', wave: 'triangle', from: midiToHz(84), at: 0.015, attack: 0.006, duration: 0.45, gain: 0.18 },
+    { kind: 'tone', wave: 'sine', from: midiToHz(91), at: 0.015, attack: 0.004, duration: 0.25, gain: 0.06 },
+  ],
+  // The golden thread snaps: a sharp crack, and its two ends recoiling as they curl.
+  snap: [
+    { kind: 'noise', filter: 'highpass', frequency: 2400, q: 0.9, at: 0, attack: 0.001, duration: 0.04, gain: 0.3 },
+    { kind: 'tone', wave: 'triangle', from: 880, to: 330, at: 0, attack: 0.002, duration: 0.22, gain: 0.16 },
+    { kind: 'tone', wave: 'triangle', from: 660, to: 247, at: 0.03, attack: 0.002, duration: 0.24, gain: 0.12 },
+  ],
   // The credits end on a short phrase, and a low C under its last note.
   theme: [
     ...THEME_NOTES.flatMap(([note, beat, beats]) => bell(note, beat * THEME_BEAT, beats)),
@@ -195,17 +209,16 @@ export function cueLength(cue: Cue): number {
 }
 
 /**
- * Chapter 3's cues once the decision lands, each with its delay in seconds: if the die was thrown,
- * its knock, and the coins once the knock is over, so they never sound on top of each other
- * (ADR 0030, rule 4).
+ * Chapter 3's cues once the decision lands, each with its delay in seconds, one after the other so
+ * they never sound on top of each other (ADR 0030, rule 4): if the die was thrown, its knock; if the
+ * visitor promised and kept the money, the thread snapping; then the coins.
  */
-export function foldCues(thrown: boolean): readonly (readonly [cue: Cue, after: number])[] {
-  const cues: [Cue, number][] = [];
+export function foldCues(thrown: boolean, snapped: boolean): readonly (readonly [cue: Cue, after: number])[] {
+  const order: Cue[] = [...(thrown ? ['land' as const] : []), ...(snapped ? ['snap' as const] : []), 'coins'];
   let at = 0;
-  if (thrown) {
-    cues.push(['land', at]);
-    at += cueLength('land');
-  }
-  cues.push(['coins', at]);
-  return cues;
+  return order.map((cue) => {
+    const after = at;
+    at += cueLength(cue);
+    return [cue, after] as const;
+  });
 }

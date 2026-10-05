@@ -726,8 +726,14 @@ de que ninguna satura y de que todas suman a lo más 1.
       que mientras suena cada uno el escenario lo muestra. Con movimiento reducido los cortes saltan
       el apagón y el parpadeo (no se ven), así que no suenan; la carta tampoco, porque no vuela. Otro
       test: cada señal llega a menos de la mitad de la escala, así que ni dos juntas saturan.
-- [ ] **7.4.4** El letrero que enciende su cifra (capítulo 6, `sign`) y el hilo que se rompe
+- [x] **7.4.4** El letrero que enciende su cifra (capítulo 6, `sign`) y el hilo que se rompe
       (capítulo 3, `snap`, antes de las monedas).
+      `sign`: el chasquido del filamento y una nota clara que brilla con la cifra; suena cada vez que
+      el visitante pide ver una cifra, y con el scroll una sola vez (`signs` en `sights.ts`) si llega
+      a las cifras con alguna sin adivinar: las dos se encienden juntas. Con las dos adivinadas, el
+      scroll no enciende nada y no suena. `snap`: el chasquido del hilo y sus dos puntas que se
+      recogen. `foldCues` pone en fila las señales del capítulo 3: el golpe del dado o el hilo, y
+      después las monedas.
 - [ ] **7.4.5** Las dos voces que llegan (capítulo 4, `voices`), y el test de que las señales del
       capítulo 3 no se encimen.
 - [ ] **7.4.6** Video con sonido para Montse: sin silencios largos entre los capítulos 3 y 7, y nada

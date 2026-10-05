@@ -31,9 +31,9 @@ export function fold(film: FilmContext): void {
         film.update({ decision });
         film.begin('count');
         if (decision.phase === 'outcome') {
-          for (const [cue, after] of foldCues(decision.face !== null)) film.play(cue, after);
-          const said = decision.face === null ? button.dataset.said : (JSON.parse(button.dataset.said ?? '{}') as Record<string, string>)[decision.face];
           const promised = film.state().promised === true;
+          for (const [cue, after] of foldCues(decision.face !== null, promised && decision.choice === 'dont')) film.play(cue, after);
+          const said = decision.face === null ? button.dataset.said : (JSON.parse(button.dataset.said ?? '{}') as Record<string, string>)[decision.face];
           const thread = promised ? (decision.choice === 'dont' ? decisionOut?.dataset.broken : decisionOut?.dataset.kept) : undefined;
           if (decisionOut) decisionOut.textContent = [said, thread].filter(Boolean).join(' ');
           if (promised) film.spoolAs(decision.choice === 'dont' ? 'broken' : 'kept');

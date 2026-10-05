@@ -26,6 +26,7 @@ export function realPeople(film: FilmContext): void {
       settle(box.querySelector('[data-guess-tickets]'), see);
       if (range) range.disabled = true;
       box.dataset.seen = '';
+      film.play('sign');
       if (out) out.textContent = (out.dataset.said ?? '').replace('{guess}', String(guess));
       film.note({ type: 'guess', id, guess });
       film.request();

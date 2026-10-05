@@ -276,7 +276,7 @@ function run(): void {
     const view: StageView = stageAt(p, state, portrait, still);
 
     // What the scroll brings sounds the first time it comes into view with the sound on (ADR 0030, rule 1).
-    const sights = sightsAt(p, still);
+    const sights = sightsAt(p, state, still);
     if (sound?.on) {
       for (const sight of comingIntoView(sightsShown, sights, heard)) {
         heard.add(sight);
