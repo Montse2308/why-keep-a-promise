@@ -36,7 +36,7 @@ const titleFont = fontData['--font-display']?.find((font) => font.style === 'ita
 const textFont = fontData['--font-body']?.find((font) => font.style === 'normal')?.src[0];
 // The page's poster for a shared link (ADR 0025), drawn by src/pages/posters/.
 const poster = new URL(assetHref(posterPath(locale, route)), site).href;
-const posterAlt = fill(t(locale, 'poster.alt'), { title });
+const posterAlt = fill(t(locale, 'poster.alt'), { title, author: t(locale, 'author.name') });
 // The tab's line while the visitor is away, by the thread's state, and the console's note (src/lib/details.ts).
 const away = JSON.stringify(Object.fromEntries(THREADS.map((thread) => [thread, t(locale, AWAY_KEYS[thread])])));
 const consoleLine = fill(t(locale, 'console.line'), { url: absoluteHref(site, locale, 'how-its-built') });

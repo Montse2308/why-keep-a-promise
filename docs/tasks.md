@@ -878,7 +878,13 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
       320, 360, 844×390 y 1440 px, en claro y oscuro: abre la misma página en el otro idioma.
 - ~~**7.6.8** Solo si se aprobó en 7.0.4: el enlace EN/ES conserva el capítulo.~~ No se hace
   (7.0.4).
-- [ ] **7.6.9** La autora en los pósteres, como firma (ADR 0032).
+- [x] **7.6.9** La autora en los pósteres, como firma (ADR 0032). Hecho: el nombre completo
+      (`author.name`) va en Nunito a 20 px, en el tono apagado de la tarjeta, a continuación del
+      trazo dorado que subraya «I PROMISE» / «TE LO PROMETO»: no toca el lugar del título ni el del
+      subtítulo. Si no cupiera, el build falla. El texto alternativo la nombra: «…beside the page’s
+      title, signed by {author}: {title}» / «…junto al título de la página, con la firma de
+      {author}: {title}». Tests: la firma en los 14, que cabe, sus glifos en el corte TrueType y el
+      texto alternativo.
 - [ ] **7.6.10** Verificación de salida (storyboard igual, primera carga menor, regla (h) y paridad) y
       capturas para Montse.
 - [ ] **7.6.11 (Montse)** Revisión de P7.6 (el PR).

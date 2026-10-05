@@ -25,11 +25,15 @@ export function posterMetrics(): Record<PosterFont, FontMetrics> {
   return metrics;
 }
 
-/** What a page's poster says: the project's name, and the page's title (with the site's question under a notebook page's). */
+/**
+ * What a page's poster says: the project's name, the page's title (with the site's question under a
+ * notebook page's) and the author's signature (ADR 0032).
+ */
 export function posterText(locale: Locale, route: Route): PosterText {
   const name = t(locale, 'poster.name');
-  if (route === 'home') return { name, title: t(locale, 'site.title') };
-  return { name, title: t(locale, notebookPage(route).titleKey), subtitle: t(locale, 'site.title') };
+  const author = t(locale, 'author.name');
+  if (route === 'home') return { name, title: t(locale, 'site.title'), author };
+  return { name, title: t(locale, notebookPage(route).titleKey), subtitle: t(locale, 'site.title'), author };
 }
 
 export function posterLayout(locale: Locale, route: Route): PosterLayout {

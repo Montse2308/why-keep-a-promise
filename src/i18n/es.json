@@ -284,7 +284,7 @@
   "film.closing.credits.end": "Fin",
   "film.closing.again": "Ver de nuevo",
   "poster.name": "Te lo prometo",
-  "poster.alt": "El círculo y el cuadrado de la película, unidos por un hilo dorado, junto al título de la página: {title}",
+  "poster.alt": "El círculo y el cuadrado de la película, unidos por un hilo dorado, junto al título de la página, con la firma de {author}: {title}",
   "tab.away.none": "Una promesa te espera.",
   "tab.away.tied": "Lo prometiste. Vuelve.",
   "tab.away.kept": "Cumpliste tu promesa.",
