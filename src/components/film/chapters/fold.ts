@@ -2,6 +2,7 @@
  * Chapter 3's controller (Fold.astro): keep the money or roll the die, once. The promise of
  * chapter 0 is settled with it.
  */
+import { foldCues } from '../../../lib/film/sound';
 import { decide, UNDECIDED, type DecisionState } from '../../../lib/table/decision';
 import { DIE_FACES, type Choice, type Face } from '../../../lib/table/game';
 import { ROLL_MS, settle, settled, type FilmContext } from '../context';
@@ -29,10 +30,10 @@ export function fold(film: FilmContext): void {
         const decision: DecisionState = decide(film.state().decision ?? UNDECIDED, { type: 'settle' }, random);
         film.update({ decision });
         film.begin('count');
-        if (decision.phase === 'outcome' && decision.face !== null) film.play('land');
         if (decision.phase === 'outcome') {
-          const said = decision.face === null ? button.dataset.said : (JSON.parse(button.dataset.said ?? '{}') as Record<string, string>)[decision.face];
           const promised = film.state().promised === true;
+          for (const [cue, after] of foldCues(decision.face !== null, promised && decision.choice === 'dont')) film.play(cue, after);
+          const said = decision.face === null ? button.dataset.said : (JSON.parse(button.dataset.said ?? '{}') as Record<string, string>)[decision.face];
           const thread = promised ? (decision.choice === 'dont' ? decisionOut?.dataset.broken : decisionOut?.dataset.kept) : undefined;
           if (decisionOut) decisionOut.textContent = [said, thread].filter(Boolean).join(' ');
           if (promised) film.spoolAs(decision.choice === 'dont' ? 'broken' : 'kept');

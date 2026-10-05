@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import adr from '../../../docs/decisions/0025-technology.md?raw';
+import cuesAdr from '../../../docs/decisions/0030-sound-cues.md?raw';
 import filmComponent from '../../components/film/Film.astro?raw';
 import player from '../../components/film/sound.ts?raw';
 import beatComponent from '../../components/film/Beat.astro?raw';
@@ -9,9 +10,11 @@ import {
   CUES,
   cueLength,
   envelopePoints,
+  foldCues,
   gainAt,
   MASTER_GAIN,
   midiToHz,
+  ON_NOTES,
   SCORE,
   SILENT,
   THEME_NOTES,
@@ -19,18 +22,24 @@ import {
   THEME_TONIC,
   type Cue,
 } from './sound';
+import { SIGHT_CUE } from './sights';
 
 // The film's script and its chapters' controllers, read as one.
 const film = Object.values(
   import.meta.glob<string>(['../../components/film/film.ts', '../../components/film/context.ts', '../../components/film/chapters/*.ts'], { query: '?raw', import: 'default', eager: true }),
 ).join('\n');
 
+/** ADR 0030's closed list: the first column of its table. */
+const closedList = [...cuesAdr.matchAll(/^\| `([a-z-]+)` \|/gm)].map((match) => match[1]);
+
 const voices = CUES.flatMap((cue) => SCORE[cue].map((voice) => [cue, voice] as const));
 
 describe('the score', () => {
-  it('has the cues of ADR 0025: the die, the seal, the bubbles and a short theme at the end', () => {
+  it('has the cues of ADR 0025, and only those of ADR 0030’s closed list', () => {
     expect(adr).toContain('el dado, el sello, las burbujas, un tema corto al final');
-    expect([...CUES]).toEqual(['roll', 'land', 'bubbles', 'stamp', 'theme']);
+    expect(adr).toContain('Precisado por el ADR 0030');
+    expect(closedList).toHaveLength(13);
+    expect([...CUES].sort()).toEqual([...closedList].sort());
   });
 
   it('pairs every cue with something the stage shows (ADR 0025: everything that sounds is also seen)', () => {
@@ -67,6 +76,18 @@ describe('the score', () => {
     }
   });
 
+  it('never clips when two cues sound together either: each peaks under half of full scale (ADR 0030, rule 4)', () => {
+    for (const cue of CUES) {
+      let peak = 0;
+      for (let t = 0; t <= cueLength(cue); t += 0.001) peak = Math.max(peak, SCORE[cue].reduce((total, voice) => total + gainAt(voice, t), 0));
+      expect(peak * MASTER_GAIN, cue).toBeLessThan(0.5);
+    }
+  });
+
+  it('keeps every cue under a second but the theme (ADR 0030, rule 5)', () => {
+    for (const cue of CUES) if (cue !== 'theme') expect(cueLength(cue), cue).toBeLessThan(1);
+  });
+
   it('keeps the effects short and the theme brief', () => {
     for (const cue of ['land', 'bubbles', 'stamp'] as const) expect(cueLength(cue)).toBeLessThanOrEqual(0.5);
     // The die spins for a second in the air (ROLL_MS in context.ts): its sound ends with the spin.
@@ -101,22 +122,85 @@ describe('the theme', () => {
   });
 });
 
+describe('turning it on', () => {
+  it('sounds the theme’s first two notes, G and C, together', () => {
+    expect([...ON_NOTES]).toEqual(THEME_NOTES.slice(0, 2).map(([note]) => note));
+    expect(ON_NOTES.map((note) => note % 12)).toEqual([7, 0]);
+    const tones = SCORE.on.filter((voice) => voice.kind === 'tone');
+    expect(new Set(tones.map((voice) => voice.at))).toEqual(new Set([0]));
+    expect(tones.map((voice) => voice.from)).toEqual(expect.arrayContaining(ON_NOTES.map(midiToHz)));
+  });
+
+  it('sounds every time it is turned on, and not when it is turned off', () => {
+    expect(film).toMatch(/const on = sound\.toggle\(\);\s*soundButton\.setAttribute\('aria-pressed', String\(on\)\);[^]*?if \(on\) play\('on'\);/);
+  });
+});
+
 describe('playing it', () => {
   const played = (cue: Cue) => film.includes(`play('${cue}')`);
 
   it('plays each cue from the film’s script, where the stage shows it', () => {
-    for (const cue of CUES) expect(played(cue) || film.includes(`'${cue}', 0.75)`), cue).toBe(true);
+    const fromFold = [...foldCues(true, false), ...foldCues(false, true)].map(([cue]) => cue);
+    const fromScroll = Object.values(SIGHT_CUE);
+    for (const cue of CUES) expect(played(cue) || film.includes(`'${cue}', 0.75)`) || fromFold.includes(cue) || fromScroll.includes(cue), cue).toBe(true);
+    // What the scroll brings sounds once, as it comes into view (./sights.ts).
+    expect(film).toMatch(/if \(sound\?\.on\) \{\s*for \(const sight of comingIntoView\(sightsShown, sights, heard\)\) \{\s*heard\.add\(sight\);\s*play\(SIGHT_CUE\[sight\]\);/);
     // The seal and the credits' last line sound when they come into view, once.
     expect(film).toContain("film.onSight(film.root.querySelector('[data-envelope] .envelope__seal'), 'stamp', 0.75);");
     expect(film).toContain("film.onSight(film.root.querySelector('.credits__end'), 'theme', 0.75);");
     expect(film).toContain("play('roll');");
-    expect(film).toContain("if (decision.phase === 'outcome' && decision.face !== null) film.play('land');");
+    // Chapter 3's decision lands: the die's knock if it was thrown, the thread if it snapped, then the coins.
+    expect(film).toContain("for (const [cue, after] of foldCues(decision.face !== null, promised && decision.choice === 'dont')) film.play(cue, after);");
     expect(film).toContain("play('bubbles');");
+  });
+
+  it('counts chapter 1’s coins as they appear, with the round', () => {
+    expect(film).toMatch(/film\.update\(\{ round: playRound\([^]*?film\.begin\('count'\);\s*film\.play\('coins'\);/);
+  });
+
+  it('flies each card of the deck with its sound, but the last, which stays, and not with reduced motion', () => {
+    expect(film).toMatch(/if \(!next\) return;\s*card\.dataset\.gone = choice;[^]*?if \(!film\.reduced\.matches\) film\.play\('card'\);/);
+  });
+
+  it('plays chapter 3’s coins after the die’s knock, not on top of it', () => {
+    expect(foldCues(false, false)).toEqual([['coins', 0]]);
+    expect(foldCues(true, false)).toEqual([
+      ['land', 0],
+      ['coins', cueLength('land')],
+    ]);
+  });
+
+  it('never sounds two of chapter 3’s cues on top of each other (ADR 0030, rule 4)', () => {
+    // The die spins for ROLL_MS before it lands: its sound is over by then.
+    const rollMs = Number(/const ROLL_MS = (\d+);/.exec(film)?.[1]);
+    expect(cueLength('roll')).toBeLessThanOrEqual(rollMs / 1000);
+    for (const thrown of [false, true]) {
+      for (const snapped of [false, true]) {
+        const cues = foldCues(thrown, snapped);
+        expect(cues.at(-1)?.[0]).toBe('coins');
+        expect(cues[0]?.[1]).toBe(0);
+        cues.forEach(([cue, after], i) => {
+          const next = cues[i + 1];
+          if (next) expect(next[1], `${cue} then ${next[0]}`).toBeGreaterThanOrEqual(after + cueLength(cue));
+        });
+      }
+    }
+  });
+
+  it('snaps the thread before the coins, not on top of them, when the visitor promised and kept the money', () => {
+    expect(foldCues(false, true)).toEqual([
+      ['snap', 0],
+      ['coins', cueLength('snap')],
+    ]);
+  });
+
+  it('turns each sign’s figure on with its sound when the visitor asks to see it, every time', () => {
+    expect(film).toMatch(/see\?\.addEventListener\('click', \(\) => \{\s*if \(settled\(see\)\) return;[^]*?box\.dataset\.seen = '';\s*film\.play\('sign'\);/);
   });
 
   it('stays silent until the visitor presses the button, which shows only where Web Audio exists', () => {
     expect(filmComponent).toMatch(/<button type="button" class="film__sound" aria-pressed="false" hidden data-sound>/);
-    expect(film).toContain("soundButton.setAttribute('aria-pressed', String(sound.toggle()))");
+    expect(film).toContain('const on = sound.toggle();');
     expect(player).toContain('let on = false;');
     expect(player).toContain('if (!Context) return null;');
     expect(player).toContain('if (!on || !ctx || !master) return;');

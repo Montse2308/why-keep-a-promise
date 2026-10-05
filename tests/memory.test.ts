@@ -19,7 +19,7 @@ describe("the film's memory in the tab", () => {
 
   it('plays every action back through a press, quietly: no sound, no wait, no focus moved, nothing moving', () => {
     for (const type of TYPES) expect(film, type).toContain(`film.onReplay('${type}'`);
-    expect(film).toContain('if (!replaying) sound?.play(cue);');
+    expect(film).toContain('if (!replaying) sound?.play(cue, after);');
     expect(film).toContain('if (replaying) next();');
     expect(film).toContain('if (!replaying) element?.focus(options);');
     expect(film).toContain("clocks[clock] = replaying ? -Infinity : performance.now();");

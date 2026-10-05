@@ -7,8 +7,9 @@
  * choices, which are plain buttons, sliders and, on the deck, a swipe that stands for a button, are
  * wired by its controller (./chapters/*.ts, through ./context.ts): every line a choice leads to was
  * resolved at build time, so the script only shows it. What the visitor did stays in this tab's
- * history entry, and nothing is sent (ADR 0029). With the sound on (./sound.ts), the die, the
- * chat's bubbles, the seal and the end of the credits sound as the stage shows them (ADR 0025). While
+ * history entry, and nothing is sent (ADR 0029). With the sound on (./sound.ts), the cues of
+ * ADR 0030 sound as the stage shows them: what the visitor plays, each time; what the scroll brings
+ * (src/lib/film/sights.ts and the seal and the credits' end), once a visit. While
  * the scroll rests, the cast comes to life (src/lib/film/idle.ts); with reduced motion nothing moves,
  * and the frames stop until the page asks for one.
  */
@@ -43,6 +44,7 @@ import { scrollPosition, TOTAL_SCREENS } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
 import { fill } from '../../lib/template';
 import { START as NO_PICKS, type CellKey, type Tag } from '../../lib/pd/bestReply';
+import { comingIntoView, SIGHT_CUE, sightsAt, type Sight } from '../../lib/film/sights';
 import type { Cue } from '../../lib/film/sound';
 import { createSound } from './sound';
 import { ROLL_MS, type Clock, type FilmContext, type Thread } from './context';
@@ -193,12 +195,17 @@ function run(): void {
   const soundButton = film.querySelector<HTMLButtonElement>('[data-sound]');
   if (sound && soundButton) {
     soundButton.hidden = false;
-    soundButton.addEventListener('click', () => soundButton.setAttribute('aria-pressed', String(sound.toggle())));
+    soundButton.addEventListener('click', () => {
+      const on = sound.toggle();
+      soundButton.setAttribute('aria-pressed', String(on));
+      // Every time it is turned on, its chord says so at once (ADR 0030); turned off, nothing.
+      if (on) play('on');
+    });
   }
   /** While the film plays its memory back (ADR 0029), nothing sounds, moves or waits. */
   let replaying = false;
-  const play = (cue: Cue): void => {
-    if (!replaying) sound?.play(cue);
+  const play = (cue: Cue, after = 0): void => {
+    if (!replaying) sound?.play(cue, after);
   };
   /**
    * A cue for something that comes into view: it sounds the first time it is seen with the sound on.
@@ -216,6 +223,10 @@ function run(): void {
     );
     watch.observe(element);
   };
+
+  /** What the scroll brings that sounds (lib/film/sights.ts): what the stage showed last frame, and what has sounded this visit. */
+  let sightsShown: ReadonlySet<Sight> = new Set();
+  const heard = new Set<Sight>();
 
   let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null, guesses: {}, now: null, pageKept: null };
   /** When each of the stage's animations last started (context.ts). */
@@ -264,6 +275,16 @@ function run(): void {
     const portrait = isPortrait({ width: innerWidth, height: innerHeight });
     const still = reduced.matches;
     const view: StageView = stageAt(p, state, portrait, still);
+
+    // What the scroll brings sounds the first time it comes into view with the sound on (ADR 0030, rule 1).
+    const sights = sightsAt(p, state, still);
+    if (sound?.on) {
+      for (const sight of comingIntoView(sightsShown, sights, heard)) {
+        heard.add(sight);
+        play(SIGHT_CUE[sight]);
+      }
+    }
+    sightsShown = sights;
 
     const box = frame(view.shot, { width: innerWidth, height: innerHeight });
     set(world, 'viewBox', viewBoxAttribute(box));

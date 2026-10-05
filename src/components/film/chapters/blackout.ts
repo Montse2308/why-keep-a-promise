@@ -38,6 +38,8 @@ function deck(film: FilmContext): void {
     // The last card stays, decided, with the tally under it.
     if (!next) return;
     card.dataset.gone = choice;
+    // With reduced motion the card does not fly, so it does not sound (ADR 0030, rule 2).
+    if (!film.reduced.matches) film.play('card');
     film.later(
       () => {
         card.hidden = true;

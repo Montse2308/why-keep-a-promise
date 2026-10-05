@@ -706,17 +706,55 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
 Dep.: P7.1 y ADR 0030 (7.0.9). Cada señal nueva lleva su entrada en `CUE_SIGHT`, y siguen los tests
 de que ninguna satura y de que todas suman a lo más 1.
 
-- [ ] **7.4.1** El acorde corto al encender, con las dos notas del motivo del tema final.
-- [ ] **7.4.2** Las monedas (capítulos 1 y 3).
-- [ ] **7.4.3** El interruptor del apagón y del parpadeo, la luz que vuelve y la carta que vuela
+- [x] **7.4.1** El acorde corto al encender, con las dos notas del motivo del tema final.
+      `on`: sol y do (`ON_NOTES`, las dos primeras del tema), juntas, con la campana del tema, en
+      menos de un segundo. Suena cada vez que se enciende, al pulsar el botón; al apagarlo, nada. El
+      test lee la lista cerrada de la tabla del ADR 0030 y comprueba que solo suenen señales de ella,
+      y que todas menos el tema duren menos de un segundo.
+- [x] **7.4.2** Las monedas (capítulos 1 y 3).
+      `coins`: cuatro tintineos en lo que dura la cuenta, iguales con 0 que con 14. En el capítulo 1
+      suenan al jugar la ronda; en el 3, al caer la decisión, y si tiró el dado, cuando termina su
+      golpe (`foldCues`). El reproductor programa una señal con retraso en el reloj de Web Audio
+      (`play(cue, after)`), sin temporizadores.
+- [x] **7.4.3** El interruptor del apagón y del parpadeo, la luz que vuelve y la carta que vuela
       (capítulo 5: `switch`, `lights-on` y `card`).
-- [ ] **7.4.4** El letrero que enciende su cifra (capítulo 6, `sign`) y el hilo que se rompe
+      `switch` es el clic del interruptor y su palanca; `lights-on`, una subida suave de mi a sol;
+      `card`, el aire de la carta mientras vuela (los 320 ms de `Blackout.astro`). Lo que trae el
+      scroll vive en `src/lib/film/sights.ts`: cada tramo es el del escenario (`stage.ts`), y el
+      cuadro suena lo que acaba de entrar a la vista con el sonido encendido, una vez por visita. Los
+      tramos no se enciman, y un test comprueba en toda la película, con y sin movimiento reducido,
+      que mientras suena cada uno el escenario lo muestra. Con movimiento reducido los cortes saltan
+      el apagón y el parpadeo (no se ven), así que no suenan; la carta tampoco, porque no vuela. Otro
+      test: cada señal llega a menos de la mitad de la escala, así que ni dos juntas saturan.
+- [x] **7.4.4** El letrero que enciende su cifra (capítulo 6, `sign`) y el hilo que se rompe
       (capítulo 3, `snap`, antes de las monedas).
-- [ ] **7.4.5** Las dos voces que llegan (capítulo 4, `voices`), y el test de que las señales del
+      `sign`: el chasquido del filamento y una nota clara que brilla con la cifra; suena cada vez que
+      el visitante pide ver una cifra, y con el scroll una sola vez (`signs` en `sights.ts`) si llega
+      a las cifras con alguna sin adivinar: las dos se encienden juntas. Con las dos adivinadas, el
+      scroll no enciende nada y no suena. `snap`: el chasquido del hilo y sus dos puntas que se
+      recogen. `foldCues` pone en fila las señales del capítulo 3: el golpe del dado o el hilo, y
+      después las monedas.
+- [x] **7.4.5** Las dos voces que llegan (capítulo 4, `voices`), y el test de que las señales del
       capítulo 3 no se encimen.
-- [ ] **7.4.6** Video con sonido para Montse: sin silencios largos entre los capítulos 3 y 7, y nada
+      `voices`: una nota suave que sube por cada voz, la nube y luego el pergamino, con el aire en
+      que flotan; suena con el scroll, una vez (`voices` en `sights.ts`). Con movimiento reducido
+      tampoco suena `lights-on`: los cortes saltan el apagón, así que la luz nunca se fue (un test
+      comprueba que el escenario reducido nunca oscurece). El test del capítulo 3 recorre las cuatro
+      combinaciones de dado e hilo: el giro acaba antes de `ROLL_MS`, y cada señal de `foldCues`
+      empieza cuando acaba la anterior. `CUES` es ya la lista cerrada del ADR 0030, las trece, y
+      quien solo hace scroll oye algo en los capítulos 4, 5 y 6 antes del sello del 7.
+- [x] **7.4.6** Video con sonido para Montse: sin silencios largos entre los capítulos 3 y 7, y nada
       suena sin encenderlo.
-- [ ] **7.4.7 (Montse)** Revisión de P7.4 (el PR).
+      Montse la dio por hecha sin video. La prueba fue un recorrido en Chrome headless
+      (`scratch/tools/cues-probe.mjs`, local) que nombra cada señal por sus frecuencias. A 1440 px EN
+      y a 360 px ES suenan `voices` (14.7 pantallas), el apagón (17.4), la luz (18.25), las cartas,
+      el parpadeo (22.75), el letrero (26.9), el sello (31.1) y el tema (35.3). `snap` va en 0 s y
+      las monedas a +0.27 s; de las seis cartas suenan cinco, y al volver con el scroll nada se
+      repite. Sin encender el sonido no suena nada, y no hubo errores de JS.
+- [x] **7.4.7 (Montse)** Revisión de P7.4 (el PR).
+      Montse aprobó las señales y que con movimiento reducido no suenen `switch`, `lights-on` ni
+      `card`: los cortes saltan el apagón, la luz nunca se va y la carta no vuela. Queda que mergee
+      el PR.
 
 ### P7.5 · Horizontal y transiciones (puntos 12 y 15)
 

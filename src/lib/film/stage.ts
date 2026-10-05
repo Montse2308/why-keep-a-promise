@@ -180,29 +180,29 @@ const TRAP = entering('two-rooms', 'trap');
 const CHAT = entering('talk', 'chat');
 const OUT_OF_ROOMS = entering('fold', 'fold');
 const DECIDE = entering('fold', 'decide');
-const VOICES_IN = entering('two-voices', 'voices');
+export const VOICES_IN = entering('two-voices', 'voices');
 /**
  * Chapter 5. The lights go out as the blackout's card comes up; in the dark the square leaves its
  * seat for another table and the triangle sits down; then the lights come back.
  */
 const BLACKOUT = beatRange('blackout', 'blackout').from;
-const LIGHTS_OUT = [BLACKOUT - 0.8, BLACKOUT - 0.4] as const;
-const LIGHTS_ON = [BLACKOUT + 0.05, BLACKOUT + 0.45] as const;
+export const LIGHTS_OUT = [BLACKOUT - 0.8, BLACKOUT - 0.4] as const;
+export const LIGHTS_ON = [BLACKOUT + 0.05, BLACKOUT + 0.45] as const;
 const SWAP = [LIGHTS_OUT[1], LIGHTS_ON[0]] as const;
 const WIDER = [BLACKOUT - 0.9, BLACKOUT - 0.4] as const;
 const DECK_IN = entering('blackout', 'deck');
 /** The visitor receives at the table as it was; then the lights flicker and the seats change again. */
 const RECEIVE_IN = entering('blackout', 'receive');
 const REVEAL = beatRange('blackout', 'reveal').from;
-const FLICKER_OUT = [REVEAL - 0.75, REVEAL - 0.55] as const;
-const FLICKER_ON = [REVEAL - 0.25, REVEAL + 0.05] as const;
+export const FLICKER_OUT = [REVEAL - 0.75, REVEAL - 0.55] as const;
+export const FLICKER_ON = [REVEAL - 0.25, REVEAL + 0.05] as const;
 const REVEAL_SWAP = [FLICKER_OUT[1], FLICKER_ON[0]] as const;
 /**
  * Chapter 6. Back at the table as it was, two signs come down over it; each figure shows when the
  * visitor guesses it, and both do when the film reaches them. At the conclusion, my word glows.
  */
 const REAL_IN = entering('real-people', 'guess-same');
-const EXPECTED = entering('real-people', 'expected');
+export const EXPECTED = entering('real-people', 'expected');
 const CONCLUSION = entering('real-people', 'conclusion');
 /**
  * Chapter 7. Night has fallen: the signs go back up, and the lamp comes down over the table as the
