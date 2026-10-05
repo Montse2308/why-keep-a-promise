@@ -30,6 +30,8 @@ export interface Viewport {
 export interface Area extends Viewport {
   readonly x: number;
   readonly y: number;
+  /** The area lies beside a card at the side, not above one at the bottom. */
+  readonly beside?: boolean;
 }
 
 export interface ViewBox {
@@ -43,14 +45,26 @@ export interface ViewBox {
 export const PORTRAIT_BELOW = 0.9;
 
 /**
- * Where the shot's centre sits on screen, from the top: higher on a phone, where the caption card
- * covers the lower part of the screen.
+ * Where the shot's centre sits in the free area, from the top: higher on a phone, where the caption
+ * card covers the lower part of the screen; near the middle beside a card at the side.
  */
-export const ANCHOR = { landscape: 0.46, portrait: 0.36 } as const;
+export const ANCHOR = { landscape: 0.46, portrait: 0.36, beside: 0.5 } as const;
 
 export function isPortrait(viewport: Viewport): boolean {
   return viewport.width / viewport.height < PORTRAIT_BELOW;
 }
+
+/**
+ * Whether the free area takes the closer, portrait shot (and the stage its portrait layout): on a
+ * narrow screen, and beside a card at the side, where what is left is about as tall as it is wide.
+ */
+export const isClose = (free: Area): boolean => free.beside === true || isPortrait(free);
+
+/**
+ * How much wider than the portrait shot the shot beside a card is: the area left is shorter than a
+ * phone held upright, and the board and the cast must both fit in its height.
+ */
+export const BESIDE_WIDER = 1.3;
 
 /** The whole screen, when no card sits at the side. */
 export const wholeScreen = (viewport: Viewport): Area => ({ x: 0, y: 0, width: viewport.width, height: viewport.height });
@@ -58,18 +72,18 @@ export const wholeScreen = (viewport: Viewport): Area => ({ x: 0, y: 0, width: v
 /**
  * The viewBox that shows `shot` on `viewport`, framed in the `free` area: the shot's width fills the
  * free area, the centre sits at the anchor of its height, and the rest of the screen (behind a card
- * at the side) shows more of the world at the same scale. Whether the shot is the portrait one
- * follows the free area's shape. The world is drawn wide and tall enough that any screen shape only
- * shows more sky and floor.
+ * at the side) shows more of the world at the same scale. Whether the shot is the closer one
+ * follows the free area (`isClose`), not the screen. The world is drawn wide and tall enough that
+ * any screen shape only shows more sky and floor.
  */
 export function frame(shot: Shot, viewport: Viewport, free: Area = wholeScreen(viewport)): ViewBox {
   if (!(viewport.width > 0 && viewport.height > 0)) throw new Error('The viewport needs a size');
   if (!(free.width > 0 && free.height > 0)) throw new Error('The free area needs a size');
-  const portrait = isPortrait(free);
-  const shown = portrait ? shot.widthPortrait : shot.width;
+  const close = isClose(free);
+  const shown = free.beside ? shot.widthPortrait * BESIDE_WIDER : close ? shot.widthPortrait : shot.width;
   /** World units per CSS pixel. */
   const unit = shown / free.width;
-  const anchor = portrait ? ANCHOR.portrait : ANCHOR.landscape;
+  const anchor = free.beside ? ANCHOR.beside : close ? ANCHOR.portrait : ANCHOR.landscape;
   const x = shot.cx - (free.x + free.width / 2) * unit;
   const y = shot.cy - (free.y + free.height * anchor) * unit;
   // The shot's top stays in view within the free area, not just within the screen.

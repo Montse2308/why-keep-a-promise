@@ -766,8 +766,19 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
       muestra más mundo a la misma escala. Si el plano es el vertical lo dice la forma del área
       libre, no la de la pantalla. Sin área, es la pantalla entera y el encuadre es el de antes
       (un test lo compara).
-- [ ] **7.5.2** La tarjeta al costado con `(orientation: landscape) and (max-height: 500px)`: a la
+- [x] **7.5.2** La tarjeta al costado con `(orientation: landscape) and (max-height: 500px)`: a la
       izquierda, ≈ 44 % del ancho, con scroll interno si no cabe; la cámara encuadra el resto.
+      La tarjeta va a la izquierda con `--side-card: 44vw`, bajo la fila del carrete y el sonido
+      (`--side-top`), y si no cabe tiene scroll interno (`Beat.astro`). El área libre es un elemento
+      invisible del escenario (`.film__free`, en `Film.astro`): a la derecha de la tarjeta y debajo
+      de la fila de arriba, donde está el botón del cuaderno; `film.ts` lee dónde quedó al cambiar la
+      pantalla y se la da a la cámara. El CSS es el único que sabe medidas. Al lado de una tarjeta el
+      área es casi cuadrada: la cámara usa el plano cercano del celular, 1.3 veces más ancho para que
+      quepan el tablero y el elenco, centrado en su alto (`beside`), y el escenario usa su
+      acomodo vertical (`isClose`). Las cartas del mazo (capítulo 5) dejan sus iconos según el ancho
+      de la carta y no el de la pantalla (una consulta de contenedor), así que de lado no se aprietan.
+      Recorrido completo con toques reales a 740 × 360: las 21 acciones se alcanzan, la del capítulo 6
+      después de bajar dentro de su tarjeta.
 - [ ] **7.5.3** El título del capítulo 0 deja de encimarse con las cabezas en horizontal.
 - ~~**7.5.4** Solo si el ADR 0031 lo aprobó: el mismo mecanismo en la compu, con su punto de
   corte.~~ No se hace: en la compu las tarjetas siguen centradas (7.0.4, ADR 0031).

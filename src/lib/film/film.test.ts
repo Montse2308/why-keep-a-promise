@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ANCHOR, frame, isPortrait, viewBoxAttribute, type Shot } from './camera';
+import { ANCHOR, BESIDE_WIDER, frame, isClose, isPortrait, viewBoxAttribute, type Shot } from './camera';
 import { spanAt, spans, totalScreens, within } from './spans';
 import { parseHex } from '../design/color';
 import { easeInOut, mixHex, progress, sample, steepestColourRate, track } from './track';
@@ -130,6 +130,19 @@ describe('camera', () => {
     // Framed by its centre alone, the top would sit above the free area, under the card's row.
     expect(frame(shot, screen, free).y + free.y * unit).toBeGreaterThan(0);
     expect(box.y + free.y * unit).toBeCloseTo(0, 9);
+  });
+
+  it('beside a card, takes the closer shot, a little wider, centred in the area’s height', () => {
+    const screen = { width: 740, height: 360 };
+    const free = { x: 340, y: 68, width: 400, height: 292, beside: true };
+    // The area is wider than tall, yet the stage takes its closer layout.
+    expect(isPortrait(free)).toBe(false);
+    expect(isClose(free)).toBe(true);
+    const box = frame(shot, screen, free);
+    const unit = box.width / screen.width;
+    expect(free.width * unit).toBeCloseTo(shot.widthPortrait * BESIDE_WIDER, 9);
+    expect(box.y + (free.y + free.height * ANCHOR.beside) * unit).toBeCloseTo(shot.cy, 9);
+    expect(box.x + (free.x + free.width / 2) * unit).toBeCloseTo(shot.cx, 9);
   });
 
   it('frames the whole screen as before when nothing sits at the side', () => {
