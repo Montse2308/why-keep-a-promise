@@ -264,3 +264,47 @@ export function overruns(weights: readonly PageWeight[], budgets: readonly Budge
 export function kilobytes(bytes: number): string {
   return `${(bytes / KB).toFixed(1)} KiB`;
 }
+
+/**
+ * A home's weights as /how-its-built cites them, from src/data/weight.json. `npm run budgets -- --write`
+ * writes that record from the build; plain `npm run budgets` fails while it differs from the build.
+ */
+export interface HomeWeight {
+  readonly locale: string;
+  readonly route: 'home';
+  readonly bytes: Record<BudgetId, number>;
+}
+
+/**
+ * The language of a page by its URL: the default one at `/base/`, `es` at `/base/es/`. Kept free of
+ * imports, since `scripts/budgets.mjs` loads this file in Node, so the default language is handed in.
+ */
+export function homeLocale(page: string, base: string, defaultLocale: string): string | null {
+  if (page === base) return defaultLocale;
+  const match = page.startsWith(base) ? /^([a-z]{2})\/$/.exec(page.slice(base.length)) : null;
+  return match?.[1] ?? null;
+}
+
+/** Each home's weights, the default language first, then the others by name. */
+export function homeWeights(weights: readonly PageWeight[], base: string, defaultLocale: string): HomeWeight[] {
+  return weights
+    .filter((w) => w.home)
+    .map((w) => {
+      const locale = homeLocale(w.page, base, defaultLocale);
+      if (!locale) throw new Error(`${w.page} is not a home`);
+      return { locale, route: 'home' as const, bytes: { ...w.totals } };
+    })
+    .sort((a, b) => Number(b.locale === defaultLocale) - Number(a.locale === defaultLocale) || a.locale.localeCompare(b.locale));
+}
+
+/** Where the record differs from the build, at the precision /how-its-built shows (0.1 KiB). */
+export function recordDrift(record: readonly HomeWeight[], built: readonly HomeWeight[]): string[] {
+  const extra = record.filter((r) => !built.some((home) => home.locale === r.locale)).map((r) => `the ${r.locale} home is cited and not built`);
+  return built.flatMap((home) => {
+    const cited = record.find((r) => r.locale === home.locale && r.route === home.route);
+    if (!cited) return [`the ${home.locale} home is not cited`];
+    return BUDGET_IDS.filter((id) => kilobytes(cited.bytes[id]) !== kilobytes(home.bytes[id])).map(
+      (id) => `the ${home.locale} home's ${id} is cited as ${kilobytes(cited.bytes[id])} and weighs ${kilobytes(home.bytes[id])}`,
+    );
+  }).concat(extra);
+}

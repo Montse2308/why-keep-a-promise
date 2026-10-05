@@ -1,11 +1,13 @@
 ---
 /**
  * /how-its-built's table of the home's weight and speed (ADR 0025): each ceiling, from
- * src/lib/budgets.ts, beside what Lighthouse measured on the home in the page's language, from
- * src/data/lighthouse.json (scripts/lighthouse.mjs writes it from the reports, with their
- * provenance). `npm run budgets` checks every page against the same ceilings after each build.
+ * src/lib/budgets.ts, beside the home in the page's language. Its weights are what `npm run budgets`
+ * weighs, from src/data/weight.json (`npm run budgets` fails while the record differs from the
+ * build, and `-- --write` writes it); its largest paint is what Lighthouse measured, from
+ * src/data/lighthouse.json (scripts/lighthouse.mjs writes it from the reports, with their provenance).
  */
 import lighthouse from '../../data/lighthouse.json';
+import weight from '../../data/weight.json';
 import { BUDGETS, KB, LCP_CEILING_MS, type BudgetId } from '../../lib/budgets';
 import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
 import { fill } from '../../lib/template';
@@ -18,6 +20,8 @@ const { locale } = Astro.props;
 const tr = useTranslations(locale);
 const measured = lighthouse.pages.find((page) => page.locale === locale && page.route === 'home');
 if (!measured) throw new Error(`No Lighthouse measurement of the ${locale} home`);
+const weighed = weight.pages.find((page) => page.locale === locale && page.route === 'home');
+if (!weighed) throw new Error(`No weight of the ${locale} home in src/data/weight.json`);
 const { provenance } = lighthouse;
 
 // Ceilings as they were set (40 KiB, 2.5 s); measurements to one decimal.
@@ -31,9 +35,9 @@ const ceiling = (id: BudgetId) => {
   return budget.bytes;
 };
 const rows: { key: UiKey; limit: string; value: string }[] = [
-  { key: 'notebook.weight.script', limit: kib(ceiling('home-script'), round), value: kib(measured.bytes.script) },
-  { key: 'notebook.weight.fonts', limit: kib(ceiling('fonts'), round), value: kib(measured.bytes.font) },
-  { key: 'notebook.weight.total', limit: kib(ceiling('first-load'), round), value: kib(measured.bytes.total) },
+  { key: 'notebook.weight.script', limit: kib(ceiling('home-script'), round), value: kib(weighed.bytes['home-script']) },
+  { key: 'notebook.weight.fonts', limit: kib(ceiling('fonts'), round), value: kib(weighed.bytes.fonts) },
+  { key: 'notebook.weight.total', limit: kib(ceiling('first-load'), round), value: kib(weighed.bytes['first-load']) },
   { key: 'notebook.weight.lcp', limit: seconds(LCP_CEILING_MS, round), value: seconds(measured.lcpMs) },
 ];
 const date = new Intl.DateTimeFormat(locale, { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${provenance.measured}T00:00:00Z`));
@@ -67,7 +71,7 @@ const source = fill(tr('notebook.weight.source'), {
     }
   </tbody>
 </table>
-<p class="table-source">{source}</p>
+<p class="table-source">{tr('notebook.weight.sizes')} {source}</p>
 
 <style>
   .weight__measured {

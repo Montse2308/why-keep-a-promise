@@ -918,12 +918,15 @@ Dep.: todas las subfases anteriores.
       que `/how-its-built` coincida con `npm run budgets`.
       Lighthouse 13.5.0, tres corridas por home contra `npm run preview` sobre el build de P7 (el
       código no cambió desde el merge de P7.6): LCP de 1.96 s en `/` y en `/es/` (antes 2.11),
-      rendimiento 0.99. `/how-its-built` dice ahora 19.1 KiB de JS, 119.5 KiB de fuentes y 178.0 KiB
-      de primera carga (en ES, 178.5); `npm run budgets` da 20.1, 118.6 y 175.2 (175.8). La
-      diferencia que queda es de método, no de cifras viejas: `budgets` suma al JS del home los dos
-      scripts que van dentro del HTML (1.3 KiB), que Lighthouse cuenta con el documento, y
-      Lighthouse suma las cabeceras HTTP de cada petición. Los informes, en
-      `scratch/p7-7/lighthouse/`.
+      rendimiento 0.99. Los informes, en `scratch/p7-7/lighthouse/`.
+      Aun al día, los pesos de Lighthouse no coincidían con `npm run budgets` (19.1 contra 20.1 KiB
+      de JS; 178.0 contra 175.2 de primera carga): `budgets` suma al JS del home los dos scripts que
+      van dentro del HTML, que Lighthouse cuenta con el documento, y Lighthouse suma las cabeceras
+      HTTP. Montse eligió que la tabla tome los pesos del mismo cálculo: `npm run budgets -- --write`
+      escribe los de los dos home en `src/data/weight.json`, `npm run budgets` falla en CI mientras
+      el registro difiera del build (a la décima de KiB que muestra la tabla), y de Lighthouse queda
+      solo el LCP. La línea de fuente bajo la tabla dice de dónde sale cada cosa. `/how-its-built`
+      dice ahora 20.1, 118.6 y 175.2 KiB (en ES, 175.8), lo mismo que `npm run budgets`.
 - [ ] **7.7.4** Revisión completa, parte 1: 1440, 360 y 320 px, horizontal, EN/ES.
 - [ ] **7.7.5** Revisión completa, parte 2: teclado, movimiento reducido, sin JS y script bloqueado.
 - [ ] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.

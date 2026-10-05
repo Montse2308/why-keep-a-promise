@@ -6,24 +6,30 @@ import agents from '../AGENTS.md?raw';
 import ci from '../.github/workflows/ci.yml?raw';
 import deploy from '../.github/workflows/deploy.yml?raw';
 import pkg from '../package.json';
+import weight from '../src/data/weight.json';
 import { weighSite } from '../scripts/budgets.mjs';
 import {
   BUDGETS,
   codePointsOf,
   covers,
   fontFacesOf,
+  homeLocale,
+  homeWeights,
   importsOf,
   KB,
   kilobytes,
   LCP_CEILING_MS,
   overruns,
   parseRanges,
+  recordDrift,
   refsOf,
   resolveUrl,
   weigh,
+  type HomeWeight,
   type PageWeight,
   type Reader,
 } from '../src/lib/budgets';
+import { DEFAULT_LOCALE, LOCALES } from '../src/lib/locales';
 
 const ceiling = (id: string) => BUDGETS.find((b) => b.id === id)?.bytes;
 
@@ -191,5 +197,43 @@ describe('weighing a built site', () => {
     expect(home?.totals['home-script']).toBeGreaterThan(0);
     expect(home?.totals['home-script']).toBeLessThan(100);
     expect(overruns(weights)).toEqual([]);
+  });
+});
+
+describe('the homes’ weights /how-its-built cites', () => {
+  const home = (locale: string, script: number): HomeWeight => ({ locale, route: 'home', bytes: { 'home-script': script, fonts: 100 * KB, 'first-load': 200 * KB } });
+
+  it('knows each home’s language by its URL', () => {
+    expect(homeLocale('/b/', '/b/', 'en')).toBe('en');
+    expect(homeLocale('/b/es/', '/b/', 'en')).toBe('es');
+    expect(homeLocale('/b/about/', '/b/', 'en')).toBeNull();
+    expect(homeLocale('/b/es/about/', '/b/', 'en')).toBeNull();
+  });
+
+  it('are taken from the build, the default language first', () => {
+    const homes = homeWeights(weighSite('tests/fixtures/budgets-dist'), '/why-keep-a-promise/', 'en');
+    expect(homes.map((h) => h.locale)).toEqual(['en', 'es']);
+    const built = weighSite('tests/fixtures/budgets-dist').find((w) => w.page === '/why-keep-a-promise/');
+    expect(homes[0]?.bytes).toEqual(built?.totals);
+  });
+
+  it('drift from the build only when the table would show another figure', () => {
+    const built = [home('en', 20_578), home('es', 20_578)];
+    expect(recordDrift(built, built)).toEqual([]);
+    // 20 578 and 20 560 bytes are both 20.1 KiB; 20 480 is 20.0.
+    expect(recordDrift([home('en', 20_560), home('es', 20_578)], built)).toEqual([]);
+    expect(recordDrift([home('en', 20_480), home('es', 20_578)], built)).toEqual(["the en home's home-script is cited as 20.0 KiB and weighs 20.1 KiB"]);
+    expect(recordDrift([home('en', 20_578)], built)).toEqual(['the es home is not cited']);
+    expect(recordDrift([...built, home('fr', 1)], built)).toEqual(['the fr home is cited and not built']);
+  });
+
+  it('are recorded for every home, within their ceilings, and checked after every build', () => {
+    expect(weight.tool).toBe('npm run budgets');
+    expect(weight.pages.map((p) => p.locale)).toEqual([DEFAULT_LOCALE, ...LOCALES.filter((l) => l !== DEFAULT_LOCALE)]);
+    for (const page of weight.pages) {
+      expect(page.route).toBe('home');
+      for (const budget of BUDGETS) expect(page.bytes[budget.id], `${page.locale} ${budget.id}`).toBeLessThanOrEqual(budget.bytes);
+    }
+    expect(agents).toContain('npm run budgets -- --write');
   });
 });

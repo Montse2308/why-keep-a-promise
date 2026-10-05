@@ -1,14 +1,18 @@
 // Weighs every page of the built site against the budgets of ADR 0025 (src/lib/budgets.ts). Run
 // after `npm run build`: it prints each page's first load and fails if any page goes over a ceiling:
-// the home's JavaScript, the fonts of a first load, or the whole first load.
+// the home's JavaScript, the fonts of a first load, or the whole first load. It also fails while the
+// homes' weights /how-its-built cites (src/data/weight.json) differ from the build's;
+// `npm run budgets -- --write` writes them from the build.
 
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
-import { BUDGETS, kilobytes, overruns, weigh } from '../src/lib/budgets.ts';
+import { BUDGETS, homeWeights, kilobytes, overruns, recordDrift, weigh } from '../src/lib/budgets.ts';
+import { DEFAULT_LOCALE } from '../src/lib/locales.ts';
 
 const BASE = '/why-keep-a-promise/';
+const RECORD = fileURLToPath(new URL('../src/data/weight.json', import.meta.url));
 
 /** @param {string} dir */
 function htmlFiles(dir) {
@@ -75,4 +79,18 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     process.exit(1);
   }
   console.log(`✓ ${weights.length} pages within every budget (ADR 0025).`);
+
+  const homes = homeWeights(weights, BASE, DEFAULT_LOCALE);
+  if (process.argv.includes('--write')) {
+    writeFileSync(RECORD, `${JSON.stringify({ tool: 'npm run budgets', pages: homes }, null, 2)}\n`);
+    console.log(`wrote ${RECORD}`);
+  } else {
+    const drift = recordDrift(JSON.parse(readFileSync(RECORD, 'utf8')).pages, homes);
+    if (drift.length > 0) {
+      for (const line of drift) console.error(`✗ src/data/weight.json: ${line}`);
+      console.error('Run `npm run budgets -- --write` after the build, so /how-its-built cites what it weighs.');
+      process.exit(1);
+    }
+    console.log('✓ /how-its-built cites the homes as they weigh (src/data/weight.json).');
+  }
 }
