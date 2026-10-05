@@ -169,4 +169,25 @@ function tags(you: Move, other: Move): UiKey[] {
     font-weight: 700;
     color: var(--color-muted);
   }
+
+  /* On a phone the whole matrix fits, down to 320 px: each row's name may take two lines, and the
+     box and its cells keep a narrower margin. A tag that wraps keeps rounded corners, not an oval. */
+  @media (max-width: 30rem) {
+    .pd-matrix__tag {
+      border-radius: var(--radius-lg);
+    }
+
+    .pd-matrix {
+      padding: var(--space-3);
+    }
+
+    th,
+    .pd-matrix__cell {
+      padding-inline: var(--space-1);
+    }
+
+    tbody th {
+      white-space: normal;
+    }
+  }
 </style>
