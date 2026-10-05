@@ -151,6 +151,15 @@ describe('chapter 4, two voices (rule (k))', () => {
     expect(citationsIn(text).sort()).toEqual(['Battigalli+Dufwenberg 2007', 'Charness+Dufwenberg 2006', 'Vanberg 2008']);
   });
 
+  it.each(LOCALES)('%s: gives the guilt-aversion citations their own citation line, under the paragraph', (locale) => {
+    const body = captionsOf(locale, 'two-voices')?.body ?? '';
+    const lines = [...body.matchAll(/<p class="card__cite">([\s\S]*?)<\/p>/g)].map((m) => m[1] ?? '');
+    expect(lines).toHaveLength(1);
+    expect(citationsIn(lines[0] ?? '').sort()).toEqual(['Battigalli+Dufwenberg 2007', 'Charness+Dufwenberg 2006']);
+    const paragraphs = readable(body.replace(/<p class="card__cite">[\s\S]*?<\/p>/g, ' '));
+    expect(citationsIn(paragraphs)).toEqual(['Vanberg 2008']);
+  });
+
   it.each(LOCALES)('%s: names the voices as the character sheet does, and gives each its prediction', (locale) => {
     const d = dictionaries[locale];
     expect([d['film.voice.expects'], d['film.voice.word']]).toEqual(locale === 'en' ? ['What the other expects', 'My word'] : ['Lo que el otro espera', 'Mi palabra']);

@@ -862,8 +862,13 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
       nodos (eran 408): 1 057 en total. El home en inglés pasa de 544 497 a 238 393 B (de 68 176 a
       28 482 con gzip) y de 5 013 a 2 398 nodos. Los 36 SVG aparte y la película con JS, iguales a
       la referencia (los mismos 17 píxeles de delta 1 en un texto).
-- [ ] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La
-      regla (k) se cumple igual: las citas se quedan, solo cambia dónde.
+- [x] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La
+      regla (k) se cumple igual: las citas se quedan, solo cambia dónde. Hecho: el párrafo dice «It
+      is called guilt aversion.» / «Se le llama aversión a la culpa.», y debajo va la línea de cita
+      (`card__cite`, más pequeña y en el tono apagado de la tarjeta): «Guilt aversion: Charness and
+      Dufwenberg (2006); Battigalli and Dufwenberg (2007).» / «Aversión a la culpa: Charness y
+      Dufwenberg (2006); Battigalli y Dufwenberg (2007).». Un test exige las dos citas en esa línea
+      y solo Vanberg (2008) en los párrafos. Los textos nuevos los confirma Montse en 7.6.11.
 - [ ] **7.6.7** El enlace EN/ES entra al panel del cuaderno.
 - ~~**7.6.8** Solo si se aprobó en 7.0.4: el enlace EN/ES conserva el capítulo.~~ No se hace
   (7.0.4).
