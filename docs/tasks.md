@@ -706,7 +706,11 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
 Dep.: P7.1 y ADR 0030 (7.0.9). Cada señal nueva lleva su entrada en `CUE_SIGHT`, y siguen los tests
 de que ninguna satura y de que todas suman a lo más 1.
 
-- [ ] **7.4.1** El acorde corto al encender, con las dos notas del motivo del tema final.
+- [x] **7.4.1** El acorde corto al encender, con las dos notas del motivo del tema final.
+      `on`: sol y do (`ON_NOTES`, las dos primeras del tema), juntas, con la campana del tema, en
+      menos de un segundo. Suena cada vez que se enciende, al pulsar el botón; al apagarlo, nada. El
+      test lee la lista cerrada de la tabla del ADR 0030 y comprueba que solo suenen señales de ella,
+      y que todas menos el tema duren menos de un segundo.
 - [ ] **7.4.2** Las monedas (capítulos 1 y 3).
 - [ ] **7.4.3** El interruptor del apagón y del parpadeo, la luz que vuelve y la carta que vuela
       (capítulo 5: `switch`, `lights-on` y `card`).

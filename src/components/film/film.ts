@@ -193,7 +193,12 @@ function run(): void {
   const soundButton = film.querySelector<HTMLButtonElement>('[data-sound]');
   if (sound && soundButton) {
     soundButton.hidden = false;
-    soundButton.addEventListener('click', () => soundButton.setAttribute('aria-pressed', String(sound.toggle())));
+    soundButton.addEventListener('click', () => {
+      const on = sound.toggle();
+      soundButton.setAttribute('aria-pressed', String(on));
+      // Every time it is turned on, its chord says so at once (ADR 0030); turned off, nothing.
+      if (on) play('on');
+    });
   }
   /** While the film plays its memory back (ADR 0029), nothing sounds, moves or waits. */
   let replaying = false;

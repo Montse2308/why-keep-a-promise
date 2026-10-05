@@ -2,11 +2,15 @@
  * The film's sound (ADR 0025): off until the visitor turns it on, synthesised with Web Audio, so
  * there are no audio files and no licences. This module is the score, pure: each cue is a few tones
  * and bursts of noise with their envelopes, and src/components/film/sound.ts plays them. Every cue
- * goes with something the stage shows at the same moment (`CUE_SIGHT`): nothing is only heard.
+ * goes with something the stage shows at the same moment (`CUE_SIGHT`): nothing is only heard. Only
+ * the cues of ADR 0030's closed list sound.
  */
 
-/** The cues: the die in the air and on the table, the chat's bubbles, the seal, and a short theme at the end. */
-export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme'] as const;
+/**
+ * The cues: the die in the air and on the table, the chat's bubbles, the seal and a short theme at
+ * the end (P6); the chord when the sound is turned on (ADR 0030).
+ */
+export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme', 'on'] as const;
 export type Cue = (typeof CUES)[number];
 
 /** What the visitor sees while each cue sounds. */
@@ -16,6 +20,7 @@ export const CUE_SIGHT: Record<Cue, string> = {
   bubbles: "chapter 2: the visitor's message goes, and the other's answer appears",
   stamp: "chapter 7: the envelope's seal comes into view",
   theme: "chapter 8: the credits' last line comes into view",
+  on: 'the sound button turns on: its icon changes, and it is pressed',
 };
 
 interface Envelope {
@@ -73,6 +78,10 @@ export const THEME_NOTES: readonly (readonly [note: number, beat: number, beats:
 ];
 export const THEME_BEAT = 0.34;
 
+/** The chord of `on`: the theme's first two notes, G and C, and how long it rings in its beats, under a second. */
+export const ON_NOTES = [67, 72] as const;
+const ON_BEATS = 1.5;
+
 /** A music-box note: a triangle with a soft sine an octave up, ringing out. */
 function bell(note: number, at: number, beats: number): Voice[] {
   const duration = Math.max(0.5, beats * THEME_BEAT * 1.6);
@@ -113,6 +122,9 @@ export const SCORE: Record<Cue, readonly Voice[]> = {
     { kind: 'tone', wave: 'sine', from: 150, to: 58, at: 0, attack: 0.004, duration: 0.28, gain: 0.5 },
     { kind: 'noise', filter: 'lowpass', frequency: 700, q: 0.7, at: 0, attack: 0.002, duration: 0.09, gain: 0.32 },
   ],
+  // The sound is turned on: the theme's first two notes, G and C, together, so the visitor hears at
+  // once that it is on.
+  on: ON_NOTES.flatMap((note) => bell(note, 0, ON_BEATS)),
   // The credits end on a short phrase, and a low C under its last note.
   theme: [
     ...THEME_NOTES.flatMap(([note, beat, beats]) => bell(note, beat * THEME_BEAT, beats)),
