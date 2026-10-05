@@ -855,7 +855,13 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
       cuadrado y el triángulo con sus sombras cuando no están, y el apagón con los ojos. Los 9
       cuadros bajan a 1 597 nodos y el home, a 312 533 B (31 309 con gzip). Los 36 SVG aparte y la
       película con JS, iguales a la referencia (salvo 17 píxeles de delta 1 en un texto).
-- [ ] **7.6.5** Lo mismo con los cuadros 6 a 8.
+- [x] **7.6.5** Lo mismo con los cuadros 6 a 8. Hecho con las piezas que llegan en los capítulos 6
+      a 8: los letreros (cada cifra o su signo de pregunta, y las nubes de lo esperado), el motor,
+      la lámpara de papel, su luz con su degradado y las estrellas; y los dos comentarios del mundo,
+      que se repetían en los 10 dibujos, ya no salen en el HTML. Cada cuadro tiene ahora de 67 a 153
+      nodos (eran 408): 1 057 en total. El home en inglés pasa de 544 497 a 238 393 B (de 68 176 a
+      28 482 con gzip) y de 5 013 a 2 398 nodos. Los 36 SVG aparte y la película con JS, iguales a
+      la referencia (los mismos 17 píxeles de delta 1 en un texto).
 - [ ] **7.6.6** Capítulo 4: las citas de la aversión a la culpa a una línea de cita más pequeña. La
       regla (k) se cumple igual: las citas se quedan, solo cambia dónde.
 - [ ] **7.6.7** El enlace EN/ES entra al panel del cuaderno.

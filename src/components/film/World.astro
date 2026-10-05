@@ -68,11 +68,15 @@ const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
       <stop offset="0" stop-color={view.light['sky-top']} data-part="sky-top" />
       <stop offset="1" stop-color={view.light['sky-bottom']} data-part="sky-bottom" />
     </linearGradient>
-    <radialGradient id={lamp} cx="50%" cy="58%" r="45%">
-      <stop offset="0" stop-color={FILM.lamp} stop-opacity="0.9" />
-      <stop offset="0.6" stop-color={FILM.lamp} stop-opacity="0.3" />
-      <stop offset="1" stop-color={FILM.lamp} stop-opacity="0" />
-    </radialGradient>
+    {
+      shows(view.lamp) && (
+        <radialGradient id={lamp} cx="50%" cy="58%" r="45%">
+          <stop offset="0" stop-color={FILM.lamp} stop-opacity="0.9" />
+          <stop offset="0.6" stop-color={FILM.lamp} stop-opacity="0.3" />
+          <stop offset="1" stop-color={FILM.lamp} stop-opacity="0" />
+        </radialGradient>
+      )
+    }
     <filter id={shadow} x="-40%" y="-40%" width="180%" height="190%">
       <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#281e3c" flood-opacity="0.28" />
     </filter>
@@ -88,9 +92,13 @@ const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
       <ellipse cx="1000" cy="104" rx="80" ry="26" />
       <ellipse cx="1052" cy="90" rx="50" ry="30" />
     </g>
-    <g data-part="stars" opacity={view.stars}>
-      {STARS.map(([x, y, size]) => <path d={star} transform={`translate(${x} ${y}) scale(${size})`} fill="#fff4c2" />)}
-    </g>
+    {
+      shows(view.stars) && (
+        <g data-part="stars" opacity={view.stars}>
+          {STARS.map(([x, y, size]) => <path d={star} transform={`translate(${x} ${y}) scale(${size})`} fill="#fff4c2" />)}
+        </g>
+      )
+    }
     {/* The hills carry no shadow filter: they are the largest shapes, repainted whenever the camera moves. */}
     <path d="M-2000 640 C -600 420, 200 520, 700 470 S 1700 380, 3600 560 L 3600 3000 L -2000 3000 Z" fill={view.light['hill-far']} data-part="hill-far" />
   </g>
@@ -98,16 +106,20 @@ const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
     <path d="M-2000 660 C -300 560, 500 600, 900 560 S 2000 520, 3600 640 L 3600 3000 L -2000 3000 Z" fill={view.light['hill-near']} data-part="hill-near" />
   </g>
   <rect x="-4000" y={WORLD.floor} width="9600" height="5000" fill={view.light.floor} data-part="floor" />
-  <rect x="200" y="200" width="1200" height="700" fill={`url(#${lamp})`} opacity={view.lamp} data-part="lamp" />
-  <!-- The night lamp of the character sheet: a paper shade over the table, from chapter 7 on. -->
-  <g data-part="shade" transform={shadeTransform(view.shade)} opacity={view.shade > 0.01 ? 1 : 0}>
-    <line x1="0" y1="-1600" x2="0" y2="-22" stroke={FILM.ink} stroke-width="3" />
-    <circle cy="22" r="24" fill={FILM.lamp} opacity="0.3" />
-    <g filter={`url(#${shadow})`}>
-      <path d="M-50 14 L-26 -22 H26 L50 14 Z" fill={FILM.rim} stroke={FILM.ink} stroke-width="4" stroke-linejoin="round" />
-    </g>
-    <circle cy="22" r="12" fill={FILM.lamp} stroke={FILM.ink} stroke-width="3" />
-  </g>
+  {shows(view.lamp) && <rect x="200" y="200" width="1200" height="700" fill={`url(#${lamp})`} opacity={view.lamp} data-part="lamp" />}
+  {/* The night lamp of the character sheet: a paper shade over the table, from chapter 7 on. */}
+  {
+    shows(view.shade > 0.01 ? 1 : 0) && (
+      <g data-part="shade" transform={shadeTransform(view.shade)} opacity={view.shade > 0.01 ? 1 : 0}>
+        <line x1="0" y1="-1600" x2="0" y2="-22" stroke={FILM.ink} stroke-width="3" />
+        <circle cy="22" r="24" fill={FILM.lamp} opacity="0.3" />
+        <g filter={`url(#${shadow})`}>
+          <path d="M-50 14 L-26 -22 H26 L50 14 Z" fill={FILM.rim} stroke={FILM.ink} stroke-width="4" stroke-linejoin="round" />
+        </g>
+        <circle cy="22" r="12" fill={FILM.lamp} stroke={FILM.ink} stroke-width="3" />
+      </g>
+    )
+  }
 
   {
     shows(view.rooms > 0.01 ? 1 : 0) && (
@@ -209,13 +221,13 @@ const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
     )
   }
 
-  <Engine engine={view.engine} shadow={shadow} />
+  <Engine engine={view.engine} shadow={shadow} lean={!live} />
   <Board locale={locale} board={view.board} shadow={shadow} lean={!live} />
-  <Signs locale={locale} signs={view.signs} shadow={shadow} />
+  <Signs locale={locale} signs={view.signs} shadow={shadow} lean={!live} />
   <Coins part="coins-you" x={youX} n={view.coins.you} shown={view.coins.shown} lean={!live} />
   <Coins part="coins-other" x={otherX} n={view.coins.other} shown={view.coins.shown} lean={!live} />
 
-  <!-- The blackout (chapter 5): the stage goes dark but for the cast's eyes. -->
+  {/* The blackout (chapter 5): the stage goes dark but for the cast's eyes. */}
   {shows(view.dark) && <rect x="-4000" y="-4000" width="9600" height="9600" fill={FILM.ink} opacity={view.dark} data-part="dark" />}
   {
     ([['you', { at: cast.you, scale: 1, opacity: 1 }, 'circle'], ['other', cast.other, 'square'], ['partner', cast.partner, 'triangle']] as const).filter(([, place]) => shows(view.dark * place.opacity)).map(([who, place, kind]) => (

@@ -17,9 +17,13 @@ interface Props {
   locale: Locale;
   signs: StageView['signs'];
   shadow: string;
+  /** A still frame: draw only what this pose shows, since no script will change it. */
+  lean?: boolean;
 }
 
-const { locale, signs, shadow } = Astro.props;
+const { locale, signs, shadow, lean = false } = Astro.props;
+/** Whether a part with this opacity is drawn: a still frame leaves out what it does not show. */
+const shows = (opacity: number) => !lean || opacity > 0;
 const tr = useTranslations(locale);
 const percent = (n: number) => fill(tr('film.real-people.percent'), { n });
 const board = [
@@ -29,33 +33,41 @@ const board = [
 const { width, height, top } = SIGN;
 ---
 
-<g data-part="signs" opacity={signs.shown > 0.01 ? 1 : 0}>
-  {
-    board.map((sign) => (
-      <g data-part={`sign-${sign.id}`} transform={signTransform(signs.x[sign.id], signs.shown)}>
-        <line x1={-width / 3} y1="-1600" x2={-width / 3} y2={top + 6} stroke={FILM.ink} stroke-width="3" />
-        <line x1={width / 3} y1="-1600" x2={width / 3} y2={top + 6} stroke={FILM.ink} stroke-width="3" />
-        <g filter={`url(#${shadow})`}>
-          <rect x={-width / 2} y={top} width={width} height={height} rx="12" fill={FILM.card} stroke={FILM.ink} stroke-width="4" />
-        </g>
-        <circle cx={-width / 3} cy={top + 6} r="4" fill={FILM.ink} />
-        <circle cx={width / 3} cy={top + 6} r="4" fill={FILM.ink} />
-        {sign.id === 'same' ? (
-          <rect x={-width / 2 + 16} y={top + 16} width="20" height="20" rx="4" fill={FILM.other} stroke={FILM.ink} stroke-width="3" />
-        ) : (
-          <path d={`M${-width / 2 + 26} ${top + 14} L${-width / 2 + 38} ${top + 36} L${-width / 2 + 14} ${top + 36} Z`} fill={FILM.new} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
-        )}
-        <text x={-width / 2 + 46} y={top + 33} class="sign__label" fill={FILM.ink}>{sign.label}</text>
-        <text x="-42" y={top + 86} text-anchor="middle" class="sign__figure" fill={FILM.ink} opacity={sign.shown} data-part={`sign-${sign.id}-figure`}>{sign.figure}</text>
-        <text x="-42" y={top + 86} text-anchor="middle" class="sign__figure" fill={FILM['card-muted']} opacity={1 - sign.shown} data-part={`sign-${sign.id}-question`}>?</text>
-        <g transform={`translate(62 ${top + 70}) scale(0.82)`} opacity={signs.expected} data-part={`sign-${sign.id}-expected`}>
-          <path d="M-40 14 C-56 14 -56 -8 -38 -8 C-36 -24 -10 -28 0 -16 C10 -30 38 -24 36 -8 C54 -8 54 14 38 14 Z" fill={FILM['voice-expects']} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
-          <text x="0" y="11" text-anchor="middle" class="sign__expected" fill={FILM.ink}>{sign.expected}</text>
-        </g>
-      </g>
-    ))
-  }
-</g>
+{
+  shows(signs.shown > 0.01 ? 1 : 0) && (
+    <g data-part="signs" opacity={signs.shown > 0.01 ? 1 : 0}>
+      {
+        board.map((sign) => (
+          <g data-part={`sign-${sign.id}`} transform={signTransform(signs.x[sign.id], signs.shown)}>
+            <line x1={-width / 3} y1="-1600" x2={-width / 3} y2={top + 6} stroke={FILM.ink} stroke-width="3" />
+            <line x1={width / 3} y1="-1600" x2={width / 3} y2={top + 6} stroke={FILM.ink} stroke-width="3" />
+            <g filter={`url(#${shadow})`}>
+              <rect x={-width / 2} y={top} width={width} height={height} rx="12" fill={FILM.card} stroke={FILM.ink} stroke-width="4" />
+            </g>
+            <circle cx={-width / 3} cy={top + 6} r="4" fill={FILM.ink} />
+            <circle cx={width / 3} cy={top + 6} r="4" fill={FILM.ink} />
+            {sign.id === 'same' ? (
+              <rect x={-width / 2 + 16} y={top + 16} width="20" height="20" rx="4" fill={FILM.other} stroke={FILM.ink} stroke-width="3" />
+            ) : (
+              <path d={`M${-width / 2 + 26} ${top + 14} L${-width / 2 + 38} ${top + 36} L${-width / 2 + 14} ${top + 36} Z`} fill={FILM.new} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
+            )}
+            <text x={-width / 2 + 46} y={top + 33} class="sign__label" fill={FILM.ink}>{sign.label}</text>
+            {shows(sign.shown) && <text x="-42" y={top + 86} text-anchor="middle" class="sign__figure" fill={FILM.ink} opacity={sign.shown} data-part={`sign-${sign.id}-figure`}>{sign.figure}</text>}
+            {shows(1 - sign.shown) && <text x="-42" y={top + 86} text-anchor="middle" class="sign__figure" fill={FILM['card-muted']} opacity={1 - sign.shown} data-part={`sign-${sign.id}-question`}>?</text>}
+            {
+              shows(signs.expected) && (
+                <g transform={`translate(62 ${top + 70}) scale(0.82)`} opacity={signs.expected} data-part={`sign-${sign.id}-expected`}>
+                  <path d="M-40 14 C-56 14 -56 -8 -38 -8 C-36 -24 -10 -28 0 -16 C10 -30 38 -24 36 -8 C54 -8 54 14 38 14 Z" fill={FILM['voice-expects']} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
+                  <text x="0" y="11" text-anchor="middle" class="sign__expected" fill={FILM.ink}>{sign.expected}</text>
+                </g>
+              )
+            }
+          </g>
+        ))
+      }
+    </g>
+  )
+}
 
 <style>
   .sign__label {
