@@ -760,19 +760,65 @@ de que ninguna satura y de que todas suman a lo más 1.
 
 Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pueden ir antes.
 
-- [ ] **7.5.1** `camera.ts` recibe el área libre en vez de la pantalla entera, con test del encuadre.
-- [ ] **7.5.2** La tarjeta al costado con `(orientation: landscape) and (max-height: 500px)`: a la
+- [x] **7.5.1** `camera.ts` recibe el área libre en vez de la pantalla entera, con test del encuadre.
+      `frame(shot, viewport, free)`: el ancho del plano llena el área libre, su centro queda en el
+      ancla de esa área, y el resto de la pantalla (lo que hay detrás de una tarjeta al costado)
+      muestra más mundo a la misma escala. Si el plano es el vertical lo dice la forma del área
+      libre, no la de la pantalla. Sin área, es la pantalla entera y el encuadre es el de antes
+      (un test lo compara).
+- [x] **7.5.2** La tarjeta al costado con `(orientation: landscape) and (max-height: 500px)`: a la
       izquierda, ≈ 44 % del ancho, con scroll interno si no cabe; la cámara encuadra el resto.
-- [ ] **7.5.3** El título del capítulo 0 deja de encimarse con las cabezas en horizontal.
+      La tarjeta va a la izquierda con `--side-card: 44vw`, bajo la fila del carrete y el sonido
+      (`--side-top`), y si no cabe tiene scroll interno (`Beat.astro`). El área libre es un elemento
+      invisible del escenario (`.film__free`, en `Film.astro`): a la derecha de la tarjeta y debajo
+      de la fila de arriba, donde está el botón del cuaderno; `film.ts` lee dónde quedó al cambiar la
+      pantalla y se la da a la cámara. El CSS es el único que sabe medidas. Al lado de una tarjeta el
+      área es casi cuadrada: la cámara usa el plano cercano del celular, 1.3 veces más ancho para que
+      quepan el tablero y el elenco, centrado en su alto (`beside`), y el escenario usa su
+      acomodo vertical (`isClose`). Las cartas del mazo (capítulo 5) dejan sus iconos según el ancho
+      de la carta y no el de la pantalla (una consulta de contenedor), así que de lado no se aprietan.
+      Recorrido completo con toques reales a 740 × 360: las 21 acciones se alcanzan, la del capítulo 6
+      después de bajar dentro de su tarjeta.
+- [x] **7.5.3** El título del capítulo 0 deja de encimarse con las cabezas en horizontal.
+      De lado, el título va sobre el área libre, a la derecha de la tarjeta, más chico
+      (`clamp(1.35rem, 3.6vw, 2.1rem)`), entre la fila de arriba y las cabezas; sigue pegado y se
+      desvanece igual al acercarse la cámara. Probado a 568 × 320, 667 × 375, 740 × 360, 844 × 390 y
+      932 × 430, en EN y ES (el título en español ocupa tres líneas y tampoco toca las cabezas). Para
+      que la fila de arriba quepa con el enlace de idioma, el botón de sonido va solo con su dibujo,
+      su nombre para lectores de pantalla, como en el celular vertical.
 - ~~**7.5.4** Solo si el ADR 0031 lo aprobó: el mismo mecanismo en la compu, con su punto de
   corte.~~ No se hace: en la compu las tarjetas siguen centradas (7.0.4, ADR 0031).
-- [ ] **7.5.5** Transiciones entre las páginas del cuaderno, solo con CSS:
+- [x] **7.5.5** Transiciones entre las páginas del cuaderno, solo con CSS:
       `@view-transition { navigation: auto; }` bajo `prefers-reduced-motion: no-preference`, y
       `view-transition-name` en la viñeta y el título. El home queda fuera.
-- [ ] **7.5.6** Salida animada al cerrar el panel, simétrica a la entrada.
-- [ ] **7.5.7** Capturas a 740×360, 844×390, 1024×768 y 1440×900; sin scroll horizontal a 320 px;
+      La transición es CSS, en `SubpageView.astro`: la viñeta y el título pasan a los de la página
+      nueva y lo demás se funde, en `--duration-slow`. Como el home no la pide, no hay transición
+      hacia ni desde la película. Una sola cosa necesitó JS: si una página del cuaderno pide la
+      transición y la siguiente no (la película), Chrome la aborta y deja un error rojo en la
+      consola. `transitions.ts` (en el script del cuaderno, que ya cargaba cada página) la suelta en
+      `pageswap` cuando el destino no es una página del cuaderno; `routeOf` (en `routes.ts`, con
+      tests) dice qué página es una URL. Sin JS el error vuelve, solo en la consola. Probado con
+      clics reales en Chrome (`pagereveal`): entre páginas del cuaderno, desde el panel y al cambiar
+      de idioma, sí; del home y hacia él y con movimiento reducido, no; sin errores en la consola.
+- [x] **7.5.6** Salida animada al cerrar el panel, simétrica a la entrada.
+      La entrada y la salida son ahora la misma transición de CSS (`Notebook.astro`): la hoja entra
+      desde el borde derecho mientras el fondo se oscurece, y sale igual mientras se aclara, en
+      `--duration-slow`. Al cerrar, el diálogo sigue en la capa superior hasta que termina de salir
+      (`@starting-style` y `allow-discrete` en `overlay` y `display`); un navegador sin `overlay`
+      (Firefox) lo cierra de golpe, como antes. Sin JS nuevo. Probado con clics reales a 1440 y
+      360 px, en una página del cuaderno y en el home: por el botón de cerrar, el fondo y Esc, sale
+      deslizándose y el foco vuelve al botón; con movimiento reducido abre y cierra sin moverse.
+- [x] **7.5.7** Capturas a 740×360, 844×390, 1024×768 y 1440×900; sin scroll horizontal a 320 px;
       presupuestos en verde.
-- [ ] **7.5.8 (Montse)** Revisión de P7.5 (el PR).
+      En `scratch/p7-5/review/` (local), con un README que termina con lo que Montse decide al
+      revisar: la película entera en los cuatro tamaños (más 844 × 390 en español y 740 × 360 con
+      movimiento reducido), el panel a mitad de entrar y de salir, la transición entre páginas a
+      mitad, y las salidas de las pruebas con clics reales. A 1024 × 768 y 1440 × 900 la película no
+      cambia. Sin scroll horizontal en las 14 páginas a 320 × 700, 568 × 320 y 740 × 360. Los
+      presupuestos: JS del home 20.1 KiB (≤ 40), fuentes 118.6 KiB (158.0 en /how-its-built, ≤ 160) y
+      primera carga del home 214.4 KiB (≤ 450).
+- [x] **7.5.8 (Montse)** Revisión de P7.5 (el PR).
+      Montse la dio por hecha. Queda que mergee el PR.
 
 ### P7.6 · Contenido, peso y pintura (el resto del punto 16 y el mínimo del 3)
 

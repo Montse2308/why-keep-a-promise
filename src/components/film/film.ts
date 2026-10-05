@@ -13,7 +13,7 @@
  * the scroll rests, the cast comes to life (src/lib/film/idle.ts); with reduced motion nothing moves,
  * and the frames stop until the page asks for one.
  */
-import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
+import { frame, isClose, viewBoxAttribute, wholeScreen, type Area } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
 import { blinking, blinkTransform, GAZE_LOOK, gazeAt, rockAt, rockTransform } from '../../lib/film/idle';
 import { noteFor } from '../../lib/film/board';
@@ -186,6 +186,7 @@ function run(): void {
   const title = film.querySelector<HTMLElement>('[data-title]');
   const envelope = film.querySelector<HTMLElement>('[data-envelope]');
   const paper = film.querySelector<HTMLElement>('[data-paper]');
+  const freeArea = film.querySelector<HTMLElement>('[data-free]');
   const beads = [...film.querySelectorAll<HTMLElement>('[data-bead]')];
   const progressLabel = film.querySelector<HTMLElement>('[data-progress-label]');
   let chapterShown = 0;
@@ -236,6 +237,15 @@ function run(): void {
   let restSince = performance.now();
   let visible = true;
   let frameRequested = false;
+  /** The part of the screen the cards leave free (Film.astro), read again when the screen changes. */
+  let free: Area | null = null;
+  const freeOf = (): Area => {
+    const screen = { width: innerWidth, height: innerHeight };
+    const left = freeArea?.offsetLeft ?? 0;
+    const top = freeArea?.offsetTop ?? 0;
+    if (left <= 0 && top <= 0) return wholeScreen(screen);
+    return { x: left, y: top, width: Math.max(1, screen.width - left), height: Math.max(1, screen.height - top), beside: true };
+  };
 
   /** Scroll position through the whole film, from 0 to 1, of which the built chapters hold [from, to]. */
   const position = (): number =>
@@ -272,7 +282,8 @@ function run(): void {
   const render = (now: number): void => {
     frameRequested = false;
     const p = position();
-    const portrait = isPortrait({ width: innerWidth, height: innerHeight });
+    free ??= freeOf();
+    const portrait = isClose(free);
     const still = reduced.matches;
     const view: StageView = stageAt(p, state, portrait, still);
 
@@ -286,7 +297,7 @@ function run(): void {
     }
     sightsShown = sights;
 
-    const box = frame(view.shot, { width: innerWidth, height: innerHeight });
+    const box = frame(view.shot, { width: innerWidth, height: innerHeight }, free);
     set(world, 'viewBox', viewBoxAttribute(box));
     set(parts.skyTop, 'stop-color', view.light['sky-top']);
     set(parts.skyBottom, 'stop-color', view.light['sky-bottom']);
@@ -460,7 +471,10 @@ function run(): void {
     if (visible) stir();
   }).observe(film);
   addEventListener('scroll', stir, { passive: true });
-  addEventListener('resize', stir);
+  addEventListener('resize', () => {
+    free = null;
+    stir();
+  });
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) stir();
   });

@@ -286,7 +286,15 @@ const still = stageAt(
     line-height: 1.25;
   }
 
-  @media (max-width: 26rem) {
+  /*
+   * A narrow card, on a phone held upright or at the side of one held sideways (ADR 0031): the
+   * tickets keep their words and drop their icons. The card's own width says so, not the screen's.
+   */
+  .deck-card {
+    container-type: inline-size;
+  }
+
+  @container (max-width: 22rem) {
     .deck-card :global(.ticket__icon) {
       display: none;
     }

@@ -76,6 +76,8 @@ const of = (id: ChapterId) => {
   <div class="film__stage">
     <World locale={locale} uid="live" view={stageAt(0, { promised: null }, false, false)} live />
     <div class="film__paper" aria-hidden="true" data-paper></div>
+    <!-- What the cards leave free of the stage; ./film.ts has the camera frame the shot in it. -->
+    <div class="film__free" aria-hidden="true" data-free></div>
     <div class="film__controls">
       <div class="film__spool">
         <svg viewBox="-24 -24 48 48" aria-hidden="true" data-spool="none">
@@ -218,6 +220,32 @@ const of = (id: ChapterId) => {
     will-change: opacity;
   }
 
+  /*
+   * The part of the stage the cards leave free: all of it, except with a phone held sideways
+   * (ADR 0031), where the cards sit at the left (Beat.astro) under the corner, and the camera frames
+   * the screen right of them and below the corner's row, where the notebook's button is. Never
+   * seen; ./film.ts reads where it lies.
+   */
+  .film {
+    --side-card: 44vw;
+    /* Below the corner's row: the spool and the sound. */
+    --side-top: calc(var(--space-3) + env(safe-area-inset-top, 0px) + var(--target-min) + var(--space-3));
+  }
+
+  .film__free {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  @media (orientation: landscape) and (max-height: 500px) {
+    .film__free {
+      top: var(--side-top);
+      left: calc(max(var(--gutter), env(safe-area-inset-left, 0px)) + var(--side-card));
+    }
+  }
+
   /* The film's own corner: the spool, and the sound beside it. */
   .film__controls {
     position: absolute;
@@ -357,6 +385,22 @@ const of = (id: ChapterId) => {
       visibility: hidden;
     }
 
+    .film__sound {
+      padding: 0;
+    }
+
+    .film__sound-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  /* A phone held sideways (ADR 0031): the top row also holds the language link; the sound is drawn alone. */
+  @media (orientation: landscape) and (max-height: 500px) {
     .film__sound {
       padding: 0;
     }

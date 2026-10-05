@@ -66,4 +66,21 @@ const ask = beat('arrival', 'ask');
     opacity: calc(1 - var(--title-gone, 0));
     transform: translateY(calc(var(--title-gone, 0) * -2rem));
   }
+
+  /*
+   * A phone held sideways (ADR 0031): the card is at the left, so the title goes over the free area
+   * right of it (Film.astro), smaller, between the corner's row and the heads.
+   */
+  @media (orientation: landscape) and (max-height: 500px) {
+    :global(html.js) .arrival__title {
+      align-self: flex-end;
+      box-sizing: border-box;
+      width: calc(100% - var(--side-card));
+      max-width: none;
+      margin: 0;
+      padding-inline: var(--space-4) 0;
+      top: var(--side-top);
+      font-size: clamp(1.35rem, 3.6vw, 2.1rem);
+    }
+  }
 </style>

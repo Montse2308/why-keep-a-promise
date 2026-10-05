@@ -121,7 +121,8 @@ src/
   lib/                   pure, tested modules
     i18n.ts              typed t(); fails check and build on key mismatch
     locales.ts           locale list, no dictionary imports (safe for client scripts)
-    routes.ts            buildHref/href/assetHref: every internal link goes through here
+    routes.ts            buildHref/href/assetHref: every internal link goes through here;
+                         routeOf reads a path back into its route
     lock.ts              the lock: full content only under review or in dev (ADR 0026)
     film/                the scene engine: tracks, easing, colours (OKLCH), camera, chapter
                          spans; timeline.ts (screens, beats, the native scroll mapped to the film);
@@ -178,8 +179,10 @@ src/
                          (arrival.ts, two-rooms.ts, …: its choices, noted and played back);
                          film.ts the frame loop and the stage's state, context.ts what it hands
                          the controllers, sound.ts the Web Audio player);
-                         notebook/ (Notebook, the button and panel, with notebook.ts, details.ts
-                         and back.ts; NotebookFooter; Sources, Author, Day, Weight, Vignette);
+                         notebook/ (Notebook, the button and panel, with notebook.ts, details.ts,
+                         back.ts and transitions.ts, which lets the transition between notebook
+                         pages go on the way to the film; NotebookFooter; Sources, Author, Day,
+                         Weight, Vignette);
                          curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);

@@ -217,6 +217,25 @@ const { id, screens, caption, opening = false, cardClass, roll = false } = Astro
     bottom: auto;
   }
 
+  /*
+   * A phone held sideways (ADR 0031): the card goes to the left, under the film's corner, in
+   * `--side-card` of the width (Film.astro, whose free area the camera frames is the rest). A card
+   * taller than the screen scrolls inside itself.
+   */
+  @media (orientation: landscape) and (max-height: 500px) {
+    :global(html.js) .beat {
+      align-items: flex-start;
+      padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px)) var(--gutter);
+    }
+
+    :global(html.js) .card {
+      width: var(--side-card);
+      max-height: calc(100svh - var(--side-top) - var(--space-3) - env(safe-area-inset-bottom, 0px));
+      overflow-y: auto;
+      bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
   /* A short screen (a small phone): tighter cards, so the stage still shows above them. */
   @media (max-height: 40rem) {
     .card {
