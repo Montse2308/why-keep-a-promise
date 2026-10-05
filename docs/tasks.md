@@ -899,9 +899,14 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
 
 Dep.: todas las subfases anteriores.
 
-- [ ] **7.7.1** `README.md`: sin «Work in progress»; tres o cuatro puntos fuertes (el storyboard, el
+- [x] **7.7.1** `README.md`: sin «Work in progress»; tres o cuatro puntos fuertes (el storyboard, el
       motor propio, el candado con `verify:dist`, los presupuestos y los tests); el enlace a
       `/how-its-built`; el enlace al sitio como `TODO(launch)`. `README.es.md`, su copia.
+      Los dos README presentan la película y el cuaderno con cuatro puntos («What is worth a look»
+      / «Lo que vale la pena ver»); el candado se cuenta como en `/how-its-built`, y del motor de
+      simulación no dicen nada (regla (j)). El enlace a `/how-its-built` va a su URL en Pages, cada
+      README a su idioma; el enlace al sitio es un comentario `TODO(launch)` arriba, y el paso 8
+      de `docs/launch-checklist.md` ahora lo nombra, porque su `grep` solo mira `src/`.
 - [ ] **7.7.2** Una captura o un GIF ligero para los dos README.
 - [ ] **7.7.3** Lighthouse otra vez sobre el commit final; regenerar `src/data/lighthouse.json` para
       que `/how-its-built` coincida con `npm run budgets`.

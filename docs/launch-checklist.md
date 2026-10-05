@@ -36,7 +36,9 @@ el paso 6.
 - [ ] **8. Enlace al motor.** Reemplazar cada `TODO(launch): enlace al repo del motor` por el
       enlace al repo del motor, público desde el paso 2: en el capítulo 7, en el panel del
       cuaderno, en `/finding` y en `/how-its-built` (`grep -rn "TODO(launch)" src/` los lista).
-      Después, `npm run build` y `grep -r "TODO(" dist/` vacío.
+      En los dos README, el `TODO(launch)` del principio se vuelve el enlace al sitio
+      (`grep -n "TODO(launch)" README*.md`). Después, `npm run build` y `grep -r "TODO(" dist/`
+      vacío.
 - [ ] **9. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`). El
       workflow se detiene si `dist/` todavía lleva un `TODO(` (por ejemplo, un `TODO(launch)` que
       el paso 8 no resolvió) o una fuente que `/sources` marca «por verificar» (`data-unverified`;

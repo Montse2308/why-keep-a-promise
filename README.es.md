@@ -2,12 +2,31 @@
 
 [English](README.md)
 
-La página de divulgación de un proyecto personal de investigación sobre por qué la gente cumple
-promesas que ya no le convienen. Se está reconstruyendo como una película corta ligada al scroll,
-en nueve capítulos, del dilema del prisionero al juego de cambio de pareja de Vanberg (2008), con
-un cuaderno para la profundidad técnica.
+<!-- TODO(launch): enlace al sitio, https://montse2308.github.io/why-keep-a-promise/es/, cuando el paso 9 de docs/launch-checklist.md lo haya publicado. -->
 
-**Trabajo en curso.** Nada de lo que hay aquí es definitivo.
+La página de divulgación de un proyecto personal de investigación sobre por qué la gente cumple
+promesas que ya no le convienen. El home es una película corta ligada al scroll, en nueve
+capítulos, del dilema del prisionero al juego de cambio de pareja de Vanberg (2008), y un cuaderno
+a un toque de distancia guarda la profundidad.
+
+## Lo que vale la pena ver
+
+- **Primero, un storyboard.** Cada página es HTML estático. Sin JavaScript, el home es un
+  storyboard: cada capítulo un cuadro quieto con sus textos, cada resultado por escrito. Un script
+  lo convierte en la película, sobre el scroll nativo, que nunca captura.
+- **Un motor de escenas propio.** Pistas, suavizado, colores mezclados en OKLCH y una cámara que
+  encuadra cada pantalla, escritos en TypeScript para esta película: módulos puros con sus pruebas,
+  sin librería de animación y sin canvas.
+- **Un candado fuera del build.** Una parte del sitio sigue cerrada hasta que el manuscrito esté en
+  revisión. Esa parte se queda fuera del build, no escondida, y `npm run verify:dist` lee cada
+  archivo construido y falla si se coló algún rastro.
+- **Presupuestos y pruebas que detienen el build.** CI falla si el JavaScript del home pasa de
+  40 KiB comprimido, las fuentes de 160 KiB o la primera carga de cualquier página de 450 KiB. Más
+  de 1200 pruebas mantienen los pagos como fracciones exactas, cada cifra atada a su fuente y el
+  inglés y el español a la par.
+
+La página cuenta cómo está hecha en
+[Cómo está hecho](https://montse2308.github.io/why-keep-a-promise/es/how-its-built/).
 
 ## Correrlo en local
 
