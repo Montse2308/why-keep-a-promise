@@ -566,39 +566,68 @@ empezar en cuanto se cierre P6, sin esperar a P7.0.
       jugado completo; una pestaña nueva empieza vacía; sin JS, con el script bloqueado, con error o
       tardío se ve el storyboard; el JS del home pesa 17.7 KiB de 40. Capturas en `scratch/p7-1/review/`
       (local, no se versiona).
-- [ ] **7.1.13 (Montse)** Revisión de P7.1 (el PR).
+- [x] **7.1.13 (Montse)** Revisión de P7.1 (el PR #11, mergeado).
 
 ### P7.2 · Metadatos, SEO y datos (puntos 4, 13 y 6)
 
 Dep.: P7.0. Puede ir en paralelo a P7.1.
 
-- [ ] **7.2.1** `<meta name="description">` y `og:description` por página e idioma: las del cuaderno
+- [x] **7.2.1** `<meta name="description">` y `og:description` por página e idioma: las del cuaderno
       salen de su línea del panel; la del home, de la clave nueva (7.0.3); `/finding` cerrado lleva
       la pregunta del sitio, no la frase de estado. Quita el `TODO(F5)` de `BaseLayout.astro`.
-- [ ] **7.2.2** `og:locale`, `og:locale:alternate` y `og:site_name`.
-- [ ] **7.2.3** Test: las 14 páginas llevan descripción, en paridad y sin frases prohibidas;
-      `verify:dist` revisa que la descripción no filtre el candado.
-- [ ] **7.2.4** `src/pages/404.astro`, bilingüe en una sola página (GitHub Pages sirve un único
-      `404.html`), con el escenario y los dos enlaces de vuelta.
-- [ ] **7.2.5** `noindex` en `/finding` según `findingUnlocked()`; `verify:dist` lo exige con el
-      candado cerrado y lo prohíbe con el candado abierto.
-- [ ] **7.2.6** `src/pages/sitemap.xml.ts`, propio y sin dependencias, con las alternativas de
+      Hecho en `src/lib/meta.ts`, con la clave `site.description`. `/finding` lleva la pregunta del
+      sitio también con el candado abierto: no hay texto aprobado que hable del hallazgo.
+- [x] **7.2.2** `og:locale`, `og:locale:alternate` y `og:site_name`. El nombre es el de los
+      pósteres («I promise» / «Te lo prometo»); los idiomas, `en_US` y `es_MX` (Open Graph pide
+      idioma y territorio; Montse lo confirma en 7.2.11).
+- [x] **7.2.3** Test: las 14 páginas llevan descripción, en paridad y sin frases prohibidas;
+      `verify:dist` revisa que la descripción no filtre el candado. `tests/meta.test.ts`; `verify:dist`
+      exige en los dos estados una descripción en cada página, igual en `og:description` y sin la
+      frase de estado, y con el candado cerrado sin sus marcas.
+- [x] **7.2.4** `src/pages/404.astro`, bilingüe en una sola página (GitHub Pages sirve un único
+      `404.html`), con el escenario y los dos enlaces de vuelta. El escenario al amanecer con el
+      círculo y el cuadrado preocupados; el título y una línea en cada idioma, con su `lang`
+      (`notfound.*`, textos nuevos que Montse revisa en 7.2.11), y «Volver a la película» en cada uno.
+      Lleva `noindex`, y `verify:dist` no le pide descripción.
+- [x] **7.2.5** `noindex` en `/finding` según `findingUnlocked()`; `verify:dist` lo exige con el
+      candado cerrado y lo prohíbe con el candado abierto. También exige `noindex` en la 404 y lo
+      prohíbe en cualquier otra página.
+- [x] **7.2.6** `src/pages/sitemap.xml.ts`, propio y sin dependencias, con las alternativas de
       idioma; con el candado cerrado no lista `/finding`, y `verify:dist` lo comprueba. Sin
-      `robots.txt` (un sitio de proyecto no está en la raíz del dominio).
-- [ ] **7.2.7** `theme-color` y `apple-touch-icon` en PNG de 180 px, con el mismo proceso de resvg que
-      los pósteres.
-- [ ] **7.2.8** Axelrod según 7.0.5 (B): Axelrod y Hamilton (1981) reemplaza al libro de 1984 en
+      `robots.txt` (un sitio de proyecto no está en la raíz del dominio). El XML sale de
+      `src/lib/sitemap.ts`; `verify:dist` revisa además que cada URL sea una página del build, que no
+      falte ninguna y que la 404 no esté.
+- [x] **7.2.7** `theme-color` y `apple-touch-icon` en PNG de 180 px, con el mismo proceso de resvg que
+      los pósteres. `theme-color`: sobre la película, su cielo del amanecer; en el cuaderno y la 404,
+      el brillo de arriba del papel, de día o de noche según el tema. El ícono es el de la pestaña,
+      forma por forma (un test lo compara con `public/favicon.svg`), sobre el cielo del amanecer.
+- [x] **7.2.8** Axelrod según 7.0.5 (B): Axelrod y Hamilton (1981) reemplaza al libro de 1984 en
       `docs/sources.md` (verificada, con sus páginas), `src/content/figures.ts`, `src/lib/sources.ts`
       (sale de `UNVERIFIED`), la clave `sources.*` de los dos idiomas, los comentarios de
       `src/lib/pd/` y `src/lib/film/values.ts`, la prosa de `/dilemma` en EN y ES (las oraciones
       aprobadas en 7.0.5) y sus tests, como dice el ADR 0033; el paso 9 de
       `docs/launch-checklist.md` deja de nombrar a Axelrod (1984). El candado de `deploy.yml`
       contra `data-unverified` se queda.
+      Hecho con la clave `axelrod-hamilton-1981` y su DOI (cotejado en Crossref). `sources.at.*`
+      dice dónde está cada cosa en el artículo, con las páginas impresas en *Science*: la figura 1,
+      su pie y *w* (la probabilidad de volver a encontrarse), p. 1392; el torneo, p. 1393; la nota
+      17, p. 1396. La página de *w* no estaba en el ADR 0033: se tomó de la misma copia de JSTOR.
 - [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
-      puede, decide cómo queda registrado.
-- [ ] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
-      revisión de las 14 cabeceras y capturas para Montse.
-- [ ] **7.2.11 (Montse)** Revisión de P7.2 (el PR).
+      puede, decide cómo queda registrado. Lo que hay que ver: la suma de lo que apostaron los
+      receptores con una promesa, en la escala de 0 a 1 en cuartos, da 215 sobre 309 sin cambio de
+      pareja y 200.5 sobre 294 con cambio (`docs/sources.md`, `vanberg-beliefs`). No bloquea el PR
+      de P7.2: si coincide, sale el `PENDIENTE(datos)` de `docs/sources.md` y de P3.
+- [x] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
+      revisión de las 14 cabeceras y capturas para Montse. En los dos estados pasan `check`, `test`,
+      `build`, `verify:dist` y `budgets`; abierto, `/finding` pierde el `noindex` y entra al sitemap
+      (14 entradas; cerrado, 12). Las 15 cabeceras (las 14 y la 404) y las capturas a 360 y 1440 px,
+      en `scratch/p7-2/review/` (local, no se versiona), con un README.
+- [ ] **7.2.11 (Montse)** Revisión de P7.2 (el PR). Además de las capturas, confirma o corrige:
+      - los textos nuevos de la 404: «Page not found» / «Página no encontrada» y «There is nothing
+        at this address.» / «En esta dirección no hay nada.»;
+      - `es_MX` como el español de Open Graph (o `es_ES`, u otro: es una línea de `src/lib/meta.ts`);
+      - la línea «En la fuente» de Axelrod y Hamilton (1981): «La figura 1 y su pie, y la
+        probabilidad de volver a encontrarse, p. 1392; el torneo, p. 1393; la nota 17, p. 1396.»
 
 ### P7.3 · La película: experiencia (puntos 7, 9, 10 y 11)
 
@@ -703,15 +732,6 @@ Dep.: todas las subfases anteriores.
 
 ## Preguntas abiertas
 
-- **Axelrod (1984):** verificar antes del lanzamiento la página de los pagos del dilema, de la
-  condición `2R > T + S`, de la sombra del futuro y del torneo. La prosa ya la usa y sigue «por
-  verificar» en `docs/sources.md`. Se cita la edición original, Basic Books, 1984: las páginas se
-  buscan en esa. Si solo se tiene otra edición (la revisada de 2006), hay que decidir antes si cambia
-  la referencia. Mientras tanto `/sources` dice «Páginas por verificar.» y el deploy no publica.
-  Al verificarla: escribir `sources.at.axelrod-1984` en los dos idiomas y quitarla de `UNVERIFIED`.
-  Las páginas no se pudieron verificar. Montse eligió en 7.0.5 la opción B: citar el artículo de
-  Axelrod y Hamilton (1981), ya cotejado, en lugar del libro (ADR 0033). Se aplica en 7.2.8; al
-  aplicarse, esta pregunta pasa a «Preguntas cerradas».
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
 - **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0026 dice que
@@ -722,6 +742,10 @@ Dep.: todas las subfases anteriores.
 
 ## Preguntas cerradas
 
+- ~~Axelrod (1984): ¿en qué páginas están los pagos, `2R > T + S`, la sombra del futuro y el
+  torneo?~~ No se pudo revisar el libro. Montse eligió en 7.0.5 citar el artículo de Axelrod y
+  Hamilton (1981), cotejado (ADR 0033); se aplicó en 7.2.8, y `/sources` ya no dice «Páginas por
+  verificar.».
 - ~~¿La tarjeta al costado también en la compu?~~ No: en la computadora las tarjetas siguen
   centradas, como dice el ADR 0027 (decisión de Montse en 7.0.4; el ADR 0031 lo registra).
 - ~~¿El enlace EN/ES conserva el capítulo?~~ No: necesitaba JavaScript y precisar el ADR 0013, y al

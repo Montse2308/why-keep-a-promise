@@ -39,8 +39,8 @@ el paso 6.
       Después, `npm run build` y `grep -r "TODO(" dist/` vacío.
 - [ ] **9. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`). El
       workflow se detiene si `dist/` todavía lleva un `TODO(` (por ejemplo, un `TODO(launch)` que
-      el paso 8 no resolvió) o una fuente que `/sources` marca «por verificar» (`data-unverified`,
-      hoy Axelrod, 1984): lo que piden los pasos 3 y 8, comprobado otra vez antes de publicar.
+      el paso 8 no resolvió) o una fuente que `/sources` marca «por verificar» (`data-unverified`;
+      hoy ninguna): lo que piden los pasos 3 y 8, comprobado otra vez antes de publicar.
       También se detiene si una página se pasa de los presupuestos de peso (`npm run budgets`,
       ADR 0025).
 - [ ] **10. Verificación.** Comprobar `/` y `/es/` en línea en

@@ -3,6 +3,8 @@ import baseLayout from '../src/layouts/BaseLayout.astro?raw';
 import posterReadme from '../src/assets/fonts/posters/README.md?raw';
 import character from '../src/components/film/Character.astro?raw';
 import endpoint from '../src/pages/posters/[locale]/[route].png.ts?raw';
+import touchIconEndpoint from '../src/pages/apple-touch-icon.png.ts?raw';
+import favicon from '../public/favicon.svg?raw';
 import en from '../src/i18n/en.json';
 import es from '../src/i18n/es.json';
 import { FILM, LIGHT_POINTS } from '../src/lib/design/film';
@@ -10,7 +12,8 @@ import { LOCALES } from '../src/lib/locales';
 import { hasGlyph, lineWidth, readMetrics, type FontMetrics } from '../src/lib/posters/metrics';
 import { balance, CARD, cutout, escapeXml, fit, POSTER, POSTER_FONTS, POSTER_SCENES, posterPath, posterSvg, wrap, type PosterFont } from '../src/lib/posters/poster';
 import { readPosterFont } from '../src/lib/posters/fonts.mjs';
-import { posterLayout, posterMetrics, posterPng, posterText } from '../src/lib/posters/render';
+import { ICON_SHAPES, TOUCH_ICON, touchIconSvg } from '../src/lib/posters/icon';
+import { posterLayout, posterMetrics, posterPng, posterText, touchIconPng } from '../src/lib/posters/render';
 import { ROUTES } from '../src/lib/routes';
 
 const PAGES = LOCALES.flatMap((locale) => ROUTES.map((route) => [locale, route] as const));
@@ -128,5 +131,30 @@ describe('publishing the posters', () => {
     expect([...png.subarray(0, 8)]).toEqual([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
     const view = new DataView(png.buffer, png.byteOffset, png.byteLength);
     expect([view.getUint32(16), view.getUint32(20)]).toEqual([POSTER.width, POSTER.height]);
+  });
+});
+
+describe("the icon for a phone's home screen (point 13 of the external review)", () => {
+  /** The elements of an SVG drawing, without its comments, one per line, spaced alike. */
+  const shapes = (svg: string) => (svg.replace(/<!--[\s\S]*?-->/g, '').match(/<(path|circle|rect)\b[^>]*\/>/g) ?? []).map((shape) => shape.replace(/\s+/g, ' ').toLowerCase());
+
+  it("draws the tab's icon, shape for shape and colour for colour", () => {
+    expect(ICON_SHAPES.map((shape) => shape.toLowerCase())).toEqual(shapes(favicon));
+    expect(touchIconSvg()).toContain(ICON_SHAPES.join(''));
+  });
+
+  it("fills the square with the film's dawn sky: a phone does not draw transparency", () => {
+    const svg = touchIconSvg();
+    expect(svg).toContain('<rect x="-56" y="-56" width="112" height="112" fill="url(#sky)"/>');
+    expect(svg).toContain(`stop-color="${LIGHT_POINTS[0]?.colours['sky-top']}"`);
+  });
+
+  it('renders a PNG of 180 px, built where every page names it', () => {
+    const png = touchIconPng();
+    expect([...png.subarray(0, 8)]).toEqual([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    const view = new DataView(png.buffer, png.byteOffset, png.byteLength);
+    expect([view.getUint32(16), view.getUint32(20)]).toEqual([TOUCH_ICON, TOUCH_ICON]);
+    expect(TOUCH_ICON).toBe(180);
+    expect(touchIconEndpoint).toContain('touchIconPng()');
   });
 });

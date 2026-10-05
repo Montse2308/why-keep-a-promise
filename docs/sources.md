@@ -247,36 +247,45 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 - **Verificada:** no.
 - **Cifras:** —
 
-### Axelrod (1984)
+### Axelrod y Hamilton (1981)
 
-- **Referencia (por verificar):** Axelrod, R. (1984). *The Evolution of Cooperation*. Basic Books.
-- **Clave:** `axelrod-1984`.
+- **Referencia (verificada):** Axelrod, R. y Hamilton, W. D. (1981). The Evolution of Cooperation.
+  *Science*, 211(4489), 1390–1396. DOI: <https://doi.org/10.1126/science.7466396> (la ficha,
+  cotejada en Crossref).
+- **Clave:** `axelrod-hamilton-1981`.
 - **Uso:** matriz del dilema del prisionero (capítulo 1 y `/dilemma`); contexto del dilema
   iterado (`/dilemma`).
-- **Reemplazo:** decidido en el ADR 0033: Axelrod y Hamilton (1981), cotejado, ocupa su lugar en el
-  paso 7.2.8. Hasta entonces esta entrada describe lo que el sitio cita hoy.
-- **Verificada:** no. Se cita la edición original (Basic Books, 1984); las páginas se buscan en esa.
-  Mientras siga por verificar, `/sources` dice «Páginas por verificar.» donde iría su página
-  (`UNVERIFIED` en `src/lib/sources.ts`), y `deploy.yml` no publica un `dist/` con esa marca.
+- **Verificada:** sí (7.0.5 y 7.2.8). El agente la cotejó contra la copia de JSTOR que Axelrod tiene
+  en su sitio de la Universidad de Michigan
+  (<https://websites.umich.edu/~axe/research/Axelrod%20and%20Hamilton%20EC%201981.pdf>); las páginas
+  son las impresas en *Science*. Reemplaza al libro de Axelrod (1984), que nadie pudo revisar y que
+  ya no se cita (ADR 0033). «La sombra del futuro» era del libro: no está en el artículo y salió de
+  `/dilemma`.
 - **Cifras:**
 
 - Cifra: pagos del dilema del prisionero, (3, 3), (0, 5), (5, 0) y (1, 1), con T = 5, R = 3, P = 1
   y S = 0 (T > R > P > S).
-  Clave: `axelrod-1984`.
-  Fuente: Axelrod (1984), página por verificar. **Por verificar; bloquea el lanzamiento.**
+  Clave: `axelrod-hamilton-1981`.
+  Fuente: figura 1, p. 1392. Da solo el pago del jugador A; los pares, como (0, 5), salen por
+  simetría. El pie de la figura define el juego por T > R > P > S. **Verificada.**
   Usada en: capítulo 1 (`src/lib/pd/game.ts`, `PAYOFFS`, a través de `src/lib/film/values.ts`: el
   tablero, los boletos, las leyendas y los resultados de la ronda y de las dos columnas);
   `/dilemma` (la matriz estática, `src/components/pd/Matrix.astro`, con `PAYOFFS`, y la prosa). La
   mejor respuesta jugable salió de `/dilemma` en P5: se juega en el capítulo 1 (ADR 0023).
 - Cifra: la condición 2R > T + S, leída por ronda como "3 > 2.5": cooperar siempre deja más que
   turnarse para traicionar ((T + S) / 2 = 2.5). El "2" es el de 2R.
-  Clave: `axelrod-1984`.
-  Fuente: Axelrod (1984), página por verificar. **Por verificar; bloquea el lanzamiento.**
+  Clave: `axelrod-hamilton-1981`.
+  Fuente: escrita como R > (S + T)/2, la misma condición: el pie de la figura 1 (p. 1392) y la
+  nota 17 (p. 1396), que dice que descarta que turnarse para explotarse sea mejor que cooperar.
+  **Verificada.**
   Usada en: `/dilemma` (`src/lib/pd/game.ts`, `alternation`, con test).
-- Cifra: sin cifras, el contexto del dilema repetido en `/dilemma`: la "sombra del futuro", el
-  torneo de programas y que ganó Tit-for-Tat (coopera primero y luego copia lo que hizo el otro).
-  Clave: `axelrod-1984`.
-  Fuente: Axelrod (1984), páginas por verificar. **Por verificar; bloquea el lanzamiento.**
+- Cifra: sin cifras, el contexto del dilema repetido en `/dilemma`: la probabilidad *w* de que los
+  mismos dos vuelvan a encontrarse, el torneo de programas y que ganó Tit-for-Tat (coopera primero
+  y luego copia lo que hizo el otro).
+  Clave: `axelrod-hamilton-1981`.
+  Fuente: *w*, p. 1392 («there is some probability, w, that after the current interaction the same
+  two individuals will meet again»); el torneo y Tit-for-Tat, que ganó las dos rondas, p. 1393.
+  **Verificada.**
   Usada en: `/dilemma` (un párrafo, que termina con el enlace a *The Evolution of Trust*).
 
 ### Charness y Dufwenberg (2006)

@@ -37,12 +37,17 @@ import { slotsIn, splitSubpage } from '../src/lib/subpages';
 import { worksOf } from '../src/lib/sources';
 import {
   countStandalone,
+  descriptionProblems,
+  descriptionsOf,
   FINDING_PAGES,
   findingLinks,
   findMarks,
   HOME_PAGES,
+  isNoindex,
   lockedLinkProblems,
   MARKERS,
+  noindexProblems,
+  NOT_FOUND_PAGE,
   readStatus,
   STATUS_ON_HOME,
   statusProblems,
@@ -292,6 +297,101 @@ describe('verify:dist (ADR 0026)', () => {
     it('fails when any other page links to /finding', () => {
       const pages = { 'index.html': link('finding/') + link('finding/'), 'es/vanberg/index.html': link('es/finding/') };
       expect(lockedLinkProblems(pages)).toEqual(['index.html: links to /finding 2 times', 'es/vanberg/index.html: links to /finding once']);
+    });
+  });
+
+  describe('the descriptions (src/lib/meta.ts)', () => {
+    const dictionaries = { en, es };
+    const head = (name: string | null, og: string | null = name) =>
+      `<head>${name === null ? '' : `<meta name="description" content="${name}">`}${og === null ? '' : `<meta property="og:description" content="${og}">`}</head>`;
+
+    it('reads a description and its Open Graph copy, entities decoded', () => {
+      expect(descriptionsOf(head('Why &amp; how &quot;it&quot; works &#8212; 2008'))).toEqual({ name: 'Why & how "it" works — 2008', og: 'Why & how "it" works — 2008' });
+      expect(descriptionsOf('<head></head>')).toEqual({ name: null, og: null });
+    });
+
+    it('passes pages that each carry their own, the same twice', () => {
+      const pages = { 'index.html': head(en['site.description']), 'finding/index.html': head(en['site.title']) };
+      expect(descriptionProblems('in-preparation', dictionaries, pages)).toEqual([]);
+    });
+
+    it('leaves out the 404 page, which nothing indexes', () => {
+      expect(NOT_FOUND_PAGE).toBe('404.html');
+      expect(descriptionProblems('in-preparation', dictionaries, { '404.html': '<head></head>' })).toEqual([]);
+    });
+
+    it('fails a page without one, an empty one, or one Open Graph does not repeat', () => {
+      const pages = { 'index.html': head(null), 'dilemma/index.html': head(' '), 'vanberg/index.html': head('A', 'B'), 'about/index.html': head('A', null) };
+      expect(descriptionProblems('in-preparation', dictionaries, pages)).toEqual([
+        'index.html: no description',
+        'dilemma/index.html: no description',
+        'vanberg/index.html: og:description is not its description',
+        'about/index.html: og:description is not its description',
+      ]);
+    });
+
+    it('fails a description with the status sentence, in either state and language (rule (b))', () => {
+      const pages = { 'finding/index.html': head(es['manuscript.status.under-review']), 'es/finding/index.html': head(`¿Por qué? ${es['manuscript.status.in-preparation']}`) };
+      for (const status of ['in-preparation', 'under-review'] as const) {
+        expect(descriptionProblems(status, dictionaries, pages)).toEqual([
+          'finding/index.html: the description repeats the status sentence',
+          'es/finding/index.html: the description repeats the status sentence',
+        ]);
+      }
+    });
+
+    it('fails a description that carries a mark of the locked content, only while locked', () => {
+      const pages = { 'finding/index.html': head('On personal guilt and background trust') };
+      expect(descriptionProblems('in-preparation', dictionaries, pages)).toEqual([
+        'finding/index.html: the description carries locked content: personal guilt',
+        'finding/index.html: the description carries locked content: background trust',
+      ]);
+      expect(descriptionProblems('under-review', dictionaries, pages)).toEqual([]);
+    });
+  });
+
+  describe('noindex on /finding (point 13 of the external review)', () => {
+    const tag = '<meta name="robots" content="noindex">';
+    const site = (finding: boolean, extra: Record<string, string> = {}) => ({
+      'index.html': '<head></head>',
+      'finding/index.html': finding ? tag : '<head></head>',
+      'es/finding/index.html': finding ? tag : '<head></head>',
+      '404.html': tag,
+      ...extra,
+    });
+
+    it('reads the robots tag', () => {
+      expect(isNoindex(tag)).toBe(true);
+      expect(isNoindex('<meta name="robots" content="noindex, nofollow">')).toBe(true);
+      expect(isNoindex('<meta name="description" content="noindex">')).toBe(false);
+    });
+
+    it('wants /finding hidden while locked and indexed once open; the 404 page always hidden', () => {
+      expect(noindexProblems('in-preparation', site(true))).toEqual([]);
+      expect(noindexProblems('under-review', site(false))).toEqual([]);
+    });
+
+    it('fails /finding indexed while locked, or hidden once open', () => {
+      expect(noindexProblems('in-preparation', site(false))).toEqual([
+        "finding/index.html: no noindex while the status is 'in-preparation'",
+        "es/finding/index.html: no noindex while the status is 'in-preparation'",
+      ]);
+      expect(noindexProblems('under-review', site(true))).toEqual([
+        "finding/index.html: noindex while the status is 'under-review'",
+        "es/finding/index.html: noindex while the status is 'under-review'",
+      ]);
+    });
+
+    it('fails any other page that asks not to be indexed, and a 404 page that does not', () => {
+      expect(noindexProblems('in-preparation', site(true, { 'vanberg/index.html': tag, '404.html': '<head></head>' }))).toEqual([
+        "404.html: no noindex while the status is 'in-preparation'",
+        "vanberg/index.html: noindex while the status is 'in-preparation'",
+      ]);
+    });
+
+    it('sets it in the layout by the lock, on /finding only', () => {
+      expect(baseLayout).toContain("const noindex = route === 'finding' && !findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);");
+      expect(baseLayout).toContain('{noindex && <meta name="robots" content="noindex" />}');
     });
   });
 

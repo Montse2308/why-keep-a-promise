@@ -3,9 +3,9 @@
  * captions and the `film.*` UI strings carry `{name}` placeholders, never a figure of their own, and
  * the build fills them from here. A test fails on a digit written by hand in either.
  *
- * The dilemma's payoffs come from src/lib/pd/ (Axelrod, 1984; docs/sources.md, `axelrod-1984`);
- * the decision's, from Vanberg's game, `PAYOFFS` in src/lib/table/game.ts (`vanberg-payoffs`); the
- * experiment's results, from the exact counts in src/lib/table/ (`vanberg-rates`, `vanberg-beliefs`).
+ * The dilemma's payoffs come from src/lib/pd/ (Axelrod and Hamilton, 1981; docs/sources.md,
+ * `axelrod-hamilton-1981`); the decision's, from Vanberg's game, `PAYOFFS` in src/lib/table/game.ts
+ * (`vanberg-payoffs`); the experiment's results, from the exact counts in src/lib/table/ (`vanberg-rates`, `vanberg-beliefs`).
  */
 import { PAYOFFS as PD } from '../pd/game';
 import { promisedExpectation, scaleValue } from '../table/expectation';
