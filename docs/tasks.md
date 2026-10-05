@@ -760,7 +760,12 @@ de que ninguna satura y de que todas suman a lo más 1.
 
 Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pueden ir antes.
 
-- [ ] **7.5.1** `camera.ts` recibe el área libre en vez de la pantalla entera, con test del encuadre.
+- [x] **7.5.1** `camera.ts` recibe el área libre en vez de la pantalla entera, con test del encuadre.
+      `frame(shot, viewport, free)`: el ancho del plano llena el área libre, su centro queda en el
+      ancla de esa área, y el resto de la pantalla (lo que hay detrás de una tarjeta al costado)
+      muestra más mundo a la misma escala. Si el plano es el vertical lo dice la forma del área
+      libre, no la de la pantalla. Sin área, es la pantalla entera y el encuadre es el de antes
+      (un test lo compara).
 - [ ] **7.5.2** La tarjeta al costado con `(orientation: landscape) and (max-height: 500px)`: a la
       izquierda, ≈ 44 % del ancho, con scroll interno si no cabe; la cámara encuadra el resto.
 - [ ] **7.5.3** El título del capítulo 0 deja de encimarse con las cabezas en horizontal.

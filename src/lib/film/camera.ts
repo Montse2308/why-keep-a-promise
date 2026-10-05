@@ -23,6 +23,15 @@ export interface Viewport {
   readonly height: number;
 }
 
+/**
+ * The part of the screen the cards leave free, in CSS pixels from the screen's top left corner. With
+ * the card at the side (a phone held sideways, ADR 0031), it is the screen right of the card.
+ */
+export interface Area extends Viewport {
+  readonly x: number;
+  readonly y: number;
+}
+
 export interface ViewBox {
   readonly x: number;
   readonly y: number;
@@ -43,19 +52,29 @@ export function isPortrait(viewport: Viewport): boolean {
   return viewport.width / viewport.height < PORTRAIT_BELOW;
 }
 
+/** The whole screen, when no card sits at the side. */
+export const wholeScreen = (viewport: Viewport): Area => ({ x: 0, y: 0, width: viewport.width, height: viewport.height });
+
 /**
- * The viewBox that shows `shot` on `viewport`: the shot's width fills the screen, the height follows
- * the screen's shape, and the centre sits at the anchor. The world is drawn wide and tall enough
- * that any screen shape only shows more sky and floor.
+ * The viewBox that shows `shot` on `viewport`, framed in the `free` area: the shot's width fills the
+ * free area, the centre sits at the anchor of its height, and the rest of the screen (behind a card
+ * at the side) shows more of the world at the same scale. Whether the shot is the portrait one
+ * follows the free area's shape. The world is drawn wide and tall enough that any screen shape only
+ * shows more sky and floor.
  */
-export function frame(shot: Shot, viewport: Viewport): ViewBox {
+export function frame(shot: Shot, viewport: Viewport, free: Area = wholeScreen(viewport)): ViewBox {
   if (!(viewport.width > 0 && viewport.height > 0)) throw new Error('The viewport needs a size');
-  const portrait = isPortrait(viewport);
-  const width = portrait ? shot.widthPortrait : shot.width;
-  const height = (width * viewport.height) / viewport.width;
+  if (!(free.width > 0 && free.height > 0)) throw new Error('The free area needs a size');
+  const portrait = isPortrait(free);
+  const shown = portrait ? shot.widthPortrait : shot.width;
+  /** World units per CSS pixel. */
+  const unit = shown / free.width;
   const anchor = portrait ? ANCHOR.portrait : ANCHOR.landscape;
-  const y = shot.cy - height * anchor;
-  return { x: shot.cx - width / 2, y: shot.top === undefined ? y : Math.min(y, shot.top), width, height };
+  const x = shot.cx - (free.x + free.width / 2) * unit;
+  const y = shot.cy - (free.y + free.height * anchor) * unit;
+  // The shot's top stays in view within the free area, not just within the screen.
+  const highest = shot.top === undefined ? y : Math.min(y, shot.top - free.y * unit);
+  return { x, y: highest, width: viewport.width * unit, height: viewport.height * unit };
 }
 
 export const viewBoxAttribute = (box: ViewBox): string =>

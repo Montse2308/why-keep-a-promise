@@ -100,8 +100,46 @@ describe('camera', () => {
     expect(frame({ ...shot, top: 5000 }, { width: 1440, height: 500 })).toEqual(frame(shot, { width: 1440, height: 500 }));
   });
 
+  it('frames the shot in the free area, and shows the rest of the screen at the same scale', () => {
+    // A phone held sideways, its card on the left (ADR 0031): the shot fills the screen right of it.
+    const screen = { width: 740, height: 360 };
+    const free = { x: 340, y: 0, width: 400, height: 360 };
+    const box = frame(shot, screen, free);
+    const toScreen = (worldX: number) => ((worldX - box.x) / box.width) * screen.width;
+    expect(toScreen(shot.cx)).toBeCloseTo(free.x + free.width / 2, 9);
+    expect(toScreen(shot.cx - shot.width / 2)).toBeCloseTo(free.x, 9);
+    expect(toScreen(shot.cx + shot.width / 2)).toBeCloseTo(free.x + free.width, 9);
+    // The world is not stretched: as many world units per pixel across as down.
+    expect(box.width / screen.width).toBeCloseTo(box.height / screen.height, 9);
+    expect(box.y + box.height * ANCHOR.landscape).toBeCloseTo(shot.cy, 9);
+  });
+
+  it('takes the free area’s shape, not the screen’s, for the portrait shot and the anchor', () => {
+    const screen = { width: 740, height: 360 };
+    const free = { x: 440, y: 0, width: 300, height: 360 };
+    const box = frame(shot, screen, free);
+    expect(box.width).toBeCloseTo((shot.widthPortrait * screen.width) / free.width, 9);
+    expect(box.y + box.height * ANCHOR.portrait).toBeCloseTo(shot.cy, 9);
+  });
+
+  it('keeps the shot’s top inside the free area when it starts lower on the screen', () => {
+    const screen = { width: 740, height: 360 };
+    const free = { x: 340, y: 60, width: 400, height: 300 };
+    const box = frame({ ...shot, top: 0 }, screen, free);
+    const unit = box.height / screen.height;
+    // Framed by its centre alone, the top would sit above the free area, under the card's row.
+    expect(frame(shot, screen, free).y + free.y * unit).toBeGreaterThan(0);
+    expect(box.y + free.y * unit).toBeCloseTo(0, 9);
+  });
+
+  it('frames the whole screen as before when nothing sits at the side', () => {
+    const screen = { width: 1440, height: 900 };
+    expect(frame(shot, screen, { x: 0, y: 0, ...screen })).toEqual(frame(shot, screen));
+  });
+
   it('refuses a screen without a size and prints a compact viewBox', () => {
     expect(() => frame(shot, { width: 0, height: 900 })).toThrow();
+    expect(() => frame(shot, { width: 740, height: 360 }, { x: 740, y: 0, width: 0, height: 360 })).toThrow();
     expect(viewBoxAttribute({ x: 200, y: 155.00001, width: 1200, height: 750 })).toBe('200 155 1200 750');
   });
 });
