@@ -697,6 +697,9 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       candado abierto (`under-review` en local, sin commit). Sin scroll horizontal a 320 px. Videos y
       capturas en `scratch/p7-3/review/` (local, no se versiona), con un README.
 - [ ] **7.3.10 (Montse)** Revisión de P7.3 (el PR).
+      Montse aprobó las capturas, los videos y las tres elecciones del README: el progreso dentro de
+      la pastilla del carrete, la burbuja de tres puntos a la mitad de la llegada y el balanceo en el
+      dado del capítulo 3. Queda que mergee el PR.
 
 ### P7.4 · Sonido (punto 8)
 
