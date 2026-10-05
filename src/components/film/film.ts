@@ -43,6 +43,7 @@ import { scrollPosition, TOTAL_SCREENS } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
 import { fill } from '../../lib/template';
 import { START as NO_PICKS, type CellKey, type Tag } from '../../lib/pd/bestReply';
+import { comingIntoView, SIGHT_CUE, sightsAt, type Sight } from '../../lib/film/sights';
 import type { Cue } from '../../lib/film/sound';
 import { createSound } from './sound';
 import { ROLL_MS, type Clock, type FilmContext, type Thread } from './context';
@@ -222,6 +223,10 @@ function run(): void {
     watch.observe(element);
   };
 
+  /** What the scroll brings that sounds (lib/film/sights.ts): what the stage showed last frame, and what has sounded this visit. */
+  let sightsShown: ReadonlySet<Sight> = new Set();
+  const heard = new Set<Sight>();
+
   let state: StageState = { promised: null, round: null, columns: NO_PICKS, chat: null, decision: UNDECIDED, deck: { choices: [], at: 0 }, bet: null, guesses: {}, now: null, pageKept: null };
   /** When each of the stage's animations last started (context.ts). */
   const clocks: Record<Clock, number> = { draw: 0, count: 0, roll: 0, turn: -Infinity };
@@ -269,6 +274,16 @@ function run(): void {
     const portrait = isPortrait({ width: innerWidth, height: innerHeight });
     const still = reduced.matches;
     const view: StageView = stageAt(p, state, portrait, still);
+
+    // What the scroll brings sounds the first time it comes into view with the sound on (ADR 0030, rule 1).
+    const sights = sightsAt(p, still);
+    if (sound?.on) {
+      for (const sight of comingIntoView(sightsShown, sights, heard)) {
+        heard.add(sight);
+        play(SIGHT_CUE[sight]);
+      }
+    }
+    sightsShown = sights;
 
     const box = frame(view.shot, { width: innerWidth, height: innerHeight });
     set(world, 'viewBox', viewBoxAttribute(box));

@@ -8,9 +8,10 @@
 
 /**
  * The cues: the die in the air and on the table, the chat's bubbles, the seal and a short theme at
- * the end (P6); the chord when the sound is turned on and the coins (ADR 0030).
+ * the end (P6); the chord when the sound is turned on, the coins, and chapter 5's switch, light and
+ * cards (ADR 0030).
  */
-export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme', 'on', 'coins'] as const;
+export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme', 'on', 'coins', 'switch', 'lights-on', 'card'] as const;
 export type Cue = (typeof CUES)[number];
 
 /** What the visitor sees while each cue sounds. */
@@ -22,6 +23,9 @@ export const CUE_SIGHT: Record<Cue, string> = {
   theme: "chapter 8: the credits' last line comes into view",
   on: 'the sound button turns on: its icon changes, and it is pressed',
   coins: 'chapters 1 and 3: the coins appear over each character and are counted',
+  switch: 'chapter 5: the stage goes dark but for the eyes; later, the light flickers for the reveal',
+  'lights-on': 'chapter 5: the light comes back after the blackout, with the triangle in the seat',
+  card: 'chapter 5: the decided card flies off to one side, and the next person comes',
 };
 
 interface Envelope {
@@ -136,6 +140,26 @@ export const SCORE: Record<Cue, readonly Voice[]> = {
   // The coins are counted onto their piles: four clinks over the count (COUNT_MS in film.ts), the
   // same for 0 coins as for 14, so the sound never judges a choice (ADR 0030, rule 3).
   coins: [...clink(0, 0.2), ...clink(0.1, 0.17), ...clink(0.2, 0.15), ...clink(0.32, 0.13)],
+  // A light switch: its click, and the lever settling a moment later.
+  switch: [
+    { kind: 'noise', filter: 'bandpass', frequency: 2600, q: 3, at: 0, attack: 0.001, duration: 0.03, gain: 0.34 },
+    { kind: 'tone', wave: 'sine', from: 1400, to: 700, at: 0, attack: 0.001, duration: 0.03, gain: 0.12 },
+    { kind: 'noise', filter: 'bandpass', frequency: 1700, q: 3, at: 0.05, attack: 0.001, duration: 0.035, gain: 0.2 },
+    { kind: 'tone', wave: 'sine', from: 140, to: 90, at: 0.05, attack: 0.002, duration: 0.08, gain: 0.18 },
+  ],
+  // The light comes back: a soft swell, E rising to G as the lamp warms, and its glow above.
+  'lights-on': [
+    { kind: 'tone', wave: 'sine', from: midiToHz(64), to: midiToHz(67), at: 0, attack: 0.18, duration: 0.75, gain: 0.2 },
+    { kind: 'tone', wave: 'triangle', from: midiToHz(76), at: 0.08, attack: 0.2, duration: 0.6, gain: 0.08 },
+    { kind: 'noise', filter: 'lowpass', frequency: 900, q: 0.5, at: 0, attack: 0.15, duration: 0.5, gain: 0.05 },
+  ],
+  // A card flies off: the paper's flick as it leaves, and the air past it for as long as it flies
+  // (Blackout.astro's 320 ms).
+  card: [
+    { kind: 'noise', filter: 'highpass', frequency: 2800, q: 0.7, at: 0, attack: 0.002, duration: 0.025, gain: 0.18 },
+    { kind: 'noise', filter: 'bandpass', frequency: 1300, q: 1.1, at: 0, attack: 0.12, duration: 0.34, gain: 0.22 },
+    { kind: 'tone', wave: 'sine', from: 520, to: 260, at: 0.02, attack: 0.05, duration: 0.28, gain: 0.08 },
+  ],
   // The credits end on a short phrase, and a low C under its last note.
   theme: [
     ...THEME_NOTES.flatMap(([note, beat, beats]) => bell(note, beat * THEME_BEAT, beats)),

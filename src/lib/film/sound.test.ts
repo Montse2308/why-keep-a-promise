@@ -22,6 +22,7 @@ import {
   THEME_TONIC,
   type Cue,
 } from './sound';
+import { SIGHT_CUE } from './sights';
 
 // The film's script and its chapters' controllers, read as one.
 const film = Object.values(
@@ -73,6 +74,14 @@ describe('the score', () => {
       const sum = SCORE[cue].reduce((total, voice) => total + gainAt(voice, t), 0);
       expect(sum * MASTER_GAIN).toBeLessThan(1);
       expect(sum).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('never clips when two cues sound together either: each peaks under half of full scale (ADR 0030, rule 4)', () => {
+    for (const cue of CUES) {
+      let peak = 0;
+      for (let t = 0; t <= cueLength(cue); t += 0.001) peak = Math.max(peak, SCORE[cue].reduce((total, voice) => total + gainAt(voice, t), 0));
+      expect(peak * MASTER_GAIN, cue).toBeLessThan(0.5);
     }
   });
 
@@ -133,7 +142,10 @@ describe('playing it', () => {
 
   it('plays each cue from the film’s script, where the stage shows it', () => {
     const fromFold = foldCues(true).map(([cue]) => cue);
-    for (const cue of CUES) expect(played(cue) || film.includes(`'${cue}', 0.75)`) || fromFold.includes(cue), cue).toBe(true);
+    const fromScroll = Object.values(SIGHT_CUE);
+    for (const cue of CUES) expect(played(cue) || film.includes(`'${cue}', 0.75)`) || fromFold.includes(cue) || fromScroll.includes(cue), cue).toBe(true);
+    // What the scroll brings sounds once, as it comes into view (./sights.ts).
+    expect(film).toMatch(/if \(sound\?\.on\) \{\s*for \(const sight of comingIntoView\(sightsShown, sights, heard\)\) \{\s*heard\.add\(sight\);\s*play\(SIGHT_CUE\[sight\]\);/);
     // The seal and the credits' last line sound when they come into view, once.
     expect(film).toContain("film.onSight(film.root.querySelector('[data-envelope] .envelope__seal'), 'stamp', 0.75);");
     expect(film).toContain("film.onSight(film.root.querySelector('.credits__end'), 'theme', 0.75);");
@@ -145,6 +157,10 @@ describe('playing it', () => {
 
   it('counts chapter 1’s coins as they appear, with the round', () => {
     expect(film).toMatch(/film\.update\(\{ round: playRound\([^]*?film\.begin\('count'\);\s*film\.play\('coins'\);/);
+  });
+
+  it('flies each card of the deck with its sound, but the last, which stays, and not with reduced motion', () => {
+    expect(film).toMatch(/if \(!next\) return;\s*card\.dataset\.gone = choice;[^]*?if \(!film\.reduced\.matches\) film\.play\('card'\);/);
   });
 
   it('plays chapter 3’s coins after the die’s knock, not on top of it', () => {

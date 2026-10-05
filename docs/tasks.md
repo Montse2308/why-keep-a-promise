@@ -716,8 +716,16 @@ de que ninguna satura y de que todas suman a lo más 1.
       suenan al jugar la ronda; en el 3, al caer la decisión, y si tiró el dado, cuando termina su
       golpe (`foldCues`). El reproductor programa una señal con retraso en el reloj de Web Audio
       (`play(cue, after)`), sin temporizadores.
-- [ ] **7.4.3** El interruptor del apagón y del parpadeo, la luz que vuelve y la carta que vuela
+- [x] **7.4.3** El interruptor del apagón y del parpadeo, la luz que vuelve y la carta que vuela
       (capítulo 5: `switch`, `lights-on` y `card`).
+      `switch` es el clic del interruptor y su palanca; `lights-on`, una subida suave de mi a sol;
+      `card`, el aire de la carta mientras vuela (los 320 ms de `Blackout.astro`). Lo que trae el
+      scroll vive en `src/lib/film/sights.ts`: cada tramo es el del escenario (`stage.ts`), y el
+      cuadro suena lo que acaba de entrar a la vista con el sonido encendido, una vez por visita. Los
+      tramos no se enciman, y un test comprueba en toda la película, con y sin movimiento reducido,
+      que mientras suena cada uno el escenario lo muestra. Con movimiento reducido los cortes saltan
+      el apagón y el parpadeo (no se ven), así que no suenan; la carta tampoco, porque no vuela. Otro
+      test: cada señal llega a menos de la mitad de la escala, así que ni dos juntas saturan.
 - [ ] **7.4.4** El letrero que enciende su cifra (capítulo 6, `sign`) y el hilo que se rompe
       (capítulo 3, `snap`, antes de las monedas).
 - [ ] **7.4.5** Las dos voces que llegan (capítulo 4, `voices`), y el test de que las señales del

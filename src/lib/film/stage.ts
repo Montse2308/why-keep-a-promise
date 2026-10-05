@@ -186,16 +186,16 @@ const VOICES_IN = entering('two-voices', 'voices');
  * seat for another table and the triangle sits down; then the lights come back.
  */
 const BLACKOUT = beatRange('blackout', 'blackout').from;
-const LIGHTS_OUT = [BLACKOUT - 0.8, BLACKOUT - 0.4] as const;
-const LIGHTS_ON = [BLACKOUT + 0.05, BLACKOUT + 0.45] as const;
+export const LIGHTS_OUT = [BLACKOUT - 0.8, BLACKOUT - 0.4] as const;
+export const LIGHTS_ON = [BLACKOUT + 0.05, BLACKOUT + 0.45] as const;
 const SWAP = [LIGHTS_OUT[1], LIGHTS_ON[0]] as const;
 const WIDER = [BLACKOUT - 0.9, BLACKOUT - 0.4] as const;
 const DECK_IN = entering('blackout', 'deck');
 /** The visitor receives at the table as it was; then the lights flicker and the seats change again. */
 const RECEIVE_IN = entering('blackout', 'receive');
 const REVEAL = beatRange('blackout', 'reveal').from;
-const FLICKER_OUT = [REVEAL - 0.75, REVEAL - 0.55] as const;
-const FLICKER_ON = [REVEAL - 0.25, REVEAL + 0.05] as const;
+export const FLICKER_OUT = [REVEAL - 0.75, REVEAL - 0.55] as const;
+export const FLICKER_ON = [REVEAL - 0.25, REVEAL + 0.05] as const;
 const REVEAL_SWAP = [FLICKER_OUT[1], FLICKER_ON[0]] as const;
 /**
  * Chapter 6. Back at the table as it was, two signs come down over it; each figure shows when the
