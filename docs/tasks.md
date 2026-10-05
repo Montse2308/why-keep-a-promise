@@ -651,9 +651,16 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       lado, y así la pastilla no crece. El texto oculto es el aprobado en 7.0.3, «Chapter {n} of 8» /
       «Capítulo {n} de 8» (clave `film.progress`, con el 8 salido del código); queda fuera de la región
       `aria-live` del carrete, para que no se anuncie a cada capítulo.
-- [ ] **7.3.4** Vida en reposo, el mecanismo: sin un ciclo siempre encendido; se pausa durante el
+- [x] **7.3.4** Vida en reposo, el mecanismo: sin un ciclo siempre encendido; se pausa durante el
       scroll, con la pestaña oculta y con movimiento reducido, y no obliga a repintar los filtros
       SVG del escenario (riesgo del punto 3). Primero el parpadeo cada pocos segundos.
+      `src/lib/film/idle.ts`, puro y con test: no corre solo; el ciclo de cuadros de la película, que
+      ya corría mientras se ve, le pregunta qué mostrar según cuánto lleva quieto el scroll (1.2 s de
+      espera). El scroll, un cambio de tamaño o volver a la pestaña lo reinician; con la pestaña oculta
+      no hay cuadros. Solo mueve los ojos, que no llevan filtro. Cada personaje parpadea con su propio
+      reloj (cada 3 a 5 s, nunca dos a la vez). Además, con movimiento reducido el ciclo ya no pide
+      cuadros si nada se mueve (antes corría siempre): 0 cuadros en 9 s quieto, y las pupilas dejan de
+      seguir al puntero.
 - [ ] **7.3.5** El leve balanceo del dado, y la mirada del cuadrado mientras espera: al círculo y
       luego al boleto.
 - [ ] **7.3.6** La llegada: algo cambia a la mitad del tramo, sin cambiar su largo de 3 pantallas
