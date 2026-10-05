@@ -541,7 +541,7 @@ empezar en cuanto se cierre P6, sin esperar a P7.0.
 - [x] **7.1.4** Lo mismo con los capítulos 6 a 8 (`real-people`, `my-research`, `closing`). Recorrido
       «después» igual a la referencia de 7.1.1: los 21 pasos con el mismo estado a 1440 y 360 px, y con
       movimiento reducido las mismas capturas, byte a byte.
-- [ ] **7.1.5** Respaldo, parte 1: `BaseLayout.astro` pone la clase `js` solo si el navegador corre
+- [x] **7.1.5** Respaldo, parte 1: `BaseLayout.astro` pone la clase `js` solo si el navegador corre
       módulos.
 - [ ] **7.1.6** Respaldo, parte 2: `start()` marca `data-film-ready` y, si lanza un error, quita
       `js`; un temporizador de unos 4 s quita `js` si la película nunca arrancó. Verificar

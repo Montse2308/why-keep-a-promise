@@ -19,8 +19,8 @@ interface Props {
   codeFont?: boolean;
   /**
    * The page opens on the film (the home, ADR 0021): mark `html.js` before the first paint so the
-   * film's layout applies at once, and float the corner over the stage, with the notebook's button
-   * held in it for the whole film.
+   * film's layout applies at once (only where modules run, since the film's script is one), and
+   * float the corner over the stage, with the notebook's button held in it for the whole film.
    */
   film?: boolean;
 }
@@ -59,7 +59,8 @@ const consoleLine = fill(t(locale, 'console.line'), { url: absoluteHref(site, lo
     <meta property="og:image:height" content={String(POSTER.height)} />
     <meta property="og:image:alt" content={posterAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    {film && <script is:inline>document.documentElement.classList.add('js');</script>}
+    {/* Only a browser that runs the film's module gets the film's layout; any other keeps the storyboard. */}
+    {film && <script is:inline>if ('noModule' in HTMLScriptElement.prototype) document.documentElement.classList.add('js');</script>}
     {titleFont && <link rel="preload" href={titleFont.url} as="font" type="font/woff2" crossorigin />}
     {textFont && <link rel="preload" href={textFont.url} as="font" type="font/woff2" crossorigin />}
     <Font cssVariable="--font-display" />
