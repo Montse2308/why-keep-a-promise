@@ -30,7 +30,7 @@ life at rest, the arrival halfway, «Watch again» and the end melting into the 
 waits for Montse's review (7.3.10). P7.4 (the new sound cues) and P7.5 (the side card with a phone
 held sideways, the notebook's transitions) are closed. P7.6 (the hills without a shadow filter,
 still frames that draw only what their pose shows, chapter 4's citation line, the EN/ES switch in
-the notebook's panel, the author's signature on the posters) is done and waits for Montse's review
+the notebook's panel, the author's signature on the posters) is closed; Montse approved it
 (7.6.11). Then P7.7, F5 (QA) and F6 (launch). The film tells all nine chapters, chapter 7's finding
 behind the lock, and ends in chapter 8's credits, with «Watch again» under them; it has its sound,
 off until pressed, its progress under the spool, its cast alive at rest, and remembers what was

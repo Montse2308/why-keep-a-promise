@@ -891,7 +891,9 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
       home baja de 214,4 a 175,2 KiB (ES: de 215,5 a 175,8); la regla (h) y la paridad, en verde
       con los demás tests. Capturas y README en `scratch/p7-6/review/`; el README termina con lo que
       Montse tiene que decidir en 7.6.11.
-- [ ] **7.6.11 (Montse)** Revisión de P7.6 (el PR).
+- [x] **7.6.11 (Montse)** Revisión de P7.6 (el PR).
+      Montse aprobó todo: las colinas sin sombra, los textos nuevos del capítulo 4, EN/ES bajo el
+      título del panel y la firma de los pósteres con su texto alternativo. Queda que mergee el PR.
 
 ### P7.7 · Cierre y entrega a F5 (punto 5 y el resto del 6)
 
