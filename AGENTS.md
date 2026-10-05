@@ -20,16 +20,17 @@ It is **not** a simulator and **not** the instrument of a paper. Details: `docs/
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
 (P6, the polish, with PR #9). The active phase is P7, the fixes from an external review, planned in
 small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`.
-P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1 (the film's
-script split by chapter, the fallback to the storyboard, the memory in the tab) is done and waits
-for Montse's review (7.1.13). P7.2 (each page's description and Open Graph metadata, the 404 page,
-`noindex` on the locked /finding, the sitemap, the touch icon, Axelrod and Hamilton (1981) as the
-dilemma's source) is done up to Montse's steps (7.2.9 and 7.2.11). Then the rest of P7, F5 (QA) and F6 (launch). The film tells all nine
-chapters, chapter 7's finding behind the lock, and ends in chapter 8's credits; it has its sound, off
-until pressed, and remembers what was played in its tab entry. The
-notebook has its six pages, its panel on every page (with the finding's entry: its title and the
-status sentence), its magnifiers in the film and its footer. Every page has its poster for a shared
-link, and every build is weighed against the budgets.
+P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
+script split by chapter, the fallback to the storyboard and the memory in the tab, is closed
+(PR #11). P7.2 (each page's description and Open Graph metadata, the 404 page, `noindex` on the
+locked /finding, the sitemap, the touch icon, Axelrod and Hamilton (1981) as the dilemma's source)
+is done and waits for Montse's two steps: checking 70 and 68 against `switch.dat` (7.2.9) and the
+review (7.2.11). Then the rest of P7, F5 (QA) and F6 (launch). The film tells all nine chapters,
+chapter 7's finding behind the lock, and ends in chapter 8's credits; it has its sound, off until
+pressed, and remembers what was played in its tab entry. The notebook has its six pages, its panel
+on every page (with the finding's entry: its title and the status sentence), its magnifiers in the
+film and its footer. Every page has its description, its poster for a shared link and its place in
+the sitemap (/finding only behind the lock), and every build is weighed against the budgets.
 
 ## Reading order
 

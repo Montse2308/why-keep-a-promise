@@ -566,7 +566,7 @@ empezar en cuanto se cierre P6, sin esperar a P7.0.
       jugado completo; una pestaña nueva empieza vacía; sin JS, con el script bloqueado, con error o
       tardío se ve el storyboard; el JS del home pesa 17.7 KiB de 40. Capturas en `scratch/p7-1/review/`
       (local, no se versiona).
-- [ ] **7.1.13 (Montse)** Revisión de P7.1 (el PR).
+- [x] **7.1.13 (Montse)** Revisión de P7.1 (el PR #11, mergeado).
 
 ### P7.2 · Metadatos, SEO y datos (puntos 4, 13 y 6)
 
@@ -613,13 +613,21 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       su pie y *w* (la probabilidad de volver a encontrarse), p. 1392; el torneo, p. 1393; la nota
       17, p. 1396. La página de *w* no estaba en el ADR 0033: se tomó de la misma copia de JSTOR.
 - [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
-      puede, decide cómo queda registrado.
+      puede, decide cómo queda registrado. Lo que hay que ver: la suma de lo que apostaron los
+      receptores con una promesa, en la escala de 0 a 1 en cuartos, da 215 sobre 309 sin cambio de
+      pareja y 200.5 sobre 294 con cambio (`docs/sources.md`, `vanberg-beliefs`). No bloquea el PR
+      de P7.2: si coincide, sale el `PENDIENTE(datos)` de `docs/sources.md` y de P3.
 - [x] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
       revisión de las 14 cabeceras y capturas para Montse. En los dos estados pasan `check`, `test`,
       `build`, `verify:dist` y `budgets`; abierto, `/finding` pierde el `noindex` y entra al sitemap
       (14 entradas; cerrado, 12). Las 15 cabeceras (las 14 y la 404) y las capturas a 360 y 1440 px,
       en `scratch/p7-2/review/` (local, no se versiona), con un README.
-- [ ] **7.2.11 (Montse)** Revisión de P7.2 (el PR).
+- [ ] **7.2.11 (Montse)** Revisión de P7.2 (el PR). Además de las capturas, confirma o corrige:
+      - los textos nuevos de la 404: «Page not found» / «Página no encontrada» y «There is nothing
+        at this address.» / «En esta dirección no hay nada.»;
+      - `es_MX` como el español de Open Graph (o `es_ES`, u otro: es una línea de `src/lib/meta.ts`);
+      - la línea «En la fuente» de Axelrod y Hamilton (1981): «La figura 1 y su pie, y la
+        probabilidad de volver a encontrarse, p. 1392; el torneo, p. 1393; la nota 17, p. 1396.»
 
 ### P7.3 · La película: experiencia (puntos 7, 9, 10 y 11)
 
