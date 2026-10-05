@@ -711,7 +711,11 @@ de que ninguna satura y de que todas suman a lo más 1.
       menos de un segundo. Suena cada vez que se enciende, al pulsar el botón; al apagarlo, nada. El
       test lee la lista cerrada de la tabla del ADR 0030 y comprueba que solo suenen señales de ella,
       y que todas menos el tema duren menos de un segundo.
-- [ ] **7.4.2** Las monedas (capítulos 1 y 3).
+- [x] **7.4.2** Las monedas (capítulos 1 y 3).
+      `coins`: cuatro tintineos en lo que dura la cuenta, iguales con 0 que con 14. En el capítulo 1
+      suenan al jugar la ronda; en el 3, al caer la decisión, y si tiró el dado, cuando termina su
+      golpe (`foldCues`). El reproductor programa una señal con retraso en el reloj de Web Audio
+      (`play(cue, after)`), sin temporizadores.
 - [ ] **7.4.3** El interruptor del apagón y del parpadeo, la luz que vuelve y la carta que vuela
       (capítulo 5: `switch`, `lights-on` y `card`).
 - [ ] **7.4.4** El letrero que enciende su cifra (capítulo 6, `sign`) y el hilo que se rompe

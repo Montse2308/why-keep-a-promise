@@ -202,8 +202,8 @@ function run(): void {
   }
   /** While the film plays its memory back (ADR 0029), nothing sounds, moves or waits. */
   let replaying = false;
-  const play = (cue: Cue): void => {
-    if (!replaying) sound?.play(cue);
+  const play = (cue: Cue, after = 0): void => {
+    if (!replaying) sound?.play(cue, after);
   };
   /**
    * A cue for something that comes into view: it sounds the first time it is seen with the sound on.

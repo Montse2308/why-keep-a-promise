@@ -27,8 +27,8 @@ export interface FilmContext {
   readonly begin: (clock: Clock) => void;
   /** Asks for a frame. */
   readonly request: () => void;
-  /** Sounds a cue, if the sound is on. */
-  readonly play: (cue: Cue) => void;
+  /** Sounds a cue now, or `after` seconds from now, if the sound is on. */
+  readonly play: (cue: Cue, after?: number) => void;
   /** A cue for something that comes into view: it sounds the first time it is seen with the sound on. */
   readonly onSight: (element: Element | null | undefined, cue: Cue, threshold: number) => void;
   /** The spool in the corner: the thread's state, in words too. */

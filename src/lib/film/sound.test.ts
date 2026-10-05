@@ -10,6 +10,7 @@ import {
   CUES,
   cueLength,
   envelopePoints,
+  foldCues,
   gainAt,
   MASTER_GAIN,
   midiToHz,
@@ -131,13 +132,27 @@ describe('playing it', () => {
   const played = (cue: Cue) => film.includes(`play('${cue}')`);
 
   it('plays each cue from the film’s script, where the stage shows it', () => {
-    for (const cue of CUES) expect(played(cue) || film.includes(`'${cue}', 0.75)`), cue).toBe(true);
+    const fromFold = foldCues(true).map(([cue]) => cue);
+    for (const cue of CUES) expect(played(cue) || film.includes(`'${cue}', 0.75)`) || fromFold.includes(cue), cue).toBe(true);
     // The seal and the credits' last line sound when they come into view, once.
     expect(film).toContain("film.onSight(film.root.querySelector('[data-envelope] .envelope__seal'), 'stamp', 0.75);");
     expect(film).toContain("film.onSight(film.root.querySelector('.credits__end'), 'theme', 0.75);");
     expect(film).toContain("play('roll');");
-    expect(film).toContain("if (decision.phase === 'outcome' && decision.face !== null) film.play('land');");
+    // Chapter 3's decision lands: the die's knock if it was thrown, then the coins.
+    expect(film).toContain('for (const [cue, after] of foldCues(decision.face !== null)) film.play(cue, after);');
     expect(film).toContain("play('bubbles');");
+  });
+
+  it('counts chapter 1’s coins as they appear, with the round', () => {
+    expect(film).toMatch(/film\.update\(\{ round: playRound\([^]*?film\.begin\('count'\);\s*film\.play\('coins'\);/);
+  });
+
+  it('plays chapter 3’s coins after the die’s knock, not on top of it', () => {
+    expect(foldCues(false)).toEqual([['coins', 0]]);
+    expect(foldCues(true)).toEqual([
+      ['land', 0],
+      ['coins', cueLength('land')],
+    ]);
   });
 
   it('stays silent until the visitor presses the button, which shows only where Web Audio exists', () => {

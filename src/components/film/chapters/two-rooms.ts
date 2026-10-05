@@ -16,6 +16,7 @@ export function twoRooms(film: FilmContext): void {
       const move = button.dataset.round as Move;
       film.update({ round: playRound(film.state().round ?? null, move) });
       film.begin('count');
+      film.play('coins');
       settle(roundTickets, button);
       if (roundOut) roundOut.textContent = button.dataset.said ?? '';
       film.note({ type: 'round', move });

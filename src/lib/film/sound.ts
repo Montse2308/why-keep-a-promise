@@ -8,9 +8,9 @@
 
 /**
  * The cues: the die in the air and on the table, the chat's bubbles, the seal and a short theme at
- * the end (P6); the chord when the sound is turned on (ADR 0030).
+ * the end (P6); the chord when the sound is turned on and the coins (ADR 0030).
  */
-export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme', 'on'] as const;
+export const CUES = ['roll', 'land', 'bubbles', 'stamp', 'theme', 'on', 'coins'] as const;
 export type Cue = (typeof CUES)[number];
 
 /** What the visitor sees while each cue sounds. */
@@ -21,6 +21,7 @@ export const CUE_SIGHT: Record<Cue, string> = {
   stamp: "chapter 7: the envelope's seal comes into view",
   theme: "chapter 8: the credits' last line comes into view",
   on: 'the sound button turns on: its icon changes, and it is pressed',
+  coins: 'chapters 1 and 3: the coins appear over each character and are counted',
 };
 
 interface Envelope {
@@ -94,6 +95,13 @@ function bell(note: number, at: number, beats: number): Voice[] {
 /** A tick of the die's corner on the air: a short, bright burst. */
 const tick = (at: number, gain: number): Noise => ({ kind: 'noise', filter: 'bandpass', frequency: 3200, q: 2.5, at, attack: 0.002, duration: 0.035, gain });
 
+/** A coin set on its pile: two bright partials that do not make a chord, ringing briefly, and the touch. */
+const clink = (at: number, gain: number): Voice[] => [
+  { kind: 'tone', wave: 'sine', from: 2637, at, attack: 0.002, duration: 0.14, gain },
+  { kind: 'tone', wave: 'sine', from: 3729, at, attack: 0.002, duration: 0.09, gain: gain * 0.5 },
+  { kind: 'noise', filter: 'highpass', frequency: 3000, q: 0.7, at, attack: 0.001, duration: 0.02, gain: gain * 0.6 },
+];
+
 export const SCORE: Record<Cue, readonly Voice[]> = {
   // The die is tossed: a lift in pitch as it leaves the hand, the air past it, and its corners
   // turning, for the second it spins (ROLL_MS in film.ts).
@@ -125,6 +133,9 @@ export const SCORE: Record<Cue, readonly Voice[]> = {
   // The sound is turned on: the theme's first two notes, G and C, together, so the visitor hears at
   // once that it is on.
   on: ON_NOTES.flatMap((note) => bell(note, 0, ON_BEATS)),
+  // The coins are counted onto their piles: four clinks over the count (COUNT_MS in film.ts), the
+  // same for 0 coins as for 14, so the sound never judges a choice (ADR 0030, rule 3).
+  coins: [...clink(0, 0.2), ...clink(0.1, 0.17), ...clink(0.2, 0.15), ...clink(0.32, 0.13)],
   // The credits end on a short phrase, and a low C under its last note.
   theme: [
     ...THEME_NOTES.flatMap(([note, beat, beats]) => bell(note, beat * THEME_BEAT, beats)),
@@ -157,4 +168,20 @@ export function gainAt(voice: Voice, t: number): number {
 /** How long a cue lasts, in seconds. */
 export function cueLength(cue: Cue): number {
   return Math.max(...SCORE[cue].map((voice) => voice.at + voice.duration));
+}
+
+/**
+ * Chapter 3's cues once the decision lands, each with its delay in seconds: if the die was thrown,
+ * its knock, and the coins once the knock is over, so they never sound on top of each other
+ * (ADR 0030, rule 4).
+ */
+export function foldCues(thrown: boolean): readonly (readonly [cue: Cue, after: number])[] {
+  const cues: [Cue, number][] = [];
+  let at = 0;
+  if (thrown) {
+    cues.push(['land', at]);
+    at += cueLength('land');
+  }
+  cues.push(['coins', at]);
+  return cues;
 }

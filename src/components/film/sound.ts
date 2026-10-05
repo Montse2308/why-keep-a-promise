@@ -9,8 +9,8 @@ export interface Sound {
   readonly on: boolean;
   /** Turns the sound on or off; returns whether it is on now. */
   toggle(): boolean;
-  /** Plays a cue now, if the sound is on. */
-  play(cue: Cue): void;
+  /** Plays a cue now, or `after` seconds from now, if the sound is on. */
+  play(cue: Cue, after?: number): void;
 }
 
 type AudioContextClass = typeof AudioContext;
@@ -91,9 +91,9 @@ export function createSound(): Sound | null {
       }
       return on;
     },
-    play(cue) {
+    play(cue, after = 0) {
       if (!on || !ctx || !master) return;
-      const start = ctx.currentTime + 0.01;
+      const start = ctx.currentTime + 0.01 + after;
       for (const v of SCORE[cue]) voice(ctx, master, v, start);
     },
   };
