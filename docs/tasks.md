@@ -832,8 +832,13 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
       en el borde de las colinas (delta máximo 7 de 255); las capturas están en
       `scratch/p7-6/review/7.6.1-*`.
 
-- [ ] **7.6.2** Referencia: medir el HTML del home y los nodos de cada cuadro quieto (hoy unos 460 de
+- [x] **7.6.2** Referencia: medir el HTML del home y los nodos de cada cuadro quieto (hoy unos 460 de
       los 540 KB del HTML y 4 985 nodos) y sacar capturas sin JS de los 9 cuadros, en `scratch/`.
+      Medido después de 7.6.1, con el candado cerrado: el home en inglés pesa 544 497 B (68 176 B
+      con gzip) y tiene 5 013 nodos; los 9 cuadros quietos suman 418 087 B y 3 672 nodos, 408 cada
+      uno, porque cada cuadro dibuja el mundo entero. En español, 545 138 B (69 256 con gzip). Con
+      el candado abierto, 565 731 B y 5 248 nodos, con los mismos cuadros. Las capturas (EN y ES,
+      360 y 1440 px, los dos estados del candado) están en `scratch/p7-6/ref/`.
 - [ ] **7.6.3** Cuadros quietos 0 a 2 con solo lo que se ve en su pose; capturas iguales a la
       referencia.
 - [ ] **7.6.4** Lo mismo con los cuadros 3 a 5.
