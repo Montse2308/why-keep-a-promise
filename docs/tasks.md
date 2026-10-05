@@ -808,8 +808,15 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
       (Firefox) lo cierra de golpe, como antes. Sin JS nuevo. Probado con clics reales a 1440 y
       360 px, en una página del cuaderno y en el home: por el botón de cerrar, el fondo y Esc, sale
       deslizándose y el foco vuelve al botón; con movimiento reducido abre y cierra sin moverse.
-- [ ] **7.5.7** Capturas a 740×360, 844×390, 1024×768 y 1440×900; sin scroll horizontal a 320 px;
+- [x] **7.5.7** Capturas a 740×360, 844×390, 1024×768 y 1440×900; sin scroll horizontal a 320 px;
       presupuestos en verde.
+      En `scratch/p7-5/review/` (local), con un README que termina con lo que Montse decide al
+      revisar: la película entera en los cuatro tamaños (más 844 × 390 en español y 740 × 360 con
+      movimiento reducido), el panel a mitad de entrar y de salir, la transición entre páginas a
+      mitad, y las salidas de las pruebas con clics reales. A 1024 × 768 y 1440 × 900 la película no
+      cambia. Sin scroll horizontal en las 14 páginas a 320 × 700, 568 × 320 y 740 × 360. Los
+      presupuestos: JS del home 20.1 KiB (≤ 40), fuentes 118.6 KiB (158.0 en /how-its-built, ≤ 160) y
+      primera carga del home 214.4 KiB (≤ 450).
 - [ ] **7.5.8 (Montse)** Revisión de P7.5 (el PR).
 
 ### P7.6 · Contenido, peso y pintura (el resto del punto 16 y el mínimo del 3)
