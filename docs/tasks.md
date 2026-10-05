@@ -927,7 +927,17 @@ Dep.: todas las subfases anteriores.
       el registro difiera del build (a la décima de KiB que muestra la tabla), y de Lighthouse queda
       solo el LCP. La línea de fuente bajo la tabla dice de dónde sale cada cosa. `/how-its-built`
       dice ahora 20.1, 118.6 y 175.2 KiB (en ES, 175.8), lo mismo que `npm run budgets`.
-- [ ] **7.7.4** Revisión completa, parte 1: 1440, 360 y 320 px, horizontal, EN/ES.
+- [x] **7.7.4** Revisión completa, parte 1: 1440, 360 y 320 px, horizontal, EN/ES.
+      Sobre el build cerrado. La película, jugada entera con toques reales (las 21 interacciones)
+      a 1440 × 900, 360 × 740, 320 × 640 y 844 × 390 en EN y ES, y a 740 × 360 en EN: todo se
+      alcanzó con un toque. Ninguna de las 15 páginas tiene scroll horizontal a 1440, 360, 320,
+      568 × 320 ni 844 × 390. El cuaderno y su panel, a los tres anchos, en claro y oscuro.
+      Hallazgos: (1) la tabla de pagos de `/dilemma` no cabe a 360 px (sobran 13 px en EN y 19 en
+      ES) ni a 320 (53 y 59); se desliza dentro de su recuadro, se ve cortada y no se alcanza con el
+      teclado (sin `tabindex`). (2) En el celular, una tarjeta que sale por arriba pasa sobre el
+      carrete y el sonido (el cuaderno queda encima). Con la tarjeta quieta en su lugar nada tapa el
+      tablero. Capturas y README en `scratch/p7-7/review/`; el README termina con lo que Montse
+      tiene que decidir de cada hallazgo.
 - [ ] **7.7.5** Revisión completa, parte 2: teclado, movimiento reducido, sin JS y script bloqueado.
 - [ ] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
 - [ ] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
