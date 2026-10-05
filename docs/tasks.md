@@ -817,7 +817,8 @@ Dep.: P7.3 y ADR 0031 (7.0.10). 7.5.5 y 7.5.6 no dependen de la película y pued
       cambia. Sin scroll horizontal en las 14 páginas a 320 × 700, 568 × 320 y 740 × 360. Los
       presupuestos: JS del home 20.1 KiB (≤ 40), fuentes 118.6 KiB (158.0 en /how-its-built, ≤ 160) y
       primera carga del home 214.4 KiB (≤ 450).
-- [ ] **7.5.8 (Montse)** Revisión de P7.5 (el PR).
+- [x] **7.5.8 (Montse)** Revisión de P7.5 (el PR).
+      Montse la dio por hecha. Queda que mergee el PR.
 
 ### P7.6 · Contenido, peso y pintura (el resto del punto 16 y el mínimo del 3)
 
