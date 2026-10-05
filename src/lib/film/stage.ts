@@ -168,6 +168,12 @@ function entering(chapter: ChapterId, beat: string): readonly [number, number] {
 /** How far a point (in screens) has gone through a stretch, eased. */
 const eased = (screens: number, [from, to]: readonly [number, number]): number => easeInOut(progress(screens, from, to));
 
+/**
+ * Chapter 0, halfway through its three screens, once the camera has closed in: while the visitor
+ * has not answered, the other's bubble comes up with its three dots, still waiting, so the stretch
+ * does not stand still. It goes as the rooms come.
+ */
+export const WAITING = [1.8, 2.05] as const;
 const INTO_ROOMS = entering('two-rooms', 'rooms');
 const BOARD_DOWN = entering('two-rooms', 'columns');
 const TRAP = entering('two-rooms', 'trap');
@@ -274,12 +280,13 @@ function poseOf(chapter: ChapterId, beat: string): number {
 /**
  * With reduced motion the stage cuts between still poses instead of moving (ADR 0027): from each
  * cut's point on, everything that moves stands where it stands at the cut's pose. In screens.
- * Chapter 0 cuts once, from the wide shot of the title to the table; every later beat cuts as its
- * card takes the stage.
+ * Chapter 0 cuts from the wide shot of the title to the table, and halfway to the other still
+ * waiting for an answer; every later beat cuts as its card takes the stage.
  */
 export const CUTS: readonly { readonly from: number; readonly pose: number }[] = [
   { from: 0, pose: 0 },
   { from: 0.9, pose: 1.8 },
+  { from: WAITING[0], pose: WAITING[1] + 0.1 },
   ...BEATS.filter((range) => range.chapter !== 'arrival').map((range) => ({ from: range.from - LEAD, pose: poseOf(range.chapter, range.beat.id) })),
 ];
 
@@ -668,7 +675,8 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
   // the visitor receives (chapter 5), the other speaks again: the promise it makes them.
   const talking = eased(m, CHAT) * (1 - eased(m, [OUT_OF_ROOMS[0], OUT_OF_ROOMS[0] + 0.5]));
   const promising = eased(m, RECEIVE_IN) * (1 - eased(m, REVEAL_SWAP));
-  const bubbles = { you: state.chat ? talking : 0, other: Math.max(talking, promising) };
+  const waiting = state.promised == null ? eased(m, WAITING) * (1 - eased(m, [INTO_ROOMS[0], INTO_ROOMS[0] + 0.3])) : 0;
+  const bubbles = { you: state.chat ? talking : 0, other: Math.max(talking, promising, waiting) };
   // The die floats over the table in chapter 0 and leaves with the rooms; it comes back out of the
   // board's fold and rests on the table for the decision, until chapter 7's engine takes its place.
   // In chapter 8 the engine goes back up, and the die floats again, showing its face of chapter 0.

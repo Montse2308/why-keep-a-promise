@@ -2,7 +2,7 @@
  * Chapter 8's controller (Closing.astro). The other asks one last time: it is only an answer, the
  * promise of chapter 0 is settled with it, and nothing is paid. Then the visitor says whether the
  * page kept its own promise, the one it made at the arrival. With the sound on, the end of the
- * credits sounds when it comes into view.
+ * credits sounds when it comes into view. «Watch again», under them, starts the film over, empty.
  */
 import type { Choice } from '../../../lib/table/game';
 import { settle, settled, type FilmContext } from '../context';
@@ -41,4 +41,11 @@ export function closing(film: FilmContext): void {
   film.onReplay('page', ({ kept }) => film.root.querySelector<HTMLButtonElement>(`[data-page-kept="${kept ? 'yes' : 'no'}"]`)?.click());
 
   film.onSight(film.root.querySelector('.credits__end'), 'theme', 0.75);
+
+  // «Watch again» is a plain link to the film. Followed in this tab, it leaves no memory behind; opened
+  // in another tab (a modifier, or not the main button), this one keeps what was played.
+  film.root.querySelector('[data-film-again]')?.addEventListener('click', (event) => {
+    if (!(event instanceof MouseEvent) || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    film.forget();
+  });
 }

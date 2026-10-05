@@ -8,10 +8,13 @@
  * wired by its controller (./chapters/*.ts, through ./context.ts): every line a choice leads to was
  * resolved at build time, so the script only shows it. What the visitor did stays in this tab's
  * history entry, and nothing is sent (ADR 0029). With the sound on (./sound.ts), the die, the
- * chat's bubbles, the seal and the end of the credits sound as the stage shows them (ADR 0025).
+ * chat's bubbles, the seal and the end of the credits sound as the stage shows them (ADR 0025). While
+ * the scroll rests, the cast comes to life (src/lib/film/idle.ts); with reduced motion nothing moves,
+ * and the frames stop until the page asks for one.
  */
 import { frame, isPortrait, viewBoxAttribute } from '../../lib/film/camera';
 import { FACES, type Mood } from '../../lib/film/faces';
+import { blinking, blinkTransform, GAZE_LOOK, gazeAt, rockAt, rockTransform } from '../../lib/film/idle';
 import { noteFor } from '../../lib/film/board';
 import {
   boardOpacity,
@@ -35,8 +38,10 @@ import {
 import { signTransform } from '../../lib/film/signs';
 import { lookAt } from '../../lib/film/voices';
 import { brokenBetween, stageAt, threadBetween, type Place, type StageState, type StageView } from '../../lib/film/stage';
-import { scrollPosition } from '../../lib/film/timeline';
+import { progressAt } from '../../lib/film/progress';
+import { scrollPosition, TOTAL_SCREENS } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
+import { fill } from '../../lib/template';
 import { START as NO_PICKS, type CellKey, type Tag } from '../../lib/pd/bestReply';
 import type { Cue } from '../../lib/film/sound';
 import { createSound } from './sound';
@@ -57,6 +62,8 @@ const DRAW_MS = 800;
 const COUNT_MS = 450;
 /** How long a card's person takes to slide into the seat. */
 const SLIDE_MS = 520;
+/** Over how much of the last scroll, in screens, the stage melts into the footer's paper before it goes. */
+const END_SCREENS = 0.6;
 
 /** Sets an attribute only when it changes, so a still frame costs the page nothing. */
 const cache = new WeakMap<Element, Map<string, string>>();
@@ -69,7 +76,7 @@ function set(element: Element | null | undefined, name: string, value: string): 
   element.setAttribute(name, value);
 }
 
-function applyMood(root: Element | null, mood: Mood, pointer: readonly [number, number]): void {
+function applyMood(root: Element | null, mood: Mood, pointer: readonly [number, number], shut = false): void {
   if (!root) return;
   const face = FACES[mood];
   const at = (selector: string, name: string, value: string) => set(root.querySelector(selector), name, value);
@@ -77,6 +84,7 @@ function applyMood(root: Element | null, mood: Mood, pointer: readonly [number, 
   at('.face__brow-l', 'd', face.brows[0]);
   at('.face__brow-r', 'd', face.brows[1]);
   at('.face__open', 'visibility', face.closedEyes ? 'hidden' : 'visible');
+  at('.face__open', 'transform', blinkTransform(shut && !face.closedEyes));
   at('.face__closed', 'visibility', face.closedEyes ? 'visible' : 'hidden');
   at('.face__blush', 'opacity', face.blush ? '0.6' : '0');
   at('.face__sweat', 'opacity', face.sweat ? '1' : '0');
@@ -175,6 +183,10 @@ function run(): void {
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
   const title = film.querySelector<HTMLElement>('[data-title]');
   const envelope = film.querySelector<HTMLElement>('[data-envelope]');
+  const paper = film.querySelector<HTMLElement>('[data-paper]');
+  const beads = [...film.querySelectorAll<HTMLElement>('[data-bead]')];
+  const progressLabel = film.querySelector<HTMLElement>('[data-progress-label]');
+  let chapterShown = 0;
 
   // The sound: off until the visitor presses its button, which shows only where Web Audio exists.
   const sound = createSound();
@@ -209,6 +221,8 @@ function run(): void {
   /** When each of the stage's animations last started (context.ts). */
   const clocks: Record<Clock, number> = { draw: 0, count: 0, roll: 0, turn: -Infinity };
   let pointer: [number, number] = [0, 0];
+  /** When the scroll last moved, or the film last came back into view: life at rest waits for it (lib/film/idle.ts). */
+  let restSince = performance.now();
   let visible = true;
   let frameRequested = false;
 
@@ -259,7 +273,6 @@ function run(): void {
     set(parts.hillNear, 'fill', view.light['hill-near']);
     set(parts.floor, 'fill', view.light.floor);
     set(parts.lamp, 'opacity', view.lamp.toFixed(3));
-    film.style.setProperty('--film-fade-from', view.light.floor);
     // The far hills and the sky move slower than the set: a little depth when the camera moves.
     const drift = (box.x + box.width / 2 - 800) * 0.4;
     set(parts.far, 'transform', `translate(${drift.toFixed(2)} ${((box.y - 200) * 0.3).toFixed(2)})`);
@@ -283,9 +296,14 @@ function run(): void {
     set(parts.shadowOther, 'opacity', (0.2 * other.opacity).toFixed(3));
     set(parts.shadowPartner, 'transform', shadowTransform(partner));
     set(parts.shadowPartner, 'opacity', (0.2 * partner.opacity).toFixed(3));
-    applyMood(parts.you, view.moods.you, pointer);
-    applyMood(parts.other, view.moods.other, pointer);
-    applyMood(parts.partner, view.moods.partner, pointer);
+    // At rest the cast blinks, each on its own clock; with reduced motion the eyes keep still, pointer and all.
+    const rest = still ? -1 : now - restSince;
+    const look: readonly [number, number] = still ? [0, 0] : pointer;
+    applyMood(parts.you, view.moods.you, look, blinking(rest, 'you'));
+    // While it waits for the visitor's answer, the square glances at the circle, then at the tickets.
+    const gaze = view.beat.chapter === 'arrival' && state.promised == null ? gazeAt(rest) : null;
+    applyMood(parts.other, view.moods.other, gaze ? GAZE_LOOK[gaze] : look, blinking(rest, 'other'));
+    applyMood(parts.partner, view.moods.partner, look, blinking(rest, 'partner'));
     const cast = { you: view.cast.you, other: other.at };
 
     // The blackout: the stage goes dark, and only the cast's eyes show where each one is.
@@ -315,7 +333,9 @@ function run(): void {
     const turn = view.die.rolling && !still ? 720 * (1 - (1 - spun) ** 3) : view.die.floating && !still ? Math.sin(now / 900) * 12 : 0;
     set(parts.die, 'transform', `translate(800 ${(view.die.y + float + jump).toFixed(2)})`);
     set(parts.die, 'opacity', view.die.opacity.toFixed(3));
-    set(parts.dieSpin, 'transform', `rotate(${turn.toFixed(2)})`);
+    // Waiting on the table for the decision, it rocks now and then, as if nudged.
+    const waits = !still && view.beat.chapter === 'fold' && view.beat.id === 'decide' && !view.die.rolling && (state.decision?.phase ?? 'idle') === 'idle';
+    set(parts.dieSpin, 'transform', waits ? rockTransform(rockAt(rest)) : `rotate(${turn.toFixed(2)})`);
     const face: Face = view.die.rolling && !still ? (DIE_FACES[Math.floor(now / 90) % DIE_FACES.length] ?? view.die.face) : view.die.face;
     for (const pip of pips) set(pip, 'visibility', PIPS[face].includes(pip.dataset.pip as Pip) ? 'visible' : 'hidden');
 
@@ -384,9 +404,22 @@ function run(): void {
     envelope?.style.setProperty('--opened', view.envelope.toFixed(3));
 
     title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
+    // The end: over the film's last stretch of scroll, before the stage goes, its floor melts into
+    // the footer's paper (Film.astro).
+    const left = film.getBoundingClientRect().bottom - innerHeight;
+    set(paper, 'style', `opacity: ${clamp(1 - left / (innerHeight * END_SCREENS), 0, 1).toFixed(3)}`);
     // On a phone the sound's button waits under the spool until the title has gone (Film.astro).
     set(film, 'data-title', view.titleGone < 0.6 ? 'shown' : 'gone');
-    if (visible) request();
+
+    // The progress under the spool: each chapter's bead, and the chapter in words for a screen reader.
+    const progress = progressAt(p * TOTAL_SCREENS);
+    beads.forEach((bead, i) => set(bead, 'style', `--fill: ${(progress.beads[i] ?? 0).toFixed(2)}`));
+    if (progressLabel && progress.chapter !== chapterShown) {
+      chapterShown = progress.chapter;
+      progressLabel.textContent = fill(film.dataset.progress ?? '{n}', { n: chapterShown });
+    }
+    // While anything may move, the next frame; with reduced motion nothing does, so frames come only when asked.
+    if (visible && !still) request();
   };
 
   const request = (): void => {
@@ -395,13 +428,22 @@ function run(): void {
     requestAnimationFrame(render);
   };
 
+  /** The scroll moved, the screen changed or the visitor came back: the cast waits a moment before life at rest. */
+  const stir = (): void => {
+    restSince = performance.now();
+    request();
+  };
   // Only animate while the film is on screen: past it, the page is the notebook's footer.
   new IntersectionObserver((entries) => {
     visible = entries.some((entry) => entry.isIntersecting);
-    if (visible) request();
+    if (visible) stir();
   }).observe(film);
-  addEventListener('scroll', request, { passive: true });
-  addEventListener('resize', request);
+  addEventListener('scroll', stir, { passive: true });
+  addEventListener('resize', stir);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) stir();
+  });
+  reduced.addEventListener('change', request);
   addEventListener(
     'pointermove',
     (event) => {
@@ -459,6 +501,10 @@ function run(): void {
     note: (action) => {
       memory = remember(memory, action);
       if (!replaying) keep();
+    },
+    forget: () => {
+      memory = EMPTY;
+      keep();
     },
     onReplay: (type, run) => replayers.set(type, run as (action: Action) => void),
     later: (next, ms) => {

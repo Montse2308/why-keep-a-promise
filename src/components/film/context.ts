@@ -39,6 +39,8 @@ export interface FilmContext {
   readonly settlePromise: () => void;
   /** Notes what the visitor just did in the film's memory, which lives in the tab's history entry (ADR 0029). */
   readonly note: (action: Action) => void;
+  /** Forgets everything the visitor did: the tab's entry keeps an empty memory, so the film opens empty («Watch again», ADR 0029). */
+  readonly forget: () => void;
   /**
    * How to play an action of this type back when the film loads with a memory: the same press the
    * visitor made, through the same code. While it plays back, the film is quiet: no sound, no

@@ -633,26 +633,73 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
 
 Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
 
-- [ ] **7.3.1** El chat en orden: al elegir aparece tu burbuja azul a la derecha y los boletos se van
+- [x] **7.3.1** El chat en orden: al elegir aparece tu burbuja azul a la derecha y los boletos se van
       (sale la regla de `Talk.astro` que esconde `.bubble--you` con JS). Orden: pregunta, tu
       mensaje, respuesta, como en el storyboard.
-- [ ] **7.3.2** El progreso, la lógica: función pura sobre los tramos de `timeline.ts` (capítulo y
+      Se van también los tres boletos y «No te cuesta nada»; el foco pasa a tu burbuja (que no entra
+      en el orden de tabulación), y la respuesta llega un momento después, sin animación con
+      movimiento reducido.
+- [x] **7.3.2** El progreso, la lógica: función pura sobre los tramos de `timeline.ts` (capítulo y
       cuánto se llenó cada cuenta), con test.
-- [ ] **7.3.3** El progreso, a la vista: un hilo fino con 9 cuentas que se llenan con el scroll.
+      `progressAt()` en `src/lib/film/progress.ts`: el capítulo cambia cuando sube su primera
+      tarjeta, igual que el tiempo del escenario (`LEAD`), y en ese momento la cuenta anterior está
+      llena. Las cuentas solo se llenan en orden y nunca se vacían al avanzar.
+- [x] **7.3.3** El progreso, a la vista: un hilo fino con 9 cuentas que se llenan con el scroll.
       Pasivo y sin foco (ADR 0024); texto oculto «Capítulo 5 de 9» para lectores de pantalla.
       Revisado a 320 px junto al carrete, el sonido y el cuaderno.
-- [ ] **7.3.4** Vida en reposo, el mecanismo: sin un ciclo siempre encendido; se pausa durante el
+      Va dentro de la pastilla del carrete, bajo sus palabras: a 320 px la esquina no tiene lugar al
+      lado, y así la pastilla no crece. El texto oculto es el aprobado en 7.0.3, «Chapter {n} of 8» /
+      «Capítulo {n} de 8» (clave `film.progress`, con el 8 salido del código); queda fuera de la región
+      `aria-live` del carrete, para que no se anuncie a cada capítulo.
+- [x] **7.3.4** Vida en reposo, el mecanismo: sin un ciclo siempre encendido; se pausa durante el
       scroll, con la pestaña oculta y con movimiento reducido, y no obliga a repintar los filtros
       SVG del escenario (riesgo del punto 3). Primero el parpadeo cada pocos segundos.
-- [ ] **7.3.5** El leve balanceo del dado, y la mirada del cuadrado mientras espera: al círculo y
+      `src/lib/film/idle.ts`, puro y con test: no corre solo; el ciclo de cuadros de la película, que
+      ya corría mientras se ve, le pregunta qué mostrar según cuánto lleva quieto el scroll (1.2 s de
+      espera). El scroll, un cambio de tamaño o volver a la pestaña lo reinician; con la pestaña oculta
+      no hay cuadros. Solo mueve los ojos, que no llevan filtro. Cada personaje parpadea con su propio
+      reloj (cada 3 a 5 s, nunca dos a la vez). Además, con movimiento reducido el ciclo ya no pide
+      cuadros si nada se mueve (antes corría siempre): 0 cuadros en 9 s quieto, y las pupilas dejan de
+      seguir al puntero.
+- [x] **7.3.5** El leve balanceo del dado, y la mirada del cuadrado mientras espera: al círculo y
       luego al boleto.
-- [ ] **7.3.6** La llegada: algo cambia a la mitad del tramo, sin cambiar su largo de 3 pantallas
+      En el capítulo 0 el dado ya flotaba y giraba; el que se quedaba quieto era el que espera sobre
+      la mesa la decisión del capítulo 3: ese se balancea, cada 3.6 s, dos vaivenes que se apagan, a lo
+      más 7°, sobre la esquina de abajo hacia la que se inclina. El cuadrado, mientras el capítulo 0
+      espera la respuesta, mira al círculo, luego a los boletos y vuelve, en un ciclo de 7.2 s. Los
+      dos, solo en reposo y nunca con movimiento reducido.
+- [x] **7.3.6** La llegada: algo cambia a la mitad del tramo, sin cambiar su largo de 3 pantallas
       (el reloj de la luz, ADR 0027).
-- [ ] **7.3.7** «Ver de nuevo» al pie de los créditos: un enlace simple que también borra la memoria.
-- [ ] **7.3.8** La escena se funde con el papel del pie, en vez de irse y dejar el suelo vacío.
-- [ ] **7.3.9** Verificación de salida (teclado, movimiento reducido, tests de la coreografía) y
+      Si el visitante no ha contestado, cuando la cámara termina de acercarse (1.8 a 2.05 pantallas)
+      sube la burbuja del cuadrado con sus tres puntos: sigue esperando la respuesta. Se va cuando
+      llegan los cuartos, y no sale si ya contestó. Con movimiento reducido llega con un corte propio.
+      Sin texto nuevo; el cuadro del storyboard (con la promesa hecha) no cambia.
+- [x] **7.3.7** «Ver de nuevo» al pie de los créditos: un enlace simple que también borra la memoria.
+      Bajo «Fin», a `href('/')`, con el texto aprobado en 7.0.3 (`film.closing.again`). Con un clic
+      normal, antes de irse deja la memoria vacía en la entrada de la pestaña: hacía falta, porque
+      Chrome conserva `history.state` al navegar a la misma URL. Con Ctrl, Mayús o la rueda (otra
+      pestaña), esta pestaña conserva lo jugado. Probado con clic y toque reales: vuelve arriba, sin
+      promesa, en el capítulo 0, y reemplaza la entrada en vez de sumar otra.
+- [x] **7.3.8** La escena se funde con el papel del pie, en vez de irse y dejar el suelo vacío.
+      En los últimos 0.6 pantallas antes de que el escenario se vaya, el suelo se funde, de debajo de
+      los personajes hacia abajo, con el papel de la página (su color y su grano, de día o de noche).
+      Cuando el escenario sube, su borde ya es el papel del pie. Solo cambia la opacidad de una capa
+      propia, bajo las tarjetas y la esquina: no obliga a repintar el escenario. Sale el degradado
+      `film__fade` con JS, que quedaba tapado por el escenario; sin JS se queda.
+- [x] **7.3.9** Verificación de salida (teclado, movimiento reducido, tests de la coreografía) y
       video del recorrido a 360 y 1440 px.
+      Teclado solo (1440 EN, 360 ES y 1440 con movimiento reducido): 17 boletos jugados con Enter, el
+      foco nunca entra al progreso, nunca se pierde y siempre queda en pantalla; «Ver de nuevo» se
+      alcanza con Tab. Con clics y toques reales, la película entera se juega y la memoria vuelve igual
+      al recargar, con Atrás y con «Volver a la película» (como carga nueva, sin la caché del
+      navegador). Con movimiento reducido no hay parpadeo, mirada ni balanceo, y 0 cuadros en reposo.
+      Los tests de la coreografía y del reloj de la luz, en verde; las cinco puertas, también con el
+      candado abierto (`under-review` en local, sin commit). Sin scroll horizontal a 320 px. Videos y
+      capturas en `scratch/p7-3/review/` (local, no se versiona), con un README.
 - [ ] **7.3.10 (Montse)** Revisión de P7.3 (el PR).
+      Montse aprobó las capturas, los videos y las tres elecciones del README: el progreso dentro de
+      la pastilla del carrete, la burbuja de tres puntos a la mitad de la llegada y el balanceo en el
+      dado del capítulo 3. Queda que mergee el PR.
 
 ### P7.4 · Sonido (punto 8)
 

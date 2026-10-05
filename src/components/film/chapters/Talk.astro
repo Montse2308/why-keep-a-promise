@@ -44,7 +44,7 @@ const still = stageAt(KEY_POSE.talk ?? 0, { promised: true, round: roundOf('coop
     </h2>
     <div class="chat">
       <p class="bubble bubble--other"><span class="visually-hidden">{tr('film.who.other')}: </span>{tr('film.talk.opener')}</p>
-      <p class="bubble bubble--you chat__as-if" data-chat-mine><span class="visually-hidden">{tr('film.who.you')}: </span><span data-text>{says(AS_IF)}</span></p>
+      <p class="bubble bubble--you chat__as-if" tabindex="-1" data-chat-mine><span class="visually-hidden">{tr('film.who.you')}: </span><span data-text>{says(AS_IF)}</span></p>
       <p class="bubble bubble--other chat__as-if" data-chat-answer><span class="visually-hidden">{tr('film.who.other')}: </span><span data-text>{answer(AS_IF)}</span></p>
     </div>
     <Tickets label={tr('film.talk.group')} data-chat-tickets="">
@@ -72,7 +72,7 @@ const still = stageAt(KEY_POSE.talk ?? 0, { promised: true, round: roundOf('coop
         ))
       }
     </Tickets>
-    <p class="card__free">{tr('film.ticket.free')}</p>
+    <p class="card__free" data-chat-free>{tr('film.ticket.free')}</p>
     <p class="card__out visually-hidden" aria-live="polite" data-chat-out></p>
     <p class="card__noscript">{tr('film.talk.noscript')}</p>
   </Beat>
@@ -112,12 +112,39 @@ const still = stageAt(KEY_POSE.talk ?? 0, { promised: true, round: roundOf('coop
   }
 
   /*
-   * With JavaScript, the answer waits for the visitor's message, and the chosen ticket stands for
-   * the message itself; without it, the storyboard shows the chat as if the visitor had promised.
+   * With JavaScript, the chat waits for the visitor's message: once it is chosen, it shows as their
+   * bubble and the other's answer follows, in the storyboard's order, while the tickets go. Without
+   * JavaScript, the storyboard shows the chat as if the visitor had promised.
    */
   :global(html.js) .chat__as-if:not([data-shown]),
-  :global(html.js) .bubble--you {
+  :global(html.js) .card__free[hidden] {
     display: none;
+  }
+
+  .bubble--you:focus {
+    outline: none;
+  }
+
+  .bubble--you:focus-visible {
+    outline: 3px solid var(--film-ink);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .chat__as-if[data-shown] {
+      animation: bubble-in 280ms var(--ease-standard) both;
+    }
+
+    .bubble--other.chat__as-if[data-shown] {
+      animation-delay: 450ms;
+    }
+  }
+
+  @keyframes bubble-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem) scale(0.96);
+    }
   }
 
   .card__free {
