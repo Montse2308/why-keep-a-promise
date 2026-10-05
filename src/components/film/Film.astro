@@ -10,9 +10,10 @@
  * the one component that may render them.
  */
 import { getCollection } from 'astro:content';
-import { BUILT, LOCKED_BEATS, type ChapterId } from '../../lib/chapters';
+import { BUILT, CHAPTERS, LOCKED_BEATS, type ChapterId } from '../../lib/chapters';
 import { FILM } from '../../lib/design/film';
 import { splitAtLock, splitBeats } from '../../lib/film/captions';
+import { LAST_CHAPTER } from '../../lib/film/progress';
 import { stageAt } from '../../lib/film/stage';
 import { BUILT_SPAN } from '../../lib/film/timeline';
 import { FILM_VALUES } from '../../lib/film/values';
@@ -35,6 +36,8 @@ interface Props {
 
 const { locale } = Astro.props;
 const tr = useTranslations(locale);
+// The progress in words, for a screen reader: the chapter's number as its card says it, of the last one.
+const progressLine = (n: number | string) => fill(tr('film.progress'), { n, last: LAST_CHAPTER });
 
 // Each built chapter's captions, from src/content/chapters/<locale>/, split by beat.
 const entries = await getCollection('chapters', (entry) => entry.id.startsWith(`${locale}/`));
@@ -68,11 +71,12 @@ const of = (id: ChapterId) => {
   data-thread-kept={tr('film.thread.kept')}
   data-thread-broken={tr('film.thread.broken')}
   data-thread-none={tr('film.thread.none')}
+  data-progress={progressLine('{n}')}
 >
   <div class="film__stage">
     <World locale={locale} uid="live" view={stageAt(0, { promised: null }, false, false)} live />
     <div class="film__controls">
-      <p class="film__spool" aria-live="polite">
+      <div class="film__spool">
         <svg viewBox="-24 -24 48 48" aria-hidden="true" data-spool="none">
           <rect x="-15" y="-19" width="30" height="7" rx="3" fill={FILM['table-front']} stroke={FILM.ink} stroke-width="2.5" />
           <rect x="-15" y="12" width="30" height="7" rx="3" fill={FILM['table-front']} stroke={FILM.ink} stroke-width="2.5" />
@@ -84,8 +88,15 @@ const of = (id: ChapterId) => {
           <path class="film__spool-cut" d="M-14 3 L14 -3" stroke={FILM.rim} stroke-width="5" />
           <path class="film__spool-cut" d="M-14 3 L14 -3" stroke={FILM.ink} stroke-width="1.5" stroke-dasharray="3 3" />
         </svg>
-        <span data-spool-label>{tr('film.thread.none')}</span>
-      </p>
+        <div class="film__spool-text">
+          <p aria-live="polite" data-spool-label>{tr('film.thread.none')}</p>
+          <!-- The film's progress (./film.ts): passive, never focused; a screen reader reads the chapter in words. -->
+          <p class="film__progress">
+            <span class="visually-hidden" data-progress-label>{progressLine(0)}</span>
+            <span class="film__beads" aria-hidden="true">{CHAPTERS.map(() => <span class="film__bead" data-bead />)}</span>
+          </p>
+        </div>
+      </div>
       <!-- Sound (ADR 0025): off until pressed, and only where the browser has Web Audio (./film.ts unhides it). -->
       <button type="button" class="film__sound" aria-pressed="false" hidden data-sound>
         <svg viewBox="-12 -12 24 24" aria-hidden="true">
@@ -219,6 +230,54 @@ const of = (id: ChapterId) => {
     height: 1.75rem;
   }
 
+  .film__spool-text {
+    display: grid;
+    gap: 3px;
+  }
+
+  .film__spool-text p {
+    margin: 0;
+  }
+
+  /*
+   * The progress: a thin thread with a bead per chapter, under the spool's words. Each bead fills from
+   * the left as the film goes through its chapter (./film.ts sets `--fill`).
+   */
+  .film__beads {
+    position: relative;
+    display: flex;
+    gap: 3px;
+  }
+
+  .film__beads::before {
+    content: '';
+    position: absolute;
+    inset: 50% 2px auto;
+    height: 1.5px;
+    margin-top: -0.75px;
+    background: var(--film-ink);
+    opacity: 0.35;
+  }
+
+  .film__bead {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--film-card);
+    box-shadow: inset 0 0 0 1.5px var(--film-ink);
+  }
+
+  .film__bead::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--film-ink);
+    transform: scaleX(var(--fill, 0));
+    transform-origin: left;
+  }
+
   .film__sound {
     display: inline-flex;
     align-items: center;
@@ -292,7 +351,7 @@ const of = (id: ChapterId) => {
 
   /* A narrow phone: the spool's words take two lines, so the corner's language link and the notebook fit beside it. */
   @media (max-width: 24rem) {
-    .film__spool span {
+    .film__spool [data-spool-label] {
       max-width: 7.25rem;
       line-height: 1.15;
     }

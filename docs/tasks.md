@@ -644,9 +644,13 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       `progressAt()` en `src/lib/film/progress.ts`: el capítulo cambia cuando sube su primera
       tarjeta, igual que el tiempo del escenario (`LEAD`), y en ese momento la cuenta anterior está
       llena. Las cuentas solo se llenan en orden y nunca se vacían al avanzar.
-- [ ] **7.3.3** El progreso, a la vista: un hilo fino con 9 cuentas que se llenan con el scroll.
+- [x] **7.3.3** El progreso, a la vista: un hilo fino con 9 cuentas que se llenan con el scroll.
       Pasivo y sin foco (ADR 0024); texto oculto «Capítulo 5 de 9» para lectores de pantalla.
       Revisado a 320 px junto al carrete, el sonido y el cuaderno.
+      Va dentro de la pastilla del carrete, bajo sus palabras: a 320 px la esquina no tiene lugar al
+      lado, y así la pastilla no crece. El texto oculto es el aprobado en 7.0.3, «Chapter {n} of 8» /
+      «Capítulo {n} de 8» (clave `film.progress`, con el 8 salido del código); queda fuera de la región
+      `aria-live` del carrete, para que no se anuncie a cada capítulo.
 - [ ] **7.3.4** Vida en reposo, el mecanismo: sin un ciclo siempre encendido; se pausa durante el
       scroll, con la pestaña oculta y con movimiento reducido, y no obliga a repintar los filtros
       SVG del escenario (riesgo del punto 3). Primero el parpadeo cada pocos segundos.

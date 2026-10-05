@@ -35,8 +35,10 @@ import {
 import { signTransform } from '../../lib/film/signs';
 import { lookAt } from '../../lib/film/voices';
 import { brokenBetween, stageAt, threadBetween, type Place, type StageState, type StageView } from '../../lib/film/stage';
-import { scrollPosition } from '../../lib/film/timeline';
+import { progressAt } from '../../lib/film/progress';
+import { scrollPosition, TOTAL_SCREENS } from '../../lib/film/timeline';
 import { clamp, easeInOut } from '../../lib/film/track';
+import { fill } from '../../lib/template';
 import { START as NO_PICKS, type CellKey, type Tag } from '../../lib/pd/bestReply';
 import type { Cue } from '../../lib/film/sound';
 import { createSound } from './sound';
@@ -175,6 +177,9 @@ function run(): void {
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
   const title = film.querySelector<HTMLElement>('[data-title]');
   const envelope = film.querySelector<HTMLElement>('[data-envelope]');
+  const beads = [...film.querySelectorAll<HTMLElement>('[data-bead]')];
+  const progressLabel = film.querySelector<HTMLElement>('[data-progress-label]');
+  let chapterShown = 0;
 
   // The sound: off until the visitor presses its button, which shows only where Web Audio exists.
   const sound = createSound();
@@ -386,6 +391,14 @@ function run(): void {
     title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
     // On a phone the sound's button waits under the spool until the title has gone (Film.astro).
     set(film, 'data-title', view.titleGone < 0.6 ? 'shown' : 'gone');
+
+    // The progress under the spool: each chapter's bead, and the chapter in words for a screen reader.
+    const progress = progressAt(p * TOTAL_SCREENS);
+    beads.forEach((bead, i) => set(bead, 'style', `--fill: ${(progress.beads[i] ?? 0).toFixed(2)}`));
+    if (progressLabel && progress.chapter !== chapterShown) {
+      chapterShown = progress.chapter;
+      progressLabel.textContent = fill(film.dataset.progress ?? '{n}', { n: chapterShown });
+    }
     if (visible) request();
   };
 

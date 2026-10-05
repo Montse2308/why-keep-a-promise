@@ -139,6 +139,7 @@
   "film.thread.none": "Sin promesa",
   "film.sound": "Sonido",
   "film.chapter": "Capítulo {n}",
+  "film.progress": "Capítulo {n} de {last}",
   "film.board.you.cooperate": "cooperas",
   "film.board.you.defect": "traicionas",
   "film.board.other.cooperate": "coopera",
