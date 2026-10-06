@@ -996,7 +996,11 @@ Dep.: todas las subfases anteriores.
       Montse pidió la tinta solo sin JS: en el storyboard (sin JS o con el script de la película
       bloqueado) el idioma actual va en la tinta de la película, 10.1:1 medido; con JS sigue en
       gris. axe sobre el storyboard, otra vez en cero. Los pesos no cambian a la décima.
-- [ ] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
+- [x] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
+      Montse aprobó la revisión de P7.7: los README, Lighthouse y los pesos al día, y la revisión
+      completa con sus cuatro arreglos (la tabla de `/dilemma` en el celular, el carrete y el sonido
+      sobre la tarjeta que sale, el anillo de foco en los boletos no elegidos y el idioma actual en
+      el storyboard). Queda que mergee el PR; con eso empieza F5.
 
 ## Preguntas abiertas
 
