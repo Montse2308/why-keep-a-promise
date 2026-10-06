@@ -974,7 +974,25 @@ Dep.: todas las subfases anteriores.
       boleto se ve igual que antes, pixel a pixel, a 1440 y 360 px. Se volvió a jugar la película
       con teclado (21/21). El home en español pesa 0.1 KiB más (175.9), y `src/data/weight.json` se
       reescribió. Antes y después, en `scratch/p7-7/inert/`.
-- [ ] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
+- [x] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
+      Sobre el build cerrado, con axe-core 4.14.0 fijo (descargado en `scratch/`, no es dependencia,
+      como Lighthouse). Cero violaciones en 222 corridas: las 14 páginas y la 404 recién cargadas, en
+      claro y oscuro, a 1440 y 360 px (60); el panel abierto en las 14 (28); los dos home después de
+      cada interacción de la película, de la primera a los créditos y el pie, en claro y oscuro a
+      1440 y en claro a 360 (126); y el storyboard sin JS (8). Lo que axe deja «incompleto» se
+      revisó aparte. El contraste sobre el papel del cuaderno, que es un degradado con grano y axe no
+      lee: se corrió su regla con el papel aplanado a los cuatro extremos (los dos del degradado, con
+      y sin el grano a su opacidad máxima), y pasa en todos (240 corridas). El texto sobre el
+      escenario (el título, el carrete, el sonido, el idioma, el tablero, los letreros, el mazo, el
+      código del motor, el pie donde se funde la película), medido por pixel en cada estado de la
+      película y en los cuadros del storyboard (720 mediciones): todo pasa; las lecturas bajas eran
+      trazos de tinta vecinos dentro de la caja medida (el contorno de una nube, el borde de una
+      celda o de una burbuja). El `aria-controls` del botón del cuaderno apunta a un `id` que existe,
+      y las cifras de las monedas van en iconos `aria-hidden`.
+      Hallazgo: en el storyboard sin JS, desde 30rem de ancho, el idioma actual de la esquina va en
+      el gris apagado de la película sobre el papel durazno (`#ffc58f`): 4.40:1, bajo el 4.5 del
+      texto normal. Con JS, el mismo gris sobre el cielo da 4.74. Capturas, guiones y README en
+      `scratch/p7-7/axe/`.
 - [ ] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
 
 ## Preguntas abiertas
