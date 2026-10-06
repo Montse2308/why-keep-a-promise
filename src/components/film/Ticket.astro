@@ -42,8 +42,7 @@ const { label, detail, class: className, ...attributes } = Astro.props;
       0 4px 0 2px var(--film-ink);
     transition:
       transform 120ms var(--ease-standard),
-      box-shadow 120ms var(--ease-standard),
-      opacity 200ms var(--ease-standard);
+      box-shadow 120ms var(--ease-standard);
   }
 
   .ticket:active:not([aria-disabled='true']) {
@@ -76,8 +75,22 @@ const { label, detail, class: className, ...attributes } = Astro.props;
     display: none;
   }
 
-  .ticket[aria-disabled='true']:not([aria-pressed='true']) {
+  /*
+   * The ticket not chosen fades, but not its focus ring: its contents and its edge fade, not the
+   * button, so a keyboard that stops on it still sees the ring in full.
+   */
+  .ticket > * {
+    transition: opacity 200ms var(--ease-standard);
+  }
+
+  .ticket[aria-disabled='true']:not([aria-pressed='true']) > * {
     opacity: 0.55;
+  }
+
+  .ticket[aria-disabled='true']:not([aria-pressed='true']) {
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--film-ink) 55%, var(--film-card)),
+      0 4px 0 2px color-mix(in srgb, var(--film-ink) 55%, var(--film-card));
   }
 
   .ticket:focus-visible {

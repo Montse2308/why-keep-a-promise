@@ -969,6 +969,11 @@ Dep.: todas las subfases anteriores.
       y la opacidad apaga también su anillo de foco: 1.95:1 contra la tarjeta, frente a 3.74:1 del
       anillo entero. WCAG 1.4.11 exime a un control inactivo, pero el teclado se detiene en él.
       Capturas y README en `scratch/p7-7/`.
+      Montse pidió arreglarlo: ahora se apagan el contenido del boleto y su borde (la tinta mezclada
+      al 55 % con el papel de la tarjeta), no el botón, así que el anillo queda entero. Sin foco, el
+      boleto se ve igual que antes, pixel a pixel, a 1440 y 360 px. Se volvió a jugar la película
+      con teclado (21/21). El home en español pesa 0.1 KiB más (175.9), y `src/data/weight.json` se
+      reescribió. Antes y después, en `scratch/p7-7/inert/`.
 - [ ] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
 - [ ] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
 
