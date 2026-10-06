@@ -947,7 +947,28 @@ Dep.: todas las subfases anteriores.
       todo el recorrido, la esquina se va con el escenario al final y sin JS no aparece. El home pesa
       0.1 KiB más (175.3), y `src/data/weight.json` se reescribió. Antes y después, en
       `scratch/p7-7/review/fixed-*.png` y `after-fix/`.
-- [ ] **7.7.5** Revisión completa, parte 2: teclado, movimiento reducido, sin JS y script bloqueado.
+- [x] **7.7.5** Revisión completa, parte 2: teclado, movimiento reducido, sin JS y script bloqueado.
+      Sobre el build cerrado. **Teclado:** la película, jugada entera solo con Tab, Mayús+Tab,
+      Enter, Espacio y flechas (las 21 interacciones) en EN y ES a 1440 × 900, con movimiento
+      reducido y a 844 × 390: todo se alcanza en el orden del relato, con anillo, y nada atrapa el
+      foco; el foco pasa solo al control siguiente donde el anterior desaparece, y cada resultado
+      sale en `aria-live`. Con scroll suave, el foco tarda hasta 0.9 s en llegar a pantalla en los
+      dos saltos sin controles en medio (del capítulo 3 al mazo, del 6 al 8); con movimiento
+      reducido, en el acto. De lado, la tarjeta se desplaza por dentro hasta el control enfocado. En
+      las 15 páginas, en claro y oscuro, ninguna parada queda sin anillo, fuera de pantalla ni
+      tapada; el salto al contenido lleva a `<main>`, y el panel abre con Enter o Espacio, retiene el
+      foco, cierra con Esc y lo devuelve al botón. **Movimiento reducido**, a 1440 y 360: la película
+      no pide cuadros en reposo (180 en 3 s sin la preferencia), el escenario no se mueve entre dos
+      cortes, el dado no gira, las monedas no cuentan, la carta no vuela, `roll` y `card` no suenan,
+      y el scroll, la hoja del cuaderno y el paso entre sus páginas no se animan. **Sin JS y con el
+      script de la película bloqueado**, a 360 y 1440: los dos home muestran el storyboard al primer
+      segundo, con los 9 cuadros y el resultado de cada juego en texto, sin botones que no hagan nada
+      ni scroll horizontal; en las otras 13 páginas sin JS, el enlace «Cuaderno» lleva a la lista del
+      pie. Cada enlace de vuelta a la película cae en un ancla que existe.
+      Hallazgo: un boleto ya resuelto que no se eligió queda enfocable pero inerte a opacidad 0.55,
+      y la opacidad apaga también su anillo de foco: 1.95:1 contra la tarjeta, frente a 3.74:1 del
+      anillo entero. WCAG 1.4.11 exime a un control inactivo, pero el teclado se detiene en él.
+      Capturas y README en `scratch/p7-7/`.
 - [ ] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
 - [ ] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
 
