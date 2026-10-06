@@ -215,6 +215,11 @@ const noindex = route === 'finding' && !findingUnlocked(MANUSCRIPT_STATUS, impor
     color: var(--film-card-muted);
   }
 
+  /* The storyboard's peach paper is darker than the film's dawn sky: there, the muted ink is too faint, so the ink. */
+  :global(html:not(.js)) .corner--film .corner__end > :global(.lang .lang__current) {
+    color: var(--film-ink);
+  }
+
   .corner--film .corner__end > :global(.lang a:focus-visible) {
     outline-color: var(--film-ink);
   }

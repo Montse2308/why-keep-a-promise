@@ -993,6 +993,9 @@ Dep.: todas las subfases anteriores.
       el gris apagado de la película sobre el papel durazno (`#ffc58f`): 4.40:1, bajo el 4.5 del
       texto normal. Con JS, el mismo gris sobre el cielo da 4.74. Capturas, guiones y README en
       `scratch/p7-7/axe/`.
+      Montse pidió la tinta solo sin JS: en el storyboard (sin JS o con el script de la película
+      bloqueado) el idioma actual va en la tinta de la película, 10.1:1 medido; con JS sigue en
+      gris. axe sobre el storyboard, otra vez en cero. Los pesos no cambian a la décima.
 - [ ] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
 
 ## Preguntas abiertas
