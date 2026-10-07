@@ -1,7 +1,9 @@
 # 0016 · Regla (c): la revista del manuscrito, no las de la bibliografía
 
 **Estado:** aceptada (F3). Precisa la regla (c) de `docs/content-rules.md` y el punto "No se
-nombra la revista" del ADR 0011.
+nombra la revista" del ADR 0011. Precisada por el ADR 0034: el texto no se somete a ninguna
+revista, así que la regla es no nombrar ninguna para él; el punto del 0011 (archivado) está ahora en
+el 0034, y la auditoría del historial es el paso 4 del checklist.
 
 ## Contexto
 
