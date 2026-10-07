@@ -30,7 +30,7 @@ export function splitBeats(html: string, beats: readonly string[]): Map<string, 
 const LOCK = /<!--\s*lock\s*-->/g;
 
 /**
- * A chapter's captions split where its lock begins (ADR 0026): chapter 7's finding follows a
+ * A chapter's captions split where its lock begins (ADR 0034): chapter 7's finding follows a
  * `<!-- lock -->` mark, and only a build with the lock open renders what comes after it. Every other
  * chapter has no mark, so all of it is open. At most one mark.
  */

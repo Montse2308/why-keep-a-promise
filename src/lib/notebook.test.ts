@@ -38,7 +38,7 @@ describe('the notebook (ADR 0024)', () => {
     expect(order).toEqual([...order].sort((a, b) => a - b));
   });
 
-  it('links to /finding only behind the lock (ADR 0026)', () => {
+  it('links to /finding only behind the lock (ADR 0034)', () => {
     expect(linkable(true).map((entry) => entry.page)).toEqual([...SUBPAGES]);
     expect(linkable(false).map((entry) => entry.page)).toEqual(SUBPAGES.filter((page) => page !== 'finding'));
   });

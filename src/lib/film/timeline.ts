@@ -25,7 +25,7 @@ export const OPEN_SCREENS = totalScreens(OPEN_CHAPTERS);
 
 /**
  * Chapter 7's finding, in screens from the top of the film: the end of the chapter, after the sealed
- * envelope. Empty while the lock is closed (ADR 0026).
+ * envelope. Empty while the lock is closed (ADR 0034).
  */
 export const LOCKED_STRETCH = (() => {
   const to = chapterStart('my-research') + chapter('my-research').screens;

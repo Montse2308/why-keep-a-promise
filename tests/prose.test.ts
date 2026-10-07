@@ -39,7 +39,7 @@ const subpageFiles = parse(subpageSources);
 
 const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
 
-/** Chapter 7's captions in a locale, split at its lock mark (ADR 0026). */
+/** Chapter 7's captions in a locale, split at its lock mark (ADR 0034). */
 const seventh = (locale: Locale) =>
   splitAtLock((Object.entries(captionSources).find(([path]) => path.endsWith(`/chapters/${locale}/07-my-research.md`))?.[1] ?? '').replace(/^---[\s\S]*?---/, ''));
 

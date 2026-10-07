@@ -8,7 +8,7 @@ import { CHAPTER_IDS } from './lib/chapters';
  * src/content/chapters/{en,es}/<nn>-<id>.md, split into beats by `<!-- beat:<id> -->` marks
  * (src/lib/film/captions.ts). Short text only; dialogue and ticket labels are UI keys. A number is a
  * `{name}` placeholder the build fills from the code (src/lib/film/values.ts), never a figure.
- * Chapter 7's finding follows a `<!-- lock -->` mark and renders only behind the lock (ADR 0026); its
+ * Chapter 7's finding follows a `<!-- lock -->` mark and renders only behind the lock (ADR 0034); its
  * placeholders are the curve's (src/lib/curve/values.ts).
  */
 const chapters = defineCollection({

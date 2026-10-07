@@ -30,7 +30,7 @@ function variants(file, weight, styles) {
 }
 
 /**
- * What the lock keeps out of a build while it is closed (ADR 0026), each with the stub it resolves
+ * What the lock keeps out of a build while it is closed (ADR 0034), each with the stub it resolves
  * to: the curve, /finding's guilt chart and chapter 7's finding render nothing, and the film's
  * timeline knows no beats past the sealed envelope. Paths from the project's root.
  */
@@ -42,7 +42,7 @@ const LOCKED_MODULES = {
 };
 
 /**
- * The lock at build time (ADR 0026). While it is closed, every module of `LOCKED_MODULES` resolves
+ * The lock at build time (ADR 0034). While it is closed, every module of `LOCKED_MODULES` resolves
  * to its stub, so its markup, script and data are not in the build at all; rendering a component
  * conditionally is not enough, because Astro bundles the script of every imported component. The
  * dev server is always unlocked, so the plugin only applies to builds.

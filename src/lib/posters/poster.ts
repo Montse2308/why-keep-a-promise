@@ -5,7 +5,7 @@
  * day's light: a paper card with the project's name (ADR 0021: «I promise» / «Te lo prometo») and
  * the page's title, the author's name as a small signature after the golden stroke under the
  * project's name (ADR 0032), and the circle and the square tied by the golden thread. It carries
- * nothing else: no status sentence, nothing behind the lock (ADR 0026), no figure.
+ * nothing else: no status sentence, nothing behind the lock (ADR 0034), no figure.
  *
  * The renderer does not wrap text, so titles are broken into lines here, measured with the fonts'
  * own advance widths (./metrics.ts), at the largest size that fits the card.

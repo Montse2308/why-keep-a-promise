@@ -1,9 +1,9 @@
 /**
- * Chapter 7's finding (ADR 0026): the beats that follow the sealed envelope once the lock is open,
+ * Chapter 7's finding (ADR 0034): the beats that follow the sealed envelope once the lock is open,
  * each with its length in screens. Their captions are the part of chapter 7's Markdown after its
  * `<!-- lock -->` mark, and ./chapters/Finding.astro draws them, with the curve and its control.
  *
- * Behind the lock: while the manuscript is in preparation, a build resolves this module to
+ * Behind the lock: until the working paper is public, a build resolves this module to
  * ./finding.locked.ts (`lockFinding` in astro.config.mjs), so a locked film does not even know these
  * beats exist, and `npm run verify:dist` fails if the first one's id reaches dist/.
  */

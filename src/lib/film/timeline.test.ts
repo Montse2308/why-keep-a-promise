@@ -74,7 +74,7 @@ describe('captions split by beat', () => {
   });
 });
 
-describe('the day’s light keeps the open film’s clock (ADR 0026, ADR 0027)', () => {
+describe('the day’s light keeps the open film’s clock (ADR 0034, ADR 0027)', () => {
   const finding = totalScreens(LOCKED_BEATS);
 
   it('sets chapter 7’s finding at the end of the chapter, right after the sealed envelope', () => {
@@ -100,7 +100,7 @@ describe('the day’s light keeps the open film’s clock (ADR 0026, ADR 0027)',
   });
 });
 
-describe('captions split at the lock (ADR 0026)', () => {
+describe('captions split at the lock (ADR 0034)', () => {
   it('keeps everything open without a lock mark, and splits at the one mark there is', () => {
     expect(splitAtLock('<p>All open.</p>')).toEqual({ open: '<p>All open.</p>', locked: '' });
     expect(splitAtLock('<p>Open.</p><!-- lock --><p>Locked.</p>')).toEqual({ open: '<p>Open.</p>', locked: '<p>Locked.</p>' });

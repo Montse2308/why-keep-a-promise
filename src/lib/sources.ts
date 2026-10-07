@@ -5,7 +5,7 @@
  * order. docs/sources.md is where each one was verified; this is what the visitor reads.
  *
  * /sources has no lock (ADR 0024), and what the lock does not cover looks the same in both of its
- * states (ADR 0026). So it lists the sources of what shows in both, and none of the finding's: those
+ * states (ADR 0034). So it lists the sources of what shows in both, and none of the finding's: those
  * are cited where the finding uses them, in chapter 7 and on /finding, behind the lock (`FINDING`).
  */
 import { CITATIONS, FIGURES, SOURCE_KEYS, type SourceKey } from '../content/figures';
@@ -109,7 +109,7 @@ export const ENTRIES: readonly Entry[] = [
 ];
 
 /**
- * The finding's sources, behind the lock (ADR 0026): Kawagoe and Narita (2014), the belief the curve
+ * The finding's sources, behind the lock (ADR 0034): Kawagoe and Narita (2014), the belief the curve
  * holds fixed, the curve and /finding's own figures. Chapter 7's finding and /finding cite them.
  */
 export const FINDING: readonly SourceKey[] = ['kawagoe-narita-2014', 'vanberg-second-order', 'curve', 'curve-finding'];

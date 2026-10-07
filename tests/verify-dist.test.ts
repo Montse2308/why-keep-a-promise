@@ -76,7 +76,7 @@ const parts = Object.entries(subpages).map(([path, raw]) => {
   return { path, open: text(open), locked: text(locked) };
 });
 
-/** Chapter 7's captions, split at the lock mark (ADR 0026). */
+/** Chapter 7's captions, split at the lock mark (ADR 0034). */
 const seventh = [chapterEn, chapterEs].map((raw) => splitAtLock(raw.replace(/^---[\s\S]*?---/, '')));
 
 /** UI strings only the locked components use: the curve's, and those of chapter 7's finding. */
@@ -133,7 +133,7 @@ const openSources = {
   'the open UI strings (es)': keys(es, false),
 };
 
-describe('verify:dist (ADR 0026)', () => {
+describe('verify:dist (ADR 0034)', () => {
   it('looks for marks that the locked content really carries, so the list cannot go stale', () => {
     expect(findMarks(lockedSources)).toEqual(MARKERS);
     for (const mark of UNLOCKED_MARKERS) expect(MARKERS).toContain(mark);
@@ -318,7 +318,7 @@ describe('verify:dist (ADR 0026)', () => {
     });
   });
 
-  describe('links to /finding while locked (ADR 0026)', () => {
+  describe('links to /finding while locked (ADR 0034)', () => {
     const base = '/why-keep-a-promise/';
     const link = (path: string, attributes = '') => `<a${attributes} href="${base}${path}">x</a>`;
 

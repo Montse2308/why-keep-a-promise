@@ -1,5 +1,5 @@
 /**
- * What /finding shows beyond chapter 7's curve (ADR 0026): the guilt available at each grid row, the
+ * What /finding shows beyond chapter 7's curve (ADR 0034): the guilt available at each grid row, the
  * sensitivity θ and the fixed cost c from `params.sens`, and the robustness variant. Read from
  * src/data/curve.json as it is; nothing here recomputes the model or interpolates between rows.
  *

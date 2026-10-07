@@ -1,5 +1,5 @@
 /**
- * Every number chapter 7's finding says (ADR 0026), read from the curve (src/data/curve.json, ADR 0010)
+ * Every number chapter 7's finding says (ADR 0034), read from the curve (src/data/curve.json, ADR 0010)
  * and from Vanberg's (2008) cells: its captions carry `{name}` placeholders, never a figure of their
  * own, as the rest of the film (docs/content-rules.md, rule (k)). tests/curve.test.ts checks each
  * against the registered figures (`CURVE_FIGURES`).

@@ -231,7 +231,7 @@ describe('chapter 6, the real people (rule (k))', () => {
   });
 });
 
-describe('chapter 7, this is where I come in (rule (j), ADR 0026)', () => {
+describe('chapter 7, this is where I come in (rule (j), ADR 0034)', () => {
   const parts = (locale: Locale) => splitAtLock(captionsOf(locale, 'my-research')?.body ?? '');
   const marks = (html: string) => [...html.matchAll(/<!--\s*beat:([a-z-]+)\s*-->/g)].map((m) => m[1]);
   /** What the open part may not say (rule (j)): nothing of the engine's workings, nor of the finding. */
@@ -332,7 +332,7 @@ describe('chapter 8, closing (ADR 0021, ADR 0023, ADR 0024)', () => {
     expect(closing).not.toMatch(/github|linkedin/i);
   });
 
-  it('links the credits to the notebook, with /finding only behind the lock (ADR 0026), and back to the film', () => {
+  it('links the credits to the notebook, with /finding only behind the lock (ADR 0034), and back to the film', () => {
     expect(closing).toContain('creditPages(findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV))');
     // The notebook's pages, and «Watch again», which goes to the top of the film (ADR 0029).
     expect(closing.match(/href=\{href\(locale, [^)]*\)\}/g)).toEqual(['href={href(locale, page)}', "href={href(locale, 'home')}"]);

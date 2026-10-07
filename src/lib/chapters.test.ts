@@ -78,7 +78,7 @@ describe('chapter 8, closing (ADR 0021)', () => {
   });
 });
 
-describe('chapter 7 and its lock (ADR 0026)', () => {
+describe('chapter 7 and its lock (ADR 0034)', () => {
   const seventh = chapter('my-research');
   const open = OPEN_CHAPTERS.find((c) => c.id === 'my-research');
 

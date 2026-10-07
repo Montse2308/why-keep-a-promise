@@ -212,7 +212,7 @@ export function findingLinks(html) {
 }
 
 /**
- * Pages that link to /finding while the lock is closed (ADR 0026). /finding shows its title and the
+ * Pages that link to /finding while the lock is closed (ADR 0034). /finding shows its title and the
  * status sentence then, and only its own language switch leads to it.
  * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
  * @returns {string[]}

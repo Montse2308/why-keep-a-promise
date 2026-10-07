@@ -1,6 +1,6 @@
 /**
  * The film's credits (chapter 8, ADR 0021): who plays whom, and the notebook's pages they lead to
- * (ADR 0024): all six, with /finding only behind the lock (ADR 0026). No profiles: GitHub and
+ * (ADR 0024): all six, with /finding only behind the lock (ADR 0034). No profiles: GitHub and
  * LinkedIn belong to /about.
  */
 import type { UiKey } from '../i18n';
