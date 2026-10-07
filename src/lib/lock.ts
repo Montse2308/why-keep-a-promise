@@ -7,7 +7,7 @@
  * reached dist/.
  */
 
-/** A link still to be written at step 3 of docs/launch-checklist.md, such as `SSRN_URL_PENDING`. */
+/** A link still to be written at step 3 of docs/launch-checklist.md: a placeholder ending in `_PENDING`. */
 export function isPending(link: string): boolean {
   return link.endsWith('_PENDING');
 }

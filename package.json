@@ -14,6 +14,7 @@
     "check": "astro check && tsc --noEmit",
     "verify:dist": "node scripts/verify-dist.mjs",
     "budgets": "node scripts/budgets.mjs",
+    "check:launch": "npm run build && node scripts/check-launch.mjs",
     "test": "vitest run",
     "astro": "astro"
   },
