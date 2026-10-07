@@ -36,14 +36,13 @@ verse suave.
 
 ## El candado
 
-Una parte del sitio sigue cerrada hasta que el manuscrito esté en revisión. Mientras lo está, esa
-parte se queda fuera del build, no escondida: un plugin cambia cada componente bloqueado por un stub
-vacío, y un script lee cada archivo construido y falla si se coló algún rastro. La regla
-es una línea:
+Una parte del sitio sigue cerrada hasta que el documento de trabajo sea público en SSRN. Esa parte
+se queda fuera del build, no escondida: un plugin cambia cada componente bloqueado por un stub vacío,
+y un script lee cada archivo construido y falla si se coló algún rastro. La regla es una línea:
 
 ```ts
-export function findingUnlocked(status: ManuscriptStatus, dev: boolean): boolean {
-  return status === 'under-review' || dev;
+export function findingUnlocked(ssrn: string, dev: boolean): boolean {
+  return !isPending(ssrn) || dev;
 }
 ```
 

@@ -12,13 +12,14 @@
  * Under its title, the EN/ES switch (ADR 0013): past the film's first screen the corner one is
  * gone, and the panel is a tap away from any frame.
  */
-import { MANUSCRIPT_STATUS } from '../../config';
+import { WORKING_PAPER } from '../../config';
 import { FILM } from '../../lib/design/film';
 import { useTranslations, type Locale } from '../../lib/i18n';
-import { findingUnlocked, statusKey } from '../../lib/lock';
+import { findingUnlocked } from '../../lib/lock';
 import { NOTEBOOK, NOTEBOOK_PAGES_ID } from '../../lib/notebook';
 import { href, type Route } from '../../lib/routes';
 import LanguageSwitch from '../LanguageSwitch.astro';
+import PaperStatus from '../PaperStatus.astro';
 
 interface Props {
   locale: Locale;
@@ -29,8 +30,7 @@ interface Props {
 
 const { locale, route, film = false } = Astro.props;
 const tr = useTranslations(locale);
-const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
-const status = tr(statusKey(MANUSCRIPT_STATUS));
+const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);
 const label = tr('notebook.label');
 ---
 
@@ -91,7 +91,7 @@ const label = tr('notebook.label');
             return (
               <li class="notebook__entry">
                 {unlocked ? anchor : title}
-                <span class="notebook__status">{status}</span>
+                <span class="notebook__status"><PaperStatus locale={locale} /></span>
                 {unlocked && (
                   <span class="notebook__line">
                     {tr('notebook.engine')} <span class="todo">TODO(launch): enlace al repo del motor</span>

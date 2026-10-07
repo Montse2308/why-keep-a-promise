@@ -33,13 +33,13 @@ A test fails if the sky ever turns grey, or if any surface changes too fast to l
 
 ## The lock
 
-Part of the site stays closed until the manuscript is under review. While it is, that part is left
-out of the build, not hidden: a plugin swaps each locked component for an empty stub, and a script
-reads every built file and fails if any trace of it got through. The rule is one line:
+Part of the site stays closed until the working paper is public on SSRN. Until then, that part is
+left out of the build, not hidden: a plugin swaps each locked component for an empty stub, and a
+script reads every built file and fails if any trace of it got through. The rule is one line:
 
 ```ts
-export function findingUnlocked(status: ManuscriptStatus, dev: boolean): boolean {
-  return status === 'under-review' || dev;
+export function findingUnlocked(ssrn: string, dev: boolean): boolean {
+  return !isPending(ssrn) || dev;
 }
 ```
 

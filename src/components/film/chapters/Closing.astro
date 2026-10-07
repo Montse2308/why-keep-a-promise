@@ -6,7 +6,7 @@
  * notebook (ADR 0024). Each answer is only an answer: nothing is paid, nothing says why, and nothing
  * is stored or sent. Every line an answer can lead to is resolved here.
  */
-import { MANUSCRIPT_STATUS } from '../../../config';
+import { WORKING_PAPER } from '../../../config';
 import { beat, chapter } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { CAST, CAST_LINE, creditPages, type Role } from '../../../lib/film/credits';
@@ -39,7 +39,7 @@ const collect = beat('closing', 'collect');
 const asked = beat('closing', 'asked');
 const credits = beat('closing', 'credits');
 // The notebook's six pages, in its order; /finding only with the lock open (ADR 0024, ADR 0026).
-const pages = creditPages(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));
+const pages = creditPages(findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV));
 
 // The storyboard's still frame: the first table again, at night, the die floating over it.
 const still = stageAt(

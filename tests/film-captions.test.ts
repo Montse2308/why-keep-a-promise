@@ -330,7 +330,7 @@ describe('chapter 8, closing (ADR 0021, ADR 0023, ADR 0024)', () => {
   });
 
   it('links the credits to the notebook, with /finding only behind the lock (ADR 0026), and back to the film', () => {
-    expect(closing).toContain('creditPages(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV))');
+    expect(closing).toContain('creditPages(findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV))');
     // The notebook's pages, and «Watch again», which goes to the top of the film (ADR 0029).
     expect(closing.match(/href=\{href\(locale, [^)]*\)\}/g)).toEqual(['href={href(locale, page)}', "href={href(locale, 'home')}"]);
     expect(closing).toMatch(/<a href=\{href\(locale, 'home'\)\} data-film-again>/);

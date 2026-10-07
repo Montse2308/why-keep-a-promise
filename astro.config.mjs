@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config';
-import { MANUSCRIPT_STATUS } from './src/config.ts';
+import { WORKING_PAPER } from './src/config.ts';
 import { findingUnlocked } from './src/lib/lock.ts';
 
 // Unicode ranges copied from each @fontsource-variable package's wght.css (src/assets/fonts/README.md).
@@ -55,7 +55,7 @@ function lockFinding() {
     apply: 'build',
     enforce: 'pre',
     async resolveId(source, importer, options) {
-      if (findingUnlocked(MANUSCRIPT_STATUS, false) || !names.has(source.split('/').at(-1)?.replace(/\.ts$/, ''))) return null;
+      if (findingUnlocked(WORKING_PAPER.ssrn, false) || !names.has(source.split('/').at(-1)?.replace(/\.ts$/, ''))) return null;
       const resolved = await this.resolve(source, importer, { ...options, skipSelf: true });
       const id = resolved?.id.replace(/\\/g, '/');
       const locked = Object.keys(LOCKED_MODULES).find((path) => id?.endsWith(path));

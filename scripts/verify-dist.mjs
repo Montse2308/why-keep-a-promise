@@ -1,17 +1,19 @@
-// Checks the built site against the lock (ADR 0026). Run after `npm run build`.
+// Checks the built site against the lock (ADR 0034). Run after `npm run build`.
 //
 // The lock covers chapter 7's finding (its prose, the curve and its control, its links), all of
-// /finding and the engine part of /how-its-built. While MANUSCRIPT_STATUS in src/config.ts is
-// 'in-preparation', it fails if any file in dist/ carries a mark of that content: its data
-// attributes, the charts' ids, the control's hook, the finding's first beat (which only the film's
-// timeline names) or a key phrase of its prose and charts. Once the status is 'under-review', it
-// fails if the locked content is missing from any page that carries it, so a broken unlock is caught
-// too. While locked, no page links to /finding either: chapter 7, the notebook's panel, its footer and
-// the credits link to it only behind the lock; and /finding asks not to be indexed, which it stops
-// asking once unlocked. The sitemap lists every page but the 404, and /finding only once unlocked.
+// /finding and the engine part of /how-its-built. While the working paper's link in src/config.ts
+// (WORKING_PAPER.ssrn) is still a placeholder, the lock is closed, and this fails if any file in
+// dist/ carries a mark of that content: its data attributes, the charts' ids, the control's hook, the
+// finding's first beat (which only the film's timeline names) or a key phrase of its prose and
+// charts. The working paper's title is left out of that search: it is part of the status sentence,
+// which shows in both states. Once the link is real, the lock is open, and this fails if the locked
+// content is missing from any page that carries it, so a broken unlock is caught too. While locked,
+// no page links to /finding either: chapter 7, the notebook's panel, its footer and the credits link
+// to it only behind the lock; and /finding asks not to be indexed, which it stops asking once
+// unlocked. The sitemap lists every page but the 404, and /finding only once unlocked.
 //
-// In both states it also checks the status sentence (docs/content-rules.md, rule (b)): the active one
-// appears exactly `STATUS_ON_HOME` times on each home page, and the other one appears nowhere. And
+// In both states it also checks the status sentence (docs/content-rules.md, rule (b)): it stands
+// alone exactly `STATUS_ON_HOME` times on each home page, each time linked to the working paper. And
 // every page has its description, the same in Open Graph, without the status sentence and, while
 // locked, without a mark of the locked content.
 
@@ -63,8 +65,8 @@ export const UNLOCKED_MARKERS = [...new Set(Object.values(UNLOCKED_PAGES).flat()
 export const HOME_PAGES = { 'index.html': 'en', 'es/index.html': 'es' };
 
 /**
- * The active status sentence on each home page: the stamp on chapter 7's envelope, and the notebook's
- * entry for the finding, in its panel (ADR 0024, ADR 0026).
+ * The status sentence on each home page: the stamp on chapter 7's envelope, and the notebook's entry
+ * for the finding, in its panel (ADR 0024, ADR 0034).
  */
 export const STATUS_ON_HOME = 2;
 
@@ -73,9 +75,6 @@ export const FINDING_PAGES = ['finding/index.html', 'es/finding/index.html'];
 
 /** The page GitHub Pages serves for a missing address (src/pages/404.astro): it has no description, since nothing indexes it. */
 export const NOT_FOUND_PAGE = '404.html';
-
-/** The two manuscript states (docs/content-rules.md, rule (b)). */
-export const STATUSES = /** @type {const} */ (['in-preparation', 'under-review']);
 
 const TEXT_FILES = new Set(['.html', '.js', '.mjs', '.css', '.svg', '.xml', '.txt', '.json', '.webmanifest']);
 
@@ -96,23 +95,65 @@ export function findMarks(text, markers = MARKERS) {
 }
 
 /**
- * The manuscript status declared in src/config.ts.
- * @param {string} source
- * @returns {'in-preparation' | 'under-review'}
+ * The marks of the locked content in a text, leaving out the working paper's title: it is part of the
+ * status sentence, which shows in both states of the lock (ADR 0034), though it names two of the
+ * finding's reasons.
+ * @param {string} text
+ * @param {string} title
+ * @returns {string[]}
  */
-export function readStatus(source) {
-  const match = /MANUSCRIPT_STATUS\s*:[^=]*=\s*'([a-z-]+)'/.exec(source);
-  const status = match?.[1];
-  if (status !== 'in-preparation' && status !== 'under-review') {
-    throw new Error(`Cannot read MANUSCRIPT_STATUS from src/config.ts (got ${String(status)})`);
-  }
-  return status;
+export function lockedMarks(text, title) {
+  const needle = normalize(title).trim();
+  if (needle === '') throw new Error('lockedMarks needs the working paper’s title');
+  return findMarks(normalize(text).split(needle).join(' '));
+}
+
+/**
+ * The working paper as src/config.ts declares it: its title and its link on SSRN.
+ * @param {string} source
+ * @returns {{ title: string, ssrn: string }}
+ */
+export function readPaper(source) {
+  const block = /WORKING_PAPER\s*=\s*\{([\s\S]*?)\}/.exec(source)?.[1] ?? '';
+  const title = /\btitle:\s*'([^']+)'/.exec(block)?.[1];
+  const ssrn = /\bssrn:\s*'([^']+)'/.exec(block)?.[1];
+  if (!title || !ssrn) throw new Error('Cannot read WORKING_PAPER (title, ssrn) from src/config.ts');
+  return { title, ssrn };
+}
+
+/**
+ * Whether a link is still a placeholder for step 3 of docs/launch-checklist.md, such as
+ * `SSRN_URL_PENDING`: the rule of `isPending` in src/lib/lock.ts, which a test keeps the same.
+ * @param {string} link
+ */
+export function isPendingLink(link) {
+  return link.endsWith('_PENDING');
+}
+
+/**
+ * The status sentence in one language, as its elements read: the working paper's title in its place.
+ * @param {Record<string, string>} dictionary the UI strings of the language
+ * @param {string} title
+ */
+export function statusSentence(dictionary, title) {
+  const sentence = dictionary['paper.status'];
+  if (!sentence || sentence.split('{title}').length !== 2) throw new Error('No status sentence with one {title} (paper.status)');
+  return sentence.replace('{title}', title);
+}
+
+/**
+ * An HTML text without the tags that may sit inside the status sentence: the link to the working
+ * paper and the italics of its title. What is left of its element is the sentence alone.
+ * @param {string} html
+ */
+export function withoutInlineTags(html) {
+  return html.replace(/<\/?(?:a|cite|em|i)\b[^>]*>/gi, '');
 }
 
 /**
  * How many elements of an HTML text hold exactly this sentence and nothing else: the way chapter 7's
  * stamp, the notebook's entry and /finding render the status sentence. The same words inside a longer
- * sentence of prose do not count ("…until the manuscript is under review. While…" on /how-its-built).
+ * sentence of prose do not count.
  * @param {string} html
  * @param {string} sentence
  * @returns {number}
@@ -121,39 +162,40 @@ export function countStandalone(html, sentence) {
   const needle = normalize(sentence).trim();
   if (needle === '') throw new Error('countStandalone needs a sentence');
   const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return [...normalize(html).matchAll(new RegExp(`>\\s*${escaped}\\s*<`, 'g'))].length;
+  return [...normalize(withoutInlineTags(html)).matchAll(new RegExp(`>\\s*${escaped}\\s*<`, 'g'))].length;
 }
 
 /**
- * Problems with the status sentence (rule (b), ADR 0026): the active one must stand alone exactly
- * `STATUS_ON_HOME` times on each home page, and the inactive one on no page at all.
- * @param {'in-preparation' | 'under-review'} status
+ * How many links an HTML text has to this address.
+ * @param {string} html
+ * @param {string} url
+ */
+export function linksTo(html, url) {
+  return [...html.matchAll(/<a\b[^>]*\bhref="([^"]*)"/gi)].filter((match) => decodeAttribute(match[1]) === url).length;
+}
+
+/**
+ * Problems with the status sentence (rule (b), ADR 0034): it must stand alone exactly
+ * `STATUS_ON_HOME` times on each home page, each time linked to the working paper on SSRN.
+ * @param {{ title: string, ssrn: string }} paper
  * @param {Record<string, Record<string, string>>} dictionaries the UI strings, by locale
  * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
  * @returns {string[]}
  */
-export function statusProblems(status, dictionaries, pages) {
-  const sentence = (locale, state) => {
-    const value = dictionaries[locale]?.[`manuscript.status.${state}`];
-    if (!value) throw new Error(`No status sentence for ${locale}/${state}`);
-    return value;
-  };
+export function statusProblems(paper, dictionaries, pages) {
   const problems = [];
   for (const [page, locale] of Object.entries(HOME_PAGES)) {
     const text = pages[page];
+    const dictionary = dictionaries[locale];
     if (text === undefined) {
       problems.push(`${page}: missing`);
       continue;
     }
-    const count = countStandalone(text, sentence(locale, status));
+    if (!dictionary) throw new Error(`No UI strings for ${locale}`);
+    const count = countStandalone(text, statusSentence(dictionary, paper.title));
     if (count !== STATUS_ON_HOME) problems.push(`${page}: the status sentence appears ${count} times, not ${STATUS_ON_HOME}`);
-  }
-  for (const other of STATUSES.filter((state) => state !== status)) {
-    for (const [page, text] of Object.entries(pages)) {
-      for (const locale of Object.keys(dictionaries)) {
-        if (countStandalone(text, sentence(locale, other)) > 0) problems.push(`${page}: carries the '${other}' sentence while the status is '${status}'`);
-      }
-    }
+    const links = linksTo(text, paper.ssrn);
+    if (links !== STATUS_ON_HOME) problems.push(`${page}: links to the working paper ${links} times, not ${STATUS_ON_HOME}`);
   }
   return problems;
 }
@@ -214,21 +256,22 @@ export function descriptionsOf(html) {
  * external review): every page has one, the same in `og:description`; none repeats a status sentence
  * (rule (b): the home says it exactly twice, /finding carries the site's question), and while the
  * lock is closed, none carries a mark of the locked content.
- * @param {'in-preparation' | 'under-review'} status
+ * @param {{ title: string, ssrn: string }} paper the lock is closed while its link is a placeholder
  * @param {Record<string, Record<string, string>>} dictionaries the UI strings, by locale
  * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
  * @returns {string[]}
  */
-export function descriptionProblems(status, dictionaries, pages) {
-  const sentences = Object.values(dictionaries).flatMap((dictionary) => STATUSES.map((state) => dictionary[`manuscript.status.${state}`] ?? ''));
+export function descriptionProblems(paper, dictionaries, pages) {
+  const locked = isPendingLink(paper.ssrn);
+  const sentences = Object.values(dictionaries).map((dictionary) => statusSentence(dictionary, paper.title));
   return Object.entries(pages).flatMap(([page, html]) => {
     if (page === NOT_FOUND_PAGE) return [];
     const { name, og } = descriptionsOf(html);
     if (!name?.trim()) return [`${page}: no description`];
     if (og !== name) return [`${page}: og:description is not its description`];
     const problems = [];
-    if (sentences.some((sentence) => sentence && normalize(name).includes(normalize(sentence)))) problems.push(`${page}: the description repeats the status sentence`);
-    if (status === 'in-preparation') problems.push(...findMarks(name).map((mark) => `${page}: the description carries locked content: ${mark}`));
+    if (sentences.some((sentence) => normalize(name).includes(normalize(sentence)))) problems.push(`${page}: the description repeats the status sentence`);
+    if (locked) problems.push(...lockedMarks(name, paper.title).map((mark) => `${page}: the description carries locked content: ${mark}`));
     return problems;
   });
 }
@@ -245,15 +288,16 @@ export function isNoindex(html) {
  * Problems with `noindex` (point 13 of the external review): while the lock is closed, /finding is a
  * title and the status sentence and carries it; once open, /finding is indexed like any page. The
  * 404 page always carries it, and no other page ever does.
- * @param {'in-preparation' | 'under-review'} status
+ * @param {boolean} locked whether the lock is closed
  * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
  * @returns {string[]}
  */
-export function noindexProblems(status, pages) {
-  const hidden = [NOT_FOUND_PAGE, ...(status === 'in-preparation' ? FINDING_PAGES : [])];
-  const problems = hidden.filter((page) => pages[page] !== undefined && !isNoindex(pages[page])).map((page) => `${page}: no noindex while the status is '${status}'`);
+export function noindexProblems(locked, pages) {
+  const state = locked ? 'closed' : 'open';
+  const hidden = [NOT_FOUND_PAGE, ...(locked ? FINDING_PAGES : [])];
+  const problems = hidden.filter((page) => pages[page] !== undefined && !isNoindex(pages[page])).map((page) => `${page}: no noindex while the lock is ${state}`);
   for (const [page, html] of Object.entries(pages)) {
-    if (!hidden.includes(page) && isNoindex(html)) problems.push(`${page}: noindex while the status is '${status}'`);
+    if (!hidden.includes(page) && isNoindex(html)) problems.push(`${page}: noindex while the lock is ${state}`);
   }
   for (const page of FINDING_PAGES.filter((page) => pages[page] === undefined)) problems.push(`${page}: missing`);
   return problems;
@@ -276,16 +320,15 @@ export function siteRoot(pages) {
  * Problems with the sitemap, a new place for the lock to leak through: every URL it names is a page
  * of dist/ under the site's root, not the 404 page; it lists every page; and while the lock is
  * closed it leaves /finding out, in either language and as an alternate too.
- * @param {'in-preparation' | 'under-review'} status
+ * @param {boolean} locked whether the lock is closed
  * @param {string | undefined} xml the sitemap
  * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
  * @returns {string[]}
  */
-export function sitemapProblems(status, xml, pages) {
+export function sitemapProblems(locked, xml, pages) {
   if (xml === undefined) return [`${SITEMAP}: missing`];
   const root = siteRoot(pages);
   if (!root) return ['index.html: no canonical link to read the site from'];
-  const locked = status === 'in-preparation';
   const listed = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map((match) => decodeAttribute(match[1]));
   const named = [...listed, ...[...xml.matchAll(/<xhtml:link\b[^>]*\bhref="([^"]*)"/g)].map((match) => decodeAttribute(match[1]))];
   /** @param {string} url */
@@ -318,7 +361,8 @@ function textFiles(dir) {
 function main() {
   const root = fileURLToPath(new URL('..', import.meta.url));
   const dist = join(root, 'dist');
-  const status = readStatus(readFileSync(join(root, 'src', 'config.ts'), 'utf8'));
+  const paper = readPaper(readFileSync(join(root, 'src', 'config.ts'), 'utf8'));
+  const locked = isPendingLink(paper.ssrn);
   let files;
   try {
     files = textFiles(dist);
@@ -333,43 +377,43 @@ function main() {
   const pages = Object.fromEntries(
     files.filter((file) => extname(file) === '.html').map((file) => [relative(dist, file).split('\\').join('/'), readFileSync(file, 'utf8')]),
   );
-  const problems = statusProblems(status, dictionaries, pages);
+  const problems = statusProblems(paper, dictionaries, pages);
   if (problems.length > 0) {
-    console.error(`verify:dist: the manuscript status sentence is off (rule (b)):\n  ${problems.join('\n  ')}`);
+    console.error(`verify:dist: the status sentence is off (rule (b)):\n  ${problems.join('\n  ')}`);
     process.exit(1);
   }
-  const descriptions = descriptionProblems(status, dictionaries, pages);
+  const descriptions = descriptionProblems(paper, dictionaries, pages);
   if (descriptions.length > 0) {
     console.error(`verify:dist: the pages' descriptions are off:\n  ${descriptions.join('\n  ')}`);
     process.exit(1);
   }
   const described = Object.keys(pages).filter((page) => page !== NOT_FOUND_PAGE).length;
-  const indexing = noindexProblems(status, pages);
+  const indexing = noindexProblems(locked, pages);
   if (indexing.length > 0) {
     console.error(`verify:dist: noindex is off:\n  ${indexing.join('\n  ')}`);
     process.exit(1);
   }
   const sitemapFile = join(dist, SITEMAP);
   const sitemap = files.includes(sitemapFile) ? readFileSync(sitemapFile, 'utf8') : undefined;
-  const mapping = sitemapProblems(status, sitemap, pages);
+  const mapping = sitemapProblems(locked, sitemap, pages);
   if (mapping.length > 0) {
     console.error(`verify:dist: the sitemap is off:\n  ${mapping.join('\n  ')}`);
     process.exit(1);
   }
 
-  if (status === 'in-preparation') {
-    const leaks = files.flatMap((file) => findMarks(readFileSync(file, 'utf8')).map((mark) => `${relative(root, file)}: ${mark}`));
+  if (locked) {
+    const leaks = files.flatMap((file) => lockedMarks(readFileSync(file, 'utf8'), paper.title).map((mark) => `${relative(root, file)}: ${mark}`));
     if (leaks.length > 0) {
-      console.error(`verify:dist: the lock is closed ('in-preparation'), but dist/ carries locked content:\n  ${leaks.join('\n  ')}`);
+      console.error(`verify:dist: the lock is closed (the working paper's link is still ${paper.ssrn}), but dist/ carries locked content:\n  ${leaks.join('\n  ')}`);
       process.exit(1);
     }
     const links = lockedLinkProblems(pages);
     if (links.length > 0) {
-      console.error(`verify:dist: the lock is closed ('in-preparation'), but pages link to /finding:\n  ${links.join('\n  ')}`);
+      console.error(`verify:dist: the lock is closed (the working paper's link is still ${paper.ssrn}), but pages link to /finding:\n  ${links.join('\n  ')}`);
       process.exit(1);
     }
     console.log(
-      `verify:dist: locked; ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page or the sitemap links to /finding and it is noindex, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
+      `verify:dist: locked (the working paper's link is still ${paper.ssrn}); ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page or the sitemap links to /finding and it is noindex, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, and all ${described} pages have a clean description.`,
     );
     return;
   }
@@ -380,11 +424,11 @@ function main() {
     return marks.filter((mark) => !found.includes(mark)).map((mark) => `${relative(root, file)}: ${mark}`);
   });
   if (missing.length > 0) {
-    console.error(`verify:dist: the manuscript is under review, but the locked content did not unlock:\n  ${missing.join('\n  ')}`);
+    console.error(`verify:dist: the working paper is public, but the locked content did not unlock:\n  ${missing.join('\n  ')}`);
     process.exit(1);
   }
   console.log(
-    `verify:dist: unlocked ('under-review') on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content and /finding is indexed and in the sitemap, the status sentence appears ${STATUS_ON_HOME} times on each home page, and all ${described} pages have a clean description.`,
+    `verify:dist: unlocked (the working paper is public) on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content and /finding is indexed and in the sitemap, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, and all ${described} pages have a clean description.`,
   );
 }
 

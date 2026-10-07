@@ -11,13 +11,14 @@ import Day from '../components/notebook/Day.astro';
 import Sources from '../components/notebook/Sources.astro';
 import Vignette from '../components/notebook/Vignette.astro';
 import Weight from '../components/notebook/Weight.astro';
+import PaperStatus from '../components/PaperStatus.astro';
 import GuiltChart from '../components/curve/GuiltChart.astro';
 import Matrix from '../components/pd/Matrix.astro';
 import SwitchTable from '../components/vanberg/SwitchTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { MANUSCRIPT_STATUS } from '../config';
+import { WORKING_PAPER } from '../config';
 import { t, type Locale } from '../lib/i18n';
-import { findingUnlocked, statusKey } from '../lib/lock';
+import { findingUnlocked } from '../lib/lock';
 import { notebookPage } from '../lib/notebook';
 import { href, type Subpage } from '../lib/routes';
 import { focusableCode, splitSubpage, type Segment } from '../lib/subpages';
@@ -36,13 +37,12 @@ if (!entry?.rendered) throw new Error(`No prose for subpage ${locale}/${subpage}
 const heading = entry.data.title;
 if (heading !== t(locale, page.titleKey)) throw new Error(`The title of ${locale}/${subpage} is not its notebook entry's`);
 const parts = splitSubpage(focusableCode(entry.rendered.html));
-const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
+const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);
 const segments: readonly Segment[] = unlocked ? [...parts.open, ...parts.locked] : parts.open;
 const hasLocked = parts.locked.length > 0;
 /** A subpage with nothing open (/finding) shows only its title and the status sentence while locked. */
 const lockedWhole = !unlocked && parts.open.length === 0;
 const showStatus = subpage === 'finding';
-const status = t(locale, statusKey(MANUSCRIPT_STATUS));
 // Back to the chapter of the film the page deepens; every page has the way back to the film in its footer.
 const chapterEntry = page.film && (await getCollection('chapters', (candidate) => candidate.id.startsWith(`${locale}/`) && candidate.data.chapter === page.film))[0];
 if (page.film && !chapterEntry) throw new Error(`No chapter "${page.film}" for subpage ${subpage} in ${locale}`);
@@ -76,7 +76,7 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
         ) : null,
       )
     }
-    {showStatus && <p class="subpage__status">{status}</p>}
+    {showStatus && <p class="subpage__status"><PaperStatus locale={locale} /></p>}
     {
       back && !lockedWhole && (
         <p class="subpage__back">

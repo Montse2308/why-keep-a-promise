@@ -15,6 +15,7 @@ import magnifier from '../src/components/film/Magnifier.astro?raw';
 import twoRooms from '../src/components/film/chapters/TwoRooms.astro?raw';
 import realPeople from '../src/components/film/chapters/RealPeople.astro?raw';
 import notebook from '../src/components/notebook/Notebook.astro?raw';
+import paperStatus from '../src/components/PaperStatus.astro?raw';
 import notebookScript from '../src/components/notebook/notebook.ts?raw';
 import notebookFooter from '../src/components/notebook/NotebookFooter.astro?raw';
 import sourcesComponent from '../src/components/notebook/Sources.astro?raw';
@@ -44,16 +45,27 @@ import {
   findMarks,
   HOME_PAGES,
   isNoindex,
+  isPendingLink,
+  linksTo,
   lockedLinkProblems,
+  lockedMarks,
   MARKERS,
   noindexProblems,
   NOT_FOUND_PAGE,
-  readStatus,
+  readPaper,
   STATUS_ON_HOME,
   statusProblems,
+  statusSentence,
   UNLOCKED_MARKERS,
   UNLOCKED_PAGES,
+  withoutInlineTags,
 } from '../scripts/verify-dist.mjs';
+import { WORKING_PAPER } from '../src/config';
+import { findingUnlocked, isPending } from '../src/lib/lock';
+
+/** The working paper while its link is a placeholder (the lock closed), and once it is real (open). */
+const LOCKED = { title: WORKING_PAPER.title, ssrn: 'SSRN_URL_PENDING' };
+const OPEN = { title: WORKING_PAPER.title, ssrn: 'https://ssrn.com/abstract=1' };
 
 const subpages = import.meta.glob('../src/content/subpages/*/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 
@@ -192,59 +204,86 @@ describe('verify:dist (ADR 0026)', () => {
   });
 
   it("finds nothing in chapter 7's envelope and /finding as they render while locked", () => {
-    const envelope = `<section id="my-research" class="chapter"><h2 id="my-research-title" class="card__chapter">${en['film.chapter']} · ${en['notebook.finding.title']}</h2><div class="envelope" data-envelope><p class="envelope__stamp">${en['manuscript.status.in-preparation']}</p></div></section>`;
-    const envelopeEs = `<div class="envelope" data-envelope><p class="envelope__stamp">${es['manuscript.status.in-preparation']}</p></div>`;
-    const subpage = `<article class="subpage"><h1 id="subpage-title">${en['notebook.finding.title']}</h1><p class="subpage__status">${en['manuscript.status.in-preparation']}</p></article>`;
-    expect(findMarks(envelope + envelopeEs + subpage)).toEqual([]);
+    const stamp = (dictionary: Record<string, string>) =>
+      dictionary['paper.status']?.replace('{title}', `<a href="${LOCKED.ssrn}"><cite>${WORKING_PAPER.title}</cite></a>`);
+    const envelope = `<section id="my-research" class="chapter"><h2 id="my-research-title" class="card__chapter">${en['film.chapter']} · ${en['notebook.finding.title']}</h2><div class="envelope" data-envelope><p class="envelope__stamp">${stamp(en)}</p></div></section>`;
+    const envelopeEs = `<div class="envelope" data-envelope><p class="envelope__stamp">${stamp(es)}</p></div>`;
+    const subpage = `<article class="subpage"><h1 id="subpage-title">${en['notebook.finding.title']}</h1><p class="subpage__status">${stamp(en)}</p></article>`;
+    expect(lockedMarks(envelope + envelopeEs + subpage, WORKING_PAPER.title)).toEqual([]);
   });
 
-  it('counts the status sentence where it stands alone, across line breaks and case', () => {
-    const sentence = en['manuscript.status.in-preparation'];
-    expect(countStandalone('<p class="stamp">A manuscript is in preparation.</p><p class="subpage__status">\n A manuscript\n is in PREPARATION.</p>', sentence)).toBe(2);
+  it("leaves the working paper's title out of the search, and only the title (ADR 0034)", () => {
+    // The title names two of the finding's reasons; it is part of the status sentence, seen in both states.
+    expect(findMarks(WORKING_PAPER.title)).toEqual(['personal guilt', 'partner-specific commitment']);
+    expect(lockedMarks(`<p>${WORKING_PAPER.title.toUpperCase()}</p>`, WORKING_PAPER.title)).toEqual([]);
+    expect(lockedMarks(`<p>${WORKING_PAPER.title}</p><p>Personal guilt rolls in the middle.</p>`, WORKING_PAPER.title)).toEqual(['personal guilt']);
+    expect(() => lockedMarks('<p>text</p>', ' ')).toThrow();
+  });
+
+  it('counts the status sentence where it stands alone, its link and italics included, across line breaks and case', () => {
+    const sentence = statusSentence(en, 'A Title');
+    expect(sentence).toBe('Working paper: A Title (SSRN).');
+    expect(countStandalone('<p class="stamp">Working paper: <a href="x"><cite>A Title</cite></a> (SSRN).</p><p class="subpage__status">\n Working\n paper: A TITLE (SSRN).</p>', sentence)).toBe(2);
     expect(countStandalone('<p>Nothing to see.</p>', sentence)).toBe(0);
     expect(() => countStandalone('<p>text</p>', ' ')).toThrow();
+    expect(withoutInlineTags('<p class="a">x <a href="y" class="z"><cite>t</cite></a> <em>e</em></p>')).toBe('<p class="a">x t e</p>');
   });
 
-  it('does not count the same words inside a sentence of prose (/how-its-built)', () => {
-    const prose = '<p>Part of the site stays closed until the manuscript is under review. While it is closed…</p>';
-    expect(countStandalone(prose, en['manuscript.status.under-review'])).toBe(0);
+  it('does not count the same words inside a sentence of prose', () => {
+    const sentence = statusSentence(es, 'Un título');
+    expect(countStandalone(`<p>Según el texto, ${sentence} Y sigue…</p>`, sentence)).toBe(0);
   });
 
-  describe('the status sentence (rule (b), ADR 0026)', () => {
+  it('reads the working paper from src/config.ts, and the lock from its link, as src/lib/lock.ts does', () => {
+    expect(readPaper(config)).toEqual({ title: WORKING_PAPER.title, ssrn: WORKING_PAPER.ssrn });
+    expect(readPaper("export const WORKING_PAPER = {\n  title: 'T',\n  ssrn: 'https://ssrn.com/abstract=1',\n} as const;")).toEqual({ title: 'T', ssrn: OPEN.ssrn });
+    expect(() => readPaper('export const OTHER = 1;')).toThrow();
+    for (const link of [LOCKED.ssrn, OPEN.ssrn, 'ENGINE_DOI_PENDING', WORKING_PAPER.ssrn]) {
+      expect(isPendingLink(link)).toBe(isPending(link));
+      expect(isPendingLink(link)).toBe(!findingUnlocked(link, false));
+    }
+  });
+
+  describe('the status sentence (rule (b), ADR 0034)', () => {
     const dictionaries = { en, es };
-    const page = (sentence: string, times: number) => `<main>${`<p>${sentence}</p>`.repeat(times)}</main>`;
-    const home = (status: 'in-preparation' | 'under-review', times = STATUS_ON_HOME) => ({
-      'index.html': page(en[`manuscript.status.${status}`], times),
-      'es/index.html': page(es[`manuscript.status.${status}`], times),
-      'finding/index.html': page(en[`manuscript.status.${status}`], 1),
+    const page = (dictionary: Record<string, string>, times: number, ssrn: string) =>
+      `<main>${`<p>${dictionary['paper.status']?.replace('{title}', `<a href="${ssrn}"><cite>${WORKING_PAPER.title}</cite></a>`)}</p>`.repeat(times)}</main>`;
+    const home = (paper = LOCKED, times = STATUS_ON_HOME) => ({
+      'index.html': page(en, times, paper.ssrn),
+      'es/index.html': page(es, times, paper.ssrn),
+      'finding/index.html': page(en, 1, paper.ssrn),
     });
 
     it("passes with chapter 7's stamp and the notebook's entry on each home page, in both states", () => {
       expect(STATUS_ON_HOME).toBe(2);
-      expect(statusProblems('in-preparation', dictionaries, home('in-preparation'))).toEqual([]);
-      expect(statusProblems('under-review', dictionaries, home('under-review'))).toEqual([]);
+      expect(statusProblems(LOCKED, dictionaries, home(LOCKED))).toEqual([]);
+      expect(statusProblems(OPEN, dictionaries, home(OPEN))).toEqual([]);
+    });
+
+    it('renders the sentence in one component, the same in both states', () => {
+      expect(paperStatus).toContain('{before}<a href={WORKING_PAPER.ssrn}><cite>{WORKING_PAPER.title}</cite></a>{after}');
+      expect(paperStatus).not.toMatch(/unlocked|findingUnlocked/);
     });
 
     it('stamps the envelope with the status sentence, standing alone, and nowhere else in chapter 7', () => {
-      expect(myResearch).toMatch(/<p class="envelope__stamp">\{status\}<\/p>/);
-      expect(myResearch.match(/\{status\}/g)).toHaveLength(1);
+      expect(myResearch).toMatch(/<p class="envelope__stamp"><PaperStatus locale=\{locale\} \/><\/p>/);
+      expect(myResearch.match(/<PaperStatus /g)).toHaveLength(1);
     });
 
     it("gives the notebook's panel the entry for the finding: its title and the sentence, standing alone", () => {
-      expect(notebook).toMatch(/<span class="notebook__status">\{status\}<\/span>/);
-      expect(notebook.match(/\{status\}/g)).toHaveLength(1);
-      expect(notebook).toContain('const status = tr(statusKey(MANUSCRIPT_STATUS));');
+      expect(notebook).toMatch(/<span class="notebook__status"><PaperStatus locale=\{locale\} \/><\/span>/);
+      expect(notebook.match(/<PaperStatus /g)).toHaveLength(1);
       // The entry links to /finding only behind the lock; closed, its title is plain text.
       expect(notebook).toContain('{unlocked ? anchor : title}');
       expect(notebook).toMatch(/const title = \(\s*<span class="notebook__name"/);
-      expect(notebook).toContain('const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);');
+      expect(notebook).toContain('const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);');
       // The engine's repository waits for step 8 of the launch, and only behind the lock.
       expect(notebook).toMatch(/\{unlocked && \(\s*<span class="notebook__line">\s*\{tr\('notebook\.engine'\)\} <span class="todo">TODO\(launch\): enlace al repo del motor<\/span>/);
     });
 
     it('keeps the status sentence off the footer and the rest of the page, so the home says it twice', () => {
       for (const source of [notebookFooter, baseLayout, sourcesComponent, magnifier]) {
-        expect(source).not.toMatch(/statusKey|manuscript\.status/);
+        expect(source).not.toMatch(/PaperStatus|paper\.status/);
       }
       // The panel is in the layout once, on every page: one entry for the finding per page.
       expect(baseLayout.match(/<Notebook /g)).toHaveLength(1);
@@ -252,26 +291,27 @@ describe('verify:dist (ADR 0026)', () => {
     });
 
     it('leaves /finding out of the footer while the lock is closed, as out of the credits', () => {
-      expect(notebookFooter).toContain('const pages = linkable(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));');
-      expect(closingComponent).toContain('const pages = creditPages(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));');
+      expect(notebookFooter).toContain('const pages = linkable(findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV));');
+      expect(closingComponent).toContain('const pages = creditPages(findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV));');
     });
 
     it('fails when the sentence is missing, appears once, or three times', () => {
-      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 0))).toHaveLength(2);
-      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 1))[0]).toMatch(/appears 1 times, not 2/);
-      expect(statusProblems('in-preparation', dictionaries, home('in-preparation', 3))[0]).toMatch(/appears 3 times, not 2/);
+      expect(statusProblems(LOCKED, dictionaries, home(LOCKED, 0))).toHaveLength(4);
+      expect(statusProblems(LOCKED, dictionaries, home(LOCKED, 1))[0]).toMatch(/appears 1 times, not 2/);
+      expect(statusProblems(LOCKED, dictionaries, home(LOCKED, 3))[0]).toMatch(/appears 3 times, not 2/);
     });
 
-    it('fails when the inactive sentence ships anywhere', () => {
-      const pages = { ...home('in-preparation'), 'vanberg/index.html': page(es['manuscript.status.under-review'], 1) };
-      expect(statusProblems('in-preparation', dictionaries, pages)).toEqual([
-        "vanberg/index.html: carries the 'under-review' sentence while the status is 'in-preparation'",
+    it('fails when the sentence does not link to the working paper', () => {
+      expect(linksTo('<a href="SSRN_URL_PENDING">x</a><a class="b" href="https://ssrn.com/abstract=1?a=1&amp;b=2">y</a>', 'https://ssrn.com/abstract=1?a=1&b=2')).toBe(1);
+      expect(statusProblems(OPEN, dictionaries, home(LOCKED))).toEqual([
+        'index.html: links to the working paper 0 times, not 2',
+        'es/index.html: links to the working paper 0 times, not 2',
       ]);
     });
 
     it('fails when a home page is missing', () => {
-      const { 'es/index.html': _gone, ...pages } = home('in-preparation');
-      expect(statusProblems('in-preparation', dictionaries, pages)).toEqual(['es/index.html: missing']);
+      const { 'es/index.html': _gone, ...pages } = home();
+      expect(statusProblems(LOCKED, dictionaries, pages)).toEqual(['es/index.html: missing']);
     });
   });
 
@@ -312,17 +352,17 @@ describe('verify:dist (ADR 0026)', () => {
 
     it('passes pages that each carry their own, the same twice', () => {
       const pages = { 'index.html': head(en['site.description']), 'finding/index.html': head(en['site.title']) };
-      expect(descriptionProblems('in-preparation', dictionaries, pages)).toEqual([]);
+      expect(descriptionProblems(LOCKED, dictionaries, pages)).toEqual([]);
     });
 
     it('leaves out the 404 page, which nothing indexes', () => {
       expect(NOT_FOUND_PAGE).toBe('404.html');
-      expect(descriptionProblems('in-preparation', dictionaries, { '404.html': '<head></head>' })).toEqual([]);
+      expect(descriptionProblems(LOCKED, dictionaries, { '404.html': '<head></head>' })).toEqual([]);
     });
 
     it('fails a page without one, an empty one, or one Open Graph does not repeat', () => {
       const pages = { 'index.html': head(null), 'dilemma/index.html': head(' '), 'vanberg/index.html': head('A', 'B'), 'about/index.html': head('A', null) };
-      expect(descriptionProblems('in-preparation', dictionaries, pages)).toEqual([
+      expect(descriptionProblems(LOCKED, dictionaries, pages)).toEqual([
         'index.html: no description',
         'dilemma/index.html: no description',
         'vanberg/index.html: og:description is not its description',
@@ -331,9 +371,9 @@ describe('verify:dist (ADR 0026)', () => {
     });
 
     it('fails a description with the status sentence, in either state and language (rule (b))', () => {
-      const pages = { 'finding/index.html': head(es['manuscript.status.under-review']), 'es/finding/index.html': head(`¿Por qué? ${es['manuscript.status.in-preparation']}`) };
-      for (const status of ['in-preparation', 'under-review'] as const) {
-        expect(descriptionProblems(status, dictionaries, pages)).toEqual([
+      const pages = { 'finding/index.html': head(statusSentence(es, WORKING_PAPER.title)), 'es/finding/index.html': head(`¿Por qué? ${statusSentence(en, WORKING_PAPER.title)}`) };
+      for (const paper of [LOCKED, OPEN]) {
+        expect(descriptionProblems(paper, dictionaries, pages)).toEqual([
           'finding/index.html: the description repeats the status sentence',
           'es/finding/index.html: the description repeats the status sentence',
         ]);
@@ -342,11 +382,11 @@ describe('verify:dist (ADR 0026)', () => {
 
     it('fails a description that carries a mark of the locked content, only while locked', () => {
       const pages = { 'finding/index.html': head('On personal guilt and background trust') };
-      expect(descriptionProblems('in-preparation', dictionaries, pages)).toEqual([
+      expect(descriptionProblems(LOCKED, dictionaries, pages)).toEqual([
         'finding/index.html: the description carries locked content: personal guilt',
         'finding/index.html: the description carries locked content: background trust',
       ]);
-      expect(descriptionProblems('under-review', dictionaries, pages)).toEqual([]);
+      expect(descriptionProblems(OPEN, dictionaries, pages)).toEqual([]);
     });
   });
 
@@ -367,37 +407,31 @@ describe('verify:dist (ADR 0026)', () => {
     });
 
     it('wants /finding hidden while locked and indexed once open; the 404 page always hidden', () => {
-      expect(noindexProblems('in-preparation', site(true))).toEqual([]);
-      expect(noindexProblems('under-review', site(false))).toEqual([]);
+      expect(noindexProblems(true, site(true))).toEqual([]);
+      expect(noindexProblems(false, site(false))).toEqual([]);
     });
 
     it('fails /finding indexed while locked, or hidden once open', () => {
-      expect(noindexProblems('in-preparation', site(false))).toEqual([
-        "finding/index.html: no noindex while the status is 'in-preparation'",
-        "es/finding/index.html: no noindex while the status is 'in-preparation'",
+      expect(noindexProblems(true, site(false))).toEqual([
+        "finding/index.html: no noindex while the lock is closed",
+        "es/finding/index.html: no noindex while the lock is closed",
       ]);
-      expect(noindexProblems('under-review', site(true))).toEqual([
-        "finding/index.html: noindex while the status is 'under-review'",
-        "es/finding/index.html: noindex while the status is 'under-review'",
+      expect(noindexProblems(false, site(true))).toEqual([
+        "finding/index.html: noindex while the lock is open",
+        "es/finding/index.html: noindex while the lock is open",
       ]);
     });
 
     it('fails any other page that asks not to be indexed, and a 404 page that does not', () => {
-      expect(noindexProblems('in-preparation', site(true, { 'vanberg/index.html': tag, '404.html': '<head></head>' }))).toEqual([
-        "404.html: no noindex while the status is 'in-preparation'",
-        "vanberg/index.html: noindex while the status is 'in-preparation'",
+      expect(noindexProblems(true, site(true, { 'vanberg/index.html': tag, '404.html': '<head></head>' }))).toEqual([
+        "404.html: no noindex while the lock is closed",
+        "vanberg/index.html: noindex while the lock is closed",
       ]);
     });
 
     it('sets it in the layout by the lock, on /finding only', () => {
-      expect(baseLayout).toContain("const noindex = route === 'finding' && !findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);");
+      expect(baseLayout).toContain("const noindex = route === 'finding' && !findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);");
       expect(baseLayout).toContain('{noindex && <meta name="robots" content="noindex" />}');
     });
-  });
-
-  it('reads the manuscript status from src/config.ts', () => {
-    expect(['in-preparation', 'under-review']).toContain(readStatus(config));
-    expect(readStatus("export const MANUSCRIPT_STATUS: 'in-preparation' | 'under-review' = 'under-review';")).toBe('under-review');
-    expect(() => readStatus('export const OTHER = 1;')).toThrow();
   });
 });

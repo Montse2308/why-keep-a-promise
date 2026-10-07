@@ -6,15 +6,16 @@
  * envelope is the card itself, and it says nothing but the status sentence: no shape, no axes, no
  * gap (ADR 0026). With the lock open it opens, and the finding follows (./Finding.astro).
  */
-import { MANUSCRIPT_STATUS } from '../../../config';
+import { WORKING_PAPER } from '../../../config';
 import { beat, chapter, LOCKED_BEATS } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { KEY_POSE, stageAt } from '../../../lib/film/stage';
 import { useTranslations, type Locale } from '../../../lib/i18n';
-import { findingUnlocked, statusKey } from '../../../lib/lock';
+import { findingUnlocked } from '../../../lib/lock';
 import { roundOf } from '../../../lib/pd/round';
 import { outcomeOf } from '../../../lib/table/decision';
 import { fill } from '../../../lib/template';
+import PaperStatus from '../../PaperStatus.astro';
 import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
 import Finding from './Finding.astro';
@@ -30,10 +31,9 @@ interface Props {
 
 const { locale, title, captions, locked } = Astro.props;
 const tr = useTranslations(locale);
-const unlocked = findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV);
+const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);
 // The film's timeline and this chapter must agree on the lock (astro.config.mjs stubs both).
 if (unlocked !== LOCKED_BEATS.length > 0) throw new Error('Chapter 7 and the film’s timeline disagree on the lock');
-const status = tr(statusKey(MANUSCRIPT_STATUS));
 const question = beat('my-research', 'question');
 const engine = beat('my-research', 'engine');
 const sealed = beat('my-research', 'sealed');
@@ -80,7 +80,7 @@ const seal = `M${edge(16, 0)} ${Array.from({ length: 10 }, (_, i) => `Q${edge(23
           <circle r="3.5" fill={FILM['thread-edge']} />
         </svg>
       </div>
-      <p class="envelope__stamp">{status}</p>
+      <p class="envelope__stamp"><PaperStatus locale={locale} /></p>
     </div>
   </Beat>
 
