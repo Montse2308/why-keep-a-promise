@@ -89,12 +89,13 @@ Tiene que:
 - **Sin JavaScript** o en navegadores viejos: el storyboard.
 - **Con movimiento reducido:** cortes limpios entre cuadros quietos, con todos los juegos.
 
-## El candado (ADR 0026)
+## El candado (ADR 0034)
 
 - Cubre el hallazgo del capítulo 7, `/finding`, la parte del motor de `/how-its-built` y sus
   enlaces.
 - Cerrado, se ve un sobre sellado con la frase de estado.
-- Se abre en el paso 4 del checklist, después de revisar la política de la revista (paso 1b).
+- Se abre cuando el working paper es público en SSRN: en el paso 3 del checklist, al reemplazar el
+  placeholder `SSRN_URL_PENDING` por su enlace.
 
 ## Idiomas
 
@@ -105,4 +106,6 @@ Tiene que:
 
 - GitHub Pages en `https://montse2308.github.io/why-keep-a-promise/`.
 - El repo es privado hasta el lanzamiento (F6), con un solo lanzamiento, sin deploy parcial.
-- Presupuesto cero (ADR 0007, ADR 0008).
+- El lanzamiento lo dispara un hecho: el working paper ya es público en SSRN y el repo del motor ya
+  es público. El texto no se somete a ninguna revista, y el PDF se enlaza en SSRN, no se aloja aquí.
+- Presupuesto cero (ADR 0008, ADR 0034).

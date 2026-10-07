@@ -9,6 +9,9 @@ P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película e
 
 **Fase siguiente:** F5, la QA, cuando se cierre P7.
 
+**El lanzamiento (F6)** ya no espera un sometimiento: lo dispara el working paper público en SSRN y
+el repo del motor público (ADR 0034). Su preparación y sus pasos abiertos están en la sección F6.
+
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
 capítulo 8, con su sonido, apagado hasta que el visitante lo enciende; el cuaderno tiene sus seis
 páginas, su panel en todas las páginas, sus lupas en la película y su pie. Cada página tiene su
@@ -1002,15 +1005,59 @@ Dep.: todas las subfases anteriores.
       sobre la tarjeta que sale, el anillo de foco en los boletos no elegidos y el idioma actual en
       el storyboard). Queda que mergee el PR; con eso empieza F5.
 
+## F6 · Lanzamiento
+
+El texto ya no se somete a ninguna revista: se publica como working paper en SSRN, sin revisión por
+pares, y el repo del motor se hace público el mismo día con una release en Zenodo. El lanzamiento lo
+dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
+
+### Preparación: working paper en vez de revista (rama `prep/working-paper`)
+
+- [x] ADR 0034; los ADR 0007, 0011 y 0026 al archivo, marcados como reemplazados en parte.
+- [x] Un solo texto de estado (`paper.status`, `WORKING_PAPER` en `src/config.ts`,
+      `PaperStatus.astro`) en el sello del capítulo 7, el panel y `/finding`, con su enlace a SSRN.
+      El candado se abre cuando el enlace deja de ser `SSRN_URL_PENDING`; `verify:dist` lo lee de
+      ahí, cuenta la frase con su enlace y deja el título fuera de la búsqueda de marcas.
+- [x] El enlace al motor desde un solo lugar (`ENGINE` en `src/config.ts`, `src/lib/engine.ts`):
+      el repo y el DOI de su release (`ENGINE_DOI_PENDING`), detrás del candado, en lugar de los
+      cuatro `TODO(launch)`.
+- [x] `npm run check:launch`, que falla mientras quede un `*_PENDING`; fuera de `ci.yml`, dentro
+      de `deploy.yml`.
+- [x] `content-rules.md` (reglas (b) y (c)), `launch-checklist.md`, `plan.md`, `phases.md`, este
+      archivo, `AGENTS.md` y los README.
+- [ ] **(Montse)** Revisar el sello del capítulo 7 con la frase nueva, a 360 y 1440 px: el título
+      largo en mayúsculas llena el sello.
+- [ ] **(Montse)** Revisar el PR de la rama.
+
+### Pasos del checklist
+
+- [ ] **1.** El working paper público en SSRN: su URL y su DOI.
+- [ ] **2.** El repo del motor público, con la release `v1.0.0` y su DOI de Zenodo.
+- [ ] **3.** El ADR sobre `/sources` y el hallazgo; después, los placeholders reemplazados y
+      `check:launch`, `check`, `test` y `build` en verde, con el candado abierto revisado.
+- [ ] **4.** La auditoría del historial.
+- [ ] **5.** El repo público.
+- [ ] **6.** Pages con *Source = GitHub Actions*.
+- [ ] **7.** `deploy.yml`.
+- [ ] **8.** `/` y `/es/` en línea, con los enlaces a SSRN y al motor.
+
 ## Preguntas abiertas
 
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
-- **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0026 dice que
-  todo lo que no cubre se ve igual en los dos estados, así que `/sources` no lista las fuentes del
-  hallazgo, tampoco con el candado abierto, y el «cada cifra de la página» del 0024 queda con ese
-  hueco. Montse lo confirmó en la revisión de P5 y no quiso el ADR todavía: se decide en el paso 3b
-  del checklist, antes de abrir el candado.
+- **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0034 (antes el
+  0026) dice que todo lo que no cubre se ve igual en los dos estados, así que `/sources` no lista las
+  fuentes del hallazgo, tampoco con el candado abierto, y el «cada cifra de la página» del 0024
+  queda con ese hueco. Montse lo confirmó en la revisión de P5 y no quiso el ADR todavía: se decide
+  en el paso 3 del checklist, antes de reemplazar `SSRN_URL_PENDING`, que abre el candado.
+- **La descripción del 76.** El capítulo 7, el pie de la curva (`curve.caption`) y `/finding`, detrás
+  del candado, igual que `src/content/figures.ts` y `docs/sources.md`, llaman al 76 «la expectativa
+  después de una promesa» o «la creencia después de una promesa». La
+  descripción que Montse dio es «la creencia de que la promesa se cumplirá, fija en 0.76, el
+  promedio de la creencia de segundo orden de los decisores sin cambio de pareja en Vanberg (2008,
+  Tabla I)». No se cambió al preparar el working paper: es prosa bloqueada de capítulo y cuaderno,
+  fuera de lo que esa sesión autorizaba. Falta decidir si se reescribe, y si el sitio sigue diciendo
+  «76 de 100» o pasa a «0.76».
 
 ## Preguntas cerradas
 
@@ -1027,6 +1074,9 @@ Dep.: todas las subfases anteriores.
   techo de JS vale en los dos home y los de fuentes y primera carga en cada página (ADR 0028,
   decisión de Montse en la revisión de P6).
 
+- ~~¿Revista o working paper?~~ Working paper en SSRN, sin revisión por pares; el lanzamiento lo
+  dispara el working paper público más el motor público, y el candado se abre con el enlace a SSRN
+  (ADR 0034).
 - ~~¿Otro repo o el mismo?~~ El mismo, con archivo (P0).
 - ~~¿Se abre el candado en revisión o al aceptar?~~ En revisión, después de revisar la política de
   la revista (paso 1b del checklist, ADR 0026).

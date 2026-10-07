@@ -223,13 +223,18 @@ Revisión integral antes del lanzamiento.
 - **Enlaces:** `hreflang`, canonical y `x-default` correctos en todas las combinaciones de ruta e
   idioma, y sin enlaces rotos (internos con `base` y externos).
 - **Metadatos:** Open Graph y descripción por página e idioma.
-- `grep -r "TODO(" dist/` vacío, salvo `TODO(launch)` (paso 8 de `docs/launch-checklist.md`).
+- `grep -r "TODO(" dist/` vacío. Solo quedan los placeholders de los enlaces (`SSRN_URL_PENDING` y
+  `ENGINE_DOI_PENDING`), que se reemplazan en el paso 3 de `docs/launch-checklist.md`.
 
 ## F6 · Lanzamiento
 
-Un solo lanzamiento, sin deploy parcial. Se sigue `docs/launch-checklist.md` en orden.
+Un solo lanzamiento, sin deploy parcial. Lo dispara un hecho, no una fecha: el working paper ya es
+público en SSRN y el repo del motor ya es público, con su release archivada en Zenodo (ADR 0034).
+Se sigue `docs/launch-checklist.md` en orden.
 
 **Criterio de salida**
 
 - Todos los pasos del checklist marcados.
+- `npm run check:launch` en verde: ningún placeholder en `dist/`, `src/` ni los README.
 - `/` y `/es/` en línea en `https://montse2308.github.io/why-keep-a-promise/`.
+- Los enlaces al working paper en SSRN y al motor (el repo y su DOI) funcionando en línea.
