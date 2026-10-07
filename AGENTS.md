@@ -31,7 +31,10 @@ waits for Montse's review (7.3.10). P7.4 (the new sound cues) and P7.5 (the side
 held sideways, the notebook's transitions) are closed. P7.6 (the hills without a shadow filter,
 still frames that draw only what their pose shows, chapter 4's citation line, the EN/ES switch in
 the notebook's panel, the author's signature on the posters) is closed; Montse approved it
-(7.6.11). Then P7.7, F5 (QA) and F6 (launch). The film tells all nine chapters, chapter 7's finding
+(7.6.11). P7.7 (the READMEs, Lighthouse and the weights again, and the full review: sizes,
+sideways, both languages, keyboard, reduced motion, no JS, a blocked script and axe, with its four
+fixes) is closed; Montse approved it (7.7.7), and F5 (QA) starts once its PR is merged. Then F6
+(launch). The film tells all nine chapters, chapter 7's finding
 behind the lock, and ends in chapter 8's credits, with «Watch again» under them; it has its sound,
 off until pressed, its progress under the spool, its cast alive at rest, and remembers what was
 played in its tab entry. The notebook has its six pages, its panel on every page (with the finding's
@@ -73,7 +76,7 @@ not by reading test output.
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
 | `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0026) |
-| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load) |
+| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
 
 `check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
 (`.github/workflows/ci.yml`) runs install → check → test → build → verify:dist → budgets on every
@@ -81,7 +84,8 @@ push and PR.
 
 The LCP is measured apart, by hand, with Lighthouse pinned (not a dependency), three runs per home
 against `npm run preview`; `node scripts/lighthouse.mjs` turns the reports into
-`src/data/lighthouse.json`, which `/how-its-built` cites (the command is in the script's header).
+`src/data/lighthouse.json`, whose LCP `/how-its-built` cites (the command is in the script's header);
+the weights beside it come from `src/data/weight.json`.
 
 ## Stack (ADR 0025, ADR 0028, ADR 0029, ADR 0030)
 
@@ -121,6 +125,7 @@ src/
                          /sources shows it
   data/curve.json        the engine's precomputed curve, copied with provenance; never edited (ADR 0010)
   data/lighthouse.json   the home's Lighthouse measurement, with provenance (scripts/lighthouse.mjs)
+  data/weight.json       the homes' weights as `npm run budgets` weighs them (`-- --write`)
   i18n/en.json, es.json  UI strings, flat keys, full parity
   lib/                   pure, tested modules
     i18n.ts              typed t(); fails check and build on key mismatch
@@ -198,7 +203,7 @@ src/
                          languages), sitemap.xml.ts and apple-touch-icon.png.ts
 scripts/verify-dist.mjs  checks dist/ against the lock, its links, the status sentence, the
                          descriptions, noindex and the sitemap (ADR 0026)
-scripts/budgets.mjs      weighs dist/ against the budgets (ADR 0025)
+scripts/budgets.mjs      weighs dist/ against the budgets (ADR 0025) and src/data/weight.json
 scripts/lighthouse.mjs   Lighthouse reports → src/data/lighthouse.json
 tests/                   repo-level tests (page parity, prose figures and budgets, rule (h), the
                          film's captions, forbidden phrases, curve and /finding figures,

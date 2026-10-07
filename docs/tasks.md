@@ -899,16 +899,108 @@ Dep.: P7.0. Puede ir en paralelo a P7.1. 7.6.1 no depende de nada: puede ir en c
 
 Dep.: todas las subfases anteriores.
 
-- [ ] **7.7.1** `README.md`: sin «Work in progress»; tres o cuatro puntos fuertes (el storyboard, el
+- [x] **7.7.1** `README.md`: sin «Work in progress»; tres o cuatro puntos fuertes (el storyboard, el
       motor propio, el candado con `verify:dist`, los presupuestos y los tests); el enlace a
       `/how-its-built`; el enlace al sitio como `TODO(launch)`. `README.es.md`, su copia.
-- [ ] **7.7.2** Una captura o un GIF ligero para los dos README.
-- [ ] **7.7.3** Lighthouse otra vez sobre el commit final; regenerar `src/data/lighthouse.json` para
+      Los dos README presentan la película y el cuaderno con cuatro puntos («What is worth a look»
+      / «Lo que vale la pena ver»); el candado se cuenta como en `/how-its-built`, y del motor de
+      simulación no dicen nada (regla (j)). El enlace a `/how-its-built` va a su URL en Pages, cada
+      README a su idioma; el enlace al sitio es un comentario `TODO(launch)` arriba, y el paso 8
+      de `docs/launch-checklist.md` ahora lo nombra, porque su `grep` solo mira `src/`.
+- [x] **7.7.2** Una captura o un GIF ligero para los dos README.
+      Una captura, no un GIF: aquí no hay con qué codificarlo sin agregar dependencias. Cada README
+      lleva cuatro cuadros de la película en su idioma, en una rejilla de 2×2 que sigue la luz del
+      día (el título al amanecer, el dilema, la pareja nueva con el hilo que va a quien se fue y la
+      primera mesa de noche), con texto alternativo. Se tomaron del build cerrado a 1440×900 con
+      movimiento reducido, en las pantallas 0, 6, 20.7 y 33, y se guardaron como WebP:
+      `.github/readme/film-en.webp` (81 KiB) y `film-es.webp` (83 KiB). Ninguno muestra el sello.
+- [x] **7.7.3** Lighthouse otra vez sobre el commit final; regenerar `src/data/lighthouse.json` para
       que `/how-its-built` coincida con `npm run budgets`.
-- [ ] **7.7.4** Revisión completa, parte 1: 1440, 360 y 320 px, horizontal, EN/ES.
-- [ ] **7.7.5** Revisión completa, parte 2: teclado, movimiento reducido, sin JS y script bloqueado.
-- [ ] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
-- [ ] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
+      Lighthouse 13.5.0, tres corridas por home contra `npm run preview` sobre el build de P7 (el
+      código no cambió desde el merge de P7.6): LCP de 1.96 s en `/` y en `/es/` (antes 2.11),
+      rendimiento 0.99. Los informes, en `scratch/p7-7/lighthouse/`.
+      Aun al día, los pesos de Lighthouse no coincidían con `npm run budgets` (19.1 contra 20.1 KiB
+      de JS; 178.0 contra 175.2 de primera carga): `budgets` suma al JS del home los dos scripts que
+      van dentro del HTML, que Lighthouse cuenta con el documento, y Lighthouse suma las cabeceras
+      HTTP. Montse eligió que la tabla tome los pesos del mismo cálculo: `npm run budgets -- --write`
+      escribe los de los dos home en `src/data/weight.json`, `npm run budgets` falla en CI mientras
+      el registro difiera del build (a la décima de KiB que muestra la tabla), y de Lighthouse queda
+      solo el LCP. La línea de fuente bajo la tabla dice de dónde sale cada cosa. `/how-its-built`
+      dice ahora 20.1, 118.6 y 175.2 KiB (en ES, 175.8), lo mismo que `npm run budgets`.
+- [x] **7.7.4** Revisión completa, parte 1: 1440, 360 y 320 px, horizontal, EN/ES.
+      Sobre el build cerrado. La película, jugada entera con toques reales (las 21 interacciones)
+      a 1440 × 900, 360 × 740, 320 × 640 y 844 × 390 en EN y ES, y a 740 × 360 en EN: todo se
+      alcanzó con un toque. Ninguna de las 15 páginas tiene scroll horizontal a 1440, 360, 320,
+      568 × 320 ni 844 × 390. El cuaderno y su panel, a los tres anchos, en claro y oscuro.
+      Hallazgos: (1) la tabla de pagos de `/dilemma` no cabe a 360 px (sobran 13 px en EN y 19 en
+      ES) ni a 320 (53 y 59); se desliza dentro de su recuadro, se ve cortada y no se alcanza con el
+      teclado (sin `tabindex`). (2) En el celular, una tarjeta que sale por arriba pasa sobre el
+      carrete y el sonido (el cuaderno queda encima). Con la tarjeta quieta en su lugar nada tapa el
+      tablero. Capturas y README en `scratch/p7-7/review/`.
+      Montse pidió aplicar lo recomendado en los dos: (1) en pantallas angostas (≤ 30rem) la tabla
+      deja que el nombre de cada fila ocupe dos líneas, con menos margen en el recuadro y las celdas
+      y las etiquetas con esquinas redondeadas en vez de óvalo: cabe entera a 320 y 360 px, en EN y
+      ES, y a 1440 no cambia. (2) El carrete y el sonido salen del escenario a una capa propia
+      (`.film__corner`), pegada como él y encima de los capítulos, que deja pasar los clics salvo
+      los de sus controles: la tarjeta que sale pasa por debajo, como bajo el botón del cuaderno. Se
+      volvió a jugar la película a 320 × 640 y 844 × 390 (21/21), el sonido toma el toque real en
+      todo el recorrido, la esquina se va con el escenario al final y sin JS no aparece. El home pesa
+      0.1 KiB más (175.3), y `src/data/weight.json` se reescribió. Antes y después, en
+      `scratch/p7-7/review/fixed-*.png` y `after-fix/`.
+- [x] **7.7.5** Revisión completa, parte 2: teclado, movimiento reducido, sin JS y script bloqueado.
+      Sobre el build cerrado. **Teclado:** la película, jugada entera solo con Tab, Mayús+Tab,
+      Enter, Espacio y flechas (las 21 interacciones) en EN y ES a 1440 × 900, con movimiento
+      reducido y a 844 × 390: todo se alcanza en el orden del relato, con anillo, y nada atrapa el
+      foco; el foco pasa solo al control siguiente donde el anterior desaparece, y cada resultado
+      sale en `aria-live`. Con scroll suave, el foco tarda hasta 0.9 s en llegar a pantalla en los
+      dos saltos sin controles en medio (del capítulo 3 al mazo, del 6 al 8); con movimiento
+      reducido, en el acto. De lado, la tarjeta se desplaza por dentro hasta el control enfocado. En
+      las 15 páginas, en claro y oscuro, ninguna parada queda sin anillo, fuera de pantalla ni
+      tapada; el salto al contenido lleva a `<main>`, y el panel abre con Enter o Espacio, retiene el
+      foco, cierra con Esc y lo devuelve al botón. **Movimiento reducido**, a 1440 y 360: la película
+      no pide cuadros en reposo (180 en 3 s sin la preferencia), el escenario no se mueve entre dos
+      cortes, el dado no gira, las monedas no cuentan, la carta no vuela, `roll` y `card` no suenan,
+      y el scroll, la hoja del cuaderno y el paso entre sus páginas no se animan. **Sin JS y con el
+      script de la película bloqueado**, a 360 y 1440: los dos home muestran el storyboard al primer
+      segundo, con los 9 cuadros y el resultado de cada juego en texto, sin botones que no hagan nada
+      ni scroll horizontal; en las otras 13 páginas sin JS, el enlace «Cuaderno» lleva a la lista del
+      pie. Cada enlace de vuelta a la película cae en un ancla que existe.
+      Hallazgo: un boleto ya resuelto que no se eligió queda enfocable pero inerte a opacidad 0.55,
+      y la opacidad apaga también su anillo de foco: 1.95:1 contra la tarjeta, frente a 3.74:1 del
+      anillo entero. WCAG 1.4.11 exime a un control inactivo, pero el teclado se detiene en él.
+      Capturas y README en `scratch/p7-7/`.
+      Montse pidió arreglarlo: ahora se apagan el contenido del boleto y su borde (la tinta mezclada
+      al 55 % con el papel de la tarjeta), no el botón, así que el anillo queda entero. Sin foco, el
+      boleto se ve igual que antes, pixel a pixel, a 1440 y 360 px. Se volvió a jugar la película
+      con teclado (21/21). El home en español pesa 0.1 KiB más (175.9), y `src/data/weight.json` se
+      reescribió. Antes y después, en `scratch/p7-7/inert/`.
+- [x] **7.7.6** Revisión completa, parte 3: axe en las 14 páginas, en claro y oscuro.
+      Sobre el build cerrado, con axe-core 4.14.0 fijo (descargado en `scratch/`, no es dependencia,
+      como Lighthouse). Cero violaciones en 222 corridas: las 14 páginas y la 404 recién cargadas, en
+      claro y oscuro, a 1440 y 360 px (60); el panel abierto en las 14 (28); los dos home después de
+      cada interacción de la película, de la primera a los créditos y el pie, en claro y oscuro a
+      1440 y en claro a 360 (126); y el storyboard sin JS (8). Lo que axe deja «incompleto» se
+      revisó aparte. El contraste sobre el papel del cuaderno, que es un degradado con grano y axe no
+      lee: se corrió su regla con el papel aplanado a los cuatro extremos (los dos del degradado, con
+      y sin el grano a su opacidad máxima), y pasa en todos (240 corridas). El texto sobre el
+      escenario (el título, el carrete, el sonido, el idioma, el tablero, los letreros, el mazo, el
+      código del motor, el pie donde se funde la película), medido por pixel en cada estado de la
+      película y en los cuadros del storyboard (720 mediciones): todo pasa; las lecturas bajas eran
+      trazos de tinta vecinos dentro de la caja medida (el contorno de una nube, el borde de una
+      celda o de una burbuja). El `aria-controls` del botón del cuaderno apunta a un `id` que existe,
+      y las cifras de las monedas van en iconos `aria-hidden`.
+      Hallazgo: en el storyboard sin JS, desde 30rem de ancho, el idioma actual de la esquina va en
+      el gris apagado de la película sobre el papel durazno (`#ffc58f`): 4.40:1, bajo el 4.5 del
+      texto normal. Con JS, el mismo gris sobre el cielo da 4.74. Capturas, guiones y README en
+      `scratch/p7-7/axe/`.
+      Montse pidió la tinta solo sin JS: en el storyboard (sin JS o con el script de la película
+      bloqueado) el idioma actual va en la tinta de la película, 10.1:1 medido; con JS sigue en
+      gris. axe sobre el storyboard, otra vez en cero. Los pesos no cambian a la décima.
+- [x] **7.7.7 (Montse)** Revisión de P7 (el PR). Al cerrarse, empieza F5.
+      Montse aprobó la revisión de P7.7: los README, Lighthouse y los pesos al día, y la revisión
+      completa con sus cuatro arreglos (la tabla de `/dilemma` en el celular, el carrete y el sonido
+      sobre la tarjeta que sale, el anillo de foco en los boletos no elegidos y el idioma actual en
+      el storyboard). Queda que mergee el PR; con eso empieza F5.
 
 ## Preguntas abiertas
 

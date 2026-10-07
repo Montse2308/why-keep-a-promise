@@ -1,0 +1,23 @@
+{
+  "tool": "npm run budgets",
+  "pages": [
+    {
+      "locale": "en",
+      "route": "home",
+      "bytes": {
+        "home-script": 20578,
+        "fonts": 121404,
+        "first-load": 179516
+      }
+    },
+    {
+      "locale": "es",
+      "route": "home",
+      "bytes": {
+        "home-script": 20578,
+        "fonts": 121404,
+        "first-load": 180108
+      }
+    }
+  ]
+}

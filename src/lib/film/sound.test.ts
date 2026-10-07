@@ -216,9 +216,13 @@ describe('playing it', () => {
     expect(beatComponent).toMatch(/:global\(html\.js\) \.card \{[^}]*pointer-events: auto;/);
     expect(baseLayout).toMatch(/\.corner--film \{[^}]*pointer-events: none;/);
     expect(baseLayout).toMatch(/\.corner--film :global\(:is\(a, button, dialog\)\) \{\s*pointer-events: auto;/);
-    // The button itself is not inside any of those layers: it is in the stage, beside the spool.
+    // The button itself is not inside any of those layers: it is in the film's corner, beside the
+    // spool, a layer over the chapters that lets every click through but its controls'.
     expect(filmComponent.indexOf('data-sound')).toBeGreaterThan(filmComponent.indexOf('class="film__controls"'));
+    expect(filmComponent.indexOf('class="film__controls"')).toBeGreaterThan(filmComponent.indexOf('class="film__corner"'));
     expect(filmComponent.indexOf('data-sound')).toBeLessThan(filmComponent.indexOf('class="film__chapters"'));
+    expect(filmComponent).toMatch(/:global\(html\.js\) \.film__corner \{[^}]*z-index: 1;[^}]*pointer-events: none;/);
+    expect(filmComponent).toMatch(/\.film__controls \{[^}]*pointer-events: auto;/);
   });
 
   it('makes its sounds in Web Audio, from no file', () => {
