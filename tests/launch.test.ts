@@ -51,13 +51,27 @@ describe('the launch (docs/launch-checklist.md, ADR 0034)', () => {
     expect(sourcesComponent).toMatch(/<p class="sources__row" data-unverified>/);
   });
 
+  it('starts from the working paper and the engine being public, in its eight steps', () => {
+    const titles = [...checklist.matchAll(/^- \[ \] \*\*(\d+)\. ([^*]+)\*\*/gm)].map((m) => `${m[1]}. ${m[2]}`);
+    expect(titles).toEqual([
+      '1. Working paper público.',
+      '2. Motor público.',
+      '3. Placeholders.',
+      '4. Auditoría del historial.',
+      '5. Visibilidad.',
+      '6. Pages.',
+      '7. Deploy.',
+      '8. Verificación.',
+    ]);
+    // No step waits for a journal or decides a PDF any more (ADR 0034).
+    expect(checklist).not.toMatch(/sumisi|someti|pol[ií]tica de la revista|\bPDF\b/i);
+  });
+
   it('decides with an ADR, before the lock opens, whether /sources lists the finding’s figures', () => {
-    const before = checklist.indexOf('**3b. Las cifras del hallazgo en `/sources`.**');
-    const open = checklist.indexOf('**4. Estado del manuscrito.**');
-    expect(before).toBeGreaterThan(0);
-    expect(before).toBeLessThan(open);
-    const text = checklist.slice(before, open).replace(/\s+/g, ' ');
-    expect(text).toContain('decidir con un ADR nuevo');
-    expect(text).toContain('El paso 4 no se da sin ese ADR.');
+    const step = checklist.slice(checklist.indexOf('**3. Placeholders.**'), checklist.indexOf('**4. ')).replace(/\s+/g, ' ');
+    const decide = step.indexOf('decidir con un ADR nuevo si `/sources` lista también las cifras del hallazgo');
+    expect(decide).toBeGreaterThan(0);
+    expect(decide).toBeLessThan(step.indexOf('En `src/config.ts`: `WORKING_PAPER.ssrn` pasa a la URL'));
+    expect(step).toContain('Sin ese ADR no se reemplaza `SSRN_URL_PENDING`, porque reemplazarlo abre el candado.');
   });
 });
