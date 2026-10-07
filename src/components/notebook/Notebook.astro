@@ -14,6 +14,7 @@
  */
 import { WORKING_PAPER } from '../../config';
 import { FILM } from '../../lib/design/film';
+import { engineLinks } from '../../lib/engine';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import { findingUnlocked } from '../../lib/lock';
 import { NOTEBOOK, NOTEBOOK_PAGES_ID } from '../../lib/notebook';
@@ -94,7 +95,7 @@ const label = tr('notebook.label');
                 <span class="notebook__status"><PaperStatus locale={locale} /></span>
                 {unlocked && (
                   <span class="notebook__line">
-                    {tr('notebook.engine')} <span class="todo">TODO(launch): enlace al repo del motor</span>
+                    {tr('notebook.engine')} <Fragment set:html={engineLinks()} />
                   </span>
                 )}
               </li>

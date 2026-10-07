@@ -79,4 +79,4 @@ medio, las dos ganan lo mismo, así que cuál queda ahí es cuestión de azar. U
 laboratorio ve un solo punto de la curva. Recorrerla exige comparar poblaciones con distinta
 confianza de fondo.
 
-El código del motor: <span class="todo">TODO(launch): enlace al repo del motor</span>.
+El código del motor: {engine}.

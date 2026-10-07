@@ -281,7 +281,10 @@ describe('chapter 7, this is where I come in (rule (j), ADR 0026)', () => {
     const locked = readable(parts(locale).locked);
     expect(findMarks(locked).length).toBeGreaterThan(0);
     expect(citationsIn(locked)).toContain('Kawagoe+Narita 2014');
-    expect([...parts(locale).locked.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1])).toEqual(['launch']);
+    expect(parts(locale).locked).not.toMatch(/TODO\(/);
+    // The engine's links (src/lib/engine.ts), filled where the finding writes {engine}, and only behind the lock.
+    expect(parts(locale).locked.split('{engine}')).toHaveLength(2);
+    expect(parts(locale).open).not.toContain('{engine}');
   });
 
   it.each(LOCALES)('%s: says the curve compares worlds, not a population’s history (rule (e))', (locale) => {

@@ -43,6 +43,8 @@ export const MARKERS = [
   'generador con semilla',
   'by imitation',
   'por imitación',
+  // The engine's repository (src/config.ts), linked only behind the lock (src/lib/engine.ts).
+  'Montse2308/Dilema-del-Prisionero',
   // Chapter 7's finding: the cards the envelope holds, and the timeline's first beat past it.
   'data-finding',
   'third-reason',
@@ -50,12 +52,12 @@ export const MARKERS = [
 
 /** What each unlocked page must carry, by its path in dist/. */
 export const UNLOCKED_PAGES = {
-  'index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason'],
-  'es/index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason'],
-  'finding/index.html': ['data-locked-content', 'finding-guilt', 'identification result'],
-  'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'resultado de identificación'],
-  'how-its-built/index.html': ['data-locked-content', 'by imitation'],
-  'es/how-its-built/index.html': ['data-locked-content', 'por imitación'],
+  'index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason', 'Montse2308/Dilema-del-Prisionero'],
+  'es/index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason', 'Montse2308/Dilema-del-Prisionero'],
+  'finding/index.html': ['data-locked-content', 'finding-guilt', 'identification result', 'Montse2308/Dilema-del-Prisionero'],
+  'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'resultado de identificación', 'Montse2308/Dilema-del-Prisionero'],
+  'how-its-built/index.html': ['data-locked-content', 'by imitation', 'Montse2308/Dilema-del-Prisionero'],
+  'es/how-its-built/index.html': ['data-locked-content', 'por imitación', 'Montse2308/Dilema-del-Prisionero'],
 };
 
 /** Every mark some unlocked page must carry. */

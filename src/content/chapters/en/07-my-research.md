@@ -79,4 +79,4 @@ And in the middle, the two earn the same, so which of them ends up there is a ma
 lab session sees a single point of the curve. Tracing it takes comparing populations with different
 background trust.
 
-The engine's code: <span class="todo">TODO(launch): enlace al repo del motor</span>.
+The engine's code: {engine}.

@@ -54,4 +54,4 @@ announced before the measurement was run.
 - This is an identification result, about what can be told apart, not a claim that people feel
   personal guilt.
 
-The engine that measured the curve: <span class="todo">TODO(launch): enlace al repo del motor</span>.
+The engine that measured the curve: {engine}.

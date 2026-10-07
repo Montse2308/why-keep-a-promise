@@ -3,6 +3,7 @@
  * subpages, the home sections and the film's captions.
  */
 import { CURVE_VALUES } from '../src/lib/curve/values';
+import { ENGINE_TOKEN } from '../src/lib/engine';
 import { splitAtLock } from '../src/lib/film/captions';
 import { FILM_VALUES } from '../src/lib/film/values';
 import { fill } from '../src/lib/template';
@@ -10,19 +11,21 @@ import { fill } from '../src/lib/template';
 /**
  * A chapter's captions as the visitor reads them, the way the build fills them: the placeholders of
  * the open part from the film's values, and those of chapter 7's finding, after its lock mark, from
- * the curve's (ADR 0026).
+ * the curve's (ADR 0034). The engine's links, where the finding writes `{engine}`, are left out: they
+ * are addresses, not prose, as `readable` leaves out link targets.
  */
 export function filledCaptions(body: string): string {
   const { open, locked } = splitAtLock(body);
-  return `${fill(open, FILM_VALUES)}${fill(locked, CURVE_VALUES)}`;
+  return `${fill(open, FILM_VALUES)}${fill(locked.replaceAll(ENGINE_TOKEN, ''), CURVE_VALUES)}`;
 }
 
 /**
  * The prose a reader sees: no TODO markers, no HTML comments (slot, lock and beat marks), no code
- * blocks, no link targets, no list numbers, no table rules.
+ * blocks, no link targets (the engine's links included), no list numbers, no table rules.
  */
 export function readable(body: string, { tables = true } = {}): string {
   return body
+    .replaceAll(ENGINE_TOKEN, ' ')
     .replace(/<(span|p) class="todo">[\s\S]*?<\/\1>/g, ' ')
     .replace(/<!--[\s\S]*?-->/g, ' ')
     .replace(/^```[\s\S]*?^```/gm, ' ')

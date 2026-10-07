@@ -108,4 +108,4 @@ imitación: de una generación a la siguiente, las razones que ganan más se cop
 exporta la curva con su procedencia: el commit del motor, la semilla y el comando que la produjo.
 Aquí, una prueba falla si la curva cambia o si falta el archivo.
 
-El repositorio del motor: <span class="todo">TODO(launch): enlace al repo del motor</span>.
+El repositorio del motor: {engine}.

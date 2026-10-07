@@ -88,7 +88,8 @@ const keys = (dictionary: Record<string, string>, locked: boolean) =>
     .join('\n');
 
 // What the lock covers once open: chapter 7's finding, the curve and its control, /finding and its
-// guilt chart, and the engine part of /how-its-built (ADR 0026).
+// guilt chart, the engine part of /how-its-built, and the engine's links, whose repository is in
+// src/config.ts (ADR 0034).
 const lockedSources = [
   ...seventh.map((part) => part.locked),
   keys(en, true),
@@ -100,6 +101,7 @@ const lockedSources = [
   findingBeats,
   subpageView,
   ...parts.map((part) => part.locked),
+  config,
 ].join('\n');
 
 // What renders in both states: chapter 7's question, engine and envelope, the film around them (chapter
@@ -277,8 +279,9 @@ describe('verify:dist (ADR 0026)', () => {
       expect(notebook).toContain('{unlocked ? anchor : title}');
       expect(notebook).toMatch(/const title = \(\s*<span class="notebook__name"/);
       expect(notebook).toContain('const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);');
-      // The engine's repository waits for step 8 of the launch, and only behind the lock.
-      expect(notebook).toMatch(/\{unlocked && \(\s*<span class="notebook__line">\s*\{tr\('notebook\.engine'\)\} <span class="todo">TODO\(launch\): enlace al repo del motor<\/span>/);
+      // The engine's links (src/lib/engine.ts), only behind the lock.
+      expect(notebook).toMatch(/\{unlocked && \(\s*<span class="notebook__line">\s*\{tr\('notebook\.engine'\)\} <Fragment set:html=\{engineLinks\(\)\} \/>/);
+      expect(notebook.match(/engineLinks\(\)/g)).toHaveLength(1);
     });
 
     it('keeps the status sentence off the footer and the rest of the page, so the home says it twice', () => {

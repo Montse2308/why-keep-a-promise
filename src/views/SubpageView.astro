@@ -18,6 +18,7 @@ import SwitchTable from '../components/vanberg/SwitchTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { WORKING_PAPER } from '../config';
 import { t, type Locale } from '../lib/i18n';
+import { withEngine } from '../lib/engine';
 import { findingUnlocked } from '../lib/lock';
 import { notebookPage } from '../lib/notebook';
 import { href, type Subpage } from '../lib/routes';
@@ -58,7 +59,7 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
     {
       segments.map((segment) =>
         segment.kind === 'html' ? (
-          <Fragment set:html={segment.html} />
+          <Fragment set:html={withEngine(segment.html)} />
         ) : segment.name === 'pd-matrix' ? (
           <Matrix locale={locale} />
         ) : segment.name === 'switch-table' ? (
