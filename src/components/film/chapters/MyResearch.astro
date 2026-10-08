@@ -65,7 +65,7 @@ const seal = `M${edge(16, 0)} ${Array.from({ length: 10 }, (_, i) => `Q${edge(23
 
   <Beat id={engine.id} screens={engine.screens} caption={captions.get(engine.id)} />
 
-  <Beat id={sealed.id} screens={sealed.screens} caption={captions.get(sealed.id)} cardClass="card--envelope">
+  <Beat id={sealed.id} screens={sealed.screens} caption={captions.get(sealed.id)} cardClass={unlocked ? 'card--envelope card--envelope-open' : 'card--envelope'}>
     <div class="envelope" data-envelope data-open={unlocked ? '' : undefined}>
       <svg class="envelope__back" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
         <path d="M2 98 L100 46 L198 98" fill="none" stroke={FILM['card-muted']} stroke-width="1.5" vector-effect="non-scaling-stroke" opacity="0.45" />
@@ -112,6 +112,14 @@ const seal = `M${edge(16, 0)} ${Array.from({ length: 10 }, (_, i) => `Q${edge(23
     position: relative;
     padding-top: calc(var(--space-6) + 5.5rem);
     background: linear-gradient(var(--film-card), #fbf3e3);
+  }
+
+  /*
+   * In the storyboard the cards stack one under another, and the open flap stands above its card: the
+   * card leaves it room, flap and seal, so they do not cover the card before (F5).
+   */
+  :global(html:not(.js) .film .card.card--envelope-open) {
+    margin-block-start: 7.5rem;
   }
 
   .envelope {
