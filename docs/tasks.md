@@ -3,11 +3,12 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P7, los ajustes de la revisión externa (`docs/p7-review-plan.md`), en pasos
-chicos, uno por sesión, empezando por P7.0. P0 a P6 cerradas: Montse las revisó (PR #1 a PR #9).
-P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película entera.
+**Fase activa:** F5, la QA: la revisión integral antes del lanzamiento, con el criterio de salida
+de `docs/phases.md`. Todavía no empieza. P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7,
+los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos, como ella lo pidió: dio
+por hecho el de la película entera.
 
-**Fase siguiente:** F5, la QA, cuando se cierre P7.
+**Fase siguiente:** F6, el lanzamiento.
 
 **El lanzamiento (F6)** ya no espera un sometimiento: lo dispara el working paper público en SSRN y
 el repo del motor público (ADR 0034). Su preparación y sus pasos abiertos están en la sección F6.
@@ -1004,6 +1005,24 @@ Dep.: todas las subfases anteriores.
       completa con sus cuatro arreglos (la tabla de `/dilemma` en el celular, el carrete y el sonido
       sobre la tarjeta que sale, el anillo de foco en los boletos no elegidos y el idioma actual en
       el storyboard). Queda que mergee el PR; con eso empieza F5.
+      Mergeado (PR #17): P7 cerrada, F5 activa.
+
+## F5 · QA
+
+Revisión integral antes del lanzamiento. Cada tarea es un punto del criterio de salida de
+`docs/phases.md`. Todavía no empieza.
+
+- [ ] **Móvil:** sin scroll horizontal a 320 px, y los juegos usables al tacto.
+- [ ] **El storyboard** sin JavaScript, la película con movimiento reducido y en un navegador sin
+      soporte.
+- [ ] **Accesibilidad:** teclado completo, lector de pantalla, contraste y `lang` correcto por
+      página.
+- [ ] **Enlaces:** `hreflang`, canonical y `x-default` correctos en todas las combinaciones de ruta
+      e idioma, y sin enlaces rotos (internos con `base` y externos).
+- [ ] **Metadatos:** Open Graph y descripción por página e idioma.
+- [ ] `grep -r "TODO(" dist/` vacío. Solo quedan los placeholders de los enlaces
+      (`SSRN_URL_PENDING` y `ENGINE_DOI_PENDING`), que se reemplazan en el paso 3 de
+      `docs/launch-checklist.md`.
 
 ## F6 · Lanzamiento
 
@@ -1025,8 +1044,15 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
       de `deploy.yml`.
 - [x] `content-rules.md` (reglas (b) y (c)), `launch-checklist.md`, `plan.md`, `phases.md`, este
       archivo, `AGENTS.md` y los README.
-- [ ] **(Montse)** Revisar el sello del capítulo 7 con la frase nueva, a 360 y 1440 px: el título
-      largo en mayúsculas llena el sello.
+- [x] Respuestas de Montse a la revisión de la rama: el 76 se describe como «la creencia de que la
+      promesa se cumplirá», el promedio de la creencia de segundo orden de los decisores sin cambio
+      de pareja en Vanberg (2008, Tabla I), en centésimas, en el capítulo 7, el pie de la curva,
+      `/finding`, el registro de cifras y `docs/sources.md`; el título del sello va en minúsculas y
+      cursiva; el historial se deja como está (paso 4, ADR 0034); la regla (i) prohíbe «under
+      review», «accepted», «peer-reviewed», «published in» y sus equivalentes; `AGENTS.md` dice
+      «working paper» en la regla sobre sus archivos.
+- [ ] **(Montse)** Revisar el sello del capítulo 7 con el título en minúsculas y cursiva, a 360 y
+      1440 px, EN y ES (capturas en `scratch/working-paper/`).
 - [ ] **(Montse)** Revisar el PR de la rama.
 
 ### Pasos del checklist
@@ -1035,7 +1061,8 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
 - [ ] **2.** El repo del motor público, con la release `v1.0.0` y su DOI de Zenodo.
 - [ ] **3.** El ADR sobre `/sources` y el hallazgo; después, los placeholders reemplazados y
       `check:launch`, `check`, `test` y `build` en verde, con el candado abierto revisado.
-- [ ] **4.** La auditoría del historial.
+- [ ] **4.** La auditoría del historial: decidido, se deja como está (ADR 0034). Queda que Montse
+      borre la rama remota `claude/nifty-hopper-xagnu9`.
 - [ ] **5.** El repo público.
 - [ ] **6.** Pages con *Source = GitHub Actions*.
 - [ ] **7.** `deploy.yml`.
@@ -1050,14 +1077,6 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
   fuentes del hallazgo, tampoco con el candado abierto, y el «cada cifra de la página» del 0024
   queda con ese hueco. Montse lo confirmó en la revisión de P5 y no quiso el ADR todavía: se decide
   en el paso 3 del checklist, antes de reemplazar `SSRN_URL_PENDING`, que abre el candado.
-- **La descripción del 76.** El capítulo 7, el pie de la curva (`curve.caption`) y `/finding`, detrás
-  del candado, igual que `src/content/figures.ts` y `docs/sources.md`, llaman al 76 «la expectativa
-  después de una promesa» o «la creencia después de una promesa». La
-  descripción que Montse dio es «la creencia de que la promesa se cumplirá, fija en 0.76, el
-  promedio de la creencia de segundo orden de los decisores sin cambio de pareja en Vanberg (2008,
-  Tabla I)». No se cambió al preparar el working paper: es prosa bloqueada de capítulo y cuaderno,
-  fuera de lo que esa sesión autorizaba. Falta decidir si se reescribe, y si el sitio sigue diciendo
-  «76 de 100» o pasa a «0.76».
 
 ## Preguntas cerradas
 
@@ -1074,6 +1093,14 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
   techo de JS vale en los dos home y los de fuentes y primera carga en cada página (ADR 0028,
   decisión de Montse en la revisión de P6).
 
+- ~~La descripción del 76.~~ Se reescribe: es «la creencia de que la promesa se cumplirá», el
+  promedio de la creencia de segundo orden de todos los decisores sin cambio de pareja en Vanberg
+  (2008, Tabla I), hayan prometido o no, y no una creencia medida después de una promesa. Se queda en
+  centésimas («76»), porque `/finding` la define y hace sus cuentas con ella (decisión de Montse).
+- ~~¿El título del working paper en mayúsculas en el sello?~~ No: «Working paper:» se sella en
+  mayúsculas y el título va en minúsculas y cursiva, como en el paper (decisión de Montse).
+- ~~¿Se reescribe el historial antes de hacerlo público?~~ No: se revisó y se deja como está
+  (ADR 0034, paso 4 del checklist; decisión de Montse).
 - ~~¿Revista o working paper?~~ Working paper en SSRN, sin revisión por pares; el lanzamiento lo
   dispara el working paper público más el motor público, y el candado se abre con el enlace a SSRN
   (ADR 0034).
