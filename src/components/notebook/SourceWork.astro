@@ -6,7 +6,7 @@
  * `locked`.
  */
 import { useTranslations, type Locale } from '../../lib/i18n';
-import { referenceHtml, shownUrl, type Entry, type Work } from '../../lib/sources';
+import { citeIn, referenceHtml, referenceWithType, shownUrl, type Entry, type Work } from '../../lib/sources';
 import SourceEntry from './SourceEntry.astro';
 
 interface Props {
@@ -21,24 +21,26 @@ const tr = useTranslations(locale);
 const ref = work.reference;
 // References are in English in both languages, as any bibliography's: marked so on a page in Spanish.
 const english = locale === 'en' ? undefined : 'en';
+// The kind of document, when the reference names one, is written in the page's language.
+const reference = referenceWithType(ref.text ?? '', work.typeKey ? tr(work.typeKey) : '', english && locale);
 ---
 
 <section class="sources__work" aria-labelledby={`source-${work.id}`} data-locked-content={locked ? '' : undefined}>
   <h2 id={`source-${work.id}`} class="sources__cite">
-    {work.cite}
+    {citeIn(work, locale)}
   </h2>
   <p class="sources__reference" lang={english}>
-    <Fragment set:html={referenceHtml(ref.text)} />
+    <Fragment set:html={reference} />
     {ref.url && <a class="sources__url" href={ref.url}>{shownUrl(ref.url)}</a>}
   </p>
   {
     work.parts && (
       <div class="sources__parts">
         <p class="sources__term">{tr(work.partsKey ?? 'sources.supplements')}</p>
-        <ul role="list" lang={english}>
+        <ul role="list">
           {work.parts.map((item) => (
-            <li>
-              <Fragment set:html={referenceHtml(item.text)} />
+            <li lang={item.key ? undefined : english}>
+              {item.key ? tr(item.key) : <Fragment set:html={referenceHtml(item.text ?? '')} />}
               {item.url && <a class="sources__url" href={item.url}>{shownUrl(item.url)}</a>}
             </li>
           ))}

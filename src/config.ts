@@ -13,6 +13,8 @@ export const AUTHOR = {
 export const WORKING_PAPER = {
   title: 'Promises to whom: Identifying personal guilt and partner-specific commitment across populations',
   ssrn: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218',
+  /** Its DOI, which /sources links its reference to (ADR 0035). */
+  doi: '10.2139/ssrn.7580218',
 } as const;
 
 /**

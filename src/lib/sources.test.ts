@@ -8,6 +8,8 @@ import { SUBPAGES } from './routes';
 import { ENGINE, WORKING_PAPER } from '../config';
 import {
   atKey,
+  citeIn,
+  referenceWithType,
   ENTRIES,
   figuresOf,
   FINDING,
@@ -147,12 +149,37 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
     expect(kawagoe?.cite).toBe(`${citation?.authors.join(' and ')} (${citation?.year})`);
     expect(kawagoe?.reference.text).toContain(`(${citation?.year}).`);
     // The working paper: its title and link from src/config.ts, the same as the status sentence's.
-    expect(paper?.reference.text).toContain(`*${WORKING_PAPER.title}*`);
-    expect(paper?.reference.url).toBe(WORKING_PAPER.ssrn);
-    expect(paper?.parts?.map((item) => item.url)).toEqual([ENGINE.repository, `https://doi.org/${ENGINE.doi}`]);
+    expect(paper?.reference.text).toBe(`Hernández Gallegos, M. X. (2026). *${WORKING_PAPER.title}* [{type}]. SSRN.`);
+    // Linked to its DOI, as the other references are; the status sentence keeps its page on SSRN.
+    expect(paper?.reference.url).toBe(`https://doi.org/${WORKING_PAPER.doi}`);
+    expect(paper?.typeKey).toBe('sources.working-paper.type');
+    expect(en['sources.working-paper.type']).toBe('Working paper');
+    expect(es['sources.working-paper.type']).toBe('Documento de trabajo');
+    // Its engine's lines are the page's own, in its language; only their links are the same.
+    expect(paper?.parts?.map((item) => [item.key, item.url])).toEqual([
+      ['sources.engine.repository', ENGINE.repository],
+      ['sources.engine.release', `https://doi.org/${ENGINE.doi}`],
+    ]);
+    expect(paper?.parts?.every((item) => item.text === undefined)).toBe(true);
+    expect([es['sources.engine.repository'], es['sources.engine.release']]).toEqual(['Su repositorio.', 'Su versión, archivada en Zenodo.']);
     expect(paper?.partsKey).toBe('sources.engine');
     // Neither is a work of the open part.
     for (const candidate of FINDING_WORKS) expect(WORKS.map((open) => open.id)).not.toContain(candidate.id);
+  });
+
+  it('heads each work as the prose of the page cites it: "and" in English, "y" in Spanish', () => {
+    for (const candidate of [...WORKS, ...FINDING_WORKS]) {
+      expect(citeIn(candidate, 'en')).toBe(candidate.cite);
+      expect(citeIn(candidate, 'es')).not.toMatch(/ and /);
+    }
+    expect(citeIn(FINDING_WORKS[0]!, 'es')).toBe('Kawagoe y Narita (2014)');
+    expect(citeIn(WORKS[0]!, 'es')).toBe('Axelrod y Hamilton (1981)');
+  });
+
+  it("fills a reference's kind of document in the page's language, marked so inside an English reference", () => {
+    expect(referenceWithType('A. (2026). *T* [{type}]. SSRN.', 'Working paper')).toBe('A. (2026). <i>T</i> [Working paper]. SSRN.');
+    expect(referenceWithType('A. (2026). *T* [{type}]. SSRN.', 'Documento de trabajo', 'es')).toBe('A. (2026). <i>T</i> [<span lang="es">Documento de trabajo</span>]. SSRN.');
+    expect(referenceWithType('No type here.', '')).toBe('No type here.');
   });
 
   it('writes a reference as escaped HTML, with its titles in italics, and a URL as a reader does', () => {

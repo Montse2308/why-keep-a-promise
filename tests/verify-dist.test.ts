@@ -86,7 +86,13 @@ const seventh = [chapterEn, chapterEs].map((raw) => splitAtLock(raw.replace(/^--
  * UI strings only the locked components use: the curve's, those of chapter 7's finding, and those of
  * the finding's sources on /sources (ADR 0035).
  */
-const findingSourceKeys = new Set(['sources.engine', ...FINDING.flatMap((key) => [`sources.${key}`, `sources.at.${key}`])]);
+const findingSourceKeys = new Set([
+  'sources.engine',
+  'sources.engine.repository',
+  'sources.engine.release',
+  'sources.working-paper.type',
+  ...FINDING.flatMap((key) => [`sources.${key}`, `sources.at.${key}`]),
+]);
 const isLockedKey = (key: string) => key.startsWith('curve.') || key.startsWith('film.finding.') || findingSourceKeys.has(key);
 const keys = (dictionary: Record<string, string>, locked: boolean) =>
   Object.entries(dictionary)

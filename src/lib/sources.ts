@@ -11,7 +11,7 @@
 import { ENGINE, WORKING_PAPER } from '../config';
 import { CITATIONS, FIGURES, SOURCE_KEYS, type SourceKey } from '../content/figures';
 import type { ChapterId } from './chapters';
-import type { UiKey } from './i18n';
+import type { Locale, UiKey } from './i18n';
 import type { Subpage } from './routes';
 
 /** A place where a figure is used: a chapter of the film, or a page of the notebook. */
@@ -27,17 +27,24 @@ export type WorkId =
   | 'working-paper';
 
 export interface Link {
-  /** As a bibliography writes it; `*…*` marks the italics of a title. */
-  readonly text: string;
+  /**
+   * As a bibliography writes it, in English in both languages; `*…*` marks the italics of a title,
+   * and `{type}` the kind of document, written in the page's language (`typeKey`).
+   */
+  readonly text?: string;
+  /** Or a line of the page's own, in its language: what the working paper's engine links are. */
+  readonly key?: UiKey;
   readonly url?: string;
 }
 
 export interface Work {
   readonly id: WorkId;
-  /** How the prose cites it: "Author (year)". */
+  /** How the English prose cites it: "Author (year)"; `citeIn` gives it in the page's language. */
   readonly cite: string;
   /** The full reference, the same in both languages, as any bibliography's. */
   readonly reference: Link;
+  /** The kind of document in the reference's `{type}`: the working paper's, in the page's language. */
+  readonly typeKey?: UiKey;
   /** What else of the work was used: Vanberg's (2008) supplementary material, the working paper's engine. */
   readonly parts?: readonly Link[];
   /** What the parts are called, when they are not supplementary material. */
@@ -134,10 +141,12 @@ export const FINDING_WORKS: readonly Work[] = [
   {
     id: 'working-paper',
     cite: 'Hernández Gallegos (2026)',
-    reference: { text: `Hernández Gallegos, M. X. (2026). *${WORKING_PAPER.title}*. SSRN.`, url: WORKING_PAPER.ssrn },
+    // Linked to its DOI, as the other references are; the status sentence links its page on SSRN.
+    reference: { text: `Hernández Gallegos, M. X. (2026). *${WORKING_PAPER.title}* [{type}]. SSRN.`, url: `https://doi.org/${WORKING_PAPER.doi}` },
+    typeKey: 'sources.working-paper.type',
     parts: [
-      { text: 'Its repository.', url: ENGINE.repository },
-      { text: 'Its release, archived on Zenodo.', url: `https://doi.org/${ENGINE.doi}` },
+      { key: 'sources.engine.repository', url: ENGINE.repository },
+      { key: 'sources.engine.release', url: `https://doi.org/${ENGINE.doi}` },
     ],
     partsKey: 'sources.engine',
   },
@@ -206,6 +215,20 @@ export function figuresOf(source: SourceKey): string[] {
 export function referenceHtml(text: string): string {
   const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   return escaped.replace(/\*([^*]+)\*/g, '<i>$1</i>');
+}
+
+/**
+ * A reference as HTML with its `{type}` filled: the kind of document, in the page's language, marked
+ * with that language when the English reference around it is marked English.
+ */
+export function referenceWithType(text: string, type: string, lang?: string): string {
+  const html = referenceHtml(type);
+  return referenceHtml(text).replace('{type}', lang ? `<span lang="${lang}">${html}</span>` : html);
+}
+
+/** How the prose of a language cites a work: its authors joined by "and" or "y", as CITATIONS says. */
+export function citeIn(work: Work, locale: Locale): string {
+  return locale === 'es' ? work.cite.replace(' and ', ' y ') : work.cite;
 }
 
 /** A URL as a reader writes it: no scheme, no trailing slash. */
