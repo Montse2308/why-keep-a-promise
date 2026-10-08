@@ -5,7 +5,7 @@
  * the other answers; then the film says why that changes no payoff, and yet people keep their word.
  * There is no second round of the dilemma (rule (f)).
  */
-import { beat, chapter } from '../../../lib/chapters';
+import { beat } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { KEY_POSE, stageAt } from '../../../lib/film/stage';
 import { AS_IF, LINES, MESSAGES, type Message } from '../../../lib/film/talk';
@@ -16,6 +16,7 @@ import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
 import Ticket from '../Ticket.astro';
 import Tickets from '../Tickets.astro';
+import ChapterTitle from '../ChapterTitle.astro';
 
 interface Props {
   locale: Locale;
@@ -37,11 +38,7 @@ const still = stageAt(KEY_POSE.talk ?? 0, { promised: true, round: roundOf('coop
 
 <Chapter locale={locale} id="talk" labelledby="talk-title" still={still} stillLabel={tr('film.talk.still')}>
   <Beat id={chat.id} screens={chat.screens} caption={captions.get(chat.id)}>
-    <h2 slot="top" id="talk-title" class="card__chapter">
-      <span>{fill(tr('film.chapter'), { n: chapter('talk').number })}</span>
-      <span aria-hidden="true">·</span>
-      <span>{title}</span>
-    </h2>
+    <ChapterTitle slot="top" locale={locale} chapter="talk" title={title} />
     <div class="chat">
       <p class="bubble bubble--other"><span class="visually-hidden">{tr('film.who.other')}: </span>{tr('film.talk.opener')}</p>
       <p class="bubble bubble--you chat__as-if" tabindex="-1" data-chat-mine><span class="visually-hidden">{tr('film.who.you')}: </span><span data-text>{says(AS_IF)}</span></p>

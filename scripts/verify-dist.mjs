@@ -1,15 +1,16 @@
 // Checks the built site against the lock (ADR 0034). Run after `npm run build`.
 //
 // The lock covers chapter 7's finding (its prose, the curve and its control, its links), all of
-// /finding and the engine part of /how-its-built. While the working paper's link in src/config.ts
-// (WORKING_PAPER.ssrn) is still a placeholder, the lock is closed, and this fails if any file in
+// /finding, the engine part of /how-its-built and the finding's sources on /sources (ADR 0035).
+// While the working paper's link in src/config.ts (WORKING_PAPER.ssrn) is still a placeholder, the
+// lock is closed, and this fails if any file in
 // dist/ carries a mark of that content: its data attributes, the charts' ids, the control's hook, the
 // finding's first beat (which only the film's timeline names) or a key phrase of its prose and
 // charts. The working paper's title is left out of that search: it is part of the status sentence,
 // which shows in both states. Once the link is real, the lock is open, and this fails if the locked
 // content is missing from any page that carries it, so a broken unlock is caught too. While locked,
-// no page links to /finding either: chapter 7, the notebook's panel, its footer and the credits link
-// to it only behind the lock; and /finding asks not to be indexed, which it stops asking once
+// no page links to /finding either: chapter 7, the notebook's panel, its footer, the credits and
+// /sources link to it only behind the lock; and /finding asks not to be indexed, which it stops asking once
 // unlocked. The sitemap lists every page but the 404, and /finding only once unlocked.
 //
 // In both states it also checks the status sentence (docs/content-rules.md, rule (b)): it stands
@@ -58,6 +59,9 @@ export const UNLOCKED_PAGES = {
   'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'resultado de identificación', 'Montse2308/Dilema-del-Prisionero'],
   'how-its-built/index.html': ['data-locked-content', 'by imitation', 'Montse2308/Dilema-del-Prisionero'],
   'es/how-its-built/index.html': ['data-locked-content', 'por imitación', 'Montse2308/Dilema-del-Prisionero'],
+  // /sources lists the finding's sources only behind the lock (ADR 0035).
+  'sources/index.html': ['data-locked-content', 'Kawagoe', 'Montse2308/Dilema-del-Prisionero'],
+  'es/sources/index.html': ['data-locked-content', 'Kawagoe', 'Montse2308/Dilema-del-Prisionero'],
 };
 
 /** Every mark some unlocked page must carry. */

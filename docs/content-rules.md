@@ -138,5 +138,6 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
 - No se publica el resultado: ni datos de la curva, ni parámetros del modelo, ni qué motivo paga
   dónde, fuera del candado (ADR 0034).
 - Los parámetros del modelo no se muestran nunca, salvo θ, c, la culpa disponible y la variante de
-  robustez en `/finding`, y solo detrás del candado.
+  robustez en `/finding`, y solo detrás del candado. Detrás del candado, `/sources` lista las cifras
+  de `/finding` del registro y nombra θ y c, nunca sus valores (ADR 0035).
 - Sin fechas de sometimiento ni correspondencia con otros autores en ningún archivo (ADR 0034).

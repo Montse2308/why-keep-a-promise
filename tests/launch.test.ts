@@ -4,7 +4,7 @@ import deploy from '../.github/workflows/deploy.yml?raw';
 import checklist from '../docs/launch-checklist.md?raw';
 import pkg from '../package.json';
 import { isChecked, placeholdersIn } from '../scripts/check-launch.mjs';
-import sourcesComponent from '../src/components/notebook/Sources.astro?raw';
+import sourceEntry from '../src/components/notebook/SourceEntry.astro?raw';
 import { ENGINE, WORKING_PAPER } from '../src/config';
 
 /** The launch's own guards: what the deploy refuses, and the checklist steps that come before it. */
@@ -48,11 +48,12 @@ describe('the launch (docs/launch-checklist.md, ADR 0034)', () => {
   });
 
   it('marks on /sources, with the mark the deploy refuses, a source still to be verified', () => {
-    expect(sourcesComponent).toMatch(/<p class="sources__row" data-unverified>/);
+    expect(sourceEntry).toMatch(/<p class="sources__row" data-unverified>/);
   });
 
   it('starts from the working paper and the engine being public, in its eight steps', () => {
-    const titles = [...checklist.matchAll(/^- \[ \] \*\*(\d+)\. ([^*]+)\*\*/gm)].map((m) => `${m[1]}. ${m[2]}`);
+    // Open or ticked: the steps are marked as they close, and stay in place.
+    const titles = [...checklist.matchAll(/^- \[[ x]\] \*\*(\d+)\. ([^*]+)\*\*/gm)].map((m) => `${m[1]}. ${m[2]}`);
     expect(titles).toEqual([
       '1. Working paper público.',
       '2. Motor público.',

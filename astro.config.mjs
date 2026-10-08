@@ -31,13 +31,15 @@ function variants(file, weight, styles) {
 
 /**
  * What the lock keeps out of a build while it is closed (ADR 0034), each with the stub it resolves
- * to: the curve, /finding's guilt chart and chapter 7's finding render nothing, and the film's
- * timeline knows no beats past the sealed envelope. Paths from the project's root.
+ * to: the curve, /finding's guilt chart, chapter 7's finding and the finding's part of /sources render
+ * nothing, and the film's timeline knows no beats past the sealed envelope. Paths from the project's
+ * root.
  */
 const LOCKED_MODULES = {
   '/src/components/curve/Curve.astro': '/src/components/curve/Locked.astro',
   '/src/components/curve/GuiltChart.astro': '/src/components/curve/Locked.astro',
   '/src/components/film/chapters/Finding.astro': '/src/components/curve/Locked.astro',
+  '/src/components/notebook/SourcesFinding.astro': '/src/components/curve/Locked.astro',
   '/src/lib/film/finding.ts': '/src/lib/film/finding.locked.ts',
 };
 

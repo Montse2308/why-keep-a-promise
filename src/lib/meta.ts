@@ -2,8 +2,10 @@
  * What each page says of itself in its head, for search engines and shared links: its language for
  * Open Graph, its description, and the colour a phone tints its browser bar with.
  * The notebook's pages reuse their line in the panel (src/lib/notebook.ts); the home has its own.
- * /finding has no line: it carries the site's question, in both states of the lock, so its
- * description says nothing of the finding and never repeats the status sentence (rule (b)).
+ * /finding has no line in the panel. Behind the lock it has a description of its own, the question
+ * the page answers, which names the finding's reasons and so is locked content (ADR 0034); while the
+ * lock is closed it is a title and the status sentence, and carries the site's question instead.
+ * Neither repeats the status sentence (rule (b)).
  */
 import { LIGHT_POINTS } from './design/film';
 import { PALETTE } from './design/palette';
@@ -18,14 +20,15 @@ import type { Route } from './routes';
 export const OG_LOCALES: Record<Locale, string> = { en: 'en_US', es: 'es_MX' };
 
 /** The key of a page's description. */
-export function descriptionKey(route: Route): UiKey {
+export function descriptionKey(route: Route, unlocked: boolean): UiKey {
   if (route === 'home') return 'site.description';
+  if (route === 'finding') return unlocked ? 'finding.description' : 'site.title';
   return notebookPage(route).lineKey ?? 'site.title';
 }
 
 /** A page's description, as `<meta name="description">` and `og:description` carry it. */
-export function description(locale: Locale, route: Route): string {
-  return t(locale, descriptionKey(route));
+export function description(locale: Locale, route: Route, unlocked: boolean): string {
+  return t(locale, descriptionKey(route, unlocked));
 }
 
 export interface ThemeColor {

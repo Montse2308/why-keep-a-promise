@@ -27,6 +27,7 @@ números no se reutilizan.
 | [0032](0032-author-on-posters.md) | La autora en los pósteres: una firma con su nombre y nada más. |
 | [0033](0033-dilemma-source.md) | La fuente del dilema: los pagos, `2R > T + S` y el torneo, de Axelrod y Hamilton (1981), con sus páginas. |
 | [0034](0034-working-paper.md) | Working paper en SSRN en vez de sometimiento a revista: el disparador del lanzamiento, un solo texto de estado, el PDF enlazado y no alojado, el repo privado hasta F6, las reglas de fechas y el candado completo (qué cubre, cómo se cierra en el build, `verify:dist` y cómo se abre). |
+| [0035](0035-sources-lists-the-finding.md) | `/sources` lista las cifras del hallazgo con el candado abierto, θ y c solo nombrados; cerrado, se ve como antes. |
 
 Archivados (no rigen): 0002, 0003, 0004, 0007, 0009, 0011, 0014, 0015, 0017, 0018, 0019, 0020, 0022
 y 0026, en [`docs/archivo/decisiones/`](../archivo/decisiones/).

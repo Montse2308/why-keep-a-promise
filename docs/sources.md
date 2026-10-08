@@ -13,11 +13,14 @@ entrada, y `tests/prose.test.ts` y `tests/film-captions.test.ts` fallan si la pr
 una cita que no están registrados, o si una clave no existe aquí.
 
 `/sources` (P5, ADR 0024) muestra ese registro al visitante (`src/lib/sources.ts`): cada obra con su
-referencia completa y, debajo, cada clave con sus cifras, dónde está en la fuente y dónde se usa. No
-tiene candado, así que se ve igual en los dos estados (ADR 0034): no lista las claves del hallazgo
-(`kawagoe-narita-2014`, `vanberg-second-order`, `curve` y `curve-finding`, en `FINDING`), que el
-capítulo 7 y `/finding` citan donde las usan, ni las que ya no se muestran (`vanberg-switch` y
-`vanberg-chat`, en `RETIRED`). Un test exige que cada clave esté en uno solo de esos tres lugares.
+referencia completa y, debajo, cada clave con sus cifras, dónde está en la fuente y dónde se usa. Su
+parte abierta se ve igual en los dos estados (ADR 0034). Las claves del hallazgo
+(`vanberg-second-order`, `kawagoe-narita-2014`, `curve` y `curve-finding`, en `FINDING_ENTRIES`) se
+suman solo detrás del candado, con sus cifras, salvo los valores de θ y c, que se nombran pero solo
+se dan en `/finding` (ADR 0035); `curve` y `curve-finding` van bajo el working paper en SSRN, con el
+motor (su repo y el DOI de su release) como su material. Las que ya no se muestran
+(`vanberg-switch` y `vanberg-chat`, en `RETIRED`) no se listan. Un test exige que cada clave esté en
+uno solo de esos tres lugares.
 Lo que `/sources` dice de cada clave y dónde está en la fuente vive en las claves `sources.*` de
 `src/i18n/`.
 
@@ -124,7 +127,9 @@ cifra, en el mismo commit, y también los lugares de `ENTRIES` en `src/lib/sourc
   medias, y del total verificado de arriba (415.5 / 603), que suman exactamente
   (`src/lib/table/expectation.test.ts`). Los n coinciden con las celdas de los dictadores: 309, y
   238 + 56 = 294.
-  PENDIENTE(datos): que Montse coteje las dos sumas contra `switch.dat`.
+  Cotejadas por Montse (7.2.9): `switch.dat` con el método de `promises.do` (las creencias de los
+  receptores con promesa, por celda) da 0.696 (n = 309) sin cambio y 0.682 (n = 294) con cambio,
+  que coincide con 215 / 309 y 200.5 / 294.
   La apuesta del visitante en el capítulo 5 usa la misma escala de cinco puntos. Sus extremos son los
   de la pantalla; los tres puntos de en medio («probablemente tira», «puede que sí, puede que no»,
   «probablemente no tira») son palabras de la página, no citas.

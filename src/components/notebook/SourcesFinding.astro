@@ -1,0 +1,26 @@
+---
+/**
+ * The finding's part of /sources, behind the lock (ADR 0035). With `work`, the finding's entries under
+ * that work of the open part (Vanberg's (2008) belief the curve holds fixed); without it, the works
+ * only the finding draws on, after the open ones: Kawagoe and Narita (2014), and the working paper
+ * with its engine. A locked build resolves this component to an empty stub (`lockFinding` in
+ * astro.config.mjs), so none of it reaches dist/. θ and c are named here, never their values.
+ */
+import type { Locale } from '../../lib/i18n';
+import { findingEntriesOf, findingWorksOf, type WorkId } from '../../lib/sources';
+import SourceEntry from './SourceEntry.astro';
+import SourceWork from './SourceWork.astro';
+
+interface Props {
+  locale: Locale;
+  work?: WorkId;
+}
+
+const { locale, work } = Astro.props;
+---
+
+{
+  work
+    ? findingEntriesOf(work).map((entry) => <SourceEntry locale={locale} entry={entry} locked />)
+    : findingWorksOf().map((group) => <SourceWork locale={locale} work={group.work} entries={group.entries} locked />)
+}

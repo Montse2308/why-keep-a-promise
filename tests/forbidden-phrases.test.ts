@@ -57,7 +57,7 @@ describe('forbidden phrases', () => {
     expect(found).toEqual([]);
   });
 
-  it.each(LOCALES.flatMap((locale) => ROUTES.map((route) => [`${locale} ${route}`, description(locale, route)] as const)))(
+  it.each(LOCALES.flatMap((locale) => ROUTES.flatMap((route) => [true, false].map((unlocked) => [`${locale} ${route}${unlocked ? '' : ' (locked)'}`, description(locale, route, unlocked)] as const))))(
     "the description of %s contains none",
     (_page, text) => {
       expect(FORBIDDEN.filter((phrase) => normalize(text).includes(normalize(phrase)))).toEqual([]);

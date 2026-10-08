@@ -18,9 +18,10 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
-(P6, the polish, with PR #9). The active phase is F5 (QA), not started yet. P7, the fixes from an
-external review, was planned in small steps (one per session) in `docs/p7-review-plan.md`,
-`docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
+(P6, the polish, with PR #9). The active phase is F6 (launch): steps 1 to 4 of the checklist and
+F5 (QA) are done on the branch `launch/f5-qa`, with the lock open; steps 5 to 8 are Montse's.
+P7, the fixes from an external review, was planned in small steps (one per session) in
+`docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
 script split by chapter, the fallback to the storyboard and the memory in the tab, is closed
 (PR #11). P7.2 (each page's description and Open Graph metadata, the 404 page, `noindex` on the
@@ -34,8 +35,8 @@ still frames that draw only what their pose shows, chapter 4's citation line, th
 the notebook's panel, the author's signature on the posters) is closed; Montse approved it
 (7.6.11). P7.7 (the READMEs, Lighthouse and the weights again, and the full review: sizes,
 sideways, both languages, keyboard, reduced motion, no JS, a blocked script and axe, with its four
-fixes) is closed; Montse approved it (7.7.7), and its PR is merged (#17). Now F5 (QA), then F6
-(launch). The film tells all nine chapters, chapter 7's finding
+fixes) is closed; Montse approved it (7.7.7), and its PR is merged (#17). F5 (QA) is done, and F6
+(launch) has its steps 1 to 4 done, the lock open. The film tells all nine chapters, chapter 7's finding
 behind the lock, and ends in chapter 8's credits, with «Watch again» under them; it has its sound,
 off until pressed, its progress under the spool, its cast alive at rest, and remembers what was
 played in its tab entry. The notebook has its six pages, its panel on every page (with the finding's
@@ -163,7 +164,8 @@ src/
                          leads back to, what may be linked in each state of the lock, and the
                          film's magnifiers (MAGNIFIERS)
     sources.ts           /sources: the works, each key of the register under its work, where its
-                         figures are used; the finding's keys and the retired ones are left out
+                         figures are used; the finding's keys only behind the lock (FINDING_ENTRIES,
+                         ADR 0035), the retired ones left out
     design/              film.ts (the film's colours and the day's light; film.css mirrors it),
                          palette.ts (the notebook's paper, day and night; tokens.css mirrors it),
                          colour maths
@@ -195,8 +197,9 @@ src/
                          the controllers, sound.ts the Web Audio player);
                          notebook/ (Notebook, the button and panel, with notebook.ts, details.ts,
                          back.ts and transitions.ts, which lets the transition between notebook
-                         pages go on the way to the film; NotebookFooter; Sources, Author, Day,
-                         Weight, Vignette);
+                         pages go on the way to the film; NotebookFooter; Sources, with SourceWork,
+                         SourceEntry and SourcesFinding, its locked part; Author, Day, Weight,
+                         Vignette);
                          curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
@@ -248,10 +251,11 @@ scratch/                 local notes, git-ignored, never committed
 - **Publishing the result.**
   - No curve data, no saying which motive pays where, and no content from the finding beyond the
     status sentence, except behind the lock (ADR 0034).
-  - The lock covers chapter 7's finding, `/finding`, the engine part of `/how-its-built`, and the
-    links to them and to the engine repository. It opens once the working paper is public on SSRN.
+  - The lock covers chapter 7's finding, `/finding`, the engine part of `/how-its-built`, the
+    finding's sources on `/sources` (ADR 0035), and the links to them and to the engine repository. It opens once the working paper is public on SSRN.
   - Model parameters never appear, except θ, c, the guilt available and the robustness variant on
-    `/finding`, behind the lock.
+    `/finding`, behind the lock. Behind the lock, `/sources` lists `/finding`'s figures from the
+    register and names θ and c, never their values (ADR 0035).
   - Outside the lock, chapter 7 says only the question and that Montse built a simulation engine in
     TypeScript. Nothing about the engine's tests, seed, generations, imitation or provenance
     (rule (j)).

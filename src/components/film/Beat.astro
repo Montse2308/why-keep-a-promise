@@ -96,8 +96,13 @@ const { id, screens, caption, opening = false, cardClass, roll = false } = Astro
     color: var(--film-card-muted);
   }
 
-  .card :global(.card__chapter [aria-hidden]) {
+  .card :global(.card__chapter-dot) {
     margin-inline: 0.4em;
+  }
+
+  /* What a screen reader reads instead (ChapterTitle.astro), in the case it is written in. */
+  .card :global(.card__chapter-name) {
+    text-transform: none;
   }
 
   .card :global(.card__say) {

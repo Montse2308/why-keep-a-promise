@@ -7,7 +7,7 @@
  * is stored or sent. Every line an answer can lead to is resolved here.
  */
 import { WORKING_PAPER } from '../../../config';
-import { beat, chapter } from '../../../lib/chapters';
+import { beat } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { CAST, CAST_LINE, creditPages, type Role } from '../../../lib/film/credits';
 import { nowLine, pageLine } from '../../../lib/film/lines';
@@ -25,6 +25,7 @@ import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
 import Ticket from '../Ticket.astro';
 import Tickets from '../Tickets.astro';
+import ChapterTitle from '../ChapterTitle.astro';
 
 interface Props {
   locale: Locale;
@@ -63,11 +64,7 @@ const SHAPES: Record<Exclude<Role, 'thread'>, { d: string; fill: string; scale: 
 
 <Chapter locale={locale} id="closing" labelledby="closing-title" still={still} stillLabel={tr('film.closing.still')}>
   <Beat id={collect.id} screens={collect.screens} caption={captions.get(collect.id)}>
-    <h2 slot="top" id="closing-title" class="card__chapter">
-      <span>{fill(tr('film.chapter'), { n: chapter('closing').number })}</span>
-      <span aria-hidden="true">·</span>
-      <span>{title}</span>
-    </h2>
+    <ChapterTitle slot="top" locale={locale} chapter="closing" title={title} />
     <p class="card__say">
       <span class="card__who" aria-hidden="true"></span>
       <span>

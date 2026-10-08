@@ -3,12 +3,13 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** F5, la QA: la revisión integral antes del lanzamiento, con el criterio de salida
-de `docs/phases.md`. Todavía no empieza. P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7,
+**Fase activa:** F6, el lanzamiento: los pasos 1 a 4 del checklist están hechos (rama
+`launch/f5-qa`); siguen los de Montse, del 5 al 8. F5, la QA, cerrada en la misma rama, sobre el
+build con el candado abierto. P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7,
 los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos, como ella lo pidió: dio
 por hecho el de la película entera.
 
-**Fase siguiente:** F6, el lanzamiento.
+**Fase siguiente:** ninguna: después de F6, la página está en línea.
 
 **El lanzamiento (F6)** ya no espera un sometimiento: lo dispara el working paper público en SSRN y
 el repo del motor público (ADR 0034). Su preparación y sus pasos abiertos están en la sección F6.
@@ -162,8 +163,8 @@ queda nada en el sitio.
       se queda; apuesta «probablemente no tira»; adivina 85 y 80). En `scratch/p3-review/` (local,
       no se versiona).
 - [x] Revisión de P3 por Montse (PR #4, mergeado).
-- PENDIENTE(datos): el código guarda las sumas exactas de 70 y 68 (215 / 309 y 200.5 / 294), que
-  salen de las medias verificadas y del total verificado; falta cotejarlas contra `switch.dat`
+- Cotejado en 7.2.9: el código guarda las sumas exactas de 70 y 68 (215 / 309 y 200.5 / 294), y
+  `switch.dat`, con el método de `promises.do`, da 0.696 (n = 309) y 0.682 (n = 294), que coincide
   (`docs/sources.md`, `vanberg-beliefs`).
 - Transición, resuelta en P4: el acto 6 del home decía que el navegador corre «el código de la mesa,
   en sus tres momentos». Salió con el acto.
@@ -616,22 +617,27 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       dice dónde está cada cosa en el artículo, con las páginas impresas en *Science*: la figura 1,
       su pie y *w* (la probabilidad de volver a encontrarse), p. 1392; el torneo, p. 1393; la nota
       17, p. 1396. La página de *w* no estaba en el ADR 0033: se tomó de la misma copia de JSTOR.
-- [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
+- [x] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
       puede, decide cómo queda registrado. Lo que hay que ver: la suma de lo que apostaron los
       receptores con una promesa, en la escala de 0 a 1 en cuartos, da 215 sobre 309 sin cambio de
       pareja y 200.5 sobre 294 con cambio (`docs/sources.md`, `vanberg-beliefs`). No bloquea el PR
       de P7.2: si coincide, sale el `PENDIENTE(datos)` de `docs/sources.md` y de P3.
+      Cotejado: los suplementos de Vanberg (`switch.dat`, con el método de `promises.do`) dan para
+      los receptores con promesa 0.696 (n = 309) sin cambio y 0.682 (n = 294) con cambio, que
+      coincide con 215/309 y 200.5/294. El `PENDIENTE(datos)` sale de `docs/sources.md` y de P3.
 - [x] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
       revisión de las 14 cabeceras y capturas para Montse. En los dos estados pasan `check`, `test`,
       `build`, `verify:dist` y `budgets`; abierto, `/finding` pierde el `noindex` y entra al sitemap
       (14 entradas; cerrado, 12). Las 15 cabeceras (las 14 y la 404) y las capturas a 360 y 1440 px,
       en `scratch/p7-2/review/` (local, no se versiona), con un README.
-- [ ] **7.2.11 (Montse)** Revisión de P7.2 (el PR). Además de las capturas, confirma o corrige:
+- [x] **7.2.11 (Montse)** Revisión de P7.2 (el PR). Además de las capturas, confirma o corrige:
       - los textos nuevos de la 404: «Page not found» / «Página no encontrada» y «There is nothing
         at this address.» / «En esta dirección no hay nada.»;
       - `es_MX` como el español de Open Graph (o `es_ES`, u otro: es una línea de `src/lib/meta.ts`);
       - la línea «En la fuente» de Axelrod y Hamilton (1981): «La figura 1 y su pie, y la
         probabilidad de volver a encontrarse, p. 1392; el torneo, p. 1393; la nota 17, p. 1396.»
+      Montse confirmó los textos de la 404, `es_MX` y la línea «En la fuente» de Axelrod y Hamilton
+      (1981), tal como están.
 
 ### P7.3 · La película: experiencia (puntos 7, 9, 10 y 11)
 
@@ -700,10 +706,11 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       Los tests de la coreografía y del reloj de la luz, en verde; las cinco puertas, también con el
       candado abierto (`under-review` en local, sin commit). Sin scroll horizontal a 320 px. Videos y
       capturas en `scratch/p7-3/review/` (local, no se versiona), con un README.
-- [ ] **7.3.10 (Montse)** Revisión de P7.3 (el PR).
+- [x] **7.3.10 (Montse)** Revisión de P7.3 (el PR).
       Montse aprobó las capturas, los videos y las tres elecciones del README: el progreso dentro de
       la pastilla del carrete, la burbuja de tres puntos a la mitad de la llegada y el balanceo en el
       dado del capítulo 3. Queda que mergee el PR.
+      Cerrada: la cubre la revisión de P7 completo (7.7.7, PR #17).
 
 ### P7.4 · Sonido (punto 8)
 
@@ -1010,19 +1017,91 @@ Dep.: todas las subfases anteriores.
 ## F5 · QA
 
 Revisión integral antes del lanzamiento. Cada tarea es un punto del criterio de salida de
-`docs/phases.md`. Todavía no empieza.
+`docs/phases.md`. Hecha en la rama `launch/f5-qa`, sobre `npm run preview` del build con el
+candado abierto (después del paso 3 del checklist), y solo en lo que cambió desde P7.7 donde P7.7
+ya lo había revisado. Salidas, guiones y capturas en `scratch/launch/` (local, no se versiona),
+con un README.
 
-- [ ] **Móvil:** sin scroll horizontal a 320 px, y los juegos usables al tacto.
-- [ ] **El storyboard** sin JavaScript, la película con movimiento reducido y en un navegador sin
+- [x] **Móvil:** sin scroll horizontal a 320 px, y los juegos usables al tacto.
+      `scrollWidth` contra `clientWidth` de `html` y `body` a 320 y 360 px en las 14 páginas y la
+      404: 30 de 30 sin desborde. Con toque emulado y presiones reales a 360, EN y ES: el control
+      de la curva del capítulo 7 está encima y se alcanza donde su tarjeta se detiene (46 px de
+      alto); arrastrarlo de lado lo mueve sin mover la página, un toque en su riel lo lleva ahí y un
+      deslizamiento vertical que empieza en él sigue moviendo la página. En `/finding`, cada enlace
+      lleva a su página, y el botón del cuaderno, su cierre y el enlace de idioma responden. La
+      película entera, jugada con presiones reales (21 de 21) a 1440 EN y ES, 360 EN y ES, 320 ES y
+      1440 con movimiento reducido.
+- [x] **El storyboard** sin JavaScript, la película con movimiento reducido y en un navegador sin
       soporte.
-- [ ] **Accesibilidad:** teclado completo, lector de pantalla, contraste y `lang` correcto por
+      Sin JS, con el script de la película bloqueado y con uno que lo rompe, a 360 y 1440, EN y
+      ES (180 comprobaciones): el hallazgo del capítulo 7 se lee entero, la curva se dibuja, sin
+      botones muertos, con el sello enlazado a SSRN y los enlaces del motor; la entrada del cuaderno
+      enlaza a `/finding`; `/finding`, la parte del motor de `/how-its-built` y la parte nueva de
+      `/sources` se ven enteras. Sin JS el control de la curva no aparece; con la película bloqueada
+      o rota, su propio script lo deja vivo y responde al teclado. Con movimiento reducido, 0
+      cuadros en reposo en el capítulo 7 (180 en 3 s sin la preferencia), y el sobre se abre en un
+      corte.
+      Hallazgo y arreglo: en el storyboard, la solapa abierta del sobre y su sello tapaban el texto
+      de la tarjeta anterior («Un motor, en TypeScript»); la tarjeta del sobre abierto les deja
+      lugar solo en el storyboard (`html:not(.js)`). Con JS no cambia.
+- [x] **Accesibilidad:** teclado completo, lector de pantalla, contraste y `lang` correcto por
       página.
-- [ ] **Enlaces:** `hreflang`, canonical y `x-default` correctos en todas las combinaciones de ruta
+      axe-core 4.14.0 fijo (fuera del repo), cero violaciones en 424 corridas: las 15 páginas en
+      claro y oscuro a 1440 y 360 (60), el panel abierto en las 14 (56), los dos home detenidos en
+      el sobre y en la curva (40), sin JS (60) y el contraste sobre el papel aplanado a sus cuatro
+      extremos (208); las etiquetas de la gráfica de `/finding`, que axe no mide, dan 6.67:1 en
+      claro y 8.02:1 en oscuro. Teclado: el home entero con Tab y Enter (17 boletos) a 1440 EN, 1440
+      ES con movimiento reducido y 360 ES, sin perder el foco y siempre en pantalla; `/finding`,
+      `/how-its-built` y `/sources` a 1440 y 360, EN y ES, y los home sin JS: cada parada en orden,
+      en pantalla y con anillo. Árbol de accesibilidad del capítulo 7, el panel, `/finding`,
+      `/how-its-built` y la parte nueva de `/sources`: nombres, roles y orden correctos.
+      Hallazgo y arreglo: en las páginas en español, el título del working paper y las referencias
+      de `/sources`, en inglés, no decían su idioma; ahora llevan `lang="en"`.
+      Para Montse con un lector real: que el control de la curva lea «confianza de fondo 38 de 100»
+      (el atributo es correcto, pero el árbol de Chrome por CDP da el valor, también en un control
+      de prueba vacío).
+- [x] **Enlaces:** `hreflang`, canonical y `x-default` correctos en todas las combinaciones de ruta
       e idioma, y sin enlaces rotos (internos con `base` y externos).
-- [ ] **Metadatos:** Open Graph y descripción por página e idioma.
-- [ ] `grep -r "TODO(" dist/` vacío. Solo quedan los placeholders de los enlaces
-      (`SSRN_URL_PENDING` y `ENGINE_DOI_PENDING`), que se reemplazan en el paso 3 de
-      `docs/launch-checklist.md`.
+      Sobre `dist/`: en las 14 páginas, canonical, `hreflang` en, es y `x-default` (recíprocos, a
+      páginas que existen); 523 URL internas, todas bajo `base` y a un archivo que existe, y 76
+      fragmentos, cada uno a un `id` de su página. Externos: 12 URL únicas; responden GitHub (los
+      dos), Zenodo, ncase.me y los tres de RePEc. El DOI del motor resuelve a
+      `zenodo.org/records/23222610`; los 20 enlaces a SSRN apuntan a `abstract_id=7580218`, y el DOI
+      `10.2139/ssrn.7580218` resuelve al mismo resumen. Bloquean a los bots y quedan para abrirlos a
+      mano: SSRN (Cloudflare, 403), el DOI de Axelrod y Hamilton en *Science* (403), los dos
+      suplementos de Vanberg en Wiley (403) y LinkedIn (999).
+- [x] **Metadatos:** Open Graph y descripción por página e idioma.
+      En las 14 páginas: descripción igual a `og:description`, `og:title`, `og:url` igual al
+      canonical, `og:locale` `en_US` o `es_MX` con el otro como alterno, `og:image` (un PNG de
+      1200 × 630 que existe en `dist/`) y su texto alternativo, y `<html lang>`. `/finding` ya no
+      lleva `noindex` y está en el sitemap (14 entradas); la 404 sí lo lleva.
+- [x] `grep -r "TODO(" dist/` vacío y `npm run check:launch` en verde: no queda ningún placeholder
+      en `dist/`, `src/` ni los README.
+
+### Revisión de Montse de F5
+
+- [x] **Paridad en `/sources`:** las dos líneas del motor, en inglés en `/es/sources`, son ahora
+      texto de la página en su idioma («Su repositorio.», «Su versión, archivada en Zenodo.»). Al
+      revisar el resto apareció otra: el título de cada obra decía «and» también en español
+      («Axelrod and Hamilton (1981)»); ahora dice «y», como la prosa.
+- [x] **La referencia del working paper:** «Hernández Gallegos, M. X. (2026). *Promises to whom: …*
+      [Working paper]. SSRN.», con «[Documento de trabajo]» en español, enlazada a su DOI
+      (`10.2139/ssrn.7580218`, `WORKING_PAPER.doi`) como las demás referencias. Los demás enlaces a
+      SSRN no cambian.
+- [x] **Los títulos de los 8 capítulos** se leen como un solo nombre, «Capítulo 7: Aquí entro yo»
+      (`ChapterTitle.astro`): lo que se ve queda oculto al lector de pantalla y un nombre oculto a
+      la vista lo dice escrito como se escribe, no en mayúsculas. En la pantalla nada cambia: 64
+      recortes iguales pixel a pixel, antes y después, sin JS y con JS y movimiento reducido, a 1440
+      y 360, EN y ES; axe en cero en los dos home.
+- [x] **Lighthouse otra vez,** con el candado abierto: 13.5.0, tres corridas por home contra
+      `npm run preview`, la mediana por LCP: 2.11 s en inglés y en español (antes, cerrado, 1.96 s),
+      bajo los 2.5 s del ADR 0025. `src/data/lighthouse.json` al día; `/how-its-built` lo cita de ahí.
+- [x] **La descripción de `/finding`,** propia con el candado abierto, con el texto de Montse:
+      «Why a lab session cannot tell personal guilt from partner-specific commitment, and what
+      comparing worlds with different background trust shows.» / «Por qué una sesión de laboratorio
+      no distingue la culpa personal del compromiso específico a la pareja, y qué muestra comparar
+      mundos con distinta confianza de fondo.» Nombra las razones del hallazgo, así que es contenido
+      bloqueado: cerrado, sigue siendo la pregunta del sitio.
 
 ## F6 · Lanzamiento
 
@@ -1051,18 +1130,29 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
       cursiva; el historial se deja como está (paso 4, ADR 0034); la regla (i) prohíbe «under
       review», «accepted», «peer-reviewed», «published in» y sus equivalentes; `AGENTS.md` dice
       «working paper» en la regla sobre sus archivos.
-- [ ] **(Montse)** Revisar el sello del capítulo 7 con el título en minúsculas y cursiva, a 360 y
+- [x] **(Montse)** Revisar el sello del capítulo 7 con el título en minúsculas y cursiva, a 360 y
       1440 px, EN y ES (capturas en `scratch/working-paper/`).
-- [ ] **(Montse)** Revisar el PR de la rama.
+- [x] **(Montse)** Revisar el PR de la rama. Mergeado (PR #18).
 
 ### Pasos del checklist
 
-- [ ] **1.** El working paper público en SSRN: su URL y su DOI.
-- [ ] **2.** El repo del motor público, con la release `v1.0.0` y su DOI de Zenodo.
-- [ ] **3.** El ADR sobre `/sources` y el hallazgo; después, los placeholders reemplazados y
+- [x] **1.** El working paper público en SSRN: su URL y su DOI.
+      Público:
+      `https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218`, DOI `10.2139/ssrn.7580218`
+      (confirmado por Montse).
+- [x] **2.** El repo del motor público, con la release `v1.0.0` y su DOI de Zenodo.
+      `https://github.com/Montse2308/Dilema-del-Prisionero`, release `v1.0.0`, DOI de esa versión
+      `10.5281/zenodo.23222610`, el que cita el working paper (no el DOI concepto; confirmado por
+      Montse).
+- [x] **3.** El ADR sobre `/sources` y el hallazgo; después, los placeholders reemplazados y
       `check:launch`, `check`, `test` y `build` en verde, con el candado abierto revisado.
-- [ ] **4.** La auditoría del historial: decidido, se deja como está (ADR 0034). Queda que Montse
+      ADR 0035 (sí, decisión de Montse). `WORKING_PAPER.ssrn` y `ENGINE.doi` reales, los README con
+      el enlace al working paper y al sitio, y `src/data/weight.json` al día con el candado abierto.
+      Las cinco puertas y `check:launch` en verde; el candado abierto, revisado en F5. Queda que
+      llegue a `main` antes del paso 7.
+- [x] **4.** La auditoría del historial: decidido, se deja como está (ADR 0034). Queda que Montse
       borre la rama remota `claude/nifty-hopper-xagnu9`.
+      Montse la borró: `git ls-remote origin` ya no la lista.
 - [ ] **5.** El repo público.
 - [ ] **6.** Pages con *Source = GitHub Actions*.
 - [ ] **7.** `deploy.yml`.
@@ -1072,14 +1162,12 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
 
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
-- **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0034 (antes el
-  0026) dice que todo lo que no cubre se ve igual en los dos estados, así que `/sources` no lista las
-  fuentes del hallazgo, tampoco con el candado abierto, y el «cada cifra de la página» del 0024
-  queda con ese hueco. Montse lo confirmó en la revisión de P5 y no quiso el ADR todavía: se decide
-  en el paso 3 del checklist, antes de reemplazar `SSRN_URL_PENDING`, que abre el candado.
 
 ## Preguntas cerradas
 
+- ~~¿`/sources` lista las cifras del hallazgo con el candado abierto?~~ Sí (decisión de Montse, ADR
+  0035): abierto, lista las claves del hallazgo con sus cifras y dónde se usan; θ y c se nombran,
+  sin sus valores, que siguen solo en `/finding`; cerrado, `/sources` se ve como antes.
 - ~~Axelrod (1984): ¿en qué páginas están los pagos, `2R > T + S`, la sombra del futuro y el
   torneo?~~ No se pudo revisar el libro. Montse eligió en 7.0.5 citar el artículo de Axelrod y
   Hamilton (1981), cotejado (ADR 0033); se aplicó en 7.2.8, y `/sources` ya no dice «Páginas por
