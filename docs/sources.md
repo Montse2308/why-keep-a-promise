@@ -124,7 +124,9 @@ cifra, en el mismo commit, y también los lugares de `ENTRIES` en `src/lib/sourc
   medias, y del total verificado de arriba (415.5 / 603), que suman exactamente
   (`src/lib/table/expectation.test.ts`). Los n coinciden con las celdas de los dictadores: 309, y
   238 + 56 = 294.
-  PENDIENTE(datos): que Montse coteje las dos sumas contra `switch.dat`.
+  Cotejadas por Montse (7.2.9): `switch.dat` con el método de `promises.do` (las creencias de los
+  receptores con promesa, por celda) da 0.696 (n = 309) sin cambio y 0.682 (n = 294) con cambio,
+  que coincide con 215 / 309 y 200.5 / 294.
   La apuesta del visitante en el capítulo 5 usa la misma escala de cinco puntos. Sus extremos son los
   de la pantalla; los tres puntos de en medio («probablemente tira», «puede que sí, puede que no»,
   «probablemente no tira») son palabras de la página, no citas.

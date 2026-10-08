@@ -162,8 +162,8 @@ queda nada en el sitio.
       se queda; apuesta «probablemente no tira»; adivina 85 y 80). En `scratch/p3-review/` (local,
       no se versiona).
 - [x] Revisión de P3 por Montse (PR #4, mergeado).
-- PENDIENTE(datos): el código guarda las sumas exactas de 70 y 68 (215 / 309 y 200.5 / 294), que
-  salen de las medias verificadas y del total verificado; falta cotejarlas contra `switch.dat`
+- Cotejado en 7.2.9: el código guarda las sumas exactas de 70 y 68 (215 / 309 y 200.5 / 294), y
+  `switch.dat`, con el método de `promises.do`, da 0.696 (n = 309) y 0.682 (n = 294), que coincide
   (`docs/sources.md`, `vanberg-beliefs`).
 - Transición, resuelta en P4: el acto 6 del home decía que el navegador corre «el código de la mesa,
   en sus tres momentos». Salió con el acto.
@@ -616,22 +616,27 @@ Dep.: P7.0. Puede ir en paralelo a P7.1.
       dice dónde está cada cosa en el artículo, con las páginas impresas en *Science*: la figura 1,
       su pie y *w* (la probabilidad de volver a encontrarse), p. 1392; el torneo, p. 1393; la nota
       17, p. 1396. La página de *w* no estaba en el ADR 0033: se tomó de la misma copia de JSTOR.
-- [ ] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
+- [x] **7.2.9 (Montse)** Coteja 70 y 68 contra `switch.dat` (el `PENDIENTE(datos)` de P3). Si no se
       puede, decide cómo queda registrado. Lo que hay que ver: la suma de lo que apostaron los
       receptores con una promesa, en la escala de 0 a 1 en cuartos, da 215 sobre 309 sin cambio de
       pareja y 200.5 sobre 294 con cambio (`docs/sources.md`, `vanberg-beliefs`). No bloquea el PR
       de P7.2: si coincide, sale el `PENDIENTE(datos)` de `docs/sources.md` y de P3.
+      Cotejado: los suplementos de Vanberg (`switch.dat`, con el método de `promises.do`) dan para
+      los receptores con promesa 0.696 (n = 309) sin cambio y 0.682 (n = 294) con cambio, que
+      coincide con 215/309 y 200.5/294. El `PENDIENTE(datos)` sale de `docs/sources.md` y de P3.
 - [x] **7.2.10** Prueba en los dos estados del candado (`under-review` en local, sin commit),
       revisión de las 14 cabeceras y capturas para Montse. En los dos estados pasan `check`, `test`,
       `build`, `verify:dist` y `budgets`; abierto, `/finding` pierde el `noindex` y entra al sitemap
       (14 entradas; cerrado, 12). Las 15 cabeceras (las 14 y la 404) y las capturas a 360 y 1440 px,
       en `scratch/p7-2/review/` (local, no se versiona), con un README.
-- [ ] **7.2.11 (Montse)** Revisión de P7.2 (el PR). Además de las capturas, confirma o corrige:
+- [x] **7.2.11 (Montse)** Revisión de P7.2 (el PR). Además de las capturas, confirma o corrige:
       - los textos nuevos de la 404: «Page not found» / «Página no encontrada» y «There is nothing
         at this address.» / «En esta dirección no hay nada.»;
       - `es_MX` como el español de Open Graph (o `es_ES`, u otro: es una línea de `src/lib/meta.ts`);
       - la línea «En la fuente» de Axelrod y Hamilton (1981): «La figura 1 y su pie, y la
         probabilidad de volver a encontrarse, p. 1392; el torneo, p. 1393; la nota 17, p. 1396.»
+      Montse confirmó los textos de la 404, `es_MX` y la línea «En la fuente» de Axelrod y Hamilton
+      (1981), tal como están.
 
 ### P7.3 · La película: experiencia (puntos 7, 9, 10 y 11)
 
@@ -700,10 +705,11 @@ Dep.: P7.1 (los controladores por capítulo; 7.3.7 también la memoria).
       Los tests de la coreografía y del reloj de la luz, en verde; las cinco puertas, también con el
       candado abierto (`under-review` en local, sin commit). Sin scroll horizontal a 320 px. Videos y
       capturas en `scratch/p7-3/review/` (local, no se versiona), con un README.
-- [ ] **7.3.10 (Montse)** Revisión de P7.3 (el PR).
+- [x] **7.3.10 (Montse)** Revisión de P7.3 (el PR).
       Montse aprobó las capturas, los videos y las tres elecciones del README: el progreso dentro de
       la pastilla del carrete, la burbuja de tres puntos a la mitad de la llegada y el balanceo en el
       dado del capítulo 3. Queda que mergee el PR.
+      Cerrada: la cubre la revisión de P7 completo (7.7.7, PR #17).
 
 ### P7.4 · Sonido (punto 8)
 
@@ -1051,18 +1057,25 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
       cursiva; el historial se deja como está (paso 4, ADR 0034); la regla (i) prohíbe «under
       review», «accepted», «peer-reviewed», «published in» y sus equivalentes; `AGENTS.md` dice
       «working paper» en la regla sobre sus archivos.
-- [ ] **(Montse)** Revisar el sello del capítulo 7 con el título en minúsculas y cursiva, a 360 y
+- [x] **(Montse)** Revisar el sello del capítulo 7 con el título en minúsculas y cursiva, a 360 y
       1440 px, EN y ES (capturas en `scratch/working-paper/`).
-- [ ] **(Montse)** Revisar el PR de la rama.
+- [x] **(Montse)** Revisar el PR de la rama. Mergeado (PR #18).
 
 ### Pasos del checklist
 
-- [ ] **1.** El working paper público en SSRN: su URL y su DOI.
-- [ ] **2.** El repo del motor público, con la release `v1.0.0` y su DOI de Zenodo.
+- [x] **1.** El working paper público en SSRN: su URL y su DOI.
+      Público:
+      `https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218`, DOI `10.2139/ssrn.7580218`
+      (confirmado por Montse).
+- [x] **2.** El repo del motor público, con la release `v1.0.0` y su DOI de Zenodo.
+      `https://github.com/Montse2308/Dilema-del-Prisionero`, release `v1.0.0`, DOI de esa versión
+      `10.5281/zenodo.23222610`, el que cita el working paper (no el DOI concepto; confirmado por
+      Montse).
 - [ ] **3.** El ADR sobre `/sources` y el hallazgo; después, los placeholders reemplazados y
       `check:launch`, `check`, `test` y `build` en verde, con el candado abierto revisado.
-- [ ] **4.** La auditoría del historial: decidido, se deja como está (ADR 0034). Queda que Montse
+- [x] **4.** La auditoría del historial: decidido, se deja como está (ADR 0034). Queda que Montse
       borre la rama remota `claude/nifty-hopper-xagnu9`.
+      Montse la borró: `git ls-remote origin` ya no la lista.
 - [ ] **5.** El repo público.
 - [ ] **6.** Pages con *Source = GitHub Actions*.
 - [ ] **7.** `deploy.yml`.
