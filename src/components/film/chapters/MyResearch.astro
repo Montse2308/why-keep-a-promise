@@ -175,4 +175,11 @@ const seal = `M${edge(16, 0)} ${Array.from({ length: 10 }, (_, i) => `Q${edge(23
     background: var(--film-card);
     transform: rotate(-3deg);
   }
+
+  /* The working paper's title as the paper writes it, in italics: only «Working paper:» is stamped in capitals. */
+  .envelope__stamp :global(cite) {
+    font-style: italic;
+    letter-spacing: normal;
+    text-transform: none;
+  }
 </style>
