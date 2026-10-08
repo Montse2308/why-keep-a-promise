@@ -3,12 +3,13 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** F5, la QA: la revisión integral antes del lanzamiento, con el criterio de salida
-de `docs/phases.md`. Todavía no empieza. P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7,
+**Fase activa:** F6, el lanzamiento: los pasos 1 a 4 del checklist están hechos (rama
+`launch/f5-qa`); siguen los de Montse, del 5 al 8. F5, la QA, cerrada en la misma rama, sobre el
+build con el candado abierto. P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7,
 los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos, como ella lo pidió: dio
 por hecho el de la película entera.
 
-**Fase siguiente:** F6, el lanzamiento.
+**Fase siguiente:** ninguna: después de F6, la página está en línea.
 
 **El lanzamiento (F6)** ya no espera un sometimiento: lo dispara el working paper público en SSRN y
 el repo del motor público (ADR 0034). Su preparación y sus pasos abiertos están en la sección F6.
@@ -1016,19 +1017,66 @@ Dep.: todas las subfases anteriores.
 ## F5 · QA
 
 Revisión integral antes del lanzamiento. Cada tarea es un punto del criterio de salida de
-`docs/phases.md`. Todavía no empieza.
+`docs/phases.md`. Hecha en la rama `launch/f5-qa`, sobre `npm run preview` del build con el
+candado abierto (después del paso 3 del checklist), y solo en lo que cambió desde P7.7 donde P7.7
+ya lo había revisado. Salidas, guiones y capturas en `scratch/launch/` (local, no se versiona),
+con un README.
 
-- [ ] **Móvil:** sin scroll horizontal a 320 px, y los juegos usables al tacto.
-- [ ] **El storyboard** sin JavaScript, la película con movimiento reducido y en un navegador sin
+- [x] **Móvil:** sin scroll horizontal a 320 px, y los juegos usables al tacto.
+      `scrollWidth` contra `clientWidth` de `html` y `body` a 320 y 360 px en las 14 páginas y la
+      404: 30 de 30 sin desborde. Con toque emulado y presiones reales a 360, EN y ES: el control
+      de la curva del capítulo 7 está encima y se alcanza donde su tarjeta se detiene (46 px de
+      alto); arrastrarlo de lado lo mueve sin mover la página, un toque en su riel lo lleva ahí y un
+      deslizamiento vertical que empieza en él sigue moviendo la página. En `/finding`, cada enlace
+      lleva a su página, y el botón del cuaderno, su cierre y el enlace de idioma responden. La
+      película entera, jugada con presiones reales (21 de 21) a 1440 EN y ES, 360 EN y ES, 320 ES y
+      1440 con movimiento reducido.
+- [x] **El storyboard** sin JavaScript, la película con movimiento reducido y en un navegador sin
       soporte.
-- [ ] **Accesibilidad:** teclado completo, lector de pantalla, contraste y `lang` correcto por
+      Sin JS, con el script de la película bloqueado y con uno que lo rompe, a 360 y 1440, EN y
+      ES (180 comprobaciones): el hallazgo del capítulo 7 se lee entero, la curva se dibuja, sin
+      botones muertos, con el sello enlazado a SSRN y los enlaces del motor; la entrada del cuaderno
+      enlaza a `/finding`; `/finding`, la parte del motor de `/how-its-built` y la parte nueva de
+      `/sources` se ven enteras. Sin JS el control de la curva no aparece; con la película bloqueada
+      o rota, su propio script lo deja vivo y responde al teclado. Con movimiento reducido, 0
+      cuadros en reposo en el capítulo 7 (180 en 3 s sin la preferencia), y el sobre se abre en un
+      corte.
+      Hallazgo y arreglo: en el storyboard, la solapa abierta del sobre y su sello tapaban el texto
+      de la tarjeta anterior («Un motor, en TypeScript»); la tarjeta del sobre abierto les deja
+      lugar solo en el storyboard (`html:not(.js)`). Con JS no cambia.
+- [x] **Accesibilidad:** teclado completo, lector de pantalla, contraste y `lang` correcto por
       página.
-- [ ] **Enlaces:** `hreflang`, canonical y `x-default` correctos en todas las combinaciones de ruta
+      axe-core 4.14.0 fijo (fuera del repo), cero violaciones en 424 corridas: las 15 páginas en
+      claro y oscuro a 1440 y 360 (60), el panel abierto en las 14 (56), los dos home detenidos en
+      el sobre y en la curva (40), sin JS (60) y el contraste sobre el papel aplanado a sus cuatro
+      extremos (208); las etiquetas de la gráfica de `/finding`, que axe no mide, dan 6.67:1 en
+      claro y 8.02:1 en oscuro. Teclado: el home entero con Tab y Enter (17 boletos) a 1440 EN, 1440
+      ES con movimiento reducido y 360 ES, sin perder el foco y siempre en pantalla; `/finding`,
+      `/how-its-built` y `/sources` a 1440 y 360, EN y ES, y los home sin JS: cada parada en orden,
+      en pantalla y con anillo. Árbol de accesibilidad del capítulo 7, el panel, `/finding`,
+      `/how-its-built` y la parte nueva de `/sources`: nombres, roles y orden correctos.
+      Hallazgo y arreglo: en las páginas en español, el título del working paper y las referencias
+      de `/sources`, en inglés, no decían su idioma; ahora llevan `lang="en"`.
+      Para Montse con un lector real: que el control de la curva lea «confianza de fondo 38 de 100»
+      (el atributo es correcto, pero el árbol de Chrome por CDP da el valor, también en un control
+      de prueba vacío).
+- [x] **Enlaces:** `hreflang`, canonical y `x-default` correctos en todas las combinaciones de ruta
       e idioma, y sin enlaces rotos (internos con `base` y externos).
-- [ ] **Metadatos:** Open Graph y descripción por página e idioma.
-- [ ] `grep -r "TODO(" dist/` vacío. Solo quedan los placeholders de los enlaces
-      (`SSRN_URL_PENDING` y `ENGINE_DOI_PENDING`), que se reemplazan en el paso 3 de
-      `docs/launch-checklist.md`.
+      Sobre `dist/`: en las 14 páginas, canonical, `hreflang` en, es y `x-default` (recíprocos, a
+      páginas que existen); 523 URL internas, todas bajo `base` y a un archivo que existe, y 76
+      fragmentos, cada uno a un `id` de su página. Externos: 12 URL únicas; responden GitHub (los
+      dos), Zenodo, ncase.me y los tres de RePEc. El DOI del motor resuelve a
+      `zenodo.org/records/23222610`; los 20 enlaces a SSRN apuntan a `abstract_id=7580218`, y el DOI
+      `10.2139/ssrn.7580218` resuelve al mismo resumen. Bloquean a los bots y quedan para abrirlos a
+      mano: SSRN (Cloudflare, 403), el DOI de Axelrod y Hamilton en *Science* (403), los dos
+      suplementos de Vanberg en Wiley (403) y LinkedIn (999).
+- [x] **Metadatos:** Open Graph y descripción por página e idioma.
+      En las 14 páginas: descripción igual a `og:description`, `og:title`, `og:url` igual al
+      canonical, `og:locale` `en_US` o `es_MX` con el otro como alterno, `og:image` (un PNG de
+      1200 × 630 que existe en `dist/`) y su texto alternativo, y `<html lang>`. `/finding` ya no
+      lleva `noindex` y está en el sitemap (14 entradas); la 404 sí lo lleva.
+- [x] `grep -r "TODO(" dist/` vacío y `npm run check:launch` en verde: no queda ningún placeholder
+      en `dist/`, `src/` ni los README.
 
 ## F6 · Lanzamiento
 
@@ -1071,8 +1119,12 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
       `https://github.com/Montse2308/Dilema-del-Prisionero`, release `v1.0.0`, DOI de esa versión
       `10.5281/zenodo.23222610`, el que cita el working paper (no el DOI concepto; confirmado por
       Montse).
-- [ ] **3.** El ADR sobre `/sources` y el hallazgo; después, los placeholders reemplazados y
+- [x] **3.** El ADR sobre `/sources` y el hallazgo; después, los placeholders reemplazados y
       `check:launch`, `check`, `test` y `build` en verde, con el candado abierto revisado.
+      ADR 0035 (sí, decisión de Montse). `WORKING_PAPER.ssrn` y `ENGINE.doi` reales, los README con
+      el enlace al working paper y al sitio, y `src/data/weight.json` al día con el candado abierto.
+      Las cinco puertas y `check:launch` en verde; el candado abierto, revisado en F5. Queda que
+      llegue a `main` antes del paso 7.
 - [x] **4.** La auditoría del historial: decidido, se deja como está (ADR 0034). Queda que Montse
       borre la rama remota `claude/nifty-hopper-xagnu9`.
       Montse la borró: `git ls-remote origin` ya no la lista.
