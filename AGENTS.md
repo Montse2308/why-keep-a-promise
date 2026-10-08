@@ -18,8 +18,9 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
-(P6, the polish, with PR #9). The active phase is P7, the fixes from an external review, planned in
-small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`.
+(P6, the polish, with PR #9). The active phase is F5 (QA), not started yet. P7, the fixes from an
+external review, was planned in small steps (one per session) in `docs/p7-review-plan.md`,
+`docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
 script split by chapter, the fallback to the storyboard and the memory in the tab, is closed
 (PR #11). P7.2 (each page's description and Open Graph metadata, the 404 page, `noindex` on the
@@ -33,7 +34,7 @@ still frames that draw only what their pose shows, chapter 4's citation line, th
 the notebook's panel, the author's signature on the posters) is closed; Montse approved it
 (7.6.11). P7.7 (the READMEs, Lighthouse and the weights again, and the full review: sizes,
 sideways, both languages, keyboard, reduced motion, no JS, a blocked script and axe, with its four
-fixes) is closed; Montse approved it (7.7.7), and F5 (QA) starts once its PR is merged. Then F6
+fixes) is closed; Montse approved it (7.7.7), and its PR is merged (#17). Now F5 (QA), then F6
 (launch). The film tells all nine chapters, chapter 7's finding
 behind the lock, and ends in chapter 8's credits, with «Watch again» under them; it has its sound,
 off until pressed, its progress under the spool, its cast alive at rest, and remembers what was

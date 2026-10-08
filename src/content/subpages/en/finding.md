@@ -24,7 +24,7 @@ themselves.
 ## The formula
 
 Call background trust *a*, and write every belief in hundredths, so that 76 is the belief that a
-promise will be kept: the mean second-order belief of deciders without a partner switch in Vanberg
+promise will be kept: the mean second-order belief of dictators without a partner switch in Vanberg
 (2008, Table I). The guilt available to you is then *a* · (76 − *a*) / 100. Personal guilt rolls
 the die if θ · guilt > 4, the cost of rolling (14 − 10), with θ = 0.6, how much a unit of guilt
 weighs against a unit of money: that is, if the guilt is above 20/3, about 6.67.

@@ -110,6 +110,8 @@ El sonido, los detalles (el título de la pestaña y la consola), los pósteres 
 
 ## P7 · Ajustes de la revisión externa
 
+**Estado:** cerrada (PR #17).
+
 Los puntos de la revisión externa que Montse eligió (1, 2A, 4–13, 15 y 16, y el mínimo del 3). El porqué, el orden y
 los riesgos están en `docs/p7-review-plan.md`; los pasos, uno por sesión, en `docs/tasks.md`.
 Empieza cuando se cierre la revisión de P6. Cada subfase se cierra como toda fase: en verde
