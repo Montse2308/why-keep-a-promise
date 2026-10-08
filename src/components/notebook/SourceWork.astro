@@ -19,13 +19,15 @@ interface Props {
 const { locale, work, entries, locked = false } = Astro.props;
 const tr = useTranslations(locale);
 const ref = work.reference;
+// References are in English in both languages, as any bibliography's: marked so on a page in Spanish.
+const english = locale === 'en' ? undefined : 'en';
 ---
 
 <section class="sources__work" aria-labelledby={`source-${work.id}`} data-locked-content={locked ? '' : undefined}>
   <h2 id={`source-${work.id}`} class="sources__cite">
     {work.cite}
   </h2>
-  <p class="sources__reference">
+  <p class="sources__reference" lang={english}>
     <Fragment set:html={referenceHtml(ref.text)} />
     {ref.url && <a class="sources__url" href={ref.url}>{shownUrl(ref.url)}</a>}
   </p>
@@ -33,7 +35,7 @@ const ref = work.reference;
     work.parts && (
       <div class="sources__parts">
         <p class="sources__term">{tr(work.partsKey ?? 'sources.supplements')}</p>
-        <ul role="list">
+        <ul role="list" lang={english}>
           {work.parts.map((item) => (
             <li>
               <Fragment set:html={referenceHtml(item.text)} />

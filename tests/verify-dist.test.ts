@@ -291,7 +291,7 @@ describe('verify:dist (ADR 0034)', () => {
     });
 
     it('renders the sentence in one component, the same in both states', () => {
-      expect(paperStatus).toContain('{before}<a href={WORKING_PAPER.ssrn}><cite>{WORKING_PAPER.title}</cite></a>{after}');
+      expect(paperStatus).toContain("{before}<a href={WORKING_PAPER.ssrn}><cite lang={locale === 'en' ? undefined : 'en'}>{WORKING_PAPER.title}</cite></a>{after}");
       expect(paperStatus).not.toMatch(/unlocked|findingUnlocked/);
     });
 
