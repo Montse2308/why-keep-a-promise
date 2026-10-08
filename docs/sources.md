@@ -13,11 +13,14 @@ entrada, y `tests/prose.test.ts` y `tests/film-captions.test.ts` fallan si la pr
 una cita que no están registrados, o si una clave no existe aquí.
 
 `/sources` (P5, ADR 0024) muestra ese registro al visitante (`src/lib/sources.ts`): cada obra con su
-referencia completa y, debajo, cada clave con sus cifras, dónde está en la fuente y dónde se usa. No
-tiene candado, así que se ve igual en los dos estados (ADR 0034): no lista las claves del hallazgo
-(`kawagoe-narita-2014`, `vanberg-second-order`, `curve` y `curve-finding`, en `FINDING`), que el
-capítulo 7 y `/finding` citan donde las usan, ni las que ya no se muestran (`vanberg-switch` y
-`vanberg-chat`, en `RETIRED`). Un test exige que cada clave esté en uno solo de esos tres lugares.
+referencia completa y, debajo, cada clave con sus cifras, dónde está en la fuente y dónde se usa. Su
+parte abierta se ve igual en los dos estados (ADR 0034). Las claves del hallazgo
+(`vanberg-second-order`, `kawagoe-narita-2014`, `curve` y `curve-finding`, en `FINDING_ENTRIES`) se
+suman solo detrás del candado, con sus cifras, salvo los valores de θ y c, que se nombran pero solo
+se dan en `/finding` (ADR 0035); `curve` y `curve-finding` van bajo el working paper en SSRN, con el
+motor (su repo y el DOI de su release) como su material. Las que ya no se muestran
+(`vanberg-switch` y `vanberg-chat`, en `RETIRED`) no se listan. Un test exige que cada clave esté en
+uno solo de esos tres lugares.
 Lo que `/sources` dice de cada clave y dónde está en la fuente vive en las claves `sources.*` de
 `src/i18n/`.
 

@@ -19,6 +19,9 @@ import paperStatus from '../src/components/PaperStatus.astro?raw';
 import notebookScript from '../src/components/notebook/notebook.ts?raw';
 import notebookFooter from '../src/components/notebook/NotebookFooter.astro?raw';
 import sourcesComponent from '../src/components/notebook/Sources.astro?raw';
+import sourceWork from '../src/components/notebook/SourceWork.astro?raw';
+import sourceEntry from '../src/components/notebook/SourceEntry.astro?raw';
+import sourcesFinding from '../src/components/notebook/SourcesFinding.astro?raw';
 import vignette from '../src/components/notebook/Vignette.astro?raw';
 import day from '../src/components/notebook/Day.astro?raw';
 import author from '../src/components/notebook/Author.astro?raw';
@@ -35,7 +38,7 @@ import subpageView from '../src/views/SubpageView.astro?raw';
 import { LOCKED_BEATS } from '../src/lib/chapters';
 import { splitAtLock } from '../src/lib/film/captions';
 import { slotsIn, splitSubpage } from '../src/lib/subpages';
-import { worksOf } from '../src/lib/sources';
+import { FINDING, findingEntriesOf, findingWorksOf, worksOf } from '../src/lib/sources';
 import {
   countStandalone,
   descriptionProblems,
@@ -79,8 +82,12 @@ const parts = Object.entries(subpages).map(([path, raw]) => {
 /** Chapter 7's captions, split at the lock mark (ADR 0034). */
 const seventh = [chapterEn, chapterEs].map((raw) => splitAtLock(raw.replace(/^---[\s\S]*?---/, '')));
 
-/** UI strings only the locked components use: the curve's, and those of chapter 7's finding. */
-const isLockedKey = (key: string) => key.startsWith('curve.') || key.startsWith('film.finding.');
+/**
+ * UI strings only the locked components use: the curve's, those of chapter 7's finding, and those of
+ * the finding's sources on /sources (ADR 0035).
+ */
+const findingSourceKeys = new Set(['sources.engine', ...FINDING.flatMap((key) => [`sources.${key}`, `sources.at.${key}`])]);
+const isLockedKey = (key: string) => key.startsWith('curve.') || key.startsWith('film.finding.') || findingSourceKeys.has(key);
 const keys = (dictionary: Record<string, string>, locked: boolean) =>
   Object.entries(dictionary)
     .filter(([key]) => isLockedKey(key) === locked)
@@ -102,6 +109,10 @@ const lockedSources = [
   subpageView,
   ...parts.map((part) => part.locked),
   config,
+  sourcesFinding,
+  findingWorksOf()
+    .map((group) => JSON.stringify(group))
+    .join('\n'),
 ].join('\n');
 
 // What renders in both states: chapter 7's question, engine and envelope, the film around them (chapter
@@ -141,7 +152,7 @@ describe('verify:dist (ADR 0034)', () => {
 
   it('checks every page that carries locked content once unlocked, in both languages', () => {
     expect(Object.keys(UNLOCKED_PAGES).sort()).toEqual(
-      ['index.html', 'finding/index.html', 'how-its-built/index.html'].flatMap((page) => [page, `es/${page}`]).sort(),
+      ['index.html', 'finding/index.html', 'how-its-built/index.html', 'sources/index.html'].flatMap((page) => [page, `es/${page}`]).sort(),
     );
   });
 
@@ -156,19 +167,35 @@ describe('verify:dist (ADR 0034)', () => {
     expect(findMarks(source)).toEqual([]);
   });
 
-  it('puts all of /finding and the engine of /how-its-built behind the lock, and nothing of /sources', () => {
+  it('puts all of /finding and the engine of /how-its-built behind the lock, and nothing of the prose of /sources', () => {
     for (const part of parts) {
       if (part.path.endsWith('/finding.md')) expect(part.open.trim()).toBe('');
       if (part.path.endsWith('/how-its-built.md')) expect(findMarks(part.locked).length).toBeGreaterThan(0);
       if (/\/(dilemma|vanberg|sources|about)\.md$/.test(part.path)) expect(part.locked).toBe('');
     }
-    // /sources has no lock (ADR 0024): it looks the same in both states, so it lists none of the finding's sources.
+    // The prose of /sources has no lock: the finding's sources join its list from a locked component.
     for (const [path, raw] of Object.entries(subpages).filter(([path]) => path.endsWith('/sources.md'))) {
       const split = splitSubpage(raw.replace(/^---[\s\S]*?---/, ''));
       expect(slotsIn(split.open), path).toEqual(['sources']);
       expect(split.locked, path).toEqual([]);
     }
+  });
+
+  it("lists the finding's sources on /sources only from the component a locked build does not have (ADR 0035)", () => {
+    // The open part never asks the lock: it renders SourcesFinding, which a locked build stubs out.
     expect(sourcesComponent).not.toMatch(/findingUnlocked\(|unlocked \?/);
+    expect(sourcesComponent).toMatch(/<SourcesFinding locale=\{locale\} work=\{work\.id\} \/>/);
+    expect(sourcesComponent).toMatch(/<SourcesFinding locale=\{locale\} \/>/);
+    // Every entry and work it renders carries the lock's mark. The open part renders the same two
+    // components without `locked`, so their only mark is that attribute, and only when asked for.
+    expect(sourcesFinding.match(/ locked \/>/g)).toHaveLength(2);
+    expect(findMarks(sourceEntry)).toEqual(['data-locked-content']);
+    expect(findMarks(sourceWork)).toEqual(['data-locked-content']);
+    expect(sourceEntry).toMatch(/<li class="sources__entry" data-locked-content=\{locked \? '' : undefined\}>/);
+    expect(sourceWork).toMatch(/<section class="sources__work" aria-labelledby=\{`source-\$\{work\.id\}`\} data-locked-content=\{locked \? '' : undefined\}>/);
+    // What it lists: the finding's keys, under Vanberg (2008) and under works of their own.
+    const listed = [...findingEntriesOf('vanberg-2008'), ...findingWorksOf().flatMap((group) => group.entries)].map((entry) => entry.source);
+    expect(listed.sort()).toEqual([...FINDING].sort());
   });
 
   it("puts chapter 7's finding behind the lock, in the component a locked build does not have", () => {
@@ -193,6 +220,7 @@ describe('verify:dist (ADR 0034)', () => {
       ['/src/components/curve/Curve.astro', '/src/components/curve/Locked.astro'],
       ['/src/components/curve/GuiltChart.astro', '/src/components/curve/Locked.astro'],
       ['/src/components/film/chapters/Finding.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/notebook/SourcesFinding.astro', '/src/components/curve/Locked.astro'],
       ['/src/lib/film/finding.ts', '/src/lib/film/finding.locked.ts'],
     ]);
     // The component stub is only its frontmatter; the timeline stub knows no beats.

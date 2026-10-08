@@ -4,10 +4,11 @@
  * keys, under the work it comes from, with the figures the register gives that key, in the register's
  * order. docs/sources.md is where each one was verified; this is what the visitor reads.
  *
- * /sources has no lock (ADR 0024), and what the lock does not cover looks the same in both of its
- * states (ADR 0034). So it lists the sources of what shows in both, and none of the finding's: those
- * are cited where the finding uses them, in chapter 7 and on /finding, behind the lock (`FINDING`).
+ * Its open part (`ENTRIES`, `WORKS`) looks the same in both states of the lock (ADR 0034). The
+ * finding's sources (`FINDING_ENTRIES`, `FINDING_WORKS`) join it only behind the lock, from a
+ * component a locked build does not have (ADR 0035); θ and c are named there, never their values.
  */
+import { ENGINE, WORKING_PAPER } from '../config';
 import { CITATIONS, FIGURES, SOURCE_KEYS, type SourceKey } from '../content/figures';
 import type { ChapterId } from './chapters';
 import type { UiKey } from './i18n';
@@ -16,7 +17,14 @@ import type { Subpage } from './routes';
 /** A place where a figure is used: a chapter of the film, or a page of the notebook. */
 export type Place = { readonly chapter: ChapterId } | { readonly page: Subpage };
 
-export type WorkId = 'axelrod-hamilton-1981' | 'case-2017' | 'vanberg-2008' | 'charness-dufwenberg-2006' | 'battigalli-dufwenberg-2007';
+export type WorkId =
+  | 'axelrod-hamilton-1981'
+  | 'case-2017'
+  | 'vanberg-2008'
+  | 'charness-dufwenberg-2006'
+  | 'battigalli-dufwenberg-2007'
+  | 'kawagoe-narita-2014'
+  | 'working-paper';
 
 export interface Link {
   /** As a bibliography writes it; `*…*` marks the italics of a title. */
@@ -30,8 +38,10 @@ export interface Work {
   readonly cite: string;
   /** The full reference, the same in both languages, as any bibliography's. */
   readonly reference: Link;
-  /** What else of the work was used: Vanberg's (2008) supplementary material. */
+  /** What else of the work was used: Vanberg's (2008) supplementary material, the working paper's engine. */
   readonly parts?: readonly Link[];
+  /** What the parts are called, when they are not supplementary material. */
+  readonly partsKey?: UiKey;
 }
 
 export const WORKS: readonly Work[] = [
@@ -109,10 +119,43 @@ export const ENTRIES: readonly Entry[] = [
 ];
 
 /**
- * The finding's sources, behind the lock (ADR 0034): Kawagoe and Narita (2014), the belief the curve
- * holds fixed, the curve and /finding's own figures. Chapter 7's finding and /finding cite them.
+ * The works only the finding draws on, behind the lock (ADR 0035): Kawagoe and Narita (2014), and the
+ * working paper, whose engine measured the curve (src/config.ts).
  */
-export const FINDING: readonly SourceKey[] = ['kawagoe-narita-2014', 'vanberg-second-order', 'curve', 'curve-finding'];
+export const FINDING_WORKS: readonly Work[] = [
+  {
+    id: 'kawagoe-narita-2014',
+    cite: 'Kawagoe and Narita (2014)',
+    reference: {
+      text: 'Kawagoe, T., & Narita, Y. (2014). Guilt aversion revisited: An experimental test of a new model. *Journal of Economic Behavior & Organization*, 102, 1–9.',
+      url: 'https://ideas.repec.org/a/eee/jeborg/v102y2014icp1-9.html',
+    },
+  },
+  {
+    id: 'working-paper',
+    cite: 'Hernández Gallegos (2026)',
+    reference: { text: `Hernández Gallegos, M. X. (2026). *${WORKING_PAPER.title}*. SSRN.`, url: WORKING_PAPER.ssrn },
+    parts: [
+      { text: 'Its repository.', url: ENGINE.repository },
+      { text: 'Its release, archived on Zenodo.', url: `https://doi.org/${ENGINE.doi}` },
+    ],
+    partsKey: 'sources.engine',
+  },
+];
+
+/**
+ * The finding's sources, behind the lock (ADR 0034, ADR 0035): the belief the curve holds fixed,
+ * Kawagoe and Narita (2014), the curve and /finding's own figures, in the order the film meets them.
+ */
+export const FINDING_ENTRIES: readonly Entry[] = [
+  { source: 'vanberg-second-order', work: 'vanberg-2008', places: [chapter('my-research'), page('finding')] },
+  { source: 'kawagoe-narita-2014', work: 'kawagoe-narita-2014', places: [chapter('my-research'), page('finding')] },
+  { source: 'curve', work: 'working-paper', places: [chapter('my-research'), page('finding')] },
+  { source: 'curve-finding', work: 'working-paper', places: [page('finding')] },
+];
+
+/** The finding's source keys. */
+export const FINDING: readonly SourceKey[] = FINDING_ENTRIES.map((entry) => entry.source);
 
 /**
  * Keys whose place in their source is still to be verified (docs/sources.md: "Por verificar; bloquea
@@ -129,7 +172,7 @@ export const UNVERIFIED: readonly SourceKey[] = [];
 export const RETIRED: readonly SourceKey[] = ['vanberg-switch', 'vanberg-chat'];
 
 export function work(id: WorkId): Work {
-  const found = WORKS.find((candidate) => candidate.id === id);
+  const found = [...WORKS, ...FINDING_WORKS].find((candidate) => candidate.id === id);
   if (!found) throw new Error(`No work "${id}"`);
   return found;
 }
@@ -141,9 +184,22 @@ export function worksOf(): readonly { readonly work: Work; readonly entries: rea
   );
 }
 
-/** The figures the register gives a source key, each once, in the register's order. */
+/** The finding's entries under a work of the open part: Vanberg's (2008) belief the curve holds fixed. */
+export function findingEntriesOf(id: WorkId): readonly Entry[] {
+  return FINDING_ENTRIES.filter((entry) => entry.work === id);
+}
+
+/** The works only the finding draws on, after the open ones, each with its entries. */
+export function findingWorksOf(): readonly { readonly work: Work; readonly entries: readonly Entry[] }[] {
+  return FINDING_WORKS.map((candidate) => ({ work: candidate, entries: findingEntriesOf(candidate.id) }));
+}
+
+/**
+ * The figures the register gives a source key, each once, in the register's order; never the value
+ * of a model parameter, θ or c, which only /finding shows (ADR 0035).
+ */
 export function figuresOf(source: SourceKey): string[] {
-  return [...new Set(FIGURES.filter((figure) => figure.source === source).map((figure) => figure.value))];
+  return [...new Set(FIGURES.filter((figure) => figure.source === source && !figure.parameter).map((figure) => figure.value))];
 }
 
 /** A reference as HTML: escaped, with `*…*` as the italics of a title. */

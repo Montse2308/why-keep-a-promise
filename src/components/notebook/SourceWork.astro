@@ -1,0 +1,101 @@
+---
+/**
+ * One work of /sources (ADR 0024): its citation, its full reference, what else of it was used, and
+ * its entries. The slot takes more entries after them: the finding's, behind the lock (ADR 0035). A
+ * work only the finding draws on carries `data-locked-content`; only SourcesFinding.astro passes
+ * `locked`.
+ */
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { referenceHtml, shownUrl, type Entry, type Work } from '../../lib/sources';
+import SourceEntry from './SourceEntry.astro';
+
+interface Props {
+  locale: Locale;
+  work: Work;
+  entries: readonly Entry[];
+  locked?: boolean;
+}
+
+const { locale, work, entries, locked = false } = Astro.props;
+const tr = useTranslations(locale);
+const ref = work.reference;
+---
+
+<section class="sources__work" aria-labelledby={`source-${work.id}`} data-locked-content={locked ? '' : undefined}>
+  <h2 id={`source-${work.id}`} class="sources__cite">
+    {work.cite}
+  </h2>
+  <p class="sources__reference">
+    <Fragment set:html={referenceHtml(ref.text)} />
+    {ref.url && <a class="sources__url" href={ref.url}>{shownUrl(ref.url)}</a>}
+  </p>
+  {
+    work.parts && (
+      <div class="sources__parts">
+        <p class="sources__term">{tr(work.partsKey ?? 'sources.supplements')}</p>
+        <ul role="list">
+          {work.parts.map((item) => (
+            <li>
+              <Fragment set:html={referenceHtml(item.text)} />
+              {item.url && <a class="sources__url" href={item.url}>{shownUrl(item.url)}</a>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  <ul class="sources__entries" role="list">
+    {entries.map((entry) => <SourceEntry locale={locale} entry={entry} locked={locked} />)}
+    <slot />
+  </ul>
+</section>
+
+<style>
+  .sources__work {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .sources__cite {
+    margin: 0;
+  }
+
+  .sources__reference {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .sources__url {
+    margin-inline-start: 0.3em;
+    overflow-wrap: anywhere;
+  }
+
+  .sources__parts ul {
+    margin: var(--space-1) 0 0;
+    padding-inline-start: 1.25em;
+  }
+
+  .sources__parts,
+  .sources__entries {
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  .sources__entries {
+    display: grid;
+    gap: var(--space-3);
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sources__term {
+    margin: 0;
+    font-size: var(--step-n2);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+</style>

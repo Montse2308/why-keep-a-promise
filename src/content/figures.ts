@@ -36,6 +36,8 @@ export interface Figure {
   readonly value: string;
   readonly source: SourceKey;
   readonly what: string;
+  /** A model parameter, θ or c: its value is shown only on /finding; /sources names it without it (ADR 0035). */
+  readonly parameter?: true;
 }
 
 export const FIGURES: readonly Figure[] = [
@@ -97,8 +99,8 @@ export const FIGURES: readonly Figure[] = [
   // /finding: the formula, its cut and the robustness variant (curve.json, ADR 0017). tests/finding.test.ts
   // checks FINDING_FIGURES against the file.
   { value: '14.44', source: 'curve-finding', what: 'guilt available at the peak, 38' },
-  { value: '0.6', source: 'curve-finding', what: 'θ, the sensitivity of personal guilt (params.sens.theta)' },
-  { value: '5', source: 'curve-finding', what: 'c, the fixed cost of breaking a promise (params.sens.c); the cap of the robustness variant' },
+  { value: '0.6', source: 'curve-finding', what: 'θ, the sensitivity of personal guilt (params.sens.theta)', parameter: true },
+  { value: '5', source: 'curve-finding', what: 'c, the fixed cost of breaking a promise (params.sens.c); the cap of the robustness variant', parameter: true },
   { value: '4', source: 'curve-finding', what: 'the cost of rolling, 14 − 10, that θ · guilt must exceed' },
   { value: '14', source: 'vanberg-payoffs', what: "dictator after Don't Roll, in 14 − 10" },
   { value: '10', source: 'vanberg-payoffs', what: 'dictator after Roll, in 14 − 10' },

@@ -25,6 +25,7 @@ del motor ya es público (ADR 0034).
         suma a las páginas que llevan contenido bloqueado; si dice que no, el ADR precisa el «cada
         cifra de la página» del 0024. Sin ese ADR no se reemplaza `SSRN_URL_PENDING`, porque
         reemplazarlo abre el candado.
+        Decidido: sí (ADR 0035).
       - En `src/config.ts`: `WORKING_PAPER.ssrn` pasa a la URL del paso 1 y `ENGINE.doi`, al DOI
         del paso 2. En los dos README, el enlace al working paper pasa a la misma URL, y el
         `TODO(launch)` del principio se vuelve el enlace al sitio

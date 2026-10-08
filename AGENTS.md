@@ -163,7 +163,8 @@ src/
                          leads back to, what may be linked in each state of the lock, and the
                          film's magnifiers (MAGNIFIERS)
     sources.ts           /sources: the works, each key of the register under its work, where its
-                         figures are used; the finding's keys and the retired ones are left out
+                         figures are used; the finding's keys only behind the lock (FINDING_ENTRIES,
+                         ADR 0035), the retired ones left out
     design/              film.ts (the film's colours and the day's light; film.css mirrors it),
                          palette.ts (the notebook's paper, day and night; tokens.css mirrors it),
                          colour maths
@@ -195,8 +196,9 @@ src/
                          the controllers, sound.ts the Web Audio player);
                          notebook/ (Notebook, the button and panel, with notebook.ts, details.ts,
                          back.ts and transitions.ts, which lets the transition between notebook
-                         pages go on the way to the film; NotebookFooter; Sources, Author, Day,
-                         Weight, Vignette);
+                         pages go on the way to the film; NotebookFooter; Sources, with SourceWork,
+                         SourceEntry and SourcesFinding, its locked part; Author, Day, Weight,
+                         Vignette);
                          curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
@@ -248,10 +250,11 @@ scratch/                 local notes, git-ignored, never committed
 - **Publishing the result.**
   - No curve data, no saying which motive pays where, and no content from the finding beyond the
     status sentence, except behind the lock (ADR 0034).
-  - The lock covers chapter 7's finding, `/finding`, the engine part of `/how-its-built`, and the
-    links to them and to the engine repository. It opens once the working paper is public on SSRN.
+  - The lock covers chapter 7's finding, `/finding`, the engine part of `/how-its-built`, the
+    finding's sources on `/sources` (ADR 0035), and the links to them and to the engine repository. It opens once the working paper is public on SSRN.
   - Model parameters never appear, except θ, c, the guilt available and the robustness variant on
-    `/finding`, behind the lock.
+    `/finding`, behind the lock. Behind the lock, `/sources` lists `/finding`'s figures from the
+    register and names θ and c, never their values (ADR 0035).
   - Outside the lock, chapter 7 says only the question and that Montse built a simulation engine in
     TypeScript. Nothing about the engine's tests, seed, generations, imitation or provenance
     (rule (j)).

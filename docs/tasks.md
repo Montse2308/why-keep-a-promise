@@ -1085,14 +1085,12 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
 
 - **La forma de las dos voces:** se decide con la hoja de personajes (P1).
 - **El color del triángulo:** el que pase los tests de daltonismo frente a los dos roles (P1).
-- **`/sources` y el hallazgo.** El ADR 0024 le da a `/sources` «Candado: —» y el ADR 0034 (antes el
-  0026) dice que todo lo que no cubre se ve igual en los dos estados, así que `/sources` no lista las
-  fuentes del hallazgo, tampoco con el candado abierto, y el «cada cifra de la página» del 0024
-  queda con ese hueco. Montse lo confirmó en la revisión de P5 y no quiso el ADR todavía: se decide
-  en el paso 3 del checklist, antes de reemplazar `SSRN_URL_PENDING`, que abre el candado.
 
 ## Preguntas cerradas
 
+- ~~¿`/sources` lista las cifras del hallazgo con el candado abierto?~~ Sí (decisión de Montse, ADR
+  0035): abierto, lista las claves del hallazgo con sus cifras y dónde se usan; θ y c se nombran,
+  sin sus valores, que siguen solo en `/finding`; cerrado, `/sources` se ve como antes.
 - ~~Axelrod (1984): ¿en qué páginas están los pagos, `2R > T + S`, la sombra del futuro y el
   torneo?~~ No se pudo revisar el libro. Montse eligió en 7.0.5 citar el artículo de Axelrod y
   Hamilton (1981), cotejado (ADR 0033); se aplicó en 7.2.8, y `/sources` ya no dice «Páginas por
