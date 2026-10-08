@@ -92,6 +92,10 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
 - Estas cadenas no aparecen en ningún archivo del sitio ni en su código, en ningún idioma y sin
   importar mayúsculas: "bi-stab", "bistab", "biestab", "bi-estab", "universalis", "particularis",
   "coming soon", "próximamente", "not yet approved", "aún no se aprueba", "está por lanzarse".
+- Tampoco las que presentarían el working paper como algo que no es (regla (b)): "under review",
+  "en revisión", "accepted", "aceptado", "aceptada", "peer-review" (también "peer-reviewed"),
+  "peer review", "revisión por pares", "revisado por pares", "revisada por pares",
+  "published in", "publicado en", "publicada en". El título del working paper no contiene ninguna.
 - `tests/forbidden-phrases.test.ts` las busca en `src/` y en los README, y es el único archivo de
   código que las lista.
 - La lista no incluye nombres de revistas (regla (c)).
