@@ -52,7 +52,8 @@ describe('the launch (docs/launch-checklist.md, ADR 0034)', () => {
   });
 
   it('starts from the working paper and the engine being public, in its eight steps', () => {
-    const titles = [...checklist.matchAll(/^- \[ \] \*\*(\d+)\. ([^*]+)\*\*/gm)].map((m) => `${m[1]}. ${m[2]}`);
+    // Open or ticked: the steps are marked as they close, and stay in place.
+    const titles = [...checklist.matchAll(/^- \[[ x]\] \*\*(\d+)\. ([^*]+)\*\*/gm)].map((m) => `${m[1]}. ${m[2]}`);
     expect(titles).toEqual([
       '1. Working paper público.',
       '2. Motor público.',
