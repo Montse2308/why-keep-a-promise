@@ -39,23 +39,32 @@ describe('the descriptions (point 4 of the external review)', () => {
     }
   });
 
-  it("gives /finding the site's question while locked, and what it holds once open; never the status sentence (rule (b))", () => {
+  it("gives /finding the site's question while locked, and the question it answers once open; never the status sentence (rule (b))", () => {
     expect(descriptionKey('finding', false)).toBe('site.title');
     expect(descriptionKey('finding', true)).toBe('finding.description');
-    expect(t('en', 'finding.description')).toBe('Four reasons in two pairs, the formula for the guilt available, a robustness check and the limits of the result.');
-    expect(t('es', 'finding.description')).toBe('Cuatro razones en dos pares, la fórmula de la culpa disponible, una prueba de robustez y los límites del resultado.');
+    expect(t('en', 'finding.description')).toBe(
+      'Why a lab session cannot tell personal guilt from partner-specific commitment, and what comparing worlds with different background trust shows.',
+    );
+    expect(t('es', 'finding.description')).toBe(
+      'Por qué una sesión de laboratorio no distingue la culpa personal del compromiso específico a la pareja, y qué muestra comparar mundos con distinta confianza de fondo.',
+    );
     for (const [locale, unlocked] of LOCALES.flatMap((locale) => states.map((unlocked) => [locale, unlocked] as const))) {
       const text = description(locale, 'finding', unlocked);
-      // No figure and no parameter: what the page holds, not what it finds.
+      // No figure and no parameter, and not which reason pays where: what the page asks, not what it finds.
       expect(text).not.toMatch(/\d|θ/);
-      expect(findMarks(text)).toEqual([]);
       expect(text).not.toContain(t(locale, 'paper.status').split('{title}')[0]);
       expect(text).not.toContain(WORKING_PAPER.title);
     }
+    // It names the finding's reasons, so it is locked content (ADR 0034): only once the lock is open.
+    for (const locale of LOCALES) {
+      expect(findMarks(description(locale, 'finding', false))).toEqual([]);
+      expect(findMarks(description(locale, 'finding', true)).length).toBeGreaterThan(0);
+    }
   });
 
-  it.each(pages)("%s's description carries none of the lock's marks", (_name, locale, route) => {
-    for (const unlocked of states) expect(findMarks(description(locale, route, unlocked))).toEqual([]);
+  it.each(pages)("%s's description carries none of the lock's marks, but /finding's once open", (_name, locale, route) => {
+    expect(findMarks(description(locale, route, false))).toEqual([]);
+    if (route !== 'finding') expect(findMarks(description(locale, route, true))).toEqual([]);
   });
 
   it('is written in the head as the description and as og:description', () => {

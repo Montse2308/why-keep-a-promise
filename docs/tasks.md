@@ -1096,11 +1096,12 @@ con un README.
 - [x] **Lighthouse otra vez,** con el candado abierto: 13.5.0, tres corridas por home contra
       `npm run preview`, la mediana por LCP: 2.11 s en inglés y en español (antes, cerrado, 1.96 s),
       bajo los 2.5 s del ADR 0025. `src/data/lighthouse.json` al día; `/how-its-built` lo cita de ahí.
-- [x] **La descripción de `/finding`,** propia con el candado abierto: «Four reasons in two pairs,
-      the formula for the guilt available, a robustness check and the limits of the result.» /
-      «Cuatro razones en dos pares, la fórmula de la culpa disponible, una prueba de robustez y los
-      límites del resultado.» Cerrado, sigue siendo la pregunta del sitio. Pendiente de que Montse
-      la apruebe.
+- [x] **La descripción de `/finding`,** propia con el candado abierto, con el texto de Montse:
+      «Why a lab session cannot tell personal guilt from partner-specific commitment, and what
+      comparing worlds with different background trust shows.» / «Por qué una sesión de laboratorio
+      no distingue la culpa personal del compromiso específico a la pareja, y qué muestra comparar
+      mundos con distinta confianza de fondo.» Nombra las razones del hallazgo, así que es contenido
+      bloqueado: cerrado, sigue siendo la pregunta del sitio.
 
 ## F6 · Lanzamiento
 

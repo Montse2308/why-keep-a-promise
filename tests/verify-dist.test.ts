@@ -93,7 +93,8 @@ const findingSourceKeys = new Set([
   'sources.working-paper.type',
   ...FINDING.flatMap((key) => [`sources.${key}`, `sources.at.${key}`]),
 ]);
-const isLockedKey = (key: string) => key.startsWith('curve.') || key.startsWith('film.finding.') || findingSourceKeys.has(key);
+const isLockedKey = (key: string) =>
+  key.startsWith('curve.') || key.startsWith('film.finding.') || findingSourceKeys.has(key) || key === 'finding.description';
 const keys = (dictionary: Record<string, string>, locked: boolean) =>
   Object.entries(dictionary)
     .filter(([key]) => isLockedKey(key) === locked)
