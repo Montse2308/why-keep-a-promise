@@ -2,7 +2,7 @@
 
 [Español](README.es.md)
 
-<!-- TODO(launch): link to the site, https://montse2308.github.io/why-keep-a-promise/, written at step 3 of docs/launch-checklist.md. -->
+**[Open the site](https://montse2308.github.io/why-keep-a-promise/)**
 
 ![Four frames of the film as the day goes by: the title at dawn, the prisoner's dilemma at midday, a new partner at the table in the afternoon while the thread of the promise still runs to the one who left, and the first table again at night.](.github/readme/film-en.webp)
 
@@ -19,7 +19,7 @@ partner-switching game of Vanberg (2008), and a notebook one tap away holds the 
   screen, written in TypeScript for this film: pure modules with their tests, no animation library
   and no canvas.
 - **A lock outside the build.** Part of the site stays closed until the
-  [working paper](SSRN_URL_PENDING) is public on SSRN. That part is left out of the build, not
+  [working paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218) is public on SSRN. That part is left out of the build, not
   hidden, and `npm run verify:dist` reads every built file and fails if any trace of it got through.
 - **Budgets and tests that stop the build.** CI fails if the home's JavaScript goes over 40 KiB
   gzipped, the fonts over 160 KiB or any page's first load over 450 KiB. More than 1,200 tests keep

@@ -12,7 +12,7 @@ export const AUTHOR = {
  */
 export const WORKING_PAPER = {
   title: 'Promises to whom: Identifying personal guilt and partner-specific commitment across populations',
-  ssrn: 'SSRN_URL_PENDING',
+  ssrn: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218',
 } as const;
 
 /**
@@ -22,5 +22,5 @@ export const WORKING_PAPER = {
  */
 export const ENGINE = {
   repository: 'https://github.com/Montse2308/Dilema-del-Prisionero',
-  doi: 'ENGINE_DOI_PENDING',
+  doi: '10.5281/zenodo.23222610',
 } as const;
