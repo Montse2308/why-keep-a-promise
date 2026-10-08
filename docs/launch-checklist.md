@@ -34,9 +34,11 @@ del motor ya es público (ADR 0034).
       - Revisar en `npm run preview`, en EN y ES: el capítulo 7 abierto, el cuaderno, `/finding` y
         `/how-its-built` completos, y los enlaces a SSRN y al motor.
       - El cambio se commitea y llega a `main` antes del paso 7.
-- [ ] **4. Auditoría del historial.** Revisar todo el historial (`git log -p --all`) buscando
-      nombres de revista, correos, rutas de Drive o locales y datos personales. Si aparece algo, se
-      limpia el historial antes de seguir (ADR 0012).
+- [ ] **4. Auditoría del historial.** Decisión tomada: el historial se revisó y se deja como está;
+      ADR 0034. El correo de los commits ya es público en el motor y en el working paper, y las
+      líneas de Claude en los commits son coherentes con la declaración de uso de IA del working
+      paper. Lo que queda de este paso es de Montse: borrar la rama remota
+      `claude/nifty-hopper-xagnu9`.
 - [ ] **5. Visibilidad.** Hacer público el repo.
 - [ ] **6. Pages.** Activar GitHub Pages con *Source = GitHub Actions*.
 - [ ] **7. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`). El

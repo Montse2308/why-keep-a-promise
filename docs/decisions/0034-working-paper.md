@@ -2,8 +2,9 @@
 
 **Estado:** aceptada (preparación de F6). Reemplaza los ADR 0007, 0011 y 0026 (archivados) y
 reescribe lo que sigue vigente de ellos. Precisa el ADR 0001 (la página se lanza sin que el texto
-esté publicado en una revista), el 0016 (que ahora precisa el punto sobre revistas de este ADR) y el
-0024 (su «frase de estado del manuscrito» es la frase de estado de aquí).
+esté publicado en una revista), el 0012 (el historial se revisó y se deja como está), el 0016 (que
+ahora precisa el punto sobre revistas de este ADR) y el 0024 (su «frase de estado del manuscrito» es
+la frase de estado de aquí).
 
 ## Contexto
 
@@ -68,6 +69,10 @@ archivada en Zenodo, con su DOI. No hay revisión, así que el estado «en revis
 - El lanzamiento sigue `docs/launch-checklist.md` en orden, empezando por confirmar que el working
   paper es público.
 - La auditoría del historial antes de hacerlo público es obligatoria (ADR 0012).
+- El historial se revisó y se deja como está: no se reescribe. El correo de los commits ya es
+  público en el motor y en el working paper, y las líneas de Claude en los commits son coherentes
+  con la declaración de uso de IA del working paper. Montse borra la rama remota
+  `claude/nifty-hopper-xagnu9` en el paso 4 del checklist.
 
 ### Lo que sigue vigente del ADR 0011: reglas de contenido y fechas
 
