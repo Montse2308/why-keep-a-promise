@@ -34,7 +34,7 @@ describe("the partner-switch treatment's cells", () => {
     ]);
   });
 
-  it('pools the no-switch cells into the belief after a promise that act 5 holds at 76 (n = 384)', () => {
+  it('pools the no-switch cells into the belief that a promise will be kept, which chapter 7 holds at 76 (n = 384)', () => {
     const same = SWITCH_CELLS.filter((c) => c.partner === 'same');
     const n = same.reduce((sum, c) => sum + c.n, 0);
     const beliefs = same.map((c) => c.beliefSum).reduce(add);

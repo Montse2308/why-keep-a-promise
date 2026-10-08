@@ -37,8 +37,8 @@ export function readable(body: string, { tables = true } = {}): string {
     .join('\n');
 }
 
-/** "Author (year)", or "Author (year, §3.2(ii))" with a section. */
-export const CITATION = /(\p{Lu}[\p{L}'-]+(?:\s+(?:and|y)\s+\p{Lu}[\p{L}'-]+)*)\s+\((\d{4})(?:,\s*§\d+(?:\.\d+)*(?:\([ivx]+\))?)?\)/gu;
+/** "Author (year)", or with a section, "Author (year, §3.2(ii))", or a table, "Author (year, Table I)". */
+export const CITATION = /(\p{Lu}[\p{L}'-]+(?:\s+(?:and|y)\s+\p{Lu}[\p{L}'-]+)*)\s+\((\d{4})(?:,\s*(?:§\d+(?:\.\d+)*(?:\([ivx]+\))?|(?:Table|Tabla)\s+[IVX]+))?\)/gu;
 const NUMBER = /\d+(?:[/.,]\d+)*/g;
 
 export function citationsIn(text: string): string[] {

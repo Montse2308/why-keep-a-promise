@@ -56,10 +56,10 @@ esa persona pesa lo mismo en cualquier mundo.
 ### Un mundo para cada valor.
 
 En una simulación, se fijó la confianza de fondo en cada valor de {min} a {max} de {outof}. La
-expectativa después de una promesa quedó fija en {belief}, lo que los dictadores de Vanberg creían
-que su pareja esperaba sin cambio. Ahí, la otra persona ve cuál de las razones te mueve antes de
-jugar, y solo entra si vas a tirar; si no entra, cada quien se queda con {low}. Por eso tirar paga
-{high} y no tirar, {low}.
+creencia de que la promesa se cumplirá quedó fija en {belief}: el promedio de la creencia de segundo
+orden de los decisores sin cambio de pareja en Vanberg (2008, Tabla I). Ahí, la otra persona ve cuál
+de las razones te mueve antes de jugar, y solo entra si vas a tirar; si no entra, cada quien se
+queda con {low}. Por eso tirar paga {high} y no tirar, {low}.
 
 <!-- beat:curve -->
 

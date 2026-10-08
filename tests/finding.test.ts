@@ -32,7 +32,7 @@ function roundsTo(tenths: string): boolean {
 }
 
 describe("/finding's figures, checked against src/data/curve.json", () => {
-  it('holds the expectation after a promise at 76, the 76 of the formula', () => {
+  it('holds the belief that a promise will be kept at 76, the 76 of the formula', () => {
     expect(raw.params.beta1).toEqual({ num: F.beliefAfterPromise, den: 100 });
     expect(finding.curve.axis.max).toBe(F.beliefAfterPromise);
   });

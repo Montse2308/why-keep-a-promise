@@ -78,7 +78,7 @@
   "table.reveal.row.not-promised": "Didn't promise",
   "table.reveal.col.switched": "New partner, promised by another dictator",
   "table.source": "Source: Vanberg (2008), supplementary data.",
-  "curve.caption": "Material payoff against background trust. Personal guilt pays inside an intermediate window. Partner-specific commitment pays the same amount throughout. The belief after a promise is held at 76.",
+  "curve.caption": "Material payoff against background trust. Personal guilt pays inside an intermediate window. Partner-specific commitment pays the same amount throughout. The belief that a promise will be kept is held at 76.",
   "curve.summary": "Step chart of material payoff against background trust, from {min} to {max} out of 100. Personal guilt pays {high} from {from} to {to}, and {low} outside that window. Partner-specific commitment pays {high} throughout, and general guilt, the control, follows the same line. Personal guilt weighs most at {peak}.",
   "curve.axis.x": "Background trust (out of 100)",
   "curve.axis.y": "Payoff",

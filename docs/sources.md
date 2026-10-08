@@ -154,9 +154,11 @@ corresponde exactamente a las filas "cambio a una pareja a la que otro le promet
 arriba. Por eso el mazo del capítulo 5 usa siempre ese caso, y el capítulo 6 compara esa fila con la
 de la misma pareja.
 
-- Cifra: la creencia después de una promesa, "76" de 100, que la curva del hallazgo deja fija
-  (capítulo 7 y pie de la gráfica, clave `curve.caption`). Es la creencia de segundo orden de los dictadores sin
-  cambio de pareja: lo que creían que su pareja esperaba. Media 0.7585 (n = 384), que redondea a 76.
+- Cifra: la creencia de que la promesa se cumplirá, "76" de 100, que la curva del hallazgo deja fija
+  (capítulo 7 y pie de la gráfica, clave `curve.caption`). Es el promedio de la creencia de segundo
+  orden de todos los dictadores (los que deciden) sin cambio de pareja, hayan prometido o no: lo que
+  creían que su pareja esperaba. No es una creencia medida después de una promesa. Media 0.7585
+  (n = 384), que redondea a 76.
   También es el extremo del eje de confianza de fondo (de 0 a 76).
   Clave: `vanberg-second-order`.
   Fuente: `switch.dat`, bloque TABLE I de `promises.do`, creencia de segundo orden de los dictadores
@@ -362,7 +364,7 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 
 - Cifra: eje de confianza de fondo de "0" a "76", leída "de 100".
   Clave: `curve`.
-  Fuente: `axis` de `curve.json`; el 76 es la creencia después de una promesa (`vanberg-second-order`).
+  Fuente: `axis` de `curve.json`; el 76 es la creencia de que la promesa se cumplirá (`vanberg-second-order`).
   Usada en: el hallazgo del capítulo 7 (`{min}`, `{max}`, `{outof}`); ejes y `aria-label` de la gráfica.
 - Cifra: la culpa personal tira de "15" a "65": primera y última fila donde tira, "medido en pasos
   de 5": las filas vecinas de la ventana son 10 y 70, sin filas intermedias.
@@ -397,7 +399,7 @@ La única cuenta es la cuadrática del corte analítico, y solo en un test, para
 `tests/finding.test.ts` comprueba cada cifra de abajo contra el archivo.
 
 - Cifra: la culpa disponible, `a · (76 − a) / 100`, con `a` la confianza de fondo y las creencias en
-  centésimas; el "76" es la creencia después de una promesa (`vanberg-second-order`). Pico en "38",
+  centésimas; el "76" es la creencia de que la promesa se cumplirá (`vanberg-second-order`). Pico en "38",
   con culpa "14.44"; cero en 0 y en 76.
   Clave: `curve-finding`.
   Fuente: `grid[].guilt` y `peak` de `curve.json`.

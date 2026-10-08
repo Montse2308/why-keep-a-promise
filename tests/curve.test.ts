@@ -13,7 +13,8 @@ import { filledCaptions } from './prose';
 const curve = readCurve(raw);
 /** Chapter 7's finding, the part of its captions after the lock mark, as the visitor reads it. */
 const findings = { en: filledCaptions(`<!-- lock -->${splitAtLock(chapterEn).locked}`), es: filledCaptions(`<!-- lock -->${splitAtLock(chapterEs).locked}`) };
-const numbers = (text: string) => new Set(text.replace(/\(\d{4}\)/g, ' ').match(/\d+/g) ?? []);
+/** The numbers a text states, a citation's year (and its table, "(2008, Table I)") left out. */
+const numbers = (text: string) => new Set(text.replace(/\(\d{4}(?:,\s*(?:Table|Tabla)\s+[IVX]+)?\)/g, ' ').match(/\d+/g) ?? []);
 
 /** A figure is stated in prose as a whole word: "15" must not be found inside "150". */
 const states = (text: string, value: number) => new RegExp(`(^|[^\\d])${value}([^\\d]|$)`).test(text);
@@ -64,7 +65,7 @@ describe("the curve's figures, checked against src/data/curve.json", () => {
     expect(curve.peak).toBe(CURVE_FIGURES.peak);
   });
 
-  it('holds the belief after a promise at 76, the top of the axis', () => {
+  it('holds the belief that a promise will be kept at 76, the top of the axis', () => {
     expect(raw.params.beta1).toEqual({ num: CURVE_FIGURES.beliefAfterPromise, den: 100 });
     expect(CURVE_FIGURES.axis.max).toBe(CURVE_FIGURES.beliefAfterPromise);
   });

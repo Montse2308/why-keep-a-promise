@@ -23,8 +23,9 @@ themselves.
 
 ## The formula
 
-Call background trust *a*, and write every belief in hundredths, so that 76 is the expectation
-after a promise. The guilt available to you is then *a* · (76 − *a*) / 100. Personal guilt rolls
+Call background trust *a*, and write every belief in hundredths, so that 76 is the belief that a
+promise will be kept: the mean second-order belief of deciders without a partner switch in Vanberg
+(2008, Table I). The guilt available to you is then *a* · (76 − *a*) / 100. Personal guilt rolls
 the die if θ · guilt > 4, the cost of rolling (14 − 10), with θ = 0.6, how much a unit of guilt
 weighs against a unit of money: that is, if the guilt is above 20/3, about 6.67.
 
@@ -33,8 +34,8 @@ Setting *a* · (76 − *a*) / 100 = 20/3 gives the analytic cut: personal guilt 
 from 15 to 65. The peak is at 38, where the guilt is 14.44.
 
 Partner-specific commitment has a fixed cost, c = 5, for breaking your word. Since 5 > 4, it always
-rolls when the promise binds it. General guilt answers to the expectation after a promise, which
-does not depend on background trust, so its choice does not either.
+rolls when the promise binds it. General guilt answers to the belief that a promise will be kept,
+which does not depend on background trust, so its choice does not either.
 
 <!-- slot:guilt-chart -->
 

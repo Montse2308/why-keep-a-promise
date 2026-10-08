@@ -78,7 +78,7 @@
   "table.reveal.row.not-promised": "No prometieron",
   "table.reveal.col.switched": "Nueva pareja, con promesa de otro dictador",
   "table.source": "Fuente: Vanberg (2008), datos suplementarios.",
-  "curve.caption": "Pago material contra confianza de fondo. La culpa personal paga en una ventana intermedia. El compromiso específico a la pareja paga lo mismo en todo el recorrido. La creencia después de una promesa está fija en 76.",
+  "curve.caption": "Pago material contra confianza de fondo. La culpa personal paga en una ventana intermedia. El compromiso específico a la pareja paga lo mismo en todo el recorrido. La creencia de que la promesa se cumplirá está fija en 76.",
   "curve.summary": "Gráfica escalonada del pago material contra la confianza de fondo, de {min} a {max} de 100. La culpa personal paga {high} de {from} a {to}, y {low} fuera de esa ventana. El compromiso específico a la pareja paga {high} en todo el recorrido, y la culpa general, el control, sigue la misma línea. La culpa personal pesa más en {peak}.",
   "curve.axis.x": "Confianza de fondo (de 100)",
   "curve.axis.y": "Pago",

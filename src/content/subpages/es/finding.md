@@ -25,7 +25,8 @@ Kawagoe y Narita (2014).
 ## La fórmula
 
 Llama *a* a la confianza de fondo y escribe cada creencia en centésimas, de modo que 76 es la
-expectativa después de una promesa. La culpa disponible es entonces *a* · (76 − *a*) / 100. La
+creencia de que la promesa se cumplirá: el promedio de la creencia de segundo orden de los decisores
+sin cambio de pareja en Vanberg (2008, Tabla I). La culpa disponible es entonces *a* · (76 − *a*) / 100. La
 culpa personal tira el dado si θ · culpa > 4, el costo de tirar (14 − 10), con θ = 0.6, cuánto pesa
 una unidad de culpa frente a una unidad de dinero: es decir, si la culpa pasa de 20/3, cerca de
 6.67.
@@ -35,8 +36,8 @@ Igualar *a* · (76 − *a*) / 100 = 20/3 da el corte analítico: la culpa person
 tira de 15 a 65. El pico está en 38, donde la culpa vale 14.44.
 
 El compromiso específico a la pareja tiene un costo fijo, c = 5, por romper tu palabra. Como 5 > 4,
-siempre tira cuando la promesa lo ata. La culpa general responde a la expectativa después de una
-promesa, que no depende de la confianza de fondo, así que su decisión tampoco.
+siempre tira cuando la promesa lo ata. La culpa general responde a la creencia de que la promesa se
+cumplirá, que no depende de la confianza de fondo, así que su decisión tampoco.
 
 <!-- slot:guilt-chart -->
 

@@ -66,7 +66,7 @@ export const FIGURES: readonly Figure[] = [
   { value: '68', source: 'vanberg-beliefs', what: 'mean bet of promised recipients, switch, out of 100' },
   { value: '100', source: 'vanberg-beliefs', what: 'top of the 0–100 belief scale' },
   // Chapter 7's finding: the curve (src/data/curve.json). tests/curve.test.ts checks CURVE_FIGURES against the file.
-  { value: '76', source: 'vanberg-second-order', what: 'belief after a promise, held fixed; top of the background-trust axis' },
+  { value: '76', source: 'vanberg-second-order', what: 'belief that a promise will be kept, held fixed; top of the background-trust axis' },
   { value: '0', source: 'curve', what: 'bottom of the background-trust axis' },
   { value: '100', source: 'curve', what: 'background trust is read out of 100' },
   { value: '15', source: 'curve', what: 'first background trust at which personal guilt rolls' },
@@ -108,13 +108,13 @@ export const FIGURES: readonly Figure[] = [
   { value: '65.9', source: 'curve-finding', what: 'upper analytic cut, to one decimal' },
   { value: '70', source: 'curve-finding', what: 'first row of the right tail in the robustness variant' },
   { value: '10', source: 'curve-finding', what: "personal guilt's payoff from 70 on in the robustness variant" },
-  { value: '76', source: 'curve-finding', what: 'the expectation after a promise, in the formula' },
+  { value: '76', source: 'curve-finding', what: 'the belief that a promise will be kept, in the formula' },
   { value: '100', source: 'curve-finding', what: 'beliefs in hundredths, in the formula' },
 ];
 
 /** /finding's figures, each checked against src/data/curve.json in tests/finding.test.ts. */
 export const FINDING_FIGURES = {
-  /** The expectation after a promise, out of 100: the 76 of a · (76 − a) / 100. */
+  /** The belief that a promise will be kept, out of 100: the 76 of a · (76 − a) / 100. */
   beliefAfterPromise: 76,
   /** θ as written, and the fixed cost c. */
   theta: '0.6',
@@ -141,7 +141,7 @@ export const CURVE_FIGURES = {
   /** Rolling pays `high`; not rolling pays `low`, what each keeps when the other does not join. */
   payoffs: { low: 5, high: 10 },
   peak: 38,
-  /** The belief after a promise, out of 100 (docs/sources.md, `vanberg-second-order`). */
+  /** The belief that a promise will be kept, out of 100 (docs/sources.md, `vanberg-second-order`). */
   beliefAfterPromise: 76,
 } as const;
 

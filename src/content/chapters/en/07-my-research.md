@@ -56,10 +56,10 @@ Your word to that person weighs the same in any world.
 ### One world for each value.
 
 In a simulation, background trust was fixed at each value from {min} to {max} out of {outof}. The
-expectation after a promise was held at {belief}: what Vanberg's dictators believed their partner
-expected, without a switch. There, the other person sees which reason moves you before playing, and
-only joins if you will roll; if they don't join, each keeps {low}. That is why rolling pays {high}
-and not rolling pays {low}.
+belief that a promise will be kept was held at {belief}: the mean second-order belief of deciders
+without a partner switch in Vanberg (2008, Table I). There, the other person sees which reason
+moves you before playing, and only joins if you will roll; if they don't join, each keeps {low}.
+That is why rolling pays {high} and not rolling pays {low}.
 
 <!-- beat:curve -->
 
