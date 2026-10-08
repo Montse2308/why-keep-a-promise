@@ -1,7 +1,7 @@
 /**
  * The sitemap (point 13 of the external review): every page in both languages, each with its
  * alternates, as the pages' own hreflang links name them. While the lock is closed it leaves /finding
- * out, as every link does (ADR 0026), and `npm run verify:dist` checks that. The 404 page is never in
+ * out, as every link does (ADR 0034), and `npm run verify:dist` checks that. The 404 page is never in
  * it. No robots.txt points to it: a project site does not sit at the root of its domain, where search
  * engines look for one, so a search engine learns of the sitemap only if it is handed to it by hand.
  */

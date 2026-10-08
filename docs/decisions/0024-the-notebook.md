@@ -1,7 +1,8 @@
 # 0024 · El cuaderno: profundidad y navegación
 
 **Estado:** aceptada (P0). Reemplaza el ADR 0004 (archivado). Precisa el ADR 0005: suma `/sources` y
-`/about`. La regla (h) no cambia.
+`/about`. La regla (h) no cambia. Precisada por el ADR 0034: la «frase de estado del manuscrito» es
+la frase de estado del working paper, y el candado del cuaderno está en el 0034 (antes, el 0026).
 
 ## Contexto
 

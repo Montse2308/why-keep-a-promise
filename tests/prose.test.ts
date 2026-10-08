@@ -39,7 +39,7 @@ const subpageFiles = parse(subpageSources);
 
 const bySubpage = (locale: Locale, subpage: Subpage) => subpageFiles.find((f) => f.locale === locale && f.name === subpage);
 
-/** Chapter 7's captions in a locale, split at its lock mark (ADR 0026). */
+/** Chapter 7's captions in a locale, split at its lock mark (ADR 0034). */
 const seventh = (locale: Locale) =>
   splitAtLock((Object.entries(captionSources).find(([path]) => path.endsWith(`/chapters/${locale}/07-my-research.md`))?.[1] ?? '').replace(/^---[\s\S]*?---/, ''));
 
@@ -154,10 +154,13 @@ describe('voice', () => {
     }
   });
 
-  it('marks unwritten content only with TODO(launch), the engine link of step 8', () => {
+  it("leaves nothing unwritten: the engine's links come from src/config.ts, behind the lock only (ADR 0034)", () => {
     for (const file of subpageFiles) {
-      const phases = [...file.body.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1] ?? '');
-      expect(phases.every((phase) => phase === 'launch'), `${file.locale}/${file.name}`).toBe(true);
+      expect(file.body, `${file.locale}/${file.name}`).not.toMatch(/TODO\(/);
+      const [open = '', locked = ''] = file.body.split('<!-- lock -->');
+      expect(open, `${file.locale}/${file.name}`).not.toContain('{engine}');
+      const expected = ['finding', 'how-its-built'].includes(file.name) ? 1 : 0;
+      expect(locked.split('{engine}').length - 1, `${file.locale}/${file.name}`).toBe(expected);
     }
   });
 

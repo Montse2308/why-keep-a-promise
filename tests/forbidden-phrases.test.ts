@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { WORKING_PAPER } from '../src/config';
+import en from '../src/i18n/en.json';
+import es from '../src/i18n/es.json';
 import { LOCALES } from '../src/lib/i18n';
 import { description } from '../src/lib/meta';
 import { ROUTES } from '../src/lib/routes';
@@ -19,6 +22,20 @@ const FORBIDDEN = [
   'not yet approved',
   'aún no se aprueba',
   'está por lanzarse',
+  // The working paper is not under review, accepted, peer-reviewed or published in a journal (rule (b), ADR 0034).
+  'under review',
+  'en revisión',
+  'accepted',
+  'aceptado',
+  'aceptada',
+  'peer-review',
+  'peer review',
+  'revisión por pares',
+  'revisado por pares',
+  'revisada por pares',
+  'published in',
+  'publicado en',
+  'publicada en',
 ];
 
 const files = import.meta.glob(['../src/**/*.{md,json,astro,ts,mjs}', '../README.md', '../README.es.md', '!**/*.test.ts'], {
@@ -50,7 +67,15 @@ describe('forbidden phrases', () => {
   it('matches regardless of case and accents written as one character', () => {
     const hits = (text: string) => FORBIDDEN.filter((phrase) => normalize(text).includes(normalize(phrase)));
     expect(hits('Coming Soon')).toEqual(['coming soon']);
+    expect(hits('Peer-reviewed and published in a journal')).toEqual(['peer-review', 'published in']);
+    expect(hits('El texto está EN REVISIÓN')).toEqual(['en revisión']);
     expect(hits('PRÓXIMAMENTE')).toEqual(['próximamente']);
     expect(hits('Próximamente')).toEqual(['próximamente']);
+  });
+
+  it("lets the working paper's title and its status sentence through", () => {
+    const hits = (text: string) => FORBIDDEN.filter((phrase) => normalize(text).includes(normalize(phrase)));
+    expect(hits(WORKING_PAPER.title)).toEqual([]);
+    for (const dictionary of [en, es]) expect(hits(dictionary['paper.status'].replace('{title}', WORKING_PAPER.title))).toEqual([]);
   });
 });

@@ -231,7 +231,7 @@ describe('chapter 6, the real people (rule (k))', () => {
   });
 });
 
-describe('chapter 7, this is where I come in (rule (j), ADR 0026)', () => {
+describe('chapter 7, this is where I come in (rule (j), ADR 0034)', () => {
   const parts = (locale: Locale) => splitAtLock(captionsOf(locale, 'my-research')?.body ?? '');
   const marks = (html: string) => [...html.matchAll(/<!--\s*beat:([a-z-]+)\s*-->/g)].map((m) => m[1]);
   /** What the open part may not say (rule (j)): nothing of the engine's workings, nor of the finding. */
@@ -281,7 +281,10 @@ describe('chapter 7, this is where I come in (rule (j), ADR 0026)', () => {
     const locked = readable(parts(locale).locked);
     expect(findMarks(locked).length).toBeGreaterThan(0);
     expect(citationsIn(locked)).toContain('Kawagoe+Narita 2014');
-    expect([...parts(locale).locked.matchAll(/TODO\(([^)]*)\)/g)].map((m) => m[1])).toEqual(['launch']);
+    expect(parts(locale).locked).not.toMatch(/TODO\(/);
+    // The engine's links (src/lib/engine.ts), filled where the finding writes {engine}, and only behind the lock.
+    expect(parts(locale).locked.split('{engine}')).toHaveLength(2);
+    expect(parts(locale).open).not.toContain('{engine}');
   });
 
   it.each(LOCALES)('%s: says the curve compares worlds, not a population’s history (rule (e))', (locale) => {
@@ -329,8 +332,8 @@ describe('chapter 8, closing (ADR 0021, ADR 0023, ADR 0024)', () => {
     expect(closing).not.toMatch(/github|linkedin/i);
   });
 
-  it('links the credits to the notebook, with /finding only behind the lock (ADR 0026), and back to the film', () => {
-    expect(closing).toContain('creditPages(findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV))');
+  it('links the credits to the notebook, with /finding only behind the lock (ADR 0034), and back to the film', () => {
+    expect(closing).toContain('creditPages(findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV))');
     // The notebook's pages, and «Watch again», which goes to the top of the film (ADR 0029).
     expect(closing.match(/href=\{href\(locale, [^)]*\)\}/g)).toEqual(['href={href(locale, page)}', "href={href(locale, 'home')}"]);
     expect(closing).toMatch(/<a href=\{href\(locale, 'home'\)\} data-film-again>/);

@@ -33,13 +33,13 @@ A test fails if the sky ever turns grey, or if any surface changes too fast to l
 
 ## The lock
 
-Part of the site stays closed until the manuscript is under review. While it is, that part is left
-out of the build, not hidden: a plugin swaps each locked component for an empty stub, and a script
-reads every built file and fails if any trace of it got through. The rule is one line:
+Part of the site stays closed until the working paper is public on SSRN. Until then, that part is
+left out of the build, not hidden: a plugin swaps each locked component for an empty stub, and a
+script reads every built file and fails if any trace of it got through. The rule is one line:
 
 ```ts
-export function findingUnlocked(status: ManuscriptStatus, dev: boolean): boolean {
-  return status === 'under-review' || dev;
+export function findingUnlocked(ssrn: string, dev: boolean): boolean {
+  return !isPending(ssrn) || dev;
 }
 ```
 
@@ -104,4 +104,4 @@ generation to the next, the reasons that earn more are copied more. The engine e
 with its provenance: the engine's commit, the seed and the command that produced it. On this side,
 a test fails if the curve changes or if the file is missing.
 
-The engine's repository: <span class="todo">TODO(launch): enlace al repo del motor</span>.
+The engine's repository: {engine}.

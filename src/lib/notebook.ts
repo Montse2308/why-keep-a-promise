@@ -1,7 +1,7 @@
 /**
  * The notebook (ADR 0024): the six pages of depth, one tap from anywhere. The panel, the footer of
  * every page and chapter 8's credits list them in this order; the film's magnifiers open the one
- * that deepens the moment they stand in. /finding is locked whole (ADR 0026): while the lock is
+ * that deepens the moment they stand in. /finding is locked whole (ADR 0034): while the lock is
  * closed nothing links to it, and its entry shows its title and the status sentence.
  */
 import type { ChapterId } from './chapters';
@@ -13,7 +13,7 @@ export interface NotebookPage {
   readonly titleKey: UiKey;
   /**
    * One line on what the page holds, under its title in the panel. The finding's entry has none: it
-   * shows the status sentence instead, in both states of the lock (ADR 0026).
+   * shows the status sentence instead, in both states of the lock (ADR 0034).
    */
   readonly lineKey: UiKey | null;
   /** The film's chapter the page deepens, which its back link leads to; none for a page of the whole film. */
@@ -35,7 +35,7 @@ export function notebookPage(page: Subpage): NotebookPage {
   return found;
 }
 
-/** The pages anything may link to in this state of the lock: /finding only behind it (ADR 0026). */
+/** The pages anything may link to in this state of the lock: /finding only behind it (ADR 0034). */
 export function linkable(unlocked: boolean): readonly NotebookPage[] {
   return NOTEBOOK.filter((entry) => unlocked || entry.page !== 'finding');
 }

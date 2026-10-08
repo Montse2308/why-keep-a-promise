@@ -3,11 +3,11 @@
  * dependency (ADR 0025).
  */
 import type { APIRoute } from 'astro';
-import { MANUSCRIPT_STATUS } from '../config';
+import { WORKING_PAPER } from '../config';
 import { findingUnlocked } from '../lib/lock';
 import { sitemapXml } from '../lib/sitemap';
 
 export const GET: APIRoute = ({ site }) => {
-  const xml = sitemapXml(site ?? 'https://montse2308.github.io', import.meta.env.BASE_URL, findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV));
+  const xml = sitemapXml(site ?? 'https://montse2308.github.io', import.meta.env.BASE_URL, findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV));
   return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });
 };

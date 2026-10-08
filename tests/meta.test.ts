@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import baseLayout from '../src/layouts/BaseLayout.astro?raw';
 import notFound from '../src/pages/404.astro?raw';
+import { WORKING_PAPER } from '../src/config';
 import { LIGHT_POINTS } from '../src/lib/design/film';
 import { PALETTE } from '../src/lib/design/palette';
 import { LOCALES, t } from '../src/lib/i18n';
@@ -37,7 +38,8 @@ describe('the descriptions (point 4 of the external review)', () => {
     for (const locale of LOCALES) {
       const text = description(locale, 'finding');
       expect(findMarks(text)).toEqual([]);
-      for (const state of ['in-preparation', 'under-review'] as const) expect(text).not.toContain(t(locale, `manuscript.status.${state}`));
+      expect(text).not.toContain(t(locale, 'paper.status').split('{title}')[0]);
+      expect(text).not.toContain(WORKING_PAPER.title);
     }
   });
 

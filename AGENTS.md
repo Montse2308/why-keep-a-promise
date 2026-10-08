@@ -10,16 +10,17 @@ A portfolio piece in two layers (ADR 0021):
 
 - **The film.** The home (`/`, `/es/`) is a short scroll-driven film in nine chapters on one paper
   stage whose light changes continuously. It goes from the prisoner's dilemma to cheap talk, to
-  Vanberg's (2008) partner-switching game, to Montse's research, and ends with the manuscript
-  stamp. Internal name: "Te lo prometo" / "I promise".
+  Vanberg's (2008) partner-switching game, to Montse's research, and ends with the working
+  paper's stamp. Internal name: "Te lo prometo" / "I promise".
 - **The notebook.** The depth, one tap away from anywhere: `/dilemma`, `/vanberg`, `/finding`,
   `/how-its-built`, `/sources`, `/about` (ADR 0024).
 
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
-(P6, the polish, with PR #9). The active phase is P7, the fixes from an external review, planned in
-small steps (one per session) in `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`.
+(P6, the polish, with PR #9). The active phase is F5 (QA), not started yet. P7, the fixes from an
+external review, was planned in small steps (one per session) in `docs/p7-review-plan.md`,
+`docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
 script split by chapter, the fallback to the storyboard and the memory in the tab, is closed
 (PR #11). P7.2 (each page's description and Open Graph metadata, the 404 page, `noindex` on the
@@ -33,7 +34,7 @@ still frames that draw only what their pose shows, chapter 4's citation line, th
 the notebook's panel, the author's signature on the posters) is closed; Montse approved it
 (7.6.11). P7.7 (the READMEs, Lighthouse and the weights again, and the full review: sizes,
 sideways, both languages, keyboard, reduced motion, no JS, a blocked script and axe, with its four
-fixes) is closed; Montse approved it (7.7.7), and F5 (QA) starts once its PR is merged. Then F6
+fixes) is closed; Montse approved it (7.7.7), and its PR is merged (#17). Now F5 (QA), then F6
 (launch). The film tells all nine chapters, chapter 7's finding
 behind the lock, and ends in chapter 8's credits, with «Watch again» under them; it has its sound,
 off until pressed, its progress under the spool, its cast alive at rest, and remembers what was
@@ -75,8 +76,9 @@ not by reading test output.
 | `npm test`        | Vitest, once                                      |
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
-| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0026) |
+| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034) |
 | `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
+| `npm run check:launch` | Builds, then fails while a link is still a `*_PENDING` placeholder in `dist/`, `src/` or the READMEs (ADR 0034). Not in CI; step 3 of the launch checklist and `deploy.yml` run it |
 
 `check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
 (`.github/workflows/ci.yml`) runs install → check → test → build → verify:dist → budgets on every
@@ -114,7 +116,8 @@ the weights beside it come from `src/data/weight.json`.
 
 ```
 src/
-  config.ts              author links, manuscript status (it also opens the lock)
+  config.ts              author links; the working paper (its title and SSRN link, which also opens
+                         the lock) and the engine's links, placeholders until launch (ADR 0034)
   content.config.ts      content collections (frontmatter schemas)
   content/chapters/{en,es}/  the film's captions, one file per chapter, split into beats by
                          <!-- beat:… --> marks; a number is a {placeholder}, never a figure;
@@ -132,7 +135,9 @@ src/
     locales.ts           locale list, no dictionary imports (safe for client scripts)
     routes.ts            buildHref/href/assetHref: every internal link goes through here;
                          routeOf reads a path back into its route
-    lock.ts              the lock: full content only under review or in dev (ADR 0026)
+    lock.ts              the lock: full content only once the working paper's link is real, or in
+                         dev (ADR 0034); the status sentence's parts
+    engine.ts            the engine's links, where the prose behind the lock writes {engine}
     film/                the scene engine: tracks, easing, colours (OKLCH), camera, chapter
                          spans; timeline.ts (screens, beats, the native scroll mapped to the film);
                          faces.ts (the moods); stage.ts (what the stage shows at each point);
@@ -195,14 +200,15 @@ src/
                          curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
-                         LanguageSwitch
+                         LanguageSwitch; PaperStatus, the status sentence (ADR 0034)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale; posters/[locale]/[route].png.ts
                          renders each page's poster; 404.astro (one page, both
                          languages), sitemap.xml.ts and apple-touch-icon.png.ts
 scripts/verify-dist.mjs  checks dist/ against the lock, its links, the status sentence, the
-                         descriptions, noindex and the sitemap (ADR 0026)
+                         descriptions, noindex and the sitemap (ADR 0034)
+scripts/check-launch.mjs fails while a `*_PENDING` placeholder is left (ADR 0034)
 scripts/budgets.mjs      weighs dist/ against the budgets (ADR 0025) and src/data/weight.json
 scripts/lighthouse.mjs   Lighthouse reports → src/data/lighthouse.json
 tests/                   repo-level tests (page parity, prose figures and budgets, rule (h), the
@@ -227,7 +233,9 @@ scratch/                 local notes, git-ignored, never committed
   `src/lib/routes.ts`, so `base` (`/why-keep-a-promise`) is always respected. Never hard-code `/…`
   paths.
 - **Placeholders.** Unwritten content is marked `TODO(Px)` with the phase that writes it
-  (`TODO(launch)` for step 8 of the launch checklist).
+  (`TODO(launch)` for step 3 of the launch checklist). Links not known until launch, the working
+  paper's SSRN page and the engine's DOI, are the literal `SSRN_URL_PENDING` and
+  `ENGINE_DOI_PENDING` in `src/config.ts` (ADR 0034).
 - **Decisions.** A superseded ADR, even partly, moves to `docs/archivo/decisiones/` with a line
   naming what replaces it; what still holds is restated in the new ADR. Keep
   `docs/decisions/README.md` in sync.
@@ -239,18 +247,20 @@ scratch/                 local notes, git-ignored, never committed
 
 - **Publishing the result.**
   - No curve data, no saying which motive pays where, and no content from the finding beyond the
-    status sentence, except behind the lock (ADR 0026).
+    status sentence, except behind the lock (ADR 0034).
   - The lock covers chapter 7's finding, `/finding`, the engine part of `/how-its-built`, and the
-    links to them and to the engine repository.
+    links to them and to the engine repository. It opens once the working paper is public on SSRN.
   - Model parameters never appear, except θ, c, the guilt available and the robustness variant on
     `/finding`, behind the lock.
   - Outside the lock, chapter 7 says only the question and that Montse built a simulation engine in
     TypeScript. Nothing about the engine's tests, seed, generations, imitation or provenance
     (rule (j)).
-  - The manuscript status sentence is never reworded or added to, even as the stamp (rule (b)).
+  - The status sentence (the working paper's title, linked to SSRN) is never reworded or added to,
+    even as the stamp (rule (b)). There is no other state: nothing says under review, accepted,
+    peer-reviewed or published in a journal.
   - Do not change the repository's visibility, do not enable GitHub Pages, and do not run
     `deploy.yml` (manual-only, F6).
-- **Copying the manuscript or the paper's context.** Do not read or copy the manuscript or its
+- **Copying the working paper or the paper's context.** Do not read or copy the working paper or its
   working files, wherever they live (local folders, Drive). If something is missing, ask.
 - **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,
   local folder `dilema-prisionero`) is never opened, added as a dependency, submodule or alias, and
@@ -263,8 +273,9 @@ scratch/                 local notes, git-ignored, never committed
   - No charts beyond chapter 7's curve and `/finding`'s guilt chart, both behind the lock.
   - No interaction outside the list in ADR 0023.
   - The scroll is never hijacked.
-- **Naming the journal** the manuscript was submitted to, submission dates or correspondence with
-  authors, in any file. Third-party references carry their journal, as any bibliography (ADR 0016).
+- **Naming a journal** for Montse's text, which goes to no journal (it is a working paper on SSRN,
+  ADR 0034), submission dates or correspondence with other authors, in any file. Third-party
+  references carry their journal, as any bibliography (ADR 0016).
 - **Inventing personal data** (display name, profile URLs, email, photo, school, job, city,
   biography). `/about` carries only the name, GitHub and LinkedIn.
 - **Caricaturing a real person** as a character.

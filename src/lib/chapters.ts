@@ -114,7 +114,7 @@ const BEATS: Partial<Record<ChapterId, readonly Beat[]>> = {
 /** Rounded to a thousandth, so 1.2 + 1.4 + 1.5 + 1.4 is exactly 5.5. */
 const sum = (beats: readonly Beat[]): number => Math.round(beats.reduce((total, b) => total + b.screens, 0) * 1000) / 1000;
 
-/** The nine chapters, with chapter 7's finding (ADR 0026) after its open beats. */
+/** The nine chapters, with chapter 7's finding (ADR 0034) after its open beats. */
 function chaptersWith(finding: readonly Beat[]): readonly Chapter[] {
   return CHAPTER_IDS.map((id, number) => {
     const beats = id === 'my-research' ? [...(BEATS[id] ?? []), ...finding] : (BEATS[id] ?? []);
@@ -126,7 +126,7 @@ function chaptersWith(finding: readonly Beat[]): readonly Chapter[] {
 /**
  * The film as this build shows it. With the lock open, chapter 7 goes on past the sealed envelope
  * with the finding's beats; a locked build resolves ./film/finding.ts to an empty list, so its film
- * ends chapter 7 at the envelope (ADR 0026).
+ * ends chapter 7 at the envelope (ADR 0034).
  */
 export const CHAPTERS: readonly Chapter[] = chaptersWith(FINDING_BEATS);
 

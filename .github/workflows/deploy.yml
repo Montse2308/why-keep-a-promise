@@ -1,9 +1,10 @@
 # Deploys the site to GitHub Pages.
 #
 # DO NOT RUN UNTIL F6 (launch). It is manual-only on purpose: there is no partial
-# deploy. Run it only as step 9 of docs/launch-checklist.md, after the repository
+# deploy. Run it only as step 7 of docs/launch-checklist.md, after the repository
 # is public and Pages is set to "Source: GitHub Actions". It refuses a dist/ that
-# still carries unwritten content (a TODO marker) or a source to be verified.
+# still carries unwritten content (a TODO marker), a source to be verified, or a
+# placeholder for the working paper's or the engine's link (ADR 0034).
 
 name: Deploy to GitHub Pages
 
@@ -47,20 +48,25 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Verify the lock in dist/ (ADR 0026)
+      - name: Verify the lock in dist/ (ADR 0034)
         run: npm run verify:dist
 
       - name: Weigh dist/ against the budgets (ADR 0025)
         run: npm run budgets
 
-      # Steps 3 and 8 of docs/launch-checklist.md: by now nothing in dist/ may be left to write
-      # (no TODO(launch)) or to verify (a source /sources marks data-unverified).
+      # Steps 3 and 4 of docs/launch-checklist.md: by now nothing in dist/ may be left to write
+      # (a TODO marker) or to verify (a source /sources marks data-unverified).
       - name: Nothing left to write or to verify in dist/
         run: |
           if grep -rl -e 'TODO(' -e 'data-unverified' dist/; then
             echo "dist/ still carries a TODO marker or a source to be verified: see docs/launch-checklist.md."
             exit 1
           fi
+
+      # Step 3 of docs/launch-checklist.md: the working paper's SSRN link and the engine's DOI are
+      # written, so no placeholder is left in dist/, src/ or the READMEs (ADR 0034).
+      - name: No placeholder left
+        run: node scripts/check-launch.mjs
 
       - uses: actions/configure-pages@v6
 

@@ -36,14 +36,13 @@ verse suave.
 
 ## El candado
 
-Una parte del sitio sigue cerrada hasta que el manuscrito esté en revisión. Mientras lo está, esa
-parte se queda fuera del build, no escondida: un plugin cambia cada componente bloqueado por un stub
-vacío, y un script lee cada archivo construido y falla si se coló algún rastro. La regla
-es una línea:
+Una parte del sitio sigue cerrada hasta que el documento de trabajo sea público en SSRN. Esa parte
+se queda fuera del build, no escondida: un plugin cambia cada componente bloqueado por un stub vacío,
+y un script lee cada archivo construido y falla si se coló algún rastro. La regla es una línea:
 
 ```ts
-export function findingUnlocked(status: ManuscriptStatus, dev: boolean): boolean {
-  return status === 'under-review' || dev;
+export function findingUnlocked(ssrn: string, dev: boolean): boolean {
+  return !isPending(ssrn) || dev;
 }
 ```
 
@@ -109,4 +108,4 @@ imitación: de una generación a la siguiente, las razones que ganan más se cop
 exporta la curva con su procedencia: el commit del motor, la semilla y el comando que la produjo.
 Aquí, una prueba falla si la curva cambia o si falta el archivo.
 
-El repositorio del motor: <span class="todo">TODO(launch): enlace al repo del motor</span>.
+El repositorio del motor: {engine}.

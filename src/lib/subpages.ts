@@ -1,5 +1,5 @@
 /**
- * A subpage's prose, split where the page inserts a component or where the lock begins (ADR 0026).
+ * A subpage's prose, split where the page inserts a component or where the lock begins (ADR 0034).
  * The Markdown marks those places with HTML comments:
  *
  *   <!-- slot:pd-matrix -->       a component the view renders in place

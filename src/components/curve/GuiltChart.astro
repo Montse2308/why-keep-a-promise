@@ -1,13 +1,13 @@
 ---
 /**
- * /finding's chart (ADR 0024, ADR 0026): the guilt available at each row of the grid, with the
+ * /finding's chart (ADR 0024, ADR 0034): the guilt available at each row of the grid, with the
  * threshold above which personal guilt rolls the die and its peak, built at build time from
  * src/lib/curve/finding.ts. Static: no control and no script (ADR 0023), readable without JavaScript,
  * with a visually hidden table of every row. On the notebook's paper, in either theme: personal
  * guilt's dots in ink, as on the film's curve; filled where it rolls, hollow where it doesn't, so
  * rolling is told by shape, not by colour alone.
  *
- * Render this only inside the lock (src/lib/lock.ts, ADR 0026). While the lock is closed, a build
+ * Render this only inside the lock (src/lib/lock.ts, ADR 0034). While the lock is closed, a build
  * resolves this file to ./Locked.astro (astro.config.mjs), so its markup, style and data never reach
  * dist/; `npm run verify:dist` checks that.
  */

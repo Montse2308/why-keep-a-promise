@@ -2,7 +2,9 @@
 
 **Estado:** aceptada (F0). Precisada por el ADR 0021: la página es una película corta en el home y
 un cuaderno para profundizar; sigue sin ser un simulador. Los juegos que acota están en el ADR 0023
-(antes, la mesa del ADR 0003, hoy archivado).
+(antes, la mesa del ADR 0003, hoy archivado). Precisada por el ADR 0034: el texto no va a una
+revista; la página se lanza con el working paper público en SSRN (el ADR 0011 que cita está
+archivado).
 
 ## Contexto
 

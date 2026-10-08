@@ -39,43 +39,43 @@ describe('the sitemap (point 13 of the external review)', () => {
   });
 
   it('builds the sitemap by the lock, with no dependency', () => {
-    expect(endpoint).toContain('findingUnlocked(MANUSCRIPT_STATUS, import.meta.env.DEV)');
+    expect(endpoint).toContain('findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV)');
     expect(endpoint).toContain("import { sitemapXml } from '../lib/sitemap';");
   });
 
   describe('verify:dist', () => {
     it('passes the sitemap of each state against the pages of that state', () => {
-      expect(sitemapProblems('in-preparation', sitemapXml(SITE, BASE, false), builtPages(true))).toEqual([]);
-      expect(sitemapProblems('under-review', sitemapXml(SITE, BASE, true), builtPages(true))).toEqual([]);
+      expect(sitemapProblems(true, sitemapXml(SITE, BASE, false), builtPages(true))).toEqual([]);
+      expect(sitemapProblems(false, sitemapXml(SITE, BASE, true), builtPages(true))).toEqual([]);
     });
 
     it('fails a missing sitemap', () => {
-      expect(sitemapProblems('in-preparation', undefined, builtPages(true))).toEqual(['sitemap.xml: missing']);
+      expect(sitemapProblems(true, undefined, builtPages(true))).toEqual(['sitemap.xml: missing']);
     });
 
     it('fails /finding in the sitemap while locked', () => {
-      const problems = sitemapProblems('in-preparation', sitemapXml(SITE, BASE, true), builtPages(true));
+      const problems = sitemapProblems(true, sitemapXml(SITE, BASE, true), builtPages(true));
       expect(problems).toContain(`sitemap.xml: names ${ROOT}finding/ while the lock is closed`);
       expect(problems).toContain(`sitemap.xml: names ${ROOT}es/finding/ while the lock is closed`);
     });
 
     it('fails an open sitemap that leaves /finding out, and one that names a page dist/ lacks', () => {
-      expect(sitemapProblems('under-review', sitemapXml(SITE, BASE, false), builtPages(true))).toEqual([
+      expect(sitemapProblems(false, sitemapXml(SITE, BASE, false), builtPages(true))).toEqual([
         'sitemap.xml: leaves out finding/index.html',
         'sitemap.xml: leaves out es/finding/index.html',
       ]);
       const extra = sitemapXml(SITE, BASE, false).replace('</urlset>', `  <url>\n    <loc>${ROOT}missing/</loc>\n  </url>\n</urlset>`);
-      expect(sitemapProblems('in-preparation', extra, builtPages(true))).toEqual([`sitemap.xml: ${ROOT}missing/ is not a page of the site`]);
+      expect(sitemapProblems(true, extra, builtPages(true))).toEqual([`sitemap.xml: ${ROOT}missing/ is not a page of the site`]);
     });
 
     it('fails a URL outside the site, and the 404 page', () => {
       const outside = sitemapXml(SITE, BASE, false).replace(`<loc>${ROOT}about/</loc>`, '<loc>https://example.com/about/</loc>');
-      expect(sitemapProblems('in-preparation', outside, builtPages(true))).toEqual([
+      expect(sitemapProblems(true, outside, builtPages(true))).toEqual([
         'sitemap.xml: https://example.com/about/ is not a page of the site',
         'sitemap.xml: leaves out about/index.html',
       ]);
       const notFound = sitemapXml(SITE, BASE, false).replace('</urlset>', `  <url>\n    <loc>${ROOT}404.html</loc>\n  </url>\n</urlset>`);
-      expect(sitemapProblems('in-preparation', notFound, builtPages(true))[0]).toMatch(/404\.html is not a page of the site/);
+      expect(sitemapProblems(true, notFound, builtPages(true))[0]).toMatch(/404\.html is not a page of the site/);
     });
   });
 });

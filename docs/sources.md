@@ -14,7 +14,7 @@ una cita que no están registrados, o si una clave no existe aquí.
 
 `/sources` (P5, ADR 0024) muestra ese registro al visitante (`src/lib/sources.ts`): cada obra con su
 referencia completa y, debajo, cada clave con sus cifras, dónde está en la fuente y dónde se usa. No
-tiene candado, así que se ve igual en los dos estados (ADR 0026): no lista las claves del hallazgo
+tiene candado, así que se ve igual en los dos estados (ADR 0034): no lista las claves del hallazgo
 (`kawagoe-narita-2014`, `vanberg-second-order`, `curve` y `curve-finding`, en `FINDING`), que el
 capítulo 7 y `/finding` citan donde las usan, ni las que ya no se muestran (`vanberg-switch` y
 `vanberg-chat`, en `RETIRED`). Un test exige que cada clave esté en uno solo de esos tres lugares.
@@ -154,9 +154,11 @@ corresponde exactamente a las filas "cambio a una pareja a la que otro le promet
 arriba. Por eso el mazo del capítulo 5 usa siempre ese caso, y el capítulo 6 compara esa fila con la
 de la misma pareja.
 
-- Cifra: la creencia después de una promesa, "76" de 100, que la curva del hallazgo deja fija
-  (capítulo 7 y pie de la gráfica, clave `curve.caption`). Es la creencia de segundo orden de los dictadores sin
-  cambio de pareja: lo que creían que su pareja esperaba. Media 0.7585 (n = 384), que redondea a 76.
+- Cifra: la creencia de que la promesa se cumplirá, "76" de 100, que la curva del hallazgo deja fija
+  (capítulo 7 y pie de la gráfica, clave `curve.caption`). Es el promedio de la creencia de segundo
+  orden de todos los dictadores (los que deciden) sin cambio de pareja, hayan prometido o no: lo que
+  creían que su pareja esperaba. No es una creencia medida después de una promesa. Media 0.7585
+  (n = 384), que redondea a 76.
   También es el extremo del eje de confianza de fondo (de 0 a 76).
   Clave: `vanberg-second-order`.
   Fuente: `switch.dat`, bloque TABLE I de `promises.do`, creencia de segundo orden de los dictadores
@@ -354,7 +356,7 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   76, fracciones de denominador 100); en cada una, el pago material de las tres razones y si la
   culpa personal tira. Es una comparación entre mundos, cada uno con su confianza de fondo fija
   (regla (e)). Desde F4, `/finding` lee además, solo detrás del candado, la culpa disponible de cada
-  fila, θ y c (`params.sens`) y la variante de robustez (ADR 0026). Ningún otro parámetro ni valor
+  fila, θ y c (`params.sens`) y la variante de robustez (ADR 0034). Ningún otro parámetro ni valor
   intermedio del archivo se lee ni se muestra.
 - **Verificada:** `tests/curve.test.ts` y `src/lib/curve/curve.test.ts` validan la procedencia
   (ADR 0010) y comprueban cada cifra de abajo contra el archivo. Ninguna se escribe a mano sin test.
@@ -362,7 +364,7 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 
 - Cifra: eje de confianza de fondo de "0" a "76", leída "de 100".
   Clave: `curve`.
-  Fuente: `axis` de `curve.json`; el 76 es la creencia después de una promesa (`vanberg-second-order`).
+  Fuente: `axis` de `curve.json`; el 76 es la creencia de que la promesa se cumplirá (`vanberg-second-order`).
   Usada en: el hallazgo del capítulo 7 (`{min}`, `{max}`, `{outof}`); ejes y `aria-label` de la gráfica.
 - Cifra: la culpa personal tira de "15" a "65": primera y última fila donde tira, "medido en pasos
   de 5": las filas vecinas de la ventana son 10 y 70, sin filas intermedias.
@@ -389,15 +391,15 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   Usada en: el hallazgo del capítulo 7 (`{peak}`, la tarjeta `middle`); marca del pico y valor
   inicial del control deslizante.
 
-#### Cifras de `/finding` (F4, ADR 0026)
+#### Cifras de `/finding` (F4, ADR 0034)
 
-Solo en `/finding` y solo detrás del candado (ADR 0026). La página no
+Solo en `/finding` y solo detrás del candado (ADR 0034). La página no
 recalcula el modelo: la culpa, los pagos, θ y c se leen de `curve.json` (`src/lib/curve/finding.ts`).
 La única cuenta es la cuadrática del corte analítico, y solo en un test, para verificar la prosa.
 `tests/finding.test.ts` comprueba cada cifra de abajo contra el archivo.
 
 - Cifra: la culpa disponible, `a · (76 − a) / 100`, con `a` la confianza de fondo y las creencias en
-  centésimas; el "76" es la creencia después de una promesa (`vanberg-second-order`). Pico en "38",
+  centésimas; el "76" es la creencia de que la promesa se cumplirá (`vanberg-second-order`). Pico en "38",
   con culpa "14.44"; cero en 0 y en 76.
   Clave: `curve-finding`.
   Fuente: `grid[].guilt` y `peak` de `curve.json`.

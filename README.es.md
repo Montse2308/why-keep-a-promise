@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-<!-- TODO(launch): enlace al sitio, https://montse2308.github.io/why-keep-a-promise/es/, cuando el paso 9 de docs/launch-checklist.md lo haya publicado. -->
+<!-- TODO(launch): enlace al sitio, https://montse2308.github.io/why-keep-a-promise/es/, que se escribe en el paso 3 de docs/launch-checklist.md. -->
 
 ![Cuatro cuadros de la película a lo largo del día: el título al amanecer, el dilema del prisionero a mediodía, una pareja nueva en la mesa por la tarde mientras el hilo de la promesa sigue yendo a quien se fue, y otra vez la primera mesa de noche.](.github/readme/film-es.webp)
 
@@ -19,9 +19,10 @@ a un toque de distancia guarda la profundidad.
 - **Un motor de escenas propio.** Pistas, suavizado, colores mezclados en OKLCH y una cámara que
   encuadra cada pantalla, escritos en TypeScript para esta película: módulos puros con sus pruebas,
   sin librería de animación y sin canvas.
-- **Un candado fuera del build.** Una parte del sitio sigue cerrada hasta que el manuscrito esté en
-  revisión. Esa parte se queda fuera del build, no escondida, y `npm run verify:dist` lee cada
-  archivo construido y falla si se coló algún rastro.
+- **Un candado fuera del build.** Una parte del sitio sigue cerrada hasta que el
+  [documento de trabajo (*working paper*)](SSRN_URL_PENDING) sea público en SSRN. Esa parte se queda
+  fuera del build, no escondida, y `npm run verify:dist` lee cada archivo construido y falla si se
+  coló algún rastro.
 - **Presupuestos y pruebas que detienen el build.** CI falla si el JavaScript del home pasa de
   40 KiB comprimido, las fuentes de 160 KiB o la primera carga de cualquier página de 450 KiB. Más
   de 1200 pruebas mantienen los pagos como fracciones exactas, cada cifra atada a su fuente y el

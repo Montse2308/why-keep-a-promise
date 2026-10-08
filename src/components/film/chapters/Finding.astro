@@ -1,10 +1,11 @@
 ---
 /**
- * Chapter 7's finding (ADR 0026): what the envelope holds once the lock is open. The content of act 5
+ * Chapter 7's finding (ADR 0034): what the envelope holds once the lock is open. The content of act 5
  * of the previous version, told in captions and not added to: the third reason, why a lab cannot tell
  * it apart, background trust, the simulation's worlds, the curve with its control, and why it is a
  * comparison across worlds and not a population's history (rule (e)). Every number comes from
- * src/lib/curve/values.ts; the magnifier to /finding and the engine's repository live only here.
+ * src/lib/curve/values.ts; the magnifier to /finding and the engine's links (src/lib/engine.ts)
+ * live only here.
  *
  * Render this only behind the lock. While it is closed, a build resolves this file to
  * ../../curve/Locked.astro (`lockFinding` in astro.config.mjs), so its prose, its curve and its
@@ -13,6 +14,7 @@
 import { LOCKED_BEATS } from '../../../lib/chapters';
 import { CURVE_VALUES } from '../../../lib/curve/values';
 import { splitBeats } from '../../../lib/film/captions';
+import { withEngine } from '../../../lib/engine';
 import type { Locale } from '../../../lib/i18n';
 import { fill } from '../../../lib/template';
 import Curve from '../../curve/Curve.astro';
@@ -26,7 +28,7 @@ interface Props {
 }
 
 const { locale, captions } = Astro.props;
-const beats = splitBeats(fill(captions, CURVE_VALUES), LOCKED_BEATS.map((b) => b.id));
+const beats = splitBeats(fill(withEngine(captions), CURVE_VALUES), LOCKED_BEATS.map((b) => b.id));
 const last = LOCKED_BEATS.at(-1)?.id;
 ---
 

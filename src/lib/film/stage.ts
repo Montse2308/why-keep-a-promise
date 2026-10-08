@@ -207,7 +207,7 @@ const CONCLUSION = entering('real-people', 'conclusion');
 /**
  * Chapter 7. Night has fallen: the signs go back up, and the lamp comes down over the table as the
  * chapter's card comes up. The engine comes down onto the table, where the die was; the envelope
- * follows, and with the lock open it opens before the finding (ADR 0026).
+ * follows, and with the lock open it opens before the finding (ADR 0034).
  */
 const RESEARCH_IN = entering('my-research', 'question');
 const SIGNS_UP = [RESEARCH_IN[0], RESEARCH_IN[0] + 0.4] as const;
@@ -269,7 +269,7 @@ const POSE_IN: Readonly<Record<string, number>> = {
 
 /**
  * Where a beat's still pose sits, in screens from the top of the film. The finding's beats go
- * unnamed here, so a locked build carries none of their ids (ADR 0026): each poses a little past its
+ * unnamed here, so a locked build carries none of their ids (ADR 0034): each poses a little past its
  * start, with the envelope already open.
  */
 function poseOf(chapter: ChapterId, beat: string): number {

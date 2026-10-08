@@ -5,6 +5,7 @@ import character from '../src/components/film/Character.astro?raw';
 import endpoint from '../src/pages/posters/[locale]/[route].png.ts?raw';
 import touchIconEndpoint from '../src/pages/apple-touch-icon.png.ts?raw';
 import favicon from '../public/favicon.svg?raw';
+import { WORKING_PAPER } from '../src/config';
 import en from '../src/i18n/en.json';
 import es from '../src/i18n/es.json';
 import { FILM, LIGHT_POINTS } from '../src/lib/design/film';
@@ -86,7 +87,8 @@ describe('each poster', () => {
   it.each(PAGES)('%s/%s says nothing else: no status sentence, no figure', (locale, route) => {
     const text = Object.values(posterText(locale, route)).join(' ');
     const dictionary: Record<string, string> = locale === 'en' ? en : es;
-    for (const key of ['manuscript.status.in-preparation', 'manuscript.status.under-review']) expect(text).not.toContain(dictionary[key]);
+    expect(text).not.toContain(dictionary['paper.status']?.split('{title}')[0]);
+    expect(text).not.toContain(WORKING_PAPER.title);
     expect(text).not.toMatch(/\d/);
   });
 

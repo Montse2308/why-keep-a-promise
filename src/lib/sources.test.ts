@@ -27,7 +27,7 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
     }
   });
 
-  it("leaves out the finding's sources: /sources has no lock and looks the same in both states (ADR 0024, ADR 0026)", () => {
+  it("leaves out the finding's sources: /sources has no lock and looks the same in both states (ADR 0024, ADR 0034)", () => {
     expect(FINDING).toEqual(['kawagoe-narita-2014', 'vanberg-second-order', 'curve', 'curve-finding']);
     for (const entry of ENTRIES) {
       for (const place of entry.places) expect('page' in place && place.page === 'finding', entry.source).toBe(false);

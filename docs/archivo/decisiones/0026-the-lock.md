@@ -1,5 +1,10 @@
 # 0026 · El candado
 
+> **Archivada (preparación de F6).** Reemplazada en parte por el ADR 0034 (working paper en vez de
+> sometimiento a revista): el candado se abre con el working paper público, no con el manuscrito en
+> revisión. El 0034 reescribe el candado completo. Se conserva como registro; no rige. Sus
+> referencias a otros ADR y a rutas del repo son de su momento.
+
 **Estado:** aceptada (P0). Reemplaza el ADR 0015 (archivado) y las partes del candado de los ADR 0017
 y 0019 (archivados). Junta en un solo lugar todo lo que el candado cubre, cómo se cierra en el build
 y cómo se abre.

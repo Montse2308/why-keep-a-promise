@@ -17,32 +17,37 @@ Se puede citar en cualquier fase:
 Cada cifra que aparezca en la página lleva su cita en `docs/sources.md` y su entrada en el registro
 de cifras (`src/content/figures.ts`). Una cifra nueva no entra hasta tener las dos.
 
-## (b) Estado del manuscrito: dos textos, nada más
+## (b) Estado del texto: un solo texto, nada más
 
-El sello del capítulo 7, la entrada «El hallazgo» del cuaderno y `/finding` tienen exactamente dos
-estados de texto (ADR 0026):
+El sello del capítulo 7, la entrada «El hallazgo» del cuaderno y `/finding` muestran un solo texto
+de estado, el mismo en los dos estados del candado (ADR 0034):
 
-| Estado           | EN                                  | ES                                    |
-| ---------------- | ----------------------------------- | ------------------------------------- |
-| `in-preparation` | "A manuscript is in preparation."   | "Hay un manuscrito en preparación."   |
-| `under-review`   | "The manuscript is under review."   | "El manuscrito está en revisión."     |
+| Idioma | Texto                                                                                                                         |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| EN     | "Working paper: *Promises to whom: Identifying personal guilt and partner-specific commitment across populations* (SSRN)."        |
+| ES     | "Documento de trabajo: *Promises to whom: Identifying personal guilt and partner-specific commitment across populations* (SSRN)." |
 
-- Los textos viven en las claves `manuscript.status.*` de `src/i18n/`; el estado activo está en
-  `MANUSCRIPT_STATUS` de `src/config.ts`.
-- Se pasa a `under-review` solo en el paso 4 de `docs/launch-checklist.md`.
+- El título va en inglés en los dos idiomas, porque el documento está en inglés, en cursiva y con
+  enlace a la página del working paper en SSRN.
+- La frase vive en la clave `paper.status` de `src/i18n/`, con `{title}` en lugar del título; el
+  título y el enlace están en `WORKING_PAPER` de `src/config.ts`. El enlace es `SSRN_URL_PENDING`
+  hasta el paso 3 de `docs/launch-checklist.md`.
 - La frase se puede mostrar grande, como sello, pero no se reescribe ni se le agrega nada: ni
-  revista, ni PDF, ni parámetros, ni fechas. La autora va aparte.
+  revista, ni parámetros, ni fechas. La autora va aparte.
 - En la página de inicio la frase sale exactamente dos veces: el sello del capítulo 7 y la entrada
   del cuaderno.
-- No se escribe "coming soon", "not yet approved" ni equivalentes, en ningún idioma. El sobre sellado
+- No hay otro estado. El texto es un working paper sin revisión por pares: no se presenta como
+  publicado en una revista, revisado ni aprobado. No se escribe "coming soon", "under review",
+  "accepted", "peer-reviewed", "published in", "not yet approved" ni equivalentes, en ningún idioma
+  ("próximamente", "en revisión", "aceptado", "revisado por pares", "publicado en"…). El sobre sellado
   no dice nada más que la frase.
 
-## (c) Sin revista, sin PDF
+## (c) Sin revista; el PDF se enlaza a SSRN
 
-- Ningún archivo dice a qué revista se sometió el manuscrito.
+- Ningún archivo nombra una revista para el texto de Montse.
 - Las referencias bibliográficas de terceros llevan su revista, como cualquier bibliografía
   (ADR 0016).
-- No se publica PDF del manuscrito salvo decisión explícita de Montse en F6.
+- Se enlaza a SSRN; el PDF no se aloja aquí.
 
 ## (d) Lo que no se dice ni se muestra
 
@@ -87,6 +92,10 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
 - Estas cadenas no aparecen en ningún archivo del sitio ni en su código, en ningún idioma y sin
   importar mayúsculas: "bi-stab", "bistab", "biestab", "bi-estab", "universalis", "particularis",
   "coming soon", "próximamente", "not yet approved", "aún no se aprueba", "está por lanzarse".
+- Tampoco las que presentarían el working paper como algo que no es (regla (b)): "under review",
+  "en revisión", "accepted", "aceptado", "aceptada", "peer-review" (también "peer-reviewed"),
+  "peer review", "revisión por pares", "revisado por pares", "revisada por pares",
+  "published in", "publicado en", "publicada en". El título del working paper no contiene ninguna.
 - `tests/forbidden-phrases.test.ts` las busca en `src/` y en los README, y es el único archivo de
   código que las lista.
 - La lista no incluye nombres de revistas (regla (c)).
@@ -103,7 +112,7 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
 - La aritmética exacta y los tests que detienen el build son de la página, y se cuentan en
   `/how-its-built`.
 - Los enlaces al hallazgo, a `/finding` y al repositorio del motor existen solo con el candado
-  abierto (ADR 0026).
+  abierto (ADR 0034).
 - **`/about`** lleva el nombre completo de la autora, GitHub y LinkedIn, y nada más: sin escuela,
   trabajo, ciudad ni biografía (decisión de Montse, ADR 0024).
 
@@ -127,7 +136,7 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
 ## Además (de `AGENTS.md`)
 
 - No se publica el resultado: ni datos de la curva, ni parámetros del modelo, ni qué motivo paga
-  dónde, fuera del candado (ADR 0026).
+  dónde, fuera del candado (ADR 0034).
 - Los parámetros del modelo no se muestran nunca, salvo θ, c, la culpa disponible y la variante de
   robustez en `/finding`, y solo detrás del candado.
-- Sin fechas de sumisión ni correspondencia con autores en ningún archivo (ADR 0011).
+- Sin fechas de sometimiento ni correspondencia con otros autores en ningún archivo (ADR 0034).
