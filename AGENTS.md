@@ -259,7 +259,7 @@ scratch/                 local notes, git-ignored, never committed
     peer-reviewed or published in a journal.
   - Do not change the repository's visibility, do not enable GitHub Pages, and do not run
     `deploy.yml` (manual-only, F6).
-- **Copying the manuscript or the paper's context.** Do not read or copy the manuscript or its
+- **Copying the working paper or the paper's context.** Do not read or copy the working paper or its
   working files, wherever they live (local folders, Drive). If something is missing, ask.
 - **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,
   local folder `dilema-prisionero`) is never opened, added as a dependency, submodule or alias, and
