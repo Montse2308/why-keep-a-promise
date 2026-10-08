@@ -8,7 +8,7 @@
  * and the lights flicker to show the switch they could not see, with what real recipients bet.
  * Every line a choice leads to is resolved here; ./film.ts only shows it.
  */
-import { beat, chapter } from '../../../lib/chapters';
+import { beat } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { BET_LABEL, BET_START, betAt, BETS } from '../../../lib/film/bet';
 import { DECK, tally } from '../../../lib/film/deck';
@@ -24,6 +24,7 @@ import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
 import Ticket from '../Ticket.astro';
 import Tickets from '../Tickets.astro';
+import ChapterTitle from '../ChapterTitle.astro';
 
 interface Props {
   locale: Locale;
@@ -61,11 +62,7 @@ const still = stageAt(
 
 <Chapter locale={locale} id="blackout" labelledby="blackout-title" still={still} stillLabel={tr('film.blackout.still')}>
   <Beat id={blackout.id} screens={blackout.screens} caption={captions.get(blackout.id)}>
-    <h2 slot="top" id="blackout-title" class="card__chapter">
-      <span>{fill(tr('film.chapter'), { n: chapter('blackout').number })}</span>
-      <span aria-hidden="true">·</span>
-      <span>{title}</span>
-    </h2>
+    <ChapterTitle slot="top" locale={locale} chapter="blackout" title={title} />
   </Beat>
 
   <Beat id={newPartner.id} screens={newPartner.screens} caption={captions.get(newPartner.id)} />

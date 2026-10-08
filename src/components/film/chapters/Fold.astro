@@ -5,7 +5,7 @@
  * one decides. The visitor decides once: keep the money or roll the die. The payoffs are `PAYOFFS`;
  * every line a decision can lead to, one per face of the die, is resolved here.
  */
-import { beat, chapter } from '../../../lib/chapters';
+import { beat } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { decisionLine } from '../../../lib/film/lines';
 import { PIP_AT, PIPS, type Pip } from '../../../lib/film/parts';
@@ -20,6 +20,7 @@ import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
 import Ticket from '../Ticket.astro';
 import Tickets from '../Tickets.astro';
+import ChapterTitle from '../ChapterTitle.astro';
 
 interface Props {
   locale: Locale;
@@ -43,11 +44,7 @@ const still = stageAt(KEY_POSE.fold ?? 0, { promised: true, round: roundOf('coop
 
 <Chapter locale={locale} id="fold" labelledby="fold-title" still={still} stillLabel={tr('film.fold.still')}>
   <Beat id={fold.id} screens={fold.screens} caption={captions.get(fold.id)}>
-    <h2 slot="top" id="fold-title" class="card__chapter">
-      <span>{fill(tr('film.chapter'), { n: chapter('fold').number })}</span>
-      <span aria-hidden="true">·</span>
-      <span>{title}</span>
-    </h2>
+    <ChapterTitle slot="top" locale={locale} chapter="fold" title={title} />
   </Beat>
 
   <Beat id={decide.id} screens={decide.screens} caption={captions.get(decide.id)}>

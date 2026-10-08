@@ -7,7 +7,7 @@
  * gap (ADR 0034). With the lock open it opens, and the finding follows (./Finding.astro).
  */
 import { WORKING_PAPER } from '../../../config';
-import { beat, chapter, LOCKED_BEATS } from '../../../lib/chapters';
+import { beat, LOCKED_BEATS } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { KEY_POSE, stageAt } from '../../../lib/film/stage';
 import { useTranslations, type Locale } from '../../../lib/i18n';
@@ -19,6 +19,7 @@ import PaperStatus from '../../PaperStatus.astro';
 import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
 import Finding from './Finding.astro';
+import ChapterTitle from '../ChapterTitle.astro';
 
 interface Props {
   locale: Locale;
@@ -53,11 +54,7 @@ const seal = `M${edge(16, 0)} ${Array.from({ length: 10 }, (_, i) => `Q${edge(23
 <Chapter locale={locale} id="my-research" labelledby="my-research-title" still={still} stillLabel={tr('film.my-research.still')}>
   <Beat id={question.id} screens={question.screens} caption={captions.get(question.id)}>
     <Fragment slot="top">
-      <h2 id="my-research-title" class="card__chapter">
-        <span>{fill(tr('film.chapter'), { n: chapter('my-research').number })}</span>
-        <span aria-hidden="true">·</span>
-        <span>{title}</span>
-      </h2>
+      <ChapterTitle locale={locale} chapter="my-research" title={title} />
       <p class="research__question">{tr('site.title')}</p>
       <p class="research__me">{fill(tr('film.my-research.me'), { name: tr('author.name') })}</p>
     </Fragment>

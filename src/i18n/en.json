@@ -150,6 +150,7 @@
   "film.thread.none": "No promise",
   "film.sound": "Sound",
   "film.chapter": "Chapter {n}",
+  "film.chapter.heading": "Chapter {n}: {title}",
   "film.progress": "Chapter {n} of {last}",
   "film.board.you.cooperate": "cooperate",
   "film.board.you.defect": "defect",

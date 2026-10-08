@@ -1,0 +1,30 @@
+---
+/**
+ * A chapter's heading on its first card: «Chapter 7 · This is where I come in», set small in capitals.
+ * What shows is hidden from screen readers, which read one name instead, «Chapter 7: This is where I
+ * come in», in the case it is written in: the separate pieces ran together («Chapter 7This is…») and
+ * came out in capitals (F6).
+ */
+import { chapter, type ChapterId } from '../../lib/chapters';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+  chapter: ChapterId;
+  title: string;
+}
+
+const { locale, chapter: id, title } = Astro.props;
+const tr = useTranslations(locale);
+const n = chapter(id).number;
+---
+
+<h2 id={`${id}-title`} class="card__chapter">
+  <span aria-hidden="true">
+    <span>{fill(tr('film.chapter'), { n })}</span>
+    <span class="card__chapter-dot">·</span>
+    <span>{title}</span>
+  </span>
+  <span class="visually-hidden card__chapter-name">{fill(tr('film.chapter.heading'), { n, title })}</span>
+</h2>

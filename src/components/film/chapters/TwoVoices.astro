@@ -6,7 +6,7 @@
  * change the person, and in his reading each voice then predicts something else (rule (k)). The
  * visitor only watches.
  */
-import { beat, chapter } from '../../../lib/chapters';
+import { beat } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { KEY_POSE, stageAt } from '../../../lib/film/stage';
 import { useTranslations, type Locale } from '../../../lib/i18n';
@@ -15,6 +15,7 @@ import { outcomeOf } from '../../../lib/table/decision';
 import { fill } from '../../../lib/template';
 import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
+import ChapterTitle from '../ChapterTitle.astro';
 
 interface Props {
   locale: Locale;
@@ -39,11 +40,7 @@ const still = stageAt(
 
 <Chapter locale={locale} id="two-voices" labelledby="two-voices-title" still={still} stillLabel={tr('film.two-voices.still')}>
   <Beat id={voices.id} screens={voices.screens} caption={captions.get(voices.id)}>
-    <h2 slot="top" id="two-voices-title" class="card__chapter">
-      <span>{fill(tr('film.chapter'), { n: chapter('two-voices').number })}</span>
-      <span aria-hidden="true">·</span>
-      <span>{title}</span>
-    </h2>
+    <ChapterTitle slot="top" locale={locale} chapter="two-voices" title={title} />
   </Beat>
 
   <Beat id={together.id} screens={together.screens} caption={captions.get(together.id)} />

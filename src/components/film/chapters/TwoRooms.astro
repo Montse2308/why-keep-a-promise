@@ -5,7 +5,7 @@
  * defecting pays more in each, and the trap closes: both defect. Every line a choice can lead to is
  * resolved here, from src/lib/pd/; ./film.ts only shows the one the visitor reached.
  */
-import { beat, chapter } from '../../../lib/chapters';
+import { beat } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { conclusionLine, askLine, pickLine, roundLine } from '../../../lib/film/lines';
 import { KEY_POSE, stageAt } from '../../../lib/film/stage';
@@ -20,6 +20,7 @@ import Chapter from '../Chapter.astro';
 import Magnifier from '../Magnifier.astro';
 import Ticket from '../Ticket.astro';
 import Tickets from '../Tickets.astro';
+import ChapterTitle from '../ChapterTitle.astro';
 
 interface Props {
   locale: Locale;
@@ -59,11 +60,7 @@ const still = stageAt(KEY_POSE['two-rooms'] ?? 0, { promised: true, round: round
 
 <Chapter locale={locale} id="two-rooms" labelledby="two-rooms-title" still={still} stillLabel={values('film.two-rooms.still')}>
   <Beat id={rooms.id} screens={rooms.screens} caption={caption(rooms.id)}>
-    <h2 slot="top" id="two-rooms-title" class="card__chapter">
-      <span>{fill(tr('film.chapter'), { n: chapter('two-rooms').number })}</span>
-      <span aria-hidden="true">·</span>
-      <span>{title}</span>
-    </h2>
+    <ChapterTitle slot="top" locale={locale} chapter="two-rooms" title={title} />
   </Beat>
 
   <Beat id={play.id} screens={play.screens} caption={caption(play.id)}>

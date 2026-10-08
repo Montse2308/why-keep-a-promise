@@ -6,7 +6,7 @@
  * exact counts. What the recipients expected barely moved, 70 against 68, and Vanberg's conclusion
  * closes the chapter. The guess is set beside the figure and never judged (ADR 0023).
  */
-import { beat, chapter } from '../../../lib/chapters';
+import { beat } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { GUESS_START, GUESSES, truth } from '../../../lib/film/guess';
 import { KEY_POSE, stageAt } from '../../../lib/film/stage';
@@ -20,6 +20,7 @@ import Chapter from '../Chapter.astro';
 import Magnifier from '../Magnifier.astro';
 import Ticket from '../Ticket.astro';
 import Tickets from '../Tickets.astro';
+import ChapterTitle from '../ChapterTitle.astro';
 
 interface Props {
   locale: Locale;
@@ -48,11 +49,7 @@ const still = stageAt(
     guessBeats.map(({ id, beat: b, real }, i) => (
       <Beat id={b.id} screens={b.screens} caption={captions.get(b.id)}>
         {i === 0 && (
-          <h2 slot="top" id="real-people-title" class="card__chapter">
-            <span>{fill(tr('film.chapter'), { n: chapter('real-people').number })}</span>
-            <span aria-hidden="true">·</span>
-            <span>{title}</span>
-          </h2>
+          <ChapterTitle slot="top" locale={locale} chapter="real-people" title={title} />
         )}
         <div class="guess" data-guess={id}>
           <label class="card__ask" for={`guess-${id}`}>{tr('film.real-people.guess.label')}</label>
