@@ -1078,6 +1078,30 @@ con un README.
 - [x] `grep -r "TODO(" dist/` vacío y `npm run check:launch` en verde: no queda ningún placeholder
       en `dist/`, `src/` ni los README.
 
+### Revisión de Montse de F5
+
+- [x] **Paridad en `/sources`:** las dos líneas del motor, en inglés en `/es/sources`, son ahora
+      texto de la página en su idioma («Su repositorio.», «Su versión, archivada en Zenodo.»). Al
+      revisar el resto apareció otra: el título de cada obra decía «and» también en español
+      («Axelrod and Hamilton (1981)»); ahora dice «y», como la prosa.
+- [x] **La referencia del working paper:** «Hernández Gallegos, M. X. (2026). *Promises to whom: …*
+      [Working paper]. SSRN.», con «[Documento de trabajo]» en español, enlazada a su DOI
+      (`10.2139/ssrn.7580218`, `WORKING_PAPER.doi`) como las demás referencias. Los demás enlaces a
+      SSRN no cambian.
+- [x] **Los títulos de los 8 capítulos** se leen como un solo nombre, «Capítulo 7: Aquí entro yo»
+      (`ChapterTitle.astro`): lo que se ve queda oculto al lector de pantalla y un nombre oculto a
+      la vista lo dice escrito como se escribe, no en mayúsculas. En la pantalla nada cambia: 64
+      recortes iguales pixel a pixel, antes y después, sin JS y con JS y movimiento reducido, a 1440
+      y 360, EN y ES; axe en cero en los dos home.
+- [x] **Lighthouse otra vez,** con el candado abierto: 13.5.0, tres corridas por home contra
+      `npm run preview`, la mediana por LCP: 2.11 s en inglés y en español (antes, cerrado, 1.96 s),
+      bajo los 2.5 s del ADR 0025. `src/data/lighthouse.json` al día; `/how-its-built` lo cita de ahí.
+- [x] **La descripción de `/finding`,** propia con el candado abierto: «Four reasons in two pairs,
+      the formula for the guilt available, a robustness check and the limits of the result.» /
+      «Cuatro razones en dos pares, la fórmula de la culpa disponible, una prueba de robustez y los
+      límites del resultado.» Cerrado, sigue siendo la pregunta del sitio. Pendiente de que Montse
+      la apruebe.
+
 ## F6 · Lanzamiento
 
 El texto ya no se somete a ninguna revista: se publica como working paper en SSRN, sin revisión por
