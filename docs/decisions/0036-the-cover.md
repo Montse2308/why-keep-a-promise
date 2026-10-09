@@ -1,7 +1,8 @@
 # 0036 · La portada del home: el mapa de la página
 
-**Estado:** aceptada (P8, paso 8.5). Precisa el ADR 0021 (qué abre el home y dónde va la pregunta) y
-el ADR 0024 (una entrada más al cuaderno). Decisión de Montse en el paso 8.4.
+**Estado:** aceptada (P8, paso 8.5). Precisa el ADR 0021 (qué abre el home, dónde va la pregunta y
+cómo se llama la página ante quien la lee) y el ADR 0024 (una entrada más al cuaderno). Decisiones de
+Montse en el paso 8.4 y al revisar el 8.5.
 
 ## Contexto
 
@@ -46,7 +47,9 @@ Eligió **D**: el mapa sobre el amanecer.
   | La investigación | The question of my research, and the simulation engine I built in TypeScript to work on it. | La pregunta de mi investigación, y el motor de simulación que construí en TypeScript para trabajarla. | «Go to chapter 7» / «Ir al capítulo 7»: el capítulo 7 |
   | El cuaderno | In depth: the dilemma, Vanberg’s experiment, how this page is built, and every source. | A fondo: el dilema, el experimento de Vanberg, cómo está hecha la página y cada fuente. | Las cinco páginas del cuaderno, sin `/finding` |
 
-- **«Historia», no «película»**, en todo lo que dice la portada. Un test lo comprueba.
+- **«Historia», no «película»** (en inglés, «story», no «film»), en todo lo que el visitante lee:
+  la portada, las claves de interfaz, la prosa de los capítulos y del cuaderno, y los README. Un
+  test lo comprueba (`tests/story-name.test.ts`).
 
 ### Lo que dice de la investigación
 
@@ -117,19 +120,24 @@ Eligió **D**: el mapa sobre el amanecer.
 - **En el 0024**, al cuaderno también se llega desde la portada, además del botón, las lupas y los
   créditos.
 
-### Pendiente para Montse
+### El nombre: «historia», en todo el sitio
 
-La portada dice «historia». El resto del sitio todavía dice «película» en 11 claves de interfaz y
-en 13 lugares de la prosa:
+Al revisar la portada, Montse decidió que el resto del sitio tampoco diga «película». Cambiaron 10
+claves de interfaz en cada idioma y 13 lugares de la prosa (la línea del capítulo 5, `/how-its-built`,
+`/sources` y `/vanberg`), y los README. Entre ellos:
 
 - la descripción del home al compartir el enlace;
-- «Volver a la película»;
+- «Volver a la historia»;
 - el nombre de la sección para el lector de pantalla;
 - los textos sin JavaScript de los capítulos 1 y 8;
-- el texto alternativo de los pósteres;
-- entre otros.
+- el texto alternativo de los pósteres.
 
-Cambiarlo en todo el sitio es otra decisión. Queda anotado en el paso 8.6.
+Donde la frase ya decía «historia», se reescribió: «Un script lo anima con el scroll; sin
+él, la historia completa sigue ahí.»
+
+**Lo que no cambia:** el nombre interno de la capa. En el código (`src/lib/film/`, las claves
+`film.*`) y en `docs/`, «la película» sigue nombrando la historia ligada al scroll, como en los ADR
+anteriores. Nadie que visita la página lo lee.
 
 ## Consecuencias
 

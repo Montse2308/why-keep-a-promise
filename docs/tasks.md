@@ -1165,9 +1165,10 @@ prototipos, capturas u opciones, pero no decide. Los pasos 5 a 8 de F6 esperan a
       - **Capturas:** `scratch/p8/8.5/`.
 - [ ] **8.6 (Montse)** QA de lo que cambió, los pesos y Lighthouse otra vez
       (`src/data/weight.json` y `src/data/lighthouse.json`), y los documentos al día; capturas a
-      360 y 1440 px, EN y ES, y la revisión del PR de P8. Dep.: 8.1 a 8.5. Pregunta abierta del
-      ADR 0036: si «película» se cambia también en el resto del sitio (11 claves y 13 lugares de la
-      prosa), o solo la portada dice «historia».
+      360 y 1440 px, EN y ES, y la revisión del PR de P8. Dep.: 8.1 a 8.5.
+- [x] **8.5b** «Historia», no «película», en todo lo que lee el visitante (decisión de Montse,
+      ADR 0036): 10 claves por idioma, 13 lugares de la prosa y los README. `tests/story-name.test.ts`
+      lo comprueba. El código y `docs/` conservan «la película» como nombre interno.
 
 ## F6 · Lanzamiento
 
