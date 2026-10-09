@@ -1112,7 +1112,12 @@ el commit (`8.3`). Un paso **(Montse)** es una decisión o revisión suya: el ag
 prototipos, capturas u opciones, pero no decide. Los pasos 5 a 8 de F6 esperan a que P8 llegue a
 `main`.
 
-- [ ] **8.1** El título del home en español cabe en computadora.
+- [x] **8.1** El título del home en español cabe en computadora. Hay una regla solo para español
+      en `Arrival.astro` (`:lang(es)`): `clamp(2rem, 5vw, 4.25rem)` y 24ch, en lugar de
+      `clamp(2rem, 6.4vw, 5rem)` y 16ch. A 1440, 1280 y 1024 queda en 2 renglones (antes 3, y a
+      1440 medía 235 px de alto; ahora 133). A 360, de lado (ADR 0031) y en inglés no cambia nada;
+      sin JS, a 1440, son 3 renglones a 68 px. `src/data/weight.json` está al día. Capturas antes y
+      después en `scratch/p8/8.1/`.
 - [ ] **8.2** Los títulos de las tarjetas de la película se ven nítidos en computadora.
 - [x] **8.3** Todos los enlaces externos abren en otra pestaña. Los internos, no: se quedan en la
       misma, porque la memoria de la película vive en la entrada de la pestaña (ADR 0029).

@@ -59,6 +59,12 @@ const ask = beat('arrival', 'ask');
     color: var(--film-ink);
   }
 
+  /* The question is longer in Spanish: smaller and wider, so it takes two lines on a computer. */
+  .arrival__title:lang(es) {
+    font-size: clamp(2rem, 5vw, 4.25rem);
+    max-width: 24ch;
+  }
+
   /* The film: the title stays at the top of the screen and fades as the camera closes in. */
   :global(html.js) .arrival__title {
     position: sticky;
