@@ -18,8 +18,13 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
-(P6, the polish, with PR #9). The active phase is F6 (launch): steps 1 to 4 of the checklist and
-F5 (QA) are done on the branch `launch/f5-qa`, with the lock open; steps 5 to 8 are Montse's.
+(P6, the polish, with PR #9). The active phase is P8 (polish before publishing), on the branch
+`polish/round-2`, never pushed during the phase: the Spanish home title fitting on a computer, sharp
+card titles in the film, external links in a new tab (internal ones stay in the tab, ADR 0029), and
+a new hero, prototyped in `scratch/`, chosen by Montse and built with ADR 0036 (steps 8.1 to 8.6 in
+`docs/tasks.md`). Before it, F5 (QA) and steps 1 to 4 of F6's checklist were done on the branch
+`launch/f5-qa`, with the lock open (PR #19); steps 5 to 8 are Montse's and wait for P8 to reach
+`main`.
 P7, the fixes from an external review, was planned in small steps (one per session) in
 `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's

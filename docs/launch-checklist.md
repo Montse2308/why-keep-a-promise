@@ -6,6 +6,8 @@ el paso 5.
 El lanzamiento lo dispara un hecho, no una fecha: el working paper ya es público en SSRN y el repo
 del motor ya es público (ADR 0034).
 
+Los pasos 5 a 8 esperan a que P8 (retoques antes de publicar, `docs/phases.md`) llegue a `main`.
+
 - [x] **1. Working paper público.** Confirmar con Montse que el working paper ya es público en
       SSRN. Anotar la URL de su página y su DOI.
       Público:

@@ -3,13 +3,14 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** F6, el lanzamiento: los pasos 1 a 4 del checklist están hechos (rama
-`launch/f5-qa`); siguen los de Montse, del 5 al 8. F5, la QA, cerrada en la misma rama, sobre el
-build con el candado abierto. P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7,
-los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos, como ella lo pidió: dio
-por hecho el de la película entera.
+**Fase activa:** P8, los retoques antes de publicar (rama `polish/round-2`, sin push). F6, el
+lanzamiento, tiene hechos los pasos 1 a 4 del checklist (PR #19); los de Montse, del 5 al 8,
+esperan a que P8 llegue a `main`. F5, la QA, cerrada en la rama `launch/f5-qa`, sobre el build con
+el candado abierto. P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7, los ajustes de la
+revisión externa, con el PR #17). P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la
+película entera.
 
-**Fase siguiente:** ninguna: después de F6, la página está en línea.
+**Fase siguiente:** los pasos 5 a 8 de F6; después, la página está en línea.
 
 **El lanzamiento (F6)** ya no espera un sometimiento: lo dispara el working paper público en SSRN y
 el repo del motor público (ADR 0034). Su preparación y sus pasos abiertos están en la sección F6.
@@ -1102,6 +1103,25 @@ con un README.
       no distingue la culpa personal del compromiso específico a la pareja, y qué muestra comparar
       mundos con distinta confianza de fondo.» Nombra las razones del hallazgo, así que es contenido
       bloqueado: cerrado, sigue siendo la pregunta del sitio.
+
+## P8 · Retoques antes de publicar
+
+En la rama `polish/round-2`, sin push en toda la fase. Como en P7, cada paso cabe en una sesión
+corta, termina en verde (`check`, `test`, `build`, `verify:dist` y `budgets`) y lleva su número en
+el commit (`8.3`). Un paso **(Montse)** es una decisión o revisión suya: el agente prepara
+prototipos, capturas u opciones, pero no decide. Los pasos 5 a 8 de F6 esperan a que P8 llegue a
+`main`.
+
+- [ ] **8.1** El título del home en español cabe en computadora.
+- [ ] **8.2** Los títulos de las tarjetas de la película se ven nítidos en computadora.
+- [ ] **8.3** Todos los enlaces externos abren en otra pestaña. Los internos, no: se quedan en la
+      misma, porque la memoria de la película vive en la entrada de la pestaña (ADR 0029).
+- [ ] **8.4 (Montse)** Prototipos del hero en `scratch/` y la elección de Montse.
+- [ ] **8.5** ADR 0036 con el hero elegido (y `docs/decisions/README.md` al día), y el hero
+      construido. Dep.: 8.4.
+- [ ] **8.6 (Montse)** QA de lo que cambió, los pesos y Lighthouse otra vez
+      (`src/data/weight.json` y `src/data/lighthouse.json`), y los documentos al día; capturas a
+      360 y 1440 px, EN y ES, y la revisión del PR de P8. Dep.: 8.1 a 8.5.
 
 ## F6 · Lanzamiento
 

@@ -3,7 +3,8 @@
 Cada sesión de trabajo autoriza una fase. Las fases anteriores (F0–F4 y el rediseño R0–R4) están en
 `docs/archivo/fases-anteriores.md`. F5 (QA) y F6 (lanzamiento) conservan su nombre porque el
 checklist y varios ADR los citan. P7, los ajustes de la revisión externa, va entre P6 y F5, partida
-en subfases (P7.0 a P7.7).
+en subfases (P7.0 a P7.7). P8, los retoques antes de publicar, va después de F5 y antes de los
+pasos 5 a 8 del checklist de F6.
 
 **Toda fase se cierra con:**
 
@@ -211,6 +212,29 @@ Los README, Lighthouse otra vez sobre el commit final y una revisión completa.
 - La revisión completa hecha: 1440, 360 y 320 px, horizontal, EN/ES, teclado, movimiento reducido,
   sin JS, script bloqueado y axe en las 14 páginas en claro y oscuro.
 - El PR de P7 revisado por Montse. Al cerrarse, empieza F5.
+
+## P8 · Retoques antes de publicar
+
+**Estado:** activa (rama `polish/round-2`, sin push).
+
+Una segunda ronda de pulido, con F5 cerrada y los pasos 1 a 4 de F6 hechos, antes de que el repo se
+haga público: el título del home en español en la compu, la nitidez de los títulos de las tarjetas,
+los enlaces externos en otra pestaña y un hero nuevo, que Montse elige entre prototipos y que entra
+con su ADR (0036). Los pasos, uno por sesión, en `docs/tasks.md`. Los pasos 5 a 8 del checklist
+esperan a que P8 llegue a `main`.
+
+**Criterio de salida**
+
+- Las cinco puertas en verde: `check`, `test`, `build`, `verify:dist` y `budgets`, con paridad
+  EN/ES.
+- El título del home en español cabe en la compu, y los títulos de las tarjetas de la película se
+  ven nítidos ahí.
+- Todo enlace externo abre en otra pestaña; los internos, en la misma, para no perder lo jugado
+  (ADR 0029).
+- El hero que Montse eligió, con su ADR 0036 en `docs/decisions/` y en su índice.
+- La QA de lo que cambió, los pesos y Lighthouse otra vez (`src/data/weight.json` y
+  `src/data/lighthouse.json` al día), y los documentos al día.
+- Capturas o video a 360 y 1440 px, EN y ES, que Montse revisa; P8 llega a `main` con su PR.
 
 ## F5 · QA
 
