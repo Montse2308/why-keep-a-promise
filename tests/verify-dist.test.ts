@@ -47,12 +47,15 @@ import {
   findingLinks,
   findMarks,
   HOME_PAGES,
+  isExternalLink,
   isNoindex,
   isPendingLink,
   linksTo,
+  linkTargetProblems,
   lockedLinkProblems,
   lockedMarks,
   MARKERS,
+  NEW_TAB_KEY,
   noindexProblems,
   NOT_FOUND_PAGE,
   readPaper,
@@ -63,7 +66,9 @@ import {
   UNLOCKED_PAGES,
   withoutInlineTags,
 } from '../scripts/verify-dist.mjs';
-import { WORKING_PAPER } from '../src/config';
+import { AUTHOR, WORKING_PAPER } from '../src/config';
+import { externalLinks, externalMark, isExternal } from '../src/lib/external';
+import { href } from '../src/lib/routes';
 import { findingUnlocked, isPending } from '../src/lib/lock';
 
 /** The working paper while its link is a placeholder (the lock closed), and once it is real (open). */
@@ -264,6 +269,8 @@ describe('verify:dist (ADR 0034)', () => {
     expect(countStandalone('<p>Nothing to see.</p>', sentence)).toBe(0);
     expect(() => countStandalone('<p>text</p>', ' ')).toThrow();
     expect(withoutInlineTags('<p class="a">x <a href="y" class="z"><cite>t</cite></a> <em>e</em></p>')).toBe('<p class="a">x t e</p>');
+    // The mark of a link that leaves the site is not part of the sentence (src/lib/external.ts).
+    expect(withoutInlineTags(`<p>x <a href="https://y">t${externalMark('https://y', 'es')}</a>.</p>`)).toBe('<p>x t.</p>');
   });
 
   it('does not count the same words inside a sentence of prose', () => {
@@ -297,8 +304,16 @@ describe('verify:dist (ADR 0034)', () => {
       expect(statusProblems(OPEN, dictionaries, home(OPEN))).toEqual([]);
     });
 
+    it('still counts it once its link opens in a new tab with its mark', () => {
+      const marked = Object.fromEntries(Object.entries(home(OPEN)).map(([path, html]) => [path, externalLinks(html, path.startsWith('es/') ? 'es' : 'en')]));
+      expect(marked['index.html']).toContain('target="_blank"');
+      expect(statusProblems(OPEN, dictionaries, marked)).toEqual([]);
+    });
+
     it('renders the sentence in one component, the same in both states', () => {
-      expect(paperStatus).toContain("{before}<a href={WORKING_PAPER.ssrn}><cite lang={locale === 'en' ? undefined : 'en'}>{WORKING_PAPER.title}</cite></a>{after}");
+      expect(paperStatus).toContain(
+        "{before}<a href={WORKING_PAPER.ssrn} {...externalAttrs(WORKING_PAPER.ssrn)}><cite lang={locale === 'en' ? undefined : 'en'}>{WORKING_PAPER.title}</cite><Fragment set:html={externalMark(WORKING_PAPER.ssrn, locale)} /></a>{after}",
+      );
       expect(paperStatus).not.toMatch(/unlocked|findingUnlocked/);
     });
 
@@ -315,7 +330,7 @@ describe('verify:dist (ADR 0034)', () => {
       expect(notebook).toMatch(/const title = \(\s*<span class="notebook__name"/);
       expect(notebook).toContain('const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);');
       // The engine's links (src/lib/engine.ts), only behind the lock.
-      expect(notebook).toMatch(/\{unlocked && \(\s*<span class="notebook__line">\s*\{tr\('notebook\.engine'\)\} <Fragment set:html=\{engineLinks\(\)\} \/>/);
+      expect(notebook).toMatch(/\{unlocked && \(\s*<span class="notebook__line">\s*\{tr\('notebook\.engine'\)\} <Fragment set:html=\{externalLinks\(engineLinks\(\), locale\)\} \/>/);
       expect(notebook.match(/engineLinks\(\)/g)).toHaveLength(1);
     });
 
@@ -425,6 +440,46 @@ describe('verify:dist (ADR 0034)', () => {
         'finding/index.html: the description carries locked content: background trust',
       ]);
       expect(descriptionProblems(OPEN, dictionaries, pages)).toEqual([]);
+    });
+  });
+
+  describe('where links open (step 8.3 of P8, ADR 0029)', () => {
+    const dictionaries = { en, es };
+    const page = (locale: 'en' | 'es', body: string) => `<!doctype html><html lang="${locale}"><body>${body}</body></html>`;
+    const film = href('en', 'home', 'two-rooms');
+    const prose = `<p><a href="https://ncase.me/trust/"><em>The Evolution of Trust</em></a>, <a href="${film}">the film</a>, <a href="#main">skip</a>.</p>`;
+
+    it('reads a link as leaving the site as src/lib/external.ts does', () => {
+      for (const link of ['https://ncase.me/trust/', 'http://a.b', '//a.b', film, '#main', 'SSRN_URL_PENDING', AUTHOR.github]) {
+        expect(isExternalLink(link)).toBe(isExternal(link));
+      }
+    });
+
+    it('passes the prose once its external links are marked, in both languages, and keeps internal ones in the tab', () => {
+      expect(NEW_TAB_KEY).toBe('link.newTab');
+      const pages = { 'index.html': page('en', externalLinks(prose, 'en')), 'es/index.html': page('es', externalLinks(prose, 'es')) };
+      expect(linkTargetProblems(dictionaries, pages)).toEqual([]);
+      expect(pages['index.html']).toContain(`<a href="${film}">`);
+    });
+
+    it('fails an external link that opens in the same tab, without rel, or without its notice', () => {
+      expect(linkTargetProblems(dictionaries, { 'index.html': page('en', prose) })).toEqual([
+        'index.html: https://ncase.me/trust/ leaves the site but does not open in a new tab',
+        'index.html: https://ncase.me/trust/ has no rel="noopener noreferrer"',
+        'index.html: https://ncase.me/trust/ does not end in the arrow and the notice',
+      ]);
+      const marked = externalLinks('<a href="https://a.b">x</a>', 'en');
+      expect(linkTargetProblems(dictionaries, { 'p.html': page('en', marked.replace(' rel="noopener noreferrer"', ' rel="noopener"')) })).toEqual([
+        'p.html: https://a.b has no rel="noopener noreferrer"',
+      ]);
+      // The notice in the other language: the page is in Spanish, the mark in English.
+      expect(linkTargetProblems(dictionaries, { 'es/p.html': page('es', marked) })).toEqual(['es/p.html: https://a.b does not say, in es, that it opens in a new tab']);
+    });
+
+    it('fails a link inside the site that opens elsewhere, which would lose what the film remembers', () => {
+      expect(linkTargetProblems(dictionaries, { 'p.html': page('en', `<a href="${film}" target="_blank">film</a>`) })).toEqual([
+        `p.html: ${film} is inside the site but opens in target="_blank"`,
+      ]);
     });
   });
 

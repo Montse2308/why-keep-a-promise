@@ -3,9 +3,12 @@
  * The status sentence (docs/content-rules.md, rule (b); ADR 0034): the working paper's title, in
  * English in both languages (and marked so on a page in Spanish), linked to its page on SSRN. Its host element holds this and nothing
  * else, so `npm run verify:dist` can count it: chapter 7's stamp, the notebook's entry for the
- * finding and /finding. The same in both states of the lock.
+ * finding and /finding. The same in both states of the lock. Once the link is real, it opens in a
+ * new tab and ends in the mark of a link that leaves the site (src/lib/external.ts), which is not
+ * part of the sentence: `verify:dist` reads the sentence without it.
  */
 import { WORKING_PAPER } from '../config';
+import { externalAttrs, externalMark } from '../lib/external';
 import { useTranslations, type Locale } from '../lib/i18n';
 import { statusParts } from '../lib/lock';
 
@@ -17,4 +20,4 @@ const { locale } = Astro.props;
 const [before, after] = statusParts(useTranslations(locale)('paper.status'));
 ---
 
-{before}<a href={WORKING_PAPER.ssrn}><cite lang={locale === 'en' ? undefined : 'en'}>{WORKING_PAPER.title}</cite></a>{after}
+{before}<a href={WORKING_PAPER.ssrn} {...externalAttrs(WORKING_PAPER.ssrn)}><cite lang={locale === 'en' ? undefined : 'en'}>{WORKING_PAPER.title}</cite><Fragment set:html={externalMark(WORKING_PAPER.ssrn, locale)} /></a>{after}

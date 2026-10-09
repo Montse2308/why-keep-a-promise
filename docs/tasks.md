@@ -1114,8 +1114,20 @@ prototipos, capturas u opciones, pero no decide. Los pasos 5 a 8 de F6 esperan a
 
 - [ ] **8.1** El título del home en español cabe en computadora.
 - [ ] **8.2** Los títulos de las tarjetas de la película se ven nítidos en computadora.
-- [ ] **8.3** Todos los enlaces externos abren en otra pestaña. Los internos, no: se quedan en la
+- [x] **8.3** Todos los enlaces externos abren en otra pestaña. Los internos, no: se quedan en la
       misma, porque la memoria de la película vive en la entrada de la pestaña (ADR 0029).
+      `src/lib/external.ts` (puro, con su test) da a cada enlace externo `target="_blank"`,
+      `rel="noopener noreferrer"` y una ↗ pequeña con `aria-hidden`, más el aviso oculto
+      `link.newTab`, «(opens in a new tab)» / «(se abre en otra pestaña)». Lo hace en los componentes
+      (la frase de estado, /sources y /about, donde se conserva `rel="me"`) y en la prosa ya
+      convertida (las leyendas de la película, las páginas del cuaderno y los enlaces del motor).
+      `verify:dist` falla si un enlace externo de `dist/` no tiene `target`, `rel` y el aviso en el
+      idioma de la página, o si uno interno abre en otro lado. Pasa con el candado abierto (86
+      externos) y cerrado (20). En /sources, entre la referencia y su dirección ahora hay un
+      espacio, y ya no un margen, para que la ↗ no caiga sola en otro renglón a 360. Las páginas de
+      inicio pesan 0.3 KiB más (`src/data/weight.json` al día). Capturas en `scratch/p8/8.3/` (1440 y
+      360, EN y ES): la tarjeta, /sources y /about, con un clic o un toque reales. Las 12 abren otra
+      pestaña y los internos se quedan en la misma.
 - [ ] **8.4 (Montse)** Prototipos del hero en `scratch/` y la elección de Montse.
 - [ ] **8.5** ADR 0036 con el hero elegido (y `docs/decisions/README.md` al día), y el hero
       construido. Dep.: 8.4.

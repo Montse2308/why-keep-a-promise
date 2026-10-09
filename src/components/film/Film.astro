@@ -12,6 +12,7 @@
 import { getCollection } from 'astro:content';
 import { BUILT, CHAPTERS, LOCKED_BEATS, type ChapterId } from '../../lib/chapters';
 import { FILM } from '../../lib/design/film';
+import { externalLinks } from '../../lib/external';
 import { splitAtLock, splitBeats } from '../../lib/film/captions';
 import { LAST_CHAPTER } from '../../lib/film/progress';
 import { stageAt } from '../../lib/film/stage';
@@ -48,7 +49,7 @@ const chapters = new Map(
   BUILT.map((c) => {
     const entry = entries.find((candidate) => candidate.data.chapter === c.id);
     if (!entry?.rendered) throw new Error(`No captions for chapter "${c.id}" in ${locale}`);
-    const parts = splitAtLock(entry.rendered.html);
+    const parts = splitAtLock(externalLinks(entry.rendered.html, locale));
     const open = c.beats.filter((b) => !(c.id === 'my-research' && locked.has(b.id)));
     const beats = splitBeats(fill(parts.open, FILM_VALUES), open.map((b) => b.id));
     return [c.id, { title: entry.data.title, captions: beats, locked: parts.locked }] as const;

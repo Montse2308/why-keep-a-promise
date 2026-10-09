@@ -82,7 +82,7 @@ not by reading test output.
 | `npm test`        | Vitest, once                                      |
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
-| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034) |
+| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034), or if a link leaving the site does not open in a new tab with its notice, or one inside it does (8.3) |
 | `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
 | `npm run check:launch` | Builds, then fails while a link is still a `*_PENDING` placeholder in `dist/`, `src/` or the READMEs (ADR 0034). Not in CI; step 3 of the launch checklist and `deploy.yml` run it |
 
@@ -144,6 +144,8 @@ src/
     lock.ts              the lock: full content only once the working paper's link is real, or in
                          dev (ADR 0034); the status sentence's parts
     engine.ts            the engine's links, where the prose behind the lock writes {engine}
+    external.ts          links that leave the site: a new tab, rel and the ↗ with its notice, in
+                         components and in rendered prose (8.3); internal links stay in the tab
     film/                the scene engine: tracks, easing, colours (OKLCH), camera, chapter
                          spans; timeline.ts (screens, beats, the native scroll mapped to the film);
                          faces.ts (the moods); stage.ts (what the stage shows at each point);

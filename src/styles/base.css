@@ -92,6 +92,12 @@ a:hover {
   text-decoration-color: currentColor;
 }
 
+/* A link that leaves the site opens in a new tab and ends in a small arrow (src/lib/external.ts). */
+.link-out > [aria-hidden] {
+  margin-inline-start: 0.15em;
+  font-size: 0.75em;
+}
+
 :focus-visible {
   outline: var(--focus-width) solid var(--color-focus);
   outline-offset: 2px;
