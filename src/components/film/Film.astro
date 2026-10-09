@@ -400,16 +400,8 @@ const of = (id: ChapterId) => {
     display: none;
   }
 
-  /*
-   * A phone: the sound is drawn alone, its name for screen readers, beside the spool. The first
-   * screen's top row holds the language link and the title spans the phone, so the button shows once
-   * the title has gone (./film.ts); by then the corner has scrolled away.
-   */
+  /* A phone: the sound is drawn alone, its name for screen readers, beside the spool. */
   @media (max-width: 30rem) {
-    .film[data-title='shown'] .film__sound {
-      visibility: hidden;
-    }
-
     .film__sound {
       padding: 0;
     }

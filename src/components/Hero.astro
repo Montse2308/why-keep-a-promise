@@ -1,0 +1,335 @@
+---
+/**
+ * The home's cover (ADR 0036): before the film, the page says what it holds. The question is the
+ * page's title; under it, one line and a door to each part of the page (src/lib/hero.ts): the story,
+ * the research and the notebook. HTML and CSS only: it is the same with or without JavaScript, and its
+ * links are plain links, to the film's chapters or to the notebook's pages. Its sky is the film's dawn,
+ * with the stage's sun and clouds, and ends in the colour the stage begins with.
+ */
+import { FILM } from '../lib/design/film';
+import { COVER_PAGES, COVER_SKY, DOORS, type Door } from '../lib/hero';
+import { useTranslations, type Locale } from '../lib/i18n';
+import { href } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const sky = `--cover-top: ${COVER_SKY.top}; --cover-glow: ${COVER_SKY.glow}; --cover-foot: ${COVER_SKY.foot}`;
+const [story, research, notebook] = DOORS as readonly [Door, Door, Door];
+const chapterHref = (door: Door) => href(locale, 'home', door.chapter ?? undefined);
+---
+
+<section class="cover" aria-labelledby="cover-title" style={sky}>
+  <!-- The stage's sun and two of its clouds, as the world draws them. -->
+  <div class="cover__sun" aria-hidden="true"></div>
+  {
+    ['one', 'two'].map((n) => (
+      <svg class:list={['cover__cloud', `cover__cloud--${n}`]} viewBox="0 0 220 110" aria-hidden="true">
+        <g fill="#ffffff" opacity="0.9">
+          <ellipse cx="96" cy="72" rx="92" ry="32" />
+          <ellipse cx="158" cy="50" rx="60" ry="38" />
+        </g>
+      </svg>
+    ))
+  }
+
+  <h1 id="cover-title" class="cover__title">{tr('site.title')}</h1>
+  <p class="cover__line">{tr('hero.line')}</p>
+
+  <ul class="cover__doors" role="list" aria-label={tr('hero.doors')}>
+    <li class="door">
+      <div class="door__head">
+        <svg class="door__icon" viewBox="-30 -24 60 48" aria-hidden="true">
+          <circle cx="-17" cy="8" r="10" fill={FILM.you} stroke={FILM.ink} stroke-width="3" />
+          <rect x="7" y="-2" width="20" height="20" rx="4" fill={FILM.other} stroke={FILM.ink} stroke-width="3" />
+          <rect x="-7" y="-20" width="14" height="14" rx="3" fill={FILM.card} stroke={FILM.ink} stroke-width="2.5" />
+          <circle cx="-2.5" cy="-15.5" r="1.6" fill={FILM.ink} />
+          <circle cx="2.5" cy="-10.5" r="1.6" fill={FILM.ink} />
+        </svg>
+        <h2 class="door__name">{tr(story.titleKey)}</h2>
+      </div>
+      <p class="door__text">{tr(story.textKey)}</p>
+      <a class="door__go door__go--first" href={chapterHref(story)}>
+        {story.goKey && tr(story.goKey)} <span class="door__arrow" aria-hidden="true">↓</span>
+      </a>
+    </li>
+    <li class="door">
+      <div class="door__head">
+        <svg class="door__icon" viewBox="-30 -24 60 48" aria-hidden="true">
+          <rect x="-24" y="-16" width="48" height="32" rx="4" fill={FILM['voice-word']} stroke={FILM.ink} stroke-width="3" />
+          <path d="M-24 -14 L0 4 L24 -14" fill="none" stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
+          <circle cx="0" cy="4" r="7" fill={FILM.thread} stroke={FILM['thread-edge']} stroke-width="2.5" />
+        </svg>
+        <h2 class="door__name">{tr(research.titleKey)}</h2>
+      </div>
+      <p class="door__text">{tr(research.textKey)}</p>
+      <a class="door__go" href={chapterHref(research)}>{research.goKey && tr(research.goKey)}</a>
+    </li>
+    <li class="door">
+      <div class="door__head">
+        <svg class="door__icon" viewBox="-14 -14 28 28" aria-hidden="true">
+          <rect x="-9" y="-11" width="19" height="22" rx="3" fill={FILM['table-top']} stroke={FILM.ink} stroke-width="2.2" />
+          <path d="M3 -11 V2 L5.5 -0.5 L8 2 V-11" fill={FILM.thread} stroke={FILM.ink} stroke-width="1.6" stroke-linejoin="round" />
+          <path d="M-12 -6 H-6 M-12 0 H-6 M-12 6 H-6" stroke={FILM.ink} stroke-width="2.2" stroke-linecap="round" />
+        </svg>
+        <h2 class="door__name">{tr(notebook.titleKey)}</h2>
+      </div>
+      <p class="door__text">{tr(notebook.textKey)}</p>
+      <ul class="door__pages" role="list">
+        {COVER_PAGES.map((entry) => <li><a href={href(locale, entry.page)}>{tr(entry.titleKey)}</a></li>)}
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<style>
+  /*
+   * A sheet of paper laid over the stage (ADR 0027): its edge casts a shadow on the stage as the stage
+   * comes up, so the seam reads as paper over paper, never as a cut.
+   */
+  .cover {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+    box-shadow: 0 12px 26px rgb(40 30 60 / 0.24);
+    overflow: hidden;
+    box-sizing: border-box;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.8rem, 2vh, 1.3rem);
+    padding: calc(var(--space-16) + env(safe-area-inset-top, 0px)) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+    color: var(--film-ink);
+    font-family: var(--font-body, system-ui, sans-serif);
+    text-align: center;
+    /* The dawn, a glow of its horizon low in the sky, and a foot in the colour the stage begins with. */
+    background:
+      radial-gradient(ellipse 70% 38% at 50% 64%, rgb(255 244 194 / 0.7), rgb(255 244 194 / 0) 72%),
+      linear-gradient(var(--cover-top), var(--cover-glow) 58%, var(--cover-foot));
+  }
+
+  .cover__sun {
+    position: absolute;
+    z-index: -1;
+    right: 12%;
+    top: 13%;
+    width: clamp(5rem, 9vw, 8.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #fff4c2;
+    filter: drop-shadow(0 9px 7px rgb(40 30 60 / 0.28));
+  }
+
+  .cover__cloud {
+    position: absolute;
+    z-index: -1;
+    width: clamp(9rem, 17vw, 16rem);
+    filter: drop-shadow(0 9px 7px rgb(40 30 60 / 0.28));
+  }
+
+  .cover__cloud--one {
+    left: 6%;
+    top: 9%;
+  }
+
+  .cover__cloud--two {
+    right: 30%;
+    top: 3%;
+    width: clamp(7rem, 12vw, 11rem);
+  }
+
+  .cover__title {
+    margin: 0;
+    max-width: 20ch;
+    font-family: var(--font-display, Georgia, serif);
+    font-size: min(clamp(2.3rem, 5.6vw, 5rem), 9.5vh);
+    font-style: italic;
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* The question is longer in Spanish: smaller and wider, so it takes two lines on a computer (8.1). */
+  .cover__title:lang(es) {
+    font-size: min(clamp(2.2rem, 5vw, 4.5rem), 9vh);
+    max-width: 24ch;
+  }
+
+  .cover__line {
+    margin: 0;
+    max-width: 38rem;
+    font-size: clamp(1.05rem, 1.55vw, 1.35rem);
+    font-weight: 600;
+    line-height: 1.4;
+    text-wrap: balance;
+  }
+
+  .cover__doors {
+    display: grid;
+    gap: var(--space-4);
+    width: min(30rem, 100%);
+    margin: clamp(0.3rem, 1.4vh, 1rem) 0 0;
+    padding: 0;
+    list-style: none;
+    text-align: start;
+  }
+
+  .door {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 1.1rem 1.2rem 1.2rem;
+    border-radius: var(--radius-lg, 16px);
+    background: var(--film-card);
+    box-shadow:
+      0 10px 24px rgb(40 30 60 / 0.2),
+      0 0 0 2px rgb(29 27 58 / 0.1);
+  }
+
+  .door__head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .door__icon {
+    flex: none;
+    width: 2.8rem;
+    height: 2.4rem;
+  }
+
+  .door__name {
+    margin: 0;
+    font-family: var(--font-display, Georgia, serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 900;
+    line-height: 1.05;
+  }
+
+  .door__text {
+    margin: 0;
+    color: var(--film-card-muted);
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .door__go,
+  .door__pages a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    border-radius: 999px;
+    color: var(--film-ink);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .door__go {
+    margin-top: auto;
+    align-self: flex-start;
+    gap: 0.45rem;
+    padding: 0 1.15rem;
+    border: 2.5px solid var(--film-ink);
+    background: var(--film-card);
+    font-size: 0.92rem;
+  }
+
+  .door__go--first {
+    background: var(--film-ink);
+    color: var(--film-rim);
+  }
+
+  .door__pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: auto 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .door__pages a {
+    padding: 0 0.8rem;
+    border: 1.5px solid rgb(29 27 58 / 0.3);
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  .door__go:hover,
+  .door__pages a:hover {
+    background: #f3ead8;
+  }
+
+  .door__go--first:hover {
+    background: #2c2952;
+  }
+
+  .door__go:focus-visible,
+  .door__pages a:focus-visible {
+    outline: 3px solid var(--film-ink);
+    outline-offset: 3px;
+  }
+
+  .door__arrow {
+    display: inline-block;
+    font-size: 1.2em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .door__arrow {
+      animation: door-bob 1.6s ease-in-out infinite;
+    }
+  }
+
+  @keyframes door-bob {
+    50% {
+      transform: translateY(0.22em);
+    }
+  }
+
+  /* Wide enough: the three doors side by side. */
+  @media (min-width: 44rem) {
+    .cover__doors {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      width: min(70rem, 100%);
+    }
+  }
+
+  /* A phone: the doors go one under another, from the top; the sun and a cloud lean out of the edges. */
+  @media (max-width: 40rem) {
+    .cover {
+      justify-content: flex-start;
+    }
+
+    .cover__sun {
+      right: -1.5rem;
+      top: 15%;
+    }
+
+    .cover__cloud--one {
+      left: -2.5rem;
+      top: 12%;
+    }
+
+    .cover__cloud--two {
+      display: none;
+    }
+  }
+
+  /* A phone held sideways (ADR 0031): the title fits the short screen. */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .cover__title,
+    .cover__title:lang(es) {
+      font-size: clamp(1.6rem, 9vh, 2.4rem);
+    }
+  }
+</style>

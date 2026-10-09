@@ -1,11 +1,13 @@
 ---
 /**
- * Chapter 0, the arrival (ADR 0021): the question over the dawn, the other asking for a promise,
- * the two tickets and the page's own promise. Choosing ties the golden thread or not (./film.ts).
+ * Chapter 0, the arrival (ADR 0021): at dawn, the other asking for a promise, the two tickets and the
+ * page's own promise. Choosing ties the golden thread or not (./film.ts). The question, the page's
+ * title, is the cover's, above the film (ADR 0036): the chapter keeps a heading for a screen reader.
  */
 import { beat } from '../../../lib/chapters';
 import { FILM } from '../../../lib/design/film';
 import { useTranslations, type Locale } from '../../../lib/i18n';
+import { fill } from '../../../lib/template';
 import { KEY_POSE, stageAt } from '../../../lib/film/stage';
 import Beat from '../Beat.astro';
 import Chapter from '../Chapter.astro';
@@ -24,8 +26,8 @@ const ask = beat('arrival', 'ask');
 
 <Chapter locale={locale} id="arrival" labelledby="arrival-title" still={stageAt(KEY_POSE.arrival ?? 0, { promised: true }, false, true)} stillLabel={tr('film.arrival.still')}>
   <Beat id={ask.id} screens={ask.screens} caption={captions.get(ask.id)} opening>
-    <h1 slot="above" id="arrival-title" class="arrival__title" data-title>{tr('site.title')}</h1>
     <Fragment slot="top">
+      <h2 id="arrival-title" class="visually-hidden">{fill(tr('film.chapter.heading'), { n: 0, title: tr('film.arrival.name') })}</h2>
       <p class="card__say">
         <span class="card__who" aria-hidden="true"></span>
         <span><span class="visually-hidden">{tr('film.arrival.who')}: </span>{tr('film.arrival.ask')}</span>
@@ -44,49 +46,3 @@ const ask = beat('arrival', 'ask');
   </Beat>
 </Chapter>
 
-<style>
-  .arrival__title {
-    margin: 0;
-    font-family: var(--font-display, Georgia, serif);
-    font-size: clamp(2rem, 6.4vw, 5rem);
-    font-style: italic;
-    font-weight: 900;
-    line-height: 0.98;
-    letter-spacing: -0.02em;
-    text-align: center;
-    max-width: 16ch;
-    margin-inline: auto;
-    color: var(--film-ink);
-  }
-
-  /* The question is longer in Spanish: smaller and wider, so it takes two lines on a computer. */
-  .arrival__title:lang(es) {
-    font-size: clamp(2rem, 5vw, 4.25rem);
-    max-width: 24ch;
-  }
-
-  /* The film: the title stays at the top of the screen and fades as the camera closes in. */
-  :global(html.js) .arrival__title {
-    position: sticky;
-    top: calc(var(--space-16) + env(safe-area-inset-top, 0px));
-    opacity: calc(1 - var(--title-gone, 0));
-    transform: translateY(calc(var(--title-gone, 0) * -2rem));
-  }
-
-  /*
-   * A phone held sideways (ADR 0031): the card is at the left, so the title goes over the free area
-   * right of it (Film.astro), smaller, between the corner's row and the heads.
-   */
-  @media (orientation: landscape) and (max-height: 500px) {
-    :global(html.js) .arrival__title {
-      align-self: flex-end;
-      box-sizing: border-box;
-      width: calc(100% - var(--side-card));
-      max-width: none;
-      margin: 0;
-      padding-inline: var(--space-4) 0;
-      top: var(--side-top);
-      font-size: clamp(1.35rem, 3.6vw, 2.1rem);
-    }
-  }
-</style>

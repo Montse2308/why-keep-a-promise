@@ -183,13 +183,13 @@ function run(): void {
   const cells = [...world.querySelectorAll<SVGElement>('[data-cell]')];
   const spool = film.querySelector<SVGElement>('[data-spool]');
   const spoolLabel = film.querySelector<HTMLElement>('[data-spool-label]');
-  const title = film.querySelector<HTMLElement>('[data-title]');
   const envelope = film.querySelector<HTMLElement>('[data-envelope]');
   const paper = film.querySelector<HTMLElement>('[data-paper]');
   const freeArea = film.querySelector<HTMLElement>('[data-free]');
   const beads = [...film.querySelectorAll<HTMLElement>('[data-bead]')];
   const progressLabel = film.querySelector<HTMLElement>('[data-progress-label]');
   let chapterShown = 0;
+  let leadShown = -1;
 
   // The sound: off until the visitor presses its button, which shows only where Web Audio exists.
   const sound = createSound();
@@ -435,13 +435,17 @@ function run(): void {
     if (view.engine.shown > 0) GEARS.forEach((gear, i) => set(parts.gears[i], 'transform', gearTransform(gear, view.engine.turn)));
     envelope?.style.setProperty('--opened', view.envelope.toFixed(3));
 
-    title?.style.setProperty('--title-gone', view.titleGone.toFixed(3));
+    // The cover above the film (ADR 0036): until the film reaches the top of the screen, its first
+    // card rides up with the stage instead of waiting at the bottom of the screen (Beat.astro).
+    const lead = Math.max(0, Math.round(film.getBoundingClientRect().top));
+    if (lead !== leadShown) {
+      leadShown = lead;
+      film.style.setProperty('--lead', `${lead}px`);
+    }
     // The end: over the film's last stretch of scroll, before the stage goes, its floor melts into
     // the footer's paper (Film.astro).
     const left = film.getBoundingClientRect().bottom - innerHeight;
     set(paper, 'style', `opacity: ${clamp(1 - left / (innerHeight * END_SCREENS), 0, 1).toFixed(3)}`);
-    // On a phone the sound's button waits under the spool until the title has gone (Film.astro).
-    set(film, 'data-title', view.titleGone < 0.6 ? 'shown' : 'gone');
 
     // The progress under the spool: each chapter's bead, and the chapter in words for a screen reader.
     const progress = progressAt(p * TOTAL_SCREENS);
