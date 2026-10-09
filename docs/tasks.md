@@ -1118,7 +1118,14 @@ prototipos, capturas u opciones, pero no decide. Los pasos 5 a 8 de F6 esperan a
       1440 medía 235 px de alto; ahora 133). A 360, de lado (ADR 0031) y en inglés no cambia nada;
       sin JS, a 1440, son 3 renglones a 68 px. `src/data/weight.json` está al día. Capturas antes y
       después en `scratch/p8/8.1/`.
-- [ ] **8.2** Los títulos de las tarjetas de la película se ven nítidos en computadora.
+- [x] **8.2** Los títulos de las tarjetas de la película se ven nítidos en computadora. La causa era
+      el giro de −0.4° de la tarjeta: sacaba el texto de la rejilla de pixeles. No eran ni el tamaño
+      óptico (el Fraunces del sitio quedó fijado en opsz 14, un corte de texto) ni el peso. Montse
+      eligió la variante C: en `Beat.astro`, el papel y su sombra giran en un `::before` detrás del
+      texto, que queda derecho. Con DPR 1, los medios tonos del título bajan de 52.7 % a 34.2 %. El
+      sobre del capítulo 7 y la tarjeta de lado (ADR 0031) siguen girando enteros. `weight.json` está
+      al día. El diagnóstico está en `scratch/p8/8.2/` y las capturas de antes y después (1440 con
+      DPR 1 y 2, y 360) en `scratch/p8/8.2/before-after/`.
 - [x] **8.3** Todos los enlaces externos abren en otra pestaña. Los internos, no: se quedan en la
       misma, porque la memoria de la película vive en la entrada de la pestaña (ADR 0029).
       `src/lib/external.ts` (puro, con su test) da a cada enlace externo `target="_blank"`,

@@ -42,16 +42,32 @@ const { id, screens, caption, opening = false, cardClass, roll = false } = Astro
   }
 
   .card {
+    --paper-shadow: 0 10px 28px rgb(40 30 60 / 0.2);
+    --paper-tilt: rotate(-0.4deg);
+    position: relative;
+    isolation: isolate;
     box-sizing: border-box;
     width: min(38rem, 100%);
     display: grid;
     gap: var(--space-3);
     padding: var(--space-4);
-    background: var(--film-card);
     color: var(--film-ink);
     border-radius: 14px;
-    box-shadow: 0 10px 28px rgb(40 30 60 / 0.2);
-    transform: rotate(-0.4deg);
+  }
+
+  /*
+   * The paper is tilted; its words are not. Turning the text takes it off the pixel grid, and the
+   * card's titles blur on a screen of DPR 1 (8.2), so only the paper and its shadow turn, behind them.
+   */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--film-card);
+    box-shadow: var(--paper-shadow);
+    transform: var(--paper-tilt);
   }
 
   .card :global(p),
@@ -240,11 +256,19 @@ const { id, screens, caption, opening = false, cardClass, roll = false } = Astro
       padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px)) var(--gutter);
     }
 
+    /* It may scroll inside itself, which a paper behind it would not follow: the whole card tilts. */
     :global(html.js) .card {
       width: var(--side-card);
       max-height: calc(100svh - var(--side-top) - var(--space-3) - env(safe-area-inset-bottom, 0px));
       overflow-y: auto;
       bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+      background: var(--film-card);
+      box-shadow: var(--paper-shadow);
+      transform: var(--paper-tilt);
+    }
+
+    :global(html.js) .card::before {
+      content: none;
     }
   }
 
