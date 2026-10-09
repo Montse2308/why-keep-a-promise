@@ -15,7 +15,7 @@ cambio, y quien recibe nunca se entera.
 ### Una pareja nueva, con una promesa propia.
 
 A ella también le prometieron algo, otra persona que decide, como tú. En el experimento el cambio
-llegaba al azar; en esta película siempre es este caso, un ejemplo fijo.
+llegaba al azar; en esta historia siempre es este caso, un ejemplo fijo.
 
 Lo que el otro espera sigue ahí. Tu palabra no: se la diste a alguien que se fue.
 

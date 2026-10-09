@@ -4,11 +4,11 @@
 
 **[Abrir el sitio](https://montse2308.github.io/why-keep-a-promise/es/)**
 
-![Cuatro cuadros de la película a lo largo del día: el título al amanecer, el dilema del prisionero a mediodía, una pareja nueva en la mesa por la tarde mientras el hilo de la promesa sigue yendo a quien se fue, y otra vez la primera mesa de noche.](.github/readme/film-es.webp)
+![Cuatro cuadros de la historia a lo largo del día: el título al amanecer, el dilema del prisionero a mediodía, una pareja nueva en la mesa por la tarde mientras el hilo de la promesa sigue yendo a quien se fue, y otra vez la primera mesa de noche.](.github/readme/film-es.webp)
 
 La página de divulgación de un proyecto personal de investigación sobre por qué la gente cumple
 promesas que ya no le convienen. El home abre con una portada con una puerta a cada parte de la
-página y sigue con una película corta ligada al scroll, en nueve capítulos, del dilema del
+página y sigue con una historia ilustrada corta que avanza con el scroll, en nueve capítulos, del dilema del
 prisionero al juego de cambio de pareja de Vanberg (2008), y un cuaderno a un toque de distancia
 guarda la profundidad.
 
@@ -16,9 +16,9 @@ guarda la profundidad.
 
 - **Primero, un storyboard.** Cada página es HTML estático. Sin JavaScript, el home es un
   storyboard: cada capítulo un cuadro quieto con sus textos, cada resultado por escrito. Un script
-  lo convierte en la película, sobre el scroll nativo, que nunca captura.
+  lo pone a moverse con el scroll nativo, que nunca captura.
 - **Un motor de escenas propio.** Pistas, suavizado, colores mezclados en OKLCH y una cámara que
-  encuadra cada pantalla, escritos en TypeScript para esta película: módulos puros con sus pruebas,
+  encuadra cada pantalla, escritos en TypeScript para esta historia: módulos puros con sus pruebas,
   sin librería de animación y sin canvas.
 - **Un candado fuera del build.** Una parte del sitio sigue cerrada hasta que el
   [documento de trabajo (*working paper*)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218)

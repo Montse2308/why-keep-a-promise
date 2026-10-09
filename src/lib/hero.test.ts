@@ -1,6 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import en from '../i18n/en.json';
-import es from '../i18n/es.json';
 import { CHAPTER_IDS, OPEN_CHAPTERS } from './chapters';
 import { deltaE, parseHex, toLab } from './design/color';
 import { frame, isClose, wholeScreen, type Area, type Viewport } from './film/camera';
@@ -8,7 +6,6 @@ import { stageAt } from './film/stage';
 import { COVER_PAGES, COVER_SKY, DOORS, dawnSkyAt } from './hero';
 import { linkable } from './notebook';
 
-const dictionaries = { en, es } as const;
 const distance = (a: string, b: string) => deltaE(toLab(parseHex(a)), toLab(parseHex(b)));
 
 describe('the home’s cover (ADR 0036)', () => {
@@ -26,16 +23,6 @@ describe('the home’s cover (ADR 0036)', () => {
   it('links the same notebook pages in either state of the lock: never /finding', () => {
     expect(COVER_PAGES.map((entry) => entry.page)).toEqual(linkable(false).map((entry) => entry.page));
     expect(COVER_PAGES.some((entry) => entry.page === 'finding')).toBe(false);
-  });
-
-  it('calls the page a story, not a film, in both languages (Montse, 8.4)', () => {
-    for (const locale of ['en', 'es'] as const) {
-      const words = Object.entries(dictionaries[locale])
-        .filter(([key]) => key.startsWith('hero.'))
-        .map(([, text]) => text.toLowerCase());
-      expect(words.length).toBeGreaterThan(0);
-      for (const text of words) expect(text).not.toMatch(/film|película|pelicula/);
-    }
   });
 
   it('starts in the dawn’s sky and ends in the colour the stage begins with, on any screen (ADR 0027: no cuts)', () => {

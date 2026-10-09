@@ -6,13 +6,13 @@ title: Cómo está hecho
 
 Astro construye cada página de antemano, en HTML y CSS simples. El
 home es primero un storyboard: cada capítulo un cuadro quieto, sus tarjetas en orden, cada resultado
-por escrito. Un script lo convierte en la película; sin él, la historia completa sigue ahí. La lógica
-vive en módulos puros con sus pruebas, y JavaScript corre solo en la película y el panel del
+por escrito. Un script lo anima con el scroll; sin él, la historia completa sigue ahí. La lógica
+vive en módulos puros con sus pruebas, y JavaScript corre solo en la historia y el panel del
 cuaderno.
 
 ## Un motor de escenas propio
 
-La película se mueve con un motor de escenas escrito para ella, en TypeScript. Las pistas guardan
+La historia se mueve con un motor de escenas escrito para ella, en TypeScript. Las pistas guardan
 valores ligados al scroll; el motor suaviza el paso entre ellos, para que nada arranque ni pare
 de golpe, y encuadra la cámara para cada pantalla. Un ciclo lee el scroll
 nativo y pinta lo que dicen las pistas: nada captura la rueda ni el dedo, y solo cambian
@@ -26,7 +26,7 @@ export function easeInOut(t: number): number {
 }
 ```
 
-Mezcla los colores por tono, en OKLCH, nunca canal por canal. Por eso el día de la película tiene
+Mezcla los colores por tono, en OKLCH, nunca canal por canal. Por eso el día de la historia tiene
 una salida del sol:
 
 <!-- slot:day -->
@@ -70,10 +70,10 @@ const enCoversEs: Record<keyof typeof es, string> = en;
 ```
 
 **Un registro de cifras.** Cada número que la página puede decir está en una lista con su fuente;
-las leyendas de la película no llevan ninguno, solo nombres que el build llena desde el código. Una
+las leyendas de la historia no llevan ninguno, solo nombres que el build llena desde el código. Una
 prueba falla con cualquier otro número o con una cita sin fuente.
 
-**Solo agregar.** Una prueba falla si este cuaderno repite una oración de la película.
+**Solo agregar.** Una prueba falla si este cuaderno repite una oración de la historia.
 
 **Frases prohibidas.** Otra prueba falla con una lista corta de frases que la página nunca debe
 decir.
@@ -81,14 +81,14 @@ decir.
 ## Accesibilidad
 
 Cada elección es un botón nativo que funciona con el teclado, y cada resultado se anuncia en una
-región en vivo. Con movimiento reducido, la película corta entre cuadros quietos y todos los juegos
+región en vivo. Con movimiento reducido, la historia corta entre cuadros quietos y todos los juegos
 funcionan. El contraste se prueba en cada punto de la luz del día, y el elenco se distingue
 con los dos daltonismos más comunes.
 
 ## Peso y velocidad
 
 El script del home, sus tipografías y su primera carga tienen un techo, fijado antes de escribir
-la película; un script revisa cada build.
+la historia; un script revisa cada build.
 
 <!-- slot:weight -->
 
