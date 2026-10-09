@@ -7,9 +7,10 @@
 ![Cuatro cuadros de la película a lo largo del día: el título al amanecer, el dilema del prisionero a mediodía, una pareja nueva en la mesa por la tarde mientras el hilo de la promesa sigue yendo a quien se fue, y otra vez la primera mesa de noche.](.github/readme/film-es.webp)
 
 La página de divulgación de un proyecto personal de investigación sobre por qué la gente cumple
-promesas que ya no le convienen. El home es una película corta ligada al scroll, en nueve
-capítulos, del dilema del prisionero al juego de cambio de pareja de Vanberg (2008), y un cuaderno
-a un toque de distancia guarda la profundidad.
+promesas que ya no le convienen. El home abre con una portada con una puerta a cada parte de la
+página y sigue con una película corta ligada al scroll, en nueve capítulos, del dilema del
+prisionero al juego de cambio de pareja de Vanberg (2008), y un cuaderno a un toque de distancia
+guarda la profundidad.
 
 ## Lo que vale la pena ver
 

@@ -21,12 +21,20 @@ Tiene que:
 
 | Capa | Qué es | Rutas (EN y ES) | ADR |
 | ---- | ------ | --------------- | --- |
-| **La película** | El home: la historia en nueve capítulos, ligada al scroll, sobre un solo escenario de papel que cambia de luz. | `/`, `/es/` | 0021 |
+| **La película** | El home: una portada y, después, la historia en nueve capítulos, ligada al scroll, sobre un solo escenario de papel que cambia de luz. | `/`, `/es/` | 0021, 0036 |
 | **El cuaderno** | La profundidad técnica y académica, a un toque desde cualquier punto. | `/dilemma`, `/vanberg`, `/finding`, `/how-its-built`, `/sources`, `/about` | 0024 |
 
 - Nombre interno: «Te lo prometo» / «I promise».
 - Título visible: «Why keep a promise that no longer pays?» / «¿Por qué cumplir una promesa que ya
-  no conviene?».
+  no conviene?», en la portada.
+
+## La portada (ADR 0036)
+
+- Antes del capítulo 0: la pregunta, una línea («Una historia ilustrada sobre esta pregunta, y la
+  investigación que salió de ella.») y tres puertas: la historia (al capítulo 0), la investigación
+  (al capítulo 7) y el cuaderno (sus cinco páginas, sin `/finding`).
+- Sobre el cielo del amanecer de la película, sin elenco y sin corte de color. HTML y CSS, sin script.
+- Llama a la página «historia», no «película».
 
 ## La película
 

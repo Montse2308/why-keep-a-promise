@@ -22,7 +22,7 @@ It is **not** a simulator and **not** the instrument of a paper. Details: `docs/
 `polish/round-2`, never pushed during the phase: the Spanish home title fitting on a computer, sharp
 card titles in the film, external links in a new tab (internal ones stay in the tab, ADR 0029), and
 a new hero, prototyped in `scratch/`, chosen by Montse and built with ADR 0036 (steps 8.1 to 8.6 in
-`docs/tasks.md`). Before it, F5 (QA) and steps 1 to 4 of F6's checklist were done on the branch
+`docs/tasks.md`; 8.1 to 8.5 are done, 8.6 is Montse's review). Before it, F5 (QA) and steps 1 to 4 of F6's checklist were done on the branch
 `launch/f5-qa`, with the lock open (PR #19); steps 5 to 8 are Montse's and wait for P8 to reach
 `main`.
 P7, the fixes from an external review, was planned in small steps (one per session) in
@@ -146,6 +146,8 @@ src/
     engine.ts            the engine's links, where the prose behind the lock writes {engine}
     external.ts          links that leave the site: a new tab, rel and the ↗ with its notice, in
                          components and in rendered prose (8.3); internal links stay in the tab
+    hero.ts              the home's cover (ADR 0036): its three doors, the notebook pages it
+                         links (never /finding) and its sky, which ends in the stage's first colour
     film/                the scene engine: tracks, easing, colours (OKLCH), camera, chapter
                          spans; timeline.ts (screens, beats, the native scroll mapped to the film);
                          faces.ts (the moods); stage.ts (what the stage shows at each point);
@@ -210,7 +212,8 @@ src/
                          curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
-                         LanguageSwitch; PaperStatus, the status sentence (ADR 0034)
+                         LanguageSwitch; PaperStatus, the status sentence (ADR 0034); Hero, the
+                         home's cover (ADR 0036)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale; posters/[locale]/[route].png.ts

@@ -1140,12 +1140,34 @@ prototipos, capturas u opciones, pero no decide. Los pasos 5 a 8 de F6 esperan a
       inicio pesan 0.3 KiB más (`src/data/weight.json` al día). Capturas en `scratch/p8/8.3/` (1440 y
       360, EN y ES): la tarjeta, /sources y /about, con un clic o un toque reales. Las 12 abren otra
       pestaña y los internos se quedan en la misma.
-- [ ] **8.4 (Montse)** Prototipos del hero en `scratch/` y la elección de Montse.
-- [ ] **8.5** ADR 0036 con el hero elegido (y `docs/decisions/README.md` al día), y el hero
-      construido. Dep.: 8.4.
+- [x] **8.4 (Montse)** Prototipos del hero en `scratch/` y la elección de Montse. Cinco maquetas
+      sobre la película real, en `scratch/p8/hero/`: A, la portada en el amanecer; B, la noche con el
+      elenco; C, un subtítulo; D y E, «el mapa», con el fondo de A y de B. Montse descartó C, pidió
+      que la página no se llame «película» y que la portada diga todo lo que es la página, y eligió D.
+- [x] **8.5** ADR 0036 con el hero elegido (y `docs/decisions/README.md` al día), y el hero
+      construido. La portada (`Hero.astro`, `src/lib/hero.ts` con su test) lleva la pregunta, una
+      línea y tres puertas: la historia, la investigación y el cuaderno.
+      - **Cielo y costura:** va sobre el cielo del amanecer y termina en el color con que empieza el
+        escenario, calculado del mismo degradado (menos de 1 ΔE*ab a 1440, 1024, 360, 320 y de
+        lado). Su borde proyecta una sombra de papel sobre el escenario.
+      - **El capítulo 0:** pierde el título (queda «Capítulo 0: Llegada» oculto) y su plano amplio
+        (la cámara empieza en la mesa). Su tarjeta sube con el escenario y ya no tapa al elenco, y
+        el botón del sonido ya no espera en el celular.
+      - **Los saltos a un capítulo** caen en su primer cuadro.
+      - **Comprobado** con el build abierto y con uno cerrado de prueba:
+        - el título en español, en 2 renglones a 1024, 1280 y 1440;
+        - sin scroll horizontal a 320;
+        - «Empezar» y «Ir al capítulo 7», con un clic real, en las pantallas 0 y 29.4;
+        - el boleto del capítulo 0, con el teclado;
+        - la memoria al recargar y con Atrás, a 360, 1440 y 844×390, sin caer en la portada;
+        - sin JS y con movimiento reducido.
+      - **Pesos:** primera carga +1.3 KiB y script −41 B (`weight.json` al día).
+      - **Capturas:** `scratch/p8/8.5/`.
 - [ ] **8.6 (Montse)** QA de lo que cambió, los pesos y Lighthouse otra vez
       (`src/data/weight.json` y `src/data/lighthouse.json`), y los documentos al día; capturas a
-      360 y 1440 px, EN y ES, y la revisión del PR de P8. Dep.: 8.1 a 8.5.
+      360 y 1440 px, EN y ES, y la revisión del PR de P8. Dep.: 8.1 a 8.5. Pregunta abierta del
+      ADR 0036: si «película» se cambia también en el resto del sitio (11 claves y 13 lugares de la
+      prosa), o solo la portada dice «historia».
 
 ## F6 · Lanzamiento
 

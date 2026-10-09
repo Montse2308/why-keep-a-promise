@@ -6,7 +6,8 @@ visitante se ve como un hilo dorado, no como un diamante, y la dirección de art
 Precisado por el ADR 0029: lo que el visitante contesta no sale de la pestaña ni se envía, y la
 película lo recuerda en esa pestaña. Precisado por el ADR 0032: el nombre de la autora también va,
 como firma, en los pósteres. Precisado por el ADR 0033: los pagos del dilema se citan de Axelrod y
-Hamilton (1981).
+Hamilton (1981). Precisado por el ADR 0036: antes del capítulo 0 va una portada con la pregunta, que
+sale del capítulo 0, una línea y tres puertas: la historia, la investigación y el cuaderno.
 
 ## Contexto
 
