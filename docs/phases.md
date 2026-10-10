@@ -4,7 +4,8 @@ Cada sesión de trabajo autoriza una fase. Las fases anteriores (F0–F4 y el re
 `docs/archivo/fases-anteriores.md`. F5 (QA) y F6 (lanzamiento) conservan su nombre porque el
 checklist y varios ADR los citan. P7, los ajustes de la revisión externa, va entre P6 y F5, partida
 en subfases (P7.0 a P7.7). P8, los retoques después del lanzamiento, se planeó para ir antes de los
-pasos 5 a 8 del checklist de F6, pero esos pasos ya estaban hechos: va después de F6.
+pasos 5 a 8 del checklist de F6, pero esos pasos ya estaban hechos: va después de F6. P9, `/finding`
+por sí sola, sigue a P8.
 
 **Toda fase se cierra con:**
 
@@ -215,7 +216,8 @@ Los README, Lighthouse otra vez sobre el commit final y una revisión completa.
 
 ## P8 · Retoques después del lanzamiento
 
-**Estado:** activa (rama `polish/round-2`); 8.1 a 8.5 hechos, 8.6 en la revisión de Montse.
+**Estado:** en `main` (rama `polish/round-2`, PR #20); 8.1 a 8.5 hechos y 8.6 con la parte del
+agente hecha.
 
 Una segunda ronda de pulido, con F5 y F6 cerradas: el título del home en español en la compu, la
 nitidez de los títulos de las tarjetas, los enlaces externos en otra pestaña y un hero nuevo, que
@@ -237,6 +239,51 @@ correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
   `src/data/lighthouse.json` al día), y los documentos al día.
 - Capturas o video a 360 y 1440 px, EN y ES, que Montse revisa; P8 llega a `main` con su PR, y al
   sitio con el siguiente `deploy.yml`, que corre Montse.
+
+P8 llegó a `main` con el PR #20.
+
+## P9 · /finding por sí sola
+
+**Estado:** activa (rama `p9/finding`, desde `main` en `b5cb604`).
+
+`/finding` es la página que Montse va a compartir (LinkedIn, correos), y hasta P8 funcionaba como
+apéndice del capítulo 7: empezaba con la tabla de las cuatro razones sin decir la pregunta, su única
+gráfica era el mecanismo y no el resultado, no decía qué es nuevo, no traía dos de los tres
+resultados del working paper y terminaba en dos enlaces sueltos. Quien llega desde fuera no vio la
+historia. P9 la convierte en una página que se entiende sola: en 1 minuto (quien recluta o
+programa), en 3 (quien tiene curiosidad) y en 5 (quien investiga).
+
+**Alcance**
+
+- **El texto de `/finding`**, el que Montse aprobó el 10-oct (EN y ES), con sus secciones en orden:
+  la línea bajo el título, «En un minuto», qué se sabía y qué agrega, tres mundos, el resultado,
+  la cuenta, otros dos resultados, qué lo resolvería, la robustez, los límites, de dónde salen los
+  números y cómo citar.
+- **Lo nuevo de la página:** las tarjetas de los tres mundos (sin JS), la figura de dos paneles (el
+  mecanismo y lo que gana cada razón), un explorador de la fórmula de la culpa disponible (con JS,
+  solo en `/finding`) y los bloques para citar.
+- **Lo demás del sitio:** el póster de `/finding`, su JSON-LD, el segundo enlace de la tarjeta «La
+  investigación» de la portada, la sección del motor en `/how-its-built`, ORCID y SSRN en `/about`
+  y el enlace del final del capítulo 7 como botón.
+- **Los ADR** que lo permiten, antes de tocar `src/`, y las cifras nuevas en el registro, con su
+  fuente.
+
+**Lo que queda fuera**
+
+- **El motor en el navegador (D7):** el explorador calcula solo la fórmula de la culpa disponible;
+  no corre el motor, no muestra poblaciones ni toca otros parámetros.
+- Todo lo que el texto aprobado no dice: ni cifras, ni citas, ni afirmaciones nuevas.
+
+**Criterio de salida**
+
+- Las seis puertas en verde: `check`, `test`, `build`, `verify:dist`, `budgets` y `check:launch`,
+  con paridad EN/ES.
+- `/finding` se entiende sola y completa sin JS; el explorador solo aparece con JS y funciona con
+  teclado, con toque y con movimiento reducido.
+- Los ADR nuevos en `docs/decisions/` y en su índice; `docs/content-rules.md` y `AGENTS.md` al día.
+- La QA de lo que cambió (anchos, sin JS, teclado, lector de pantalla, axe, enlaces, JSON-LD,
+  pesos y Lighthouse de `/finding`).
+- Capturas para Montse, a 360 y 1440 px, EN y ES; P9 llega a `main` con su PR, que decide ella.
 
 ## F5 · QA
 

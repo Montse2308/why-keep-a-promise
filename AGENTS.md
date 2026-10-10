@@ -21,13 +21,15 @@ It is **not** a simulator and **not** the instrument of a paper. Details: `docs/
 (P6, the polish, with PR #9). F5 (QA) and F6 (launch) are closed: the site is live at
 `https://montse2308.github.io/why-keep-a-promise/`, with the lock open. The repository is public,
 Pages publishes with GitHub Actions, and `deploy.yml` ran on 2026-10-08 (run 37860472991, on `main`
-after PR #19); every step of `docs/launch-checklist.md` is marked. The active phase is P8 (polish
-after the launch), on the branch `polish/round-2`, pushed only when Montse decides: the Spanish home
-title fitting on a computer, sharp card titles in the film, external links in a new tab (internal
-ones stay in the tab, ADR 0029), and a new hero, prototyped in `scratch/`, chosen by Montse and
-built with ADR 0036 (steps 8.1 to 8.6 in `docs/tasks.md`; 8.1 to 8.5 are done, and 8.6, its QA, is
-ready for Montse's review). What is live is the version before P8; P8 reaches the site when Montse
-merges it into `main` and runs `deploy.yml` again.
+after PR #19); every step of `docs/launch-checklist.md` is marked. P8 (polish after the launch: the
+Spanish home title on a computer, sharp card titles, external links in a new tab, ADR 0029, and the
+cover of ADR 0036) reached `main` with PR #20. The active phase is P9, **/finding on its own**, on
+the branch `p9/finding`, pushed only when Montse decides: /finding becomes the page Montse shares,
+understood without the story (the text she approved on 2026-10-10, the three worlds, a two-panel
+figure, a formula explorer, how to cite), with the rest of the site around it (its poster and
+JSON-LD, the cover's link to it, the engine on /how-its-built, ORCID and SSRN on /about). Steps 9.0
+to 9.9 in `docs/tasks.md`. P8 and P9 reach the site when Montse merges them into `main` and runs
+`deploy.yml` again.
 P7, the fixes from an external review, was planned in small steps (one per session) in
 `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's

@@ -3,16 +3,16 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P8, los retoques después del lanzamiento (rama `polish/round-2`); 8.1 a 8.5
-hechos y 8.6 en la revisión de Montse. F6, el lanzamiento, cerrada: el repo es público, Pages
+**Fase activa:** P9, `/finding` por sí sola (rama `p9/finding`). P8, los retoques después del
+lanzamiento, llegó a `main` con el PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
-línea en `https://montse2308.github.io/why-keep-a-promise/`, con la versión anterior a P8. F5, la
-QA, cerrada en la rama `launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7
-cerradas: Montse las revisó (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR
-#17). P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película entera.
+línea en `https://montse2308.github.io/why-keep-a-promise/`. F5, la QA, cerrada en la rama
+`launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7 cerradas: Montse las revisó
+(PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
+como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** ninguna planeada. P8 llega al sitio cuando Montse hace el merge a `main` y
-vuelve a correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
+**Fase siguiente:** ninguna planeada. P8 y P9 llegan al sitio cuando Montse hace el merge a `main`
+y vuelve a correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
 
 **El lanzamiento (F6)** lo disparó el working paper público en SSRN y el repo del motor público
 (ADR 0034). Su preparación y sus pasos, todos hechos, están en la sección F6.
@@ -1208,6 +1208,45 @@ anterior a P8, y P8 llega a él con el merge a `main` y otro `deploy.yml`, que c
 - [x] **8.5b** «Historia», no «película», en todo lo que lee el visitante (decisión de Montse,
       ADR 0036): 10 claves por idioma, 13 lugares de la prosa y los README. `tests/story-name.test.ts`
       lo comprueba. El código y `docs/` conservan «la película» como nombre interno.
+
+P8 llegó a `main` con el PR #20.
+
+## P9 · /finding por sí sola
+
+En la rama `p9/finding`, desde `main` en `b5cb604`; sin push y sin `deploy.yml`, que decide y corre
+Montse. Cada paso termina en verde (`check`, `test`, `build`, `verify:dist`, `budgets` y
+`check:launch`) y lleva su número en el commit (`9.3`). El texto de `/finding` es el que Montse
+aprobó el 10-oct, tal cual; una frase cambia solo si choca con una regla o un test, y el cambio se
+reporta con la frase original y la nueva. Las cifras de 9.5 entran antes que el texto de 9.2, para
+que cada commit quede en verde.
+
+- [ ] **9.0** La fase en los documentos: P9 en `docs/phases.md` y aquí, y la fase activa en
+      `AGENTS.md`.
+- [ ] **9.1** Los ADR, antes de tocar `src/`, con `docs/decisions/README.md`,
+      `docs/content-rules.md` y `AGENTS.md` al día: `/finding` por sí sola; un explorador de la
+      fórmula en `/finding` (enmienda el 0001 y el 0025); el hallazgo nombra sus otros dos
+      resultados; la portada enlaza al hallazgo (enmienda el 0036); `/about` suma ORCID y SSRN
+      (enmienda el 0024).
+- [ ] **9.2** El texto de `/finding`, EN y ES, con sus secciones en orden y sus slots; los enlaces
+      al paper y al motor salen de `src/config.ts`; la frase de estado al final, sin cambios.
+- [ ] **9.3** Los tres mundos (tarjetas sin JS, con su medidor) y la figura de dos paneles (el
+      mecanismo arriba y lo que gana cada razón abajo), de `curve.json`, con leyenda y tabla
+      accesible.
+- [ ] **9.4** El explorador de la fórmula: un módulo puro con su test, controles nativos, una región
+      viva, sin animación con movimiento reducido; su script solo en `/finding`, con su techo de
+      peso y `src/data/weight.json` al día. Sin JS no aparece.
+- [ ] **9.5** El registro de cifras y las fuentes: 60 de 60, la mitad, las filas de los tres mundos
+      y el umbral del explorador, con su fuente en `docs/sources.md`; Di Bartolomeo, Dufwenberg, Papa
+      y Passarelli (2023), sin cifras; `/sources` lista lo nuevo con el candado abierto.
+- [ ] **9.6** Lo demás del sitio: el póster de `/finding` (E1), su JSON-LD (E2), el segundo enlace
+      de la portada (E3), la sección del motor en `/how-its-built` (E4), ORCID y SSRN en `/about`
+      (E5) y el enlace del final del capítulo 7 como botón (E6).
+- [ ] **9.7** La QA: anchos (320 a 1440), sin JS, movimiento reducido, teclado y lector de pantalla,
+      axe, enlaces, JSON-LD y póster, pesos y Lighthouse de `/finding`, y los tests de reglas.
+      Capturas en `scratch/p9/`, con su README.
+- [ ] **9.8 (Montse)** Revisa las capturas y abre a mano los enlaces de SSRN (el working paper y la
+      página de autora), que responden 403 a los bots.
+- [ ] **9.9 (Montse)** El PR de P9 a `main`, y `deploy.yml` cuando ella lo decida.
 
 ## F6 · Lanzamiento
 
