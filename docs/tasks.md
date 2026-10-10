@@ -1169,6 +1169,41 @@ anterior a P8, y P8 llega a él con el merge a `main` y otro `deploy.yml`, que c
 - [ ] **8.6 (Montse)** QA de lo que cambió, los pesos y Lighthouse otra vez
       (`src/data/weight.json` y `src/data/lighthouse.json`), y los documentos al día; capturas a
       360 y 1440 px, EN y ES, y la revisión del PR de P8. Dep.: 8.1 a 8.5.
+      Hecha la parte del agente; falta la revisión de Montse y el PR. Sobre `npm run preview` del
+      build abierto, con las herramientas de `scratch/tools/` (las de P7.7 y unas nuevas); salidas
+      y capturas en `scratch/p8/review/`, con un README.
+      - **El lanzamiento, anotado:** F6 estaba hecha desde antes de P8 (sección F6), y `deploy.yml`
+        se describe como la forma manual de publicar `main`, sin cambiar su lógica.
+      - **La historia con clics o toques reales:** las 17 decisiones a 1440, 360, 320 y 844×390, EN
+        y ES, y con movimiento reducido a 1440 EN y 360 ES (11 recorridos), sin scroll horizontal ni
+        errores.
+      - **La portada:** «Empezar» cae en el capítulo 0 con su boleto en pantalla e «Ir al capítulo
+        7» en su primer cuadro; una página del cuaderno abre en la misma pestaña y Atrás vuelve a la
+        portada; EN/ES va a la misma ruta. EN y ES, a 1440 y 360.
+      - **Enlaces:** los 86 externos de las 14 páginas (44 en las páginas y 42 en el panel), con un
+        clic real: cada uno abre otra pestaña, con su aviso, y la página se queda donde estaba. Los
+        internos se quedan en la misma.
+      - **Teclado:** la historia entera (21 interacciones) a 1440 EN, 1440 ES con movimiento reducido
+        y 844×390; las 15 páginas y el panel, en claro y oscuro. Igual que en P7.7: con scroll suave,
+        el foco tarda hasta 0.9 s en llegar en los saltos largos (ahora también al control de la
+        curva), y los enlaces en dos renglones dan falsos positivos.
+      - **Sin JS y con el script bloqueado:** la portada y los 9 cuadros, sin botones muertos ni
+        desborde. En las páginas, el enlace «Cuaderno» lleva a la lista del pie.
+      - **Movimiento reducido:** 0 cuadros en reposo y nada animándose (la flecha de «Empezar» se
+        detiene), el dado quieto y las monedas de una vez.
+      - **axe-core 4.14.0:** 228 corridas, cero violaciones (las 15 páginas, el panel, la historia
+        desde la portada y sin JS). El texto de la portada sobre el cielo, medido por pixel: el
+        título, 7.25:1 o más, y la línea, 7.24:1 o más.
+      - **Hallazgos y arreglos:**
+        - El idioma actual, sobre el cielo de la portada, daba 4.44:1 (4.10:1 de lado, bajo una
+          nube), por debajo de AA. Ahora va en la tinta de la película, como en el storyboard desde
+          7.7.6: 10.0:1 o más.
+        - Al volver de una página del cuaderno a la historia, la consola decía `AbortError:
+          Transition was skipped` (desde 7.5.5). Ahora se atrapa ese rechazo, con su test.
+      - **Lighthouse** 13.5.0, tres corridas por home: LCP de 2.12 s en EN y 2.11 s en ES, y el
+        elemento del LCP es ahora el título de la portada. `src/data/lighthouse.json` al día; los
+        pesos de `src/data/weight.json` no cambiaron.
+      - **Los README:** la imagen de cuatro cuadros abre con la portada.
 - [x] **8.5b** «Historia», no «película», en todo lo que lee el visitante (decisión de Montse,
       ADR 0036): 10 claves por idioma, 13 lugares de la prosa y los README. `tests/story-name.test.ts`
       lo comprueba. El código y `docs/` conservan «la película» como nombre interno.
