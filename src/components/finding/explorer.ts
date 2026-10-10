@@ -49,7 +49,7 @@ function set(target: Element, attributes: Record<string, string | number>): void
 function mount(root: HTMLElement): void {
   const strings = JSON.parse(root.dataset.strings ?? '{}') as ExplorerStrings;
   const control = (id: string) => root.querySelector<HTMLInputElement>(`[data-control="${id}"]`);
-  const shows = (id: string) => root.querySelector<HTMLOutputElement>(`[data-shows="${id}"]`);
+  const shows = (id: string) => root.querySelector<HTMLElement>(`[data-shows="${id}"]`);
   const [a, b, theta] = [control('a'), control('b'), control('theta')];
   const plot = root.querySelector<SVGSVGElement>('[data-plot]');
   const status = root.querySelector<HTMLElement>('[data-status]');
@@ -126,9 +126,16 @@ function mount(root: HTMLElement): void {
     a.max = b.value;
     const reading = read(Number(a.value), Number(b.value), Number(theta.value));
     if (Number(a.value) !== reading.a) a.value = String(reading.a);
-    shows('a')!.textContent = String(reading.a);
-    shows('b')!.textContent = String(reading.b);
-    shows('theta')!.textContent = decimals(reading.theta, 2);
+    // Each value as the eye reads it, and as a screen reader hears it: θ with its two decimals, not a float.
+    const values: [HTMLInputElement, string, string][] = [
+      [a, 'a', String(reading.a)],
+      [b, 'b', String(reading.b)],
+      [theta, 'theta', decimals(reading.theta, 2)],
+    ];
+    for (const [input, id, text] of values) {
+      shows(id)!.textContent = text;
+      input.setAttribute('aria-valuetext', text);
+    }
 
     const said = fill(reading.rolls ? strings.rolls : strings.not, { a: reading.a });
     facts.textContent = reading.window

@@ -1,7 +1,7 @@
 ---
 /**
  * /finding's three worlds (ADR 0037): three cards, side by side on a computer and one under another on
- * a phone, for background trust 5, 38 and 70. Each card names its world and gives its background
+ * a phone or a narrow tablet, for background trust 5, 38 and 70. Each card names its world and gives its background
  * trust, what a promise adds, the guilt available and whether it passes the threshold, with a meter
  * of the guilt against a mark at the threshold, 20/3; then whether personal guilt rolls and whether
  * partner-specific commitment does. Every value comes from src/data/curve.json (src/lib/finding/
@@ -78,9 +78,17 @@ const percent = (share: number) => `${(Math.min(1, share) * 100).toFixed(2)}%`;
     list-style: none;
   }
 
-  @media (min-width: 48rem) {
+  /* Side by side once each card has room for its facts on one line; their names, meters and facts
+     line up across the three (subgrid). Below that, one under another. */
+  @media (min-width: 56rem) {
     .worlds {
       grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto auto;
+    }
+
+    .world {
+      grid-row: span 3;
+      grid-template-rows: subgrid;
     }
   }
 
@@ -107,13 +115,6 @@ const percent = (share: number) => `${(Math.min(1, share) * 100).toFixed(2)}%`;
     margin: 0;
     font-size: var(--step-0);
     text-wrap: balance;
-  }
-
-  /* Side by side, the names take two lines each, so the three meters line up. */
-  @media (min-width: 48rem) {
-    .world .world__name {
-      min-height: calc(2 * var(--leading-tight) * 1em);
-    }
   }
 
   /* The meter: the guilt available as a bar, against a mark at the threshold. */

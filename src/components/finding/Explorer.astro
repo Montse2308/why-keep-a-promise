@@ -46,8 +46,9 @@ const sliders = [
       sliders.map((slider) => (
         <div class="explorer__control">
           <label for={`explorer-${slider.id}`}>{slider.label}</label>
-          <output for={`explorer-${slider.id}`} data-shows={slider.id}>{slider.shown}</output>
-          <input id={`explorer-${slider.id}`} type="range" min={slider.min} max={slider.max} step={slider.step} value={slider.value} data-control={slider.id} />
+          {/* The value, for the eye: a slider says its own to a screen reader, and an <output> would be one more live region. */}
+          <span class="explorer__value" aria-hidden="true" data-shows={slider.id}>{slider.shown}</span>
+          <input id={`explorer-${slider.id}`} type="range" min={slider.min} max={slider.max} step={slider.step} value={slider.value} aria-valuetext={slider.shown} data-control={slider.id} />
         </div>
       ))
     }
@@ -106,7 +107,7 @@ const sliders = [
     font-weight: 700;
   }
 
-  .explorer__control output {
+  .explorer__value {
     font-weight: 800;
     font-variant-numeric: tabular-nums;
   }
