@@ -1197,7 +1197,8 @@ anterior a P8, y P8 llega a él con el merge a `main` y otro `deploy.yml`, que c
       - **Hallazgos y arreglos:**
         - El idioma actual, sobre el cielo de la portada, daba 4.44:1 (4.10:1 de lado, bajo una
           nube), por debajo de AA. Ahora va en la tinta de la película, como en el storyboard desde
-          7.7.6: 10.0:1 o más.
+          7.7.6: 10.0:1 o más. Montse lo aprobó así (2026-10-10): el idioma en que se está no es
+          enlace y va en tinta, y el otro va subrayado, sin otra marca.
         - Al volver de una página del cuaderno a la historia, la consola decía `AbortError:
           Transition was skipped` (desde 7.5.5). Ahora se atrapa ese rechazo, con su test.
       - **Lighthouse** 13.5.0, tres corridas por home: LCP de 2.12 s en EN y 2.11 s en ES, y el
