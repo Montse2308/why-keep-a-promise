@@ -28,8 +28,9 @@ export const WORKING_PAPER = {
 
 /**
  * The simulation engine (ADR 0034): its repository and the DOI of its release archived on Zenodo,
- * linked only behind the lock (src/lib/engine.ts). The DOI is a placeholder until step 3 of
- * docs/launch-checklist.md. Its title, version and licence are those of the release's CITATION.cff,
+ * linked only behind the lock (src/lib/engine.ts). The DOI is that of release v1.0.0, the one the
+ * working paper cites (not the concept DOI), set at step 3 of docs/launch-checklist.md (F6). Its
+ * title, version and licence are those of the release's CITATION.cff,
  * as /finding cites it (ADR 0037).
  */
 export const ENGINE = {
