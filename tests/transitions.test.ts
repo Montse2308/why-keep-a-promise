@@ -1,7 +1,7 @@
 // The notebook's transitions (7.5.5): a page of the notebook lets the browser's transition go on the
-// way to the film or off the site, and the rejection that letting it go leaves behind is caught, so
-// the console stays clean (8.6).
-import { afterEach, describe, expect, it, vi } from 'vitest';
+// way to the film or off the site, and catches the rejection that letting it go leaves behind, so the
+// console stays clean (8.6). Vitest fails the run on a rejection nobody handles.
+import { describe, expect, it, vi } from 'vitest';
 import { transitions } from '../src/components/notebook/transitions';
 
 type Swap = (event: PageSwapEvent) => void;
@@ -23,36 +23,29 @@ function swapTo(url: string) {
   const ready = new Promise<void>((_, no) => {
     reject = no;
   });
-  const viewTransition = {
-    ready,
-    skipTransition: vi.fn(() => reject(new DOMException('Transition was skipped.', 'AbortError'))),
-  };
-  listener?.({ viewTransition, activation: { entry: { url } } } as unknown as PageSwapEvent);
-  return viewTransition;
+  const caught = vi.spyOn(ready, 'catch');
+  const skip = vi.fn(() => reject(new DOMException('Transition was skipped.', 'AbortError')));
+  listener?.({ viewTransition: { ready, skipTransition: skip }, activation: { entry: { url } } } as unknown as PageSwapEvent);
+  return { caught, skip };
 }
 
-const unhandled = vi.fn();
-process.on('unhandledRejection', unhandled);
-afterEach(() => unhandled.mockClear());
-const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
-
 describe("the notebook's transitions", () => {
-  it('let the transition go on the way to the film, and catch what that rejects', async () => {
-    const transition = swapTo(`${ORIGIN}${base}`);
-    expect(transition.skipTransition).toHaveBeenCalledOnce();
-    await settle();
-    expect(unhandled).not.toHaveBeenCalled();
+  it('let the transition go on the way to the film, its rejection caught first', () => {
+    const { caught, skip } = swapTo(`${ORIGIN}${base}`);
+    expect(skip).toHaveBeenCalledOnce();
+    expect(caught).toHaveBeenCalledOnce();
+    expect(caught.mock.invocationCallOrder[0]).toBeLessThan(skip.mock.invocationCallOrder[0] ?? 0);
   });
 
-  it('let it go off the site too', async () => {
-    const transition = swapTo('https://papers.ssrn.com/');
-    expect(transition.skipTransition).toHaveBeenCalledOnce();
-    await settle();
-    expect(unhandled).not.toHaveBeenCalled();
+  it('let it go off the site too', () => {
+    const { caught, skip } = swapTo('https://papers.ssrn.com/');
+    expect(skip).toHaveBeenCalledOnce();
+    expect(caught).toHaveBeenCalledOnce();
   });
 
   it('keep it between two pages of the notebook', () => {
-    const transition = swapTo(`${ORIGIN}${base}dilemma/`);
-    expect(transition.skipTransition).not.toHaveBeenCalled();
+    const { caught, skip } = swapTo(`${ORIGIN}${base}dilemma/`);
+    expect(skip).not.toHaveBeenCalled();
+    expect(caught).not.toHaveBeenCalled();
   });
 });
