@@ -1377,6 +1377,16 @@ seguir no hacen falta: se rehacen con las herramientas de `scratch/tools/` (`exp
 `touch-explorer.mjs`, `axtree-page.mjs`, `ch7-button.mjs`, `locked-check.sh`, `gate-p9.sh`,
 `commit-step.sh`), que tampoco viajan.
 
+**Continuación (2026-10-10, otra máquina)**
+
+- [x] 9.2 `b31847d` (el «(§6)» de la §2 dice «(below)» / «(más abajo)», con el mismo enlace) ·
+  9.5 `b285aaf` (el DOI de Di Bartolomeo et al. (2023), comprobado en Crossref, en
+  `docs/sources.md` y enlazado en `/sources` con el candado abierto) · 9.6 `e852937` (el comentario
+  de `ENGINE` en `src/config.ts`: el DOI ya no es un placeholder).
+- Montse acepta las decisiones tomadas en la sesión, fuera del prompt, como quedaron arriba (el ADR
+  0038 precisa el 0023 y el 0034; los topes de palabras; el techo de JS de `/finding`; lo que va solo
+  con el candado abierto).
+
 ## F6 · Lanzamiento
 
 El texto ya no se somete a ninguna revista: se publica como working paper en SSRN, sin revisión por
