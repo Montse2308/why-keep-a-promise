@@ -1,0 +1,253 @@
+---
+/**
+ * /finding's figure (ADR 0037): two panels on one horizontal axis, background trust from 0 to 76. Above,
+ * the mechanism, the guilt available against the threshold (../curve/GuiltChart.astro). Below, the
+ * result: what each reason earns at the same rows. Personal guilt steps from 5 up to 10 inside its
+ * window and back to 5; partner-specific commitment and general guilt earn 10 from end to end; in the
+ * robustness variant, dashed, personal guilt's right tail stays at 10. Every value comes from
+ * src/data/curve.json. The same data as chapter 7's curve, with a legend and a caption of its own
+ * (rule (h)); the caption says it is a comparison across worlds (rule (e)).
+ *
+ * On the notebook's paper, in either theme, and told apart by line, not by colour alone: personal guilt
+ * thick in ink, partner-specific commitment in the accent's gold, general guilt dotted, the variant
+ * dashed. Static, readable without JavaScript, with a visually hidden table of every row.
+ *
+ * Render this only inside the lock (ADR 0034): a locked build resolves it to ../curve/Locked.astro
+ * (astro.config.mjs).
+ */
+import GuiltChart from '../curve/GuiltChart.astro';
+import { stepLine, xPercent, yPixel, type Frame, type Segment } from '../../lib/curve/chart';
+import { payoffLevels, pullWindow, REASONS, type Reason } from '../../lib/curve/curve';
+import { CURVE, FINDING } from '../../lib/curve/data';
+import { variantTail } from '../../lib/finding/worlds';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const { rows, axis } = CURVE;
+const window = pullWindow(CURVE);
+const levels = payoffLevels(CURVE);
+const low = levels[0] ?? 0;
+const high = levels.at(-1) ?? 0;
+const tail = variantTail(FINDING);
+
+// Vertical layout in CSS px, as the panel above; x is a percentage of the plot width, shared with it.
+const frame: Frame = { zero: 150, top: 30, high };
+const Y_ZERO = frame.zero;
+const y = (payoff: number) => yPixel(payoff, frame);
+const x = (trust: number) => `${xPercent(trust, axis)}%`;
+const xTicks = [axis.min, CURVE.peak, axis.max];
+const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y(segment.y1), y2: y(segment.y2) });
+
+const name: Record<Reason, string> = {
+  personal: tr('curve.series.personal'),
+  partner: tr('curve.series.partner'),
+  general: tr('curve.series.general'),
+};
+// Drawing order, as on chapter 7's curve: the emphasised line underneath, so the lines that share 10 with it
+// show through it; general guilt's dots on top.
+const order: readonly Reason[] = ['personal', 'partner', 'general'];
+const lines = order.map((reason) => ({ reason, segments: stepLine(rows, reason) }));
+// The variant differs from the curve only on its right tail: from where personal guilt's window ends, it stays up.
+const variant: Segment = { x1: window.to, x2: axis.max, y1: tail.payoff, y2: tail.payoff };
+const summary = fill(tr('finding.payoff.summary'), { min: axis.min, max: axis.max, high, low, from: window.from, to: window.to, tail: tail.from });
+const legend: { reason: Reason | 'variant'; label: string }[] = [
+  ...REASONS.map((reason) => ({ reason, label: name[reason] })),
+  { reason: 'variant', label: tr('finding.payoff.variant') },
+];
+const robust = (trust: number) => FINDING.rows.find((row) => row.trust === trust)?.robust;
+---
+
+<figure class="result wide" id="finding-result" aria-labelledby="finding-result-caption">
+  <GuiltChart locale={locale} id="finding-guilt" />
+
+  <div class="payoff">
+    <ul class="payoff__legend" role="list">
+      {
+        legend.map((item) => (
+          <li>
+            <svg class="payoff__swatch" viewBox="0 0 24 8" aria-hidden="true" focusable="false">
+              <line class={`payoff__line payoff__line--${item.reason}`} x1="2" x2="22" y1="4" y2="4" />
+            </svg>
+            {item.label}
+          </li>
+        ))
+      }
+    </ul>
+    <p class="payoff__axis" aria-hidden="true">{tr('curve.axis.y')}</p>
+    <div class="payoff__plot">
+      <svg class="payoff__svg" width="100%" height="196" role="img" aria-label={summary}>
+        {[0, ...levels].map((tick) => <line class="payoff__grid" x1="0" x2="100%" y1={y(tick)} y2={y(tick)} />)}
+        {levels.map((tick) => <text class="payoff__tick" x="-8" y={y(tick) + 4} text-anchor="end">{tick}</text>)}
+        {rows.map((row) => <line class="payoff__mark" x1={x(row.trust)} x2={x(row.trust)} y1={Y_ZERO} y2={Y_ZERO + 4} />)}
+        {
+          xTicks.map((tick) => (
+            <>
+              <line class="payoff__mark" x1={x(tick)} x2={x(tick)} y1={Y_ZERO} y2={Y_ZERO + 7} />
+              <text class="payoff__tick" x={x(tick)} y={Y_ZERO + 22} text-anchor={tick === axis.min ? 'start' : tick === axis.max ? 'end' : 'middle'}>{tick}</text>
+            </>
+          ))
+        }
+        {lines.map(({ reason, segments }) => segments.map((segment) => <line class={`payoff__line payoff__line--${reason}`} {...key(segment)} />))}
+        <line class="payoff__line payoff__line--variant" {...key(variant)} />
+      </svg>
+      <p class="payoff__axis payoff__axis--x" aria-hidden="true">{tr('curve.axis.x')}</p>
+    </div>
+
+    {/* A table ignores width and overflow, so the div does the hiding and keeps the page from scrolling sideways. */}
+    <div class="visually-hidden">
+      <table>
+        <caption>{tr('curve.table.caption')}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{tr('curve.table.trust')}</th>
+            {REASONS.map((reason) => <th scope="col">{name[reason]}</th>)}
+            <th scope="col">{tr('finding.payoff.variant')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((row) => (
+              <tr>
+                <th scope="row">{fill(tr('curve.trust.value'), { n: row.trust })}</th>
+                {REASONS.map((reason) => <td>{row.payoff[reason]}</td>)}
+                <td>{robust(row.trust)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <figcaption class="result__caption" id="finding-result-caption">{tr('finding.figure.caption')}</figcaption>
+</figure>
+
+<style>
+  .result {
+    display: grid;
+    gap: var(--space-6);
+    margin: var(--space-8) auto;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  @media (min-width: 40rem) {
+    .result {
+      padding: var(--space-6);
+    }
+  }
+
+  /* The two panels meet on a hairline: one axis under both. */
+  .payoff {
+    padding-top: var(--space-4);
+    border-top: var(--border-width) solid var(--color-border);
+  }
+
+  .payoff__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin: 0 0 var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .payoff__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .payoff__swatch {
+    width: 1.5rem;
+    height: 0.5rem;
+    overflow: visible;
+  }
+
+  .payoff__axis {
+    margin: 0 0 var(--space-2);
+    font-size: var(--step-n2);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .payoff__axis--x {
+    margin: var(--space-2) 0 0;
+    text-align: center;
+  }
+
+  /* The same room on the left as the panel above, so both share the axis to the pixel. */
+  .payoff__plot {
+    padding-inline: 2.25rem 0.25rem;
+  }
+
+  .payoff__svg {
+    display: block;
+    overflow: visible;
+    font-size: var(--step-n2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .payoff__grid {
+    stroke: var(--color-border);
+    stroke-width: 1;
+  }
+
+  .payoff__mark {
+    stroke: var(--color-control);
+    stroke-width: 1;
+  }
+
+  .payoff__tick {
+    fill: var(--color-muted);
+  }
+
+  .payoff__line {
+    fill: none;
+    stroke-linecap: square;
+  }
+
+  .payoff__line--personal {
+    stroke: var(--color-fg);
+    stroke-width: 7;
+  }
+
+  .payoff__line--partner {
+    stroke: var(--color-accent);
+    stroke-width: 3;
+  }
+
+  /* The control is told apart by its pattern, as on chapter 7's curve. */
+  .payoff__line--general {
+    stroke: var(--color-control);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 0 7;
+  }
+
+  .payoff__line--variant {
+    stroke: var(--color-fg);
+    stroke-width: 2.5;
+    stroke-linecap: butt;
+    stroke-dasharray: 7 5;
+  }
+
+  .result__caption {
+    margin: 0;
+    color: var(--color-muted);
+  }
+</style>

@@ -13,10 +13,11 @@ import Sources from '../components/notebook/Sources.astro';
 import Vignette from '../components/notebook/Vignette.astro';
 import Weight from '../components/notebook/Weight.astro';
 import PaperStatus from '../components/PaperStatus.astro';
-import GuiltChart from '../components/curve/GuiltChart.astro';
 import Cite from '../components/finding/Cite.astro';
 import FindingProse from '../components/finding/FindingProse.astro';
 import MinuteLinks from '../components/finding/MinuteLinks.astro';
+import ResultFigure from '../components/finding/ResultFigure.astro';
+import ThreeWorlds from '../components/finding/ThreeWorlds.astro';
 import Matrix from '../components/pd/Matrix.astro';
 import SwitchTable from '../components/vanberg/SwitchTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -70,8 +71,10 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
           <Matrix locale={locale} />
         ) : segment.name === 'switch-table' ? (
           <SwitchTable locale={locale} />
-        ) : segment.name === 'guilt-chart' || segment.name === 'result-figure' ? (
-          <GuiltChart locale={locale} id="finding-guilt" />
+        ) : segment.name === 'result-figure' ? (
+          <ResultFigure locale={locale} />
+        ) : segment.name === 'three-worlds' ? (
+          <ThreeWorlds locale={locale} />
         ) : segment.name === 'minute-links' ? (
           <MinuteLinks locale={locale} />
         ) : segment.name === 'cite' ? (

@@ -106,7 +106,7 @@ describe('figures in the prose', () => {
   });
 
   it('does not check code blocks or markers as prose', () => {
-    expect(numbersIn(readable('Text.\n\n```ts\nconst x = 200;\n```\n\n<!-- slot:guilt-chart -->\n'))).toEqual([]);
+    expect(numbersIn(readable('Text.\n\n```ts\nconst x = 200;\n```\n\n<!-- slot:result-figure -->\n'))).toEqual([]);
   });
 
   it('points every figure and citation at an entry in docs/sources.md', () => {

@@ -12,7 +12,6 @@
 export const SLOTS = [
   'pd-matrix',
   'switch-table',
-  'guilt-chart',
   'day',
   'weight',
   'sources',

@@ -1,0 +1,176 @@
+---
+/**
+ * /finding's three worlds (ADR 0037): three cards, side by side on a computer and one under another on
+ * a phone, for background trust 5, 38 and 70. Each card names its world and gives its background
+ * trust, what a promise adds, the guilt available and whether it passes the threshold, with a meter
+ * of the guilt against a mark at the threshold, 20/3; then whether personal guilt rolls and whether
+ * partner-specific commitment does. Every value comes from src/data/curve.json (src/lib/finding/
+ * worlds.ts), none is written by hand. Without JavaScript, it is the same: the explorer above it is
+ * what the script adds (ADR 0038).
+ *
+ * Render this only inside the lock (ADR 0034): a locked build resolves it to ../curve/Locked.astro
+ * (astro.config.mjs).
+ */
+import { FINDING } from '../../lib/curve/data';
+import { hundredths } from '../../lib/curve/finding';
+import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
+import { worlds } from '../../lib/finding/worlds';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const threshold = `${FINDING.threshold.num}/${FINDING.threshold.den}`;
+const yes = (value: boolean) => tr(value ? 'curve.guilt.yes' : 'curve.guilt.no');
+const name = (id: string) => tr(`finding.worlds.${id}` as UiKey);
+const percent = (share: number) => `${(Math.min(1, share) * 100).toFixed(2)}%`;
+---
+
+<ul class="worlds wide" role="list">
+  {
+    worlds(FINDING).map((world) => (
+      <li class:list={['world', { 'world--above': world.above }]}>
+        <h3 class="world__name">{name(world.id)}</h3>
+        <div class="world__meter" style={`--guilt: ${percent(world.meter.guilt)}; --threshold: ${percent(world.meter.threshold)}`} aria-hidden="true">
+          <span class="world__bar" />
+          <span class="world__mark" />
+        </div>
+        <dl class="world__facts">
+          <div>
+            <dt>{tr('finding.worlds.trust')}</dt>
+            <dd>{world.trust}</dd>
+          </div>
+          <div>
+            <dt>{tr('finding.worlds.adds')}</dt>
+            <dd>{fill(tr('finding.worlds.adds.value'), { from: world.trust, to: world.belief })}</dd>
+          </div>
+          <div>
+            <dt>{tr('finding.worlds.guilt')}</dt>
+            <dd>{hundredths(world.guilt)}</dd>
+          </div>
+          <div>
+            <dt>{fill(tr('finding.worlds.above'), { threshold })}</dt>
+            <dd>{yes(world.above)}</dd>
+          </div>
+          <div>
+            <dt>{tr('finding.worlds.personal')}</dt>
+            <dd>{yes(world.personalRolls)}</dd>
+          </div>
+          <div>
+            <dt>{tr('finding.worlds.partner')}</dt>
+            <dd>{yes(world.partnerRolls)}</dd>
+          </div>
+        </dl>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .worlds {
+    display: grid;
+    gap: var(--space-4);
+    margin: var(--space-6) auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 48rem) {
+    .worlds {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .world {
+    display: grid;
+    align-content: start;
+    gap: var(--space-4);
+    margin: 0;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  .world--above {
+    border-color: var(--color-fg);
+  }
+
+  .world .world__name {
+    margin: 0;
+    font-size: var(--step-0);
+    text-wrap: balance;
+  }
+
+  /* Side by side, the names take two lines each, so the three meters line up. */
+  @media (min-width: 48rem) {
+    .world .world__name {
+      min-height: calc(2 * var(--leading-tight) * 1em);
+    }
+  }
+
+  /* The meter: the guilt available as a bar, against a mark at the threshold. */
+  .world__meter {
+    position: relative;
+    height: 0.75rem;
+    border-radius: 999px;
+    background: var(--color-border);
+  }
+
+  .world__bar {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--guilt);
+    border-radius: 999px;
+    background: var(--color-control);
+  }
+
+  .world--above .world__bar {
+    background: var(--color-fg);
+  }
+
+  .world__mark {
+    position: absolute;
+    top: -0.3rem;
+    bottom: -0.3rem;
+    left: var(--threshold);
+    width: 2px;
+    background: var(--color-fg);
+    /* A rim of paper, so the mark reads over a bar in ink too. */
+    box-shadow: 0 0 0 2px var(--color-surface);
+  }
+
+  .world__facts {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+  }
+
+  .world__facts div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .world__facts dt {
+    color: var(--color-muted);
+  }
+
+  .world__facts dd {
+    margin: 0;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    white-space: nowrap;
+  }
+</style>

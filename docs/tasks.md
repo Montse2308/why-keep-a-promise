@@ -1238,9 +1238,13 @@ que cada commit quede en verde.
       resultados». El tope de palabras de `/finding` sube a 1 600 (ADR 0037), y la prueba de citas lee
       también la forma entre paréntesis de Di Bartolomeo et al. (2023). Build cerrado de prueba:
       `verify:dist` en verde.
-- [ ] **9.3** Los tres mundos (tarjetas sin JS, con su medidor) y la figura de dos paneles (el
+- [x] **9.3** Los tres mundos (tarjetas sin JS, con su medidor) y la figura de dos paneles (el
       mecanismo arriba y lo que gana cada razón abajo), de `curve.json`, con leyenda y tabla
-      accesible.
+      accesible. Hecho: `ThreeWorlds` y `ResultFigure`, con `src/lib/finding/worlds.ts` y su test.
+      `GuiltChart` pasa a ser el panel de arriba, sin marco ni etiquetas del eje x (el slot
+      `guilt-chart` sale). Abajo, la culpa personal gruesa en tinta (debajo, como en el capítulo 7,
+      para que se vean las otras dos en 10), el compromiso en dorado, la culpa general punteada y la
+      variante discontinua solo en su cola, de 65 a 76. Leyenda y tabla oculta propias.
 - [ ] **9.4** El explorador de la fórmula: un módulo puro con su test, controles nativos, una región
       viva, sin animación con movimiento reducido; su script solo en `/finding`, con su techo de
       peso y `src/data/weight.json` al día. Sin JS no aparece.

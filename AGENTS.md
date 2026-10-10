@@ -172,6 +172,7 @@ src/
                          the beads under the spool); idle.ts (life at rest: blinks, the square's
                          glances, the waiting die's rock, asked by the frame loop)
     back.ts              when a notebook link back to the film goes back in the tab's history
+    finding/worlds.ts    /finding's three worlds and the payoff panel's variant tail, from curve.json
     cite.ts              /finding's «How to cite»: the working paper (APA, BibTeX) and the engine, from config.ts
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light
@@ -220,7 +221,8 @@ src/
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
                          finding/ (/finding's own, behind the lock, ADR 0037: MinuteLinks, the buttons
-                         of «In one minute»; Cite; FindingProse, the styles of its blocks of prose);
+                         of «In one minute»; ThreeWorlds; ResultFigure, the two panels, GuiltChart on
+                         top; Cite; FindingProse, the styles of its blocks of prose);
                          LanguageSwitch; PaperStatus, the status sentence (ADR 0034); Hero, the
                          home's cover (ADR 0036)
   layouts/BaseLayout.astro
