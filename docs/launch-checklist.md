@@ -6,8 +6,6 @@ el paso 5.
 El lanzamiento lo dispara un hecho, no una fecha: el working paper ya es público en SSRN y el repo
 del motor ya es público (ADR 0034).
 
-Los pasos 5 a 8 esperan a que P8 (retoques antes de publicar, `docs/phases.md`) llegue a `main`.
-
 - [x] **1. Working paper público.** Confirmar con Montse que el working paper ya es público en
       SSRN. Anotar la URL de su página y su DOI.
       Público:
@@ -49,13 +47,33 @@ Los pasos 5 a 8 esperan a que P8 (retoques antes de publicar, `docs/phases.md`) 
       paper. Lo que queda de este paso es de Montse: borrar la rama remota
       `claude/nifty-hopper-xagnu9`.
       Borrada: `git ls-remote origin` ya no la lista.
-- [ ] **5. Visibilidad.** Hacer público el repo.
-- [ ] **6. Pages.** Activar GitHub Pages con *Source = GitHub Actions*.
-- [ ] **7. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`). El
+- [x] **5. Visibilidad.** Hacer público el repo.
+      Público desde el 2026-09-25 (el `PublicEvent` de la API de GitHub), antes de los pasos 3 y 4;
+      no se anotó entonces. `gh repo view Montse2308/why-keep-a-promise --json visibility` da
+      `PUBLIC`.
+- [x] **6. Pages.** Activar GitHub Pages con *Source = GitHub Actions*.
+      Activo: `gh api repos/Montse2308/why-keep-a-promise/pages` da `build_type: workflow`,
+      `https_enforced: true` y `html_url` `https://montse2308.github.io/why-keep-a-promise/`.
+- [x] **7. Deploy.** Correr `deploy.yml` a mano (`workflow_dispatch`, `confirm = launch`). El
       workflow se detiene si `dist/` todavía lleva un `TODO(` o una fuente que `/sources` marca
       «por verificar» (`data-unverified`; hoy ninguna), si queda un placeholder (`check:launch`) o
       si una página se pasa de los presupuestos de peso (`npm run budgets`, ADR 0025): lo que piden
       los pasos 3 y 4, comprobado otra vez antes de publicar.
-- [ ] **8. Verificación.** Comprobar `/` y `/es/` en línea en
+      Corrido el 2026-10-08: run
+      [37860472991](https://github.com/Montse2308/why-keep-a-promise/actions/runs/37860472991),
+      sobre `main` en `e74420a` (el merge del PR #19), `build` y `deploy` en verde.
+- [x] **8. Verificación.** Comprobar `/` y `/es/` en línea en
       `https://montse2308.github.io/why-keep-a-promise/`, con los enlaces a SSRN y al motor (el
       repo y su DOI) funcionando, el switch EN/ES y `hreflang`.
+      Comprobado el 2026-10-09 con `curl`: `/` y `/es/` responden 200, con `lang` en y es,
+      canonical, `hreflang` en, es y `x-default` recíprocos, el switch EN/ES a la misma ruta, y los
+      enlaces a SSRN (`abstract_id=7580218`), al repo del motor y a su DOI
+      (`10.5281/zenodo.23222610`). El repo y el DOI responden; SSRN bloquea a los bots, y Montse
+      abrió los enlaces a mano.
+
+## Después del lanzamiento
+
+El sitio en línea es lo que `main` tenía en el último deploy. Un cambio posterior (P8, por ejemplo)
+llega al sitio cuando Montse hace el merge a `main` y vuelve a correr `deploy.yml` a mano, con
+`confirm = launch` y las mismas comprobaciones del paso 7. Un agente no corre `deploy.yml`, ni
+cambia la visibilidad del repo o la configuración de Pages.

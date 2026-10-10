@@ -3,8 +3,8 @@
 Cada sesión de trabajo autoriza una fase. Las fases anteriores (F0–F4 y el rediseño R0–R4) están en
 `docs/archivo/fases-anteriores.md`. F5 (QA) y F6 (lanzamiento) conservan su nombre porque el
 checklist y varios ADR los citan. P7, los ajustes de la revisión externa, va entre P6 y F5, partida
-en subfases (P7.0 a P7.7). P8, los retoques antes de publicar, va después de F5 y antes de los
-pasos 5 a 8 del checklist de F6.
+en subfases (P7.0 a P7.7). P8, los retoques después del lanzamiento, se planeó para ir antes de los
+pasos 5 a 8 del checklist de F6, pero esos pasos ya estaban hechos: va después de F6.
 
 **Toda fase se cierra con:**
 
@@ -213,15 +213,16 @@ Los README, Lighthouse otra vez sobre el commit final y una revisión completa.
   sin JS, script bloqueado y axe en las 14 páginas en claro y oscuro.
 - El PR de P7 revisado por Montse. Al cerrarse, empieza F5.
 
-## P8 · Retoques antes de publicar
+## P8 · Retoques después del lanzamiento
 
-**Estado:** activa (rama `polish/round-2`, sin push).
+**Estado:** activa (rama `polish/round-2`); 8.1 a 8.5 hechos, 8.6 en la revisión de Montse.
 
-Una segunda ronda de pulido, con F5 cerrada y los pasos 1 a 4 de F6 hechos, antes de que el repo se
-haga público: el título del home en español en la compu, la nitidez de los títulos de las tarjetas,
-los enlaces externos en otra pestaña y un hero nuevo, que Montse elige entre prototipos y que entra
-con su ADR (0036). Los pasos, uno por sesión, en `docs/tasks.md`. Los pasos 5 a 8 del checklist
-esperan a que P8 llegue a `main`.
+Una segunda ronda de pulido, con F5 y F6 cerradas: el título del home en español en la compu, la
+nitidez de los títulos de las tarjetas, los enlaces externos en otra pestaña y un hero nuevo, que
+Montse elige entre prototipos y que entra con su ADR (0036). Los pasos, uno por sesión, en
+`docs/tasks.md`. Se planeó como «antes de publicar», pero el sitio ya estaba en línea: lo que está en
+línea es la versión anterior a P8, y P8 llega a él cuando Montse hace el merge a `main` y vuelve a
+correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
 
 **Criterio de salida**
 
@@ -234,9 +235,12 @@ esperan a que P8 llegue a `main`.
 - El hero que Montse eligió, con su ADR 0036 en `docs/decisions/` y en su índice.
 - La QA de lo que cambió, los pesos y Lighthouse otra vez (`src/data/weight.json` y
   `src/data/lighthouse.json` al día), y los documentos al día.
-- Capturas o video a 360 y 1440 px, EN y ES, que Montse revisa; P8 llega a `main` con su PR.
+- Capturas o video a 360 y 1440 px, EN y ES, que Montse revisa; P8 llega a `main` con su PR, y al
+  sitio con el siguiente `deploy.yml`, que corre Montse.
 
 ## F5 · QA
+
+**Estado:** cerrada (rama `launch/f5-qa`, PR #19).
 
 Revisión integral antes del lanzamiento.
 
@@ -253,6 +257,10 @@ Revisión integral antes del lanzamiento.
   `ENGINE_DOI_PENDING`), que se reemplazan en el paso 3 de `docs/launch-checklist.md`.
 
 ## F6 · Lanzamiento
+
+**Estado:** cerrada. El repo es público, Pages publica con GitHub Actions y `deploy.yml` corrió el
+2026-10-08 (run 37860472991, sobre `e74420a`); el sitio está en línea. El checklist entero está
+marcado en `docs/launch-checklist.md`.
 
 Un solo lanzamiento, sin deploy parcial. Lo dispara un hecho, no una fecha: el working paper ya es
 público en SSRN y el repo del motor ya es público, con su release archivada en Zenodo (ADR 0034).

@@ -18,13 +18,16 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
-(P6, the polish, with PR #9). The active phase is P8 (polish before publishing), on the branch
-`polish/round-2`, never pushed during the phase: the Spanish home title fitting on a computer, sharp
-card titles in the film, external links in a new tab (internal ones stay in the tab, ADR 0029), and
-a new hero, prototyped in `scratch/`, chosen by Montse and built with ADR 0036 (steps 8.1 to 8.6 in
-`docs/tasks.md`; 8.1 to 8.5 are done, 8.6 is Montse's review). Before it, F5 (QA) and steps 1 to 4 of F6's checklist were done on the branch
-`launch/f5-qa`, with the lock open (PR #19); steps 5 to 8 are Montse's and wait for P8 to reach
-`main`.
+(P6, the polish, with PR #9). F5 (QA) and F6 (launch) are closed: the site is live at
+`https://montse2308.github.io/why-keep-a-promise/`, with the lock open. The repository is public,
+Pages publishes with GitHub Actions, and `deploy.yml` ran on 2026-10-08 (run 37860472991, on `main`
+after PR #19); every step of `docs/launch-checklist.md` is marked. The active phase is P8 (polish
+after the launch), on the branch `polish/round-2`, pushed only when Montse decides: the Spanish home
+title fitting on a computer, sharp card titles in the film, external links in a new tab (internal
+ones stay in the tab, ADR 0029), and a new hero, prototyped in `scratch/`, chosen by Montse and
+built with ADR 0036 (steps 8.1 to 8.6 in `docs/tasks.md`; 8.1 to 8.5 are done, and 8.6, its QA, is
+ready for Montse's review). What is live is the version before P8; P8 reaches the site when Montse
+merges it into `main` and runs `deploy.yml` again.
 P7, the fixes from an external review, was planned in small steps (one per session) in
 `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
@@ -40,8 +43,7 @@ still frames that draw only what their pose shows, chapter 4's citation line, th
 the notebook's panel, the author's signature on the posters) is closed; Montse approved it
 (7.6.11). P7.7 (the READMEs, Lighthouse and the weights again, and the full review: sizes,
 sideways, both languages, keyboard, reduced motion, no JS, a blocked script and axe, with its four
-fixes) is closed; Montse approved it (7.7.7), and its PR is merged (#17). F5 (QA) is done, and F6
-(launch) has its steps 1 to 4 done, the lock open. The film tells all nine chapters, chapter 7's finding
+fixes) is closed; Montse approved it (7.7.7), and its PR is merged (#17). The film tells all nine chapters, chapter 7's finding
 behind the lock, and ends in chapter 8's credits, with «Watch again» under them; it has its sound,
 off until pressed, its progress under the spool, its cast alive at rest, and remembers what was
 played in its tab entry. The notebook has its six pages, its panel on every page (with the finding's
@@ -55,7 +57,7 @@ Read these before changing anything, in this order:
 
 1. `docs/plan.md`: what the page is (decided; do not reopen).
 2. `docs/content-rules.md`: what may and may not be written, anywhere.
-3. `docs/phases.md`: phases P0–P7, then F5 (QA) and F6 (launch), with their exit criteria.
+3. `docs/phases.md`: phases P0–P8, F5 (QA) and F6 (launch), with their exit criteria.
 4. `docs/tasks.md`: current tasks; only work on the active phase. P7 is split into numbered steps
    (`7.1.3`), each small enough for one short session and left green; when asked to continue P7,
    take the first open step whose dependencies are met, and stop at steps marked **(Montse)**.
@@ -272,8 +274,8 @@ scratch/                 local notes, git-ignored, never committed
   - The status sentence (the working paper's title, linked to SSRN) is never reworded or added to,
     even as the stamp (rule (b)). There is no other state: nothing says under review, accepted,
     peer-reviewed or published in a journal.
-  - Do not change the repository's visibility, do not enable GitHub Pages, and do not run
-    `deploy.yml` (manual-only, F6).
+  - Do not change the repository's visibility or its GitHub Pages settings, and do not run
+    `deploy.yml`: it is manual-only, and only Montse runs it, after merging into `main`.
 - **Copying the working paper or the paper's context.** Do not read or copy the working paper or its
   working files, wherever they live (local folders, Drive). If something is missing, ask.
 - **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,

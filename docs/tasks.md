@@ -3,17 +3,19 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P8, los retoques antes de publicar (rama `polish/round-2`, sin push). F6, el
-lanzamiento, tiene hechos los pasos 1 a 4 del checklist (PR #19); los de Montse, del 5 al 8,
-esperan a que P8 llegue a `main`. F5, la QA, cerrada en la rama `launch/f5-qa`, sobre el build con
-el candado abierto. P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7, los ajustes de la
-revisión externa, con el PR #17). P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la
-película entera.
+**Fase activa:** P8, los retoques después del lanzamiento (rama `polish/round-2`); 8.1 a 8.5
+hechos y 8.6 en la revisión de Montse. F6, el lanzamiento, cerrada: el repo es público, Pages
+publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
+línea en `https://montse2308.github.io/why-keep-a-promise/`, con la versión anterior a P8. F5, la
+QA, cerrada en la rama `launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7
+cerradas: Montse las revisó (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR
+#17). P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** los pasos 5 a 8 de F6; después, la página está en línea.
+**Fase siguiente:** ninguna planeada. P8 llega al sitio cuando Montse hace el merge a `main` y
+vuelve a correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
 
-**El lanzamiento (F6)** ya no espera un sometimiento: lo dispara el working paper público en SSRN y
-el repo del motor público (ADR 0034). Su preparación y sus pasos abiertos están en la sección F6.
+**El lanzamiento (F6)** lo disparó el working paper público en SSRN y el repo del motor público
+(ADR 0034). Su preparación y sus pasos, todos hechos, están en la sección F6.
 
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
 capítulo 8, con su sonido, apagado hasta que el visitante lo enciende; el cuaderno tiene sus seis
@@ -1104,13 +1106,14 @@ con un README.
       mundos con distinta confianza de fondo.» Nombra las razones del hallazgo, así que es contenido
       bloqueado: cerrado, sigue siendo la pregunta del sitio.
 
-## P8 · Retoques antes de publicar
+## P8 · Retoques después del lanzamiento
 
-En la rama `polish/round-2`, sin push en toda la fase. Como en P7, cada paso cabe en una sesión
+En la rama `polish/round-2`; el push lo decide Montse. Como en P7, cada paso cabe en una sesión
 corta, termina en verde (`check`, `test`, `build`, `verify:dist` y `budgets`) y lleva su número en
 el commit (`8.3`). Un paso **(Montse)** es una decisión o revisión suya: el agente prepara
-prototipos, capturas u opciones, pero no decide. Los pasos 5 a 8 de F6 esperan a que P8 llegue a
-`main`.
+prototipos, capturas u opciones, pero no decide. Se planeó como «antes de publicar», con los pasos
+5 a 8 de F6 esperando a P8, pero esos pasos ya estaban hechos: el sitio en línea es la versión
+anterior a P8, y P8 llega a él con el merge a `main` y otro `deploy.yml`, que corre Montse.
 
 - [x] **8.1** El título del home en español cabe en computadora. Hay una regla solo para español
       en `Arrival.astro` (`:lang(es)`): `clamp(2rem, 5vw, 4.25rem)` y 24ch, en lugar de
@@ -1220,10 +1223,16 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
 - [x] **4.** La auditoría del historial: decidido, se deja como está (ADR 0034). Queda que Montse
       borre la rama remota `claude/nifty-hopper-xagnu9`.
       Montse la borró: `git ls-remote origin` ya no la lista.
-- [ ] **5.** El repo público.
-- [ ] **6.** Pages con *Source = GitHub Actions*.
-- [ ] **7.** `deploy.yml`.
-- [ ] **8.** `/` y `/es/` en línea, con los enlaces a SSRN y al motor.
+- [x] **5.** El repo público.
+      Público desde el 2026-09-25 (el `PublicEvent` de la API de GitHub), antes de los pasos 3 y 4;
+      se anotó en P8 (8.6).
+- [x] **6.** Pages con *Source = GitHub Actions*.
+      `build_type: workflow`, `https_enforced: true`.
+- [x] **7.** `deploy.yml`.
+      2026-10-08, run 37860472991, sobre `main` en `e74420a` (el merge del PR #19), en verde.
+- [x] **8.** `/` y `/es/` en línea, con los enlaces a SSRN y al motor.
+      2026-10-09: 200, `lang`, canonical y `hreflang` recíprocos, el switch EN/ES y los enlaces a
+      SSRN, al repo del motor y a su DOI. SSRN bloquea a los bots; Montse abrió los enlaces a mano.
 
 ## Preguntas abiertas
 
