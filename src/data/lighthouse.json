@@ -2,7 +2,7 @@
   "provenance": {
     "tool": "Lighthouse",
     "version": "13.5.0",
-    "measured": "2026-10-08",
+    "measured": "2026-10-10",
     "served": "npm run preview",
     "formFactor": "mobile",
     "device": "moto g power (2022)",
@@ -17,15 +17,15 @@
     {
       "locale": "en",
       "route": "home",
-      "lcpMs": 2114,
-      "fcpMs": 1664,
-      "tbtMs": 0,
+      "lcpMs": 2115,
+      "fcpMs": 1640,
+      "tbtMs": 111,
       "cls": 0,
-      "score": 0.98,
+      "score": 0.97,
       "bytes": {
-        "script": 21381,
+        "script": 21340,
         "font": 122364,
-        "total": 190316
+        "total": 192034
       }
     },
     {
@@ -37,9 +37,9 @@
       "cls": 0,
       "score": 0.98,
       "bytes": {
-        "script": 21381,
+        "script": 21340,
         "font": 122364,
-        "total": 191010
+        "total": 192757
       }
     }
   ]
