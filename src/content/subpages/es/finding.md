@@ -37,7 +37,7 @@ title: El hallazgo
 <dd>La culpa personal y el compromiso específico a la pareja caen en el mismo par del diseño de Vanberg, así que su resultado le queda a las dos.</dd>
 <dd>La variable que las separa: la confianza de fondo. La culpa personal depende de ella; el compromiso específico a la pareja, no.</dd>
 <dd>Un modelo de población, en el que las razones se propagan según lo que ganan, y un motor de simulación abierto que lo mide.</dd>
-<dd>Un resultado negativo: quién puede hablar no cambia quién sobrevive (<a href="#otros-dos-resultados">§6</a>).</dd>
+<dd>Un resultado negativo: quién puede hablar no cambia quién sobrevive (<a href="#otros-dos-resultados">más abajo</a>).</dd>
 </div>
 </dl>
 

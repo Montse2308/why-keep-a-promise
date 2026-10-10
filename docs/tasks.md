@@ -1308,6 +1308,12 @@ otros dos resultados), 0040 (la portada enlaza al hallazgo) y 0041 (`/about` sum
   amplió el test de citas (`tests/prose.ts`) para que lea esa forma entre paréntesis. La frase de
   Vanberg de la §2 («a preference for keeping one's word in itself») no choca con la regla (h): el
   test compara frases enteras y la frase de la §2 no es la de la película.
+- §2, «Lo que agrega», última fila: el texto del enlace a «Otros dos resultados», porque la página
+  no numera sus secciones; el enlace es el mismo. Decisión de Montse (2026-10-10).
+  - EN, original: «A negative result: who gets to speak does not change who survives (§6).» Nueva:
+    «A negative result: who gets to speak does not change who survives (below).»
+  - ES, original: «Un resultado negativo: quién puede hablar no cambia quién sobrevive (§6).» Nueva:
+    «Un resultado negativo: quién puede hablar no cambia quién sobrevive (más abajo).»
 
 **Decisiones tomadas en la sesión, fuera del prompt**
 
@@ -1356,8 +1362,6 @@ otros dos resultados), 0040 (la portada enlaza al hallazgo) y 0041 (`/about` sum
 
 **Lo que se encontró y no se arregló**
 
-- `src/content/subpages/{en,es}/finding.md`, §2: «(§6)» viene del texto aprobado, pero la página no
-  numera sus secciones; enlaza a «Otros dos resultados». Montse decide si se queda.
 - `src/components/finding/Explorer.astro`: el árbol de accesibilidad del CDP de Chrome 154 muestra el
   valor crudo del control de θ aunque tenga `aria-valuetext` (ya visto en F5); los lectores usan el
   `aria-valuetext`.

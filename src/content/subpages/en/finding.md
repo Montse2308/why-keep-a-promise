@@ -37,7 +37,7 @@ title: The finding
 <dd>Personal guilt and partner-specific commitment fall in the same pair of Vanberg's design, so his result fits both.</dd>
 <dd>The variable that separates them: background trust. Personal guilt depends on it; partner-specific commitment does not.</dd>
 <dd>A population model, in which reasons spread by what they earn, and an open simulation engine that measures it.</dd>
-<dd>A negative result: who gets to speak does not change who survives (<a href="#two-more-results">§6</a>).</dd>
+<dd>A negative result: who gets to speak does not change who survives (<a href="#two-more-results">below</a>).</dd>
 </div>
 </dl>
 
