@@ -24,6 +24,7 @@ export type WorkId =
   | 'charness-dufwenberg-2006'
   | 'battigalli-dufwenberg-2007'
   | 'kawagoe-narita-2014'
+  | 'di-bartolomeo-2023'
   | 'working-paper';
 
 export interface Link {
@@ -126,8 +127,9 @@ export const ENTRIES: readonly Entry[] = [
 ];
 
 /**
- * The works only the finding draws on, behind the lock (ADR 0035): Kawagoe and Narita (2014), and the
- * working paper, whose engine measured the curve (src/config.ts).
+ * The works only the finding draws on, behind the lock (ADR 0035): Kawagoe and Narita (2014); Di Bartolomeo,
+ * Dufwenberg, Papa and Passarelli (2023), cited without figures by /finding's other two results
+ * (ADR 0039); and the working paper, whose engine measured the curve (src/config.ts).
  */
 export const FINDING_WORKS: readonly Work[] = [
   {
@@ -136,6 +138,13 @@ export const FINDING_WORKS: readonly Work[] = [
     reference: {
       text: 'Kawagoe, T., & Narita, Y. (2014). Guilt aversion revisited: An experimental test of a new model. *Journal of Economic Behavior & Organization*, 102, 1–9.',
       url: 'https://ideas.repec.org/a/eee/jeborg/v102y2014icp1-9.html',
+    },
+  },
+  {
+    id: 'di-bartolomeo-2023',
+    cite: 'Di Bartolomeo, Dufwenberg, Papa and Passarelli (2023)',
+    reference: {
+      text: 'Di Bartolomeo, G., Dufwenberg, M., Papa, S., & Passarelli, F. (2023). Promises or agreements? Moral commitments in bilateral communication. *Economics Letters*, 222, 110931.',
     },
   },
   {
@@ -154,13 +163,17 @@ export const FINDING_WORKS: readonly Work[] = [
 
 /**
  * The finding's sources, behind the lock (ADR 0034, ADR 0035): the belief the curve holds fixed,
- * Kawagoe and Narita (2014), the curve and /finding's own figures, in the order the film meets them.
+ * Kawagoe and Narita (2014), the curve and /finding's own figures, in the order the film meets them;
+ * then what only /finding says: Di Bartolomeo, Dufwenberg, Papa and Passarelli (2023) and the working
+ * paper's other two results (ADR 0039).
  */
 export const FINDING_ENTRIES: readonly Entry[] = [
   { source: 'vanberg-second-order', work: 'vanberg-2008', places: [chapter('my-research'), page('finding')] },
   { source: 'kawagoe-narita-2014', work: 'kawagoe-narita-2014', places: [chapter('my-research'), page('finding')] },
   { source: 'curve', work: 'working-paper', places: [chapter('my-research'), page('finding')] },
   { source: 'curve-finding', work: 'working-paper', places: [page('finding')] },
+  { source: 'di-bartolomeo-2023', work: 'di-bartolomeo-2023', places: [page('finding')] },
+  { source: 'working-paper-results', work: 'working-paper', places: [page('finding')] },
 ];
 
 /** The finding's source keys. */

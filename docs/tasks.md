@@ -1236,7 +1236,7 @@ que cada commit quede en verde.
 - [ ] **9.4** El explorador de la fórmula: un módulo puro con su test, controles nativos, una región
       viva, sin animación con movimiento reducido; su script solo en `/finding`, con su techo de
       peso y `src/data/weight.json` al día. Sin JS no aparece.
-- [ ] **9.5** El registro de cifras y las fuentes: 60 de 60, la mitad, las filas de los tres mundos
+- [x] **9.5** El registro de cifras y las fuentes: 60 de 60, la mitad, las filas de los tres mundos
       y el umbral del explorador, con su fuente en `docs/sources.md`; Di Bartolomeo, Dufwenberg, Papa
       y Passarelli (2023), sin cifras; `/sources` lista lo nuevo con el candado abierto.
 - [ ] **9.6** Lo demás del sitio: el póster de `/finding` (E1), su JSON-LD (E2), el segundo enlace

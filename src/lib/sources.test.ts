@@ -47,7 +47,7 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
   });
 
   it("keeps the finding's sources out of the open part, which looks the same in both states (ADR 0034, ADR 0035)", () => {
-    expect([...FINDING].sort()).toEqual(['curve', 'curve-finding', 'kawagoe-narita-2014', 'vanberg-second-order']);
+    expect([...FINDING].sort()).toEqual(['curve', 'curve-finding', 'di-bartolomeo-2023', 'kawagoe-narita-2014', 'vanberg-second-order', 'working-paper-results']);
     for (const entry of ENTRIES) {
       for (const place of entry.places) expect('page' in place && place.page === 'finding', entry.source).toBe(false);
       expect(FINDING).not.toContain(entry.source);
@@ -122,7 +122,8 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
     for (const candidate of WORKS) if (candidate.id !== 'vanberg-2008') expect(findingEntriesOf(candidate.id), candidate.id).toEqual([]);
     expect(findingWorksOf().map((group) => [group.work.id, group.entries.map((entry) => entry.source)])).toEqual([
       ['kawagoe-narita-2014', ['kawagoe-narita-2014']],
-      ['working-paper', ['curve', 'curve-finding']],
+      ['di-bartolomeo-2023', ['di-bartolomeo-2023']],
+      ['working-paper', ['curve', 'curve-finding', 'working-paper-results']],
     ]);
     // Every finding entry leads to chapter 7's finding or to /finding, and nowhere else.
     for (const entry of FINDING_ENTRIES) {
@@ -130,6 +131,9 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
     }
     expect(figuresOf('vanberg-second-order')).toEqual(['76']);
     expect(figuresOf('curve')).toEqual(['0', '100', '15', '65', '10', '5', '38']);
+    // The other two results: the protocol null's 60 out of 60, and the cut at one half (ADR 0039); the new citation has none.
+    expect(figuresOf('working-paper-results')).toEqual(['60', '1/2']);
+    expect(figuresOf('di-bartolomeo-2023')).toEqual([]);
   });
 
   it('names θ and c on /sources but never gives their values, which only /finding shows (ADR 0035)', () => {
@@ -138,16 +142,20 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
       ['curve-finding', '0.6', 'θ,'],
       ['curve-finding', '5', 'c,'],
     ]);
-    expect(figuresOf('curve-finding')).toEqual(['14.44', '4', '20/3', '6.67', '10.1', '65.9', '70', '10', '76', '100']);
+    expect(figuresOf('curve-finding')).toEqual(['14.44', '4', '20/3', '6.67', '10.1', '65.9', '70', '10', '76', '100', '3.55', '4.20', '0.277']);
     expect(en['sources.curve-finding']).toMatch(/θ and c are given, and explained, only on that page\.$/);
     expect(es['sources.curve-finding']).toMatch(/θ y c se dan, y se explican, solo en esa página\.$/);
   });
 
   it("cites the finding's own works in full: Kawagoe and Narita (2014) as the prose does, and the working paper with its engine", () => {
-    const [kawagoe, paper] = FINDING_WORKS;
+    const [kawagoe, diBartolomeo, paper] = FINDING_WORKS;
     const citation = CITATIONS.find((c) => c.source === 'kawagoe-narita-2014');
     expect(kawagoe?.cite).toBe(`${citation?.authors.join(' and ')} (${citation?.year})`);
     expect(kawagoe?.reference.text).toContain(`(${citation?.year}).`);
+    // Di Bartolomeo, Dufwenberg, Papa and Passarelli (2023), as /finding cites it, with its journal (ADR 0016).
+    const theirs = CITATIONS.find((c) => c.source === 'di-bartolomeo-2023');
+    expect(diBartolomeo?.cite).toBe(`${theirs?.authors.slice(0, -1).join(', ')} and ${theirs?.authors.at(-1)} (${theirs?.year})`);
+    expect(diBartolomeo?.reference.text).toContain('*Economics Letters*, 222, 110931.');
     // The working paper: its title and link from src/config.ts, the same as the status sentence's.
     expect(paper?.reference.text).toBe(`Hernández Gallegos, M. X. (2026). *${WORKING_PAPER.title}* [{type}]. SSRN.`);
     // Linked to its DOI, as the other references are; the status sentence keeps its page on SSRN.

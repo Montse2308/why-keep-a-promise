@@ -97,6 +97,13 @@ describe('figures in the prose', () => {
     expect(numbersIn('as Kawagoe and Narita (2014, §3.2(ii)) derive')).toEqual([]);
   });
 
+  it('reads a citation all in parentheses, with a surname of two words, as a citation', () => {
+    const text = 'kept more often (Di Bartolomeo, Dufwenberg, Papa and Passarelli, 2023). Or (Di Bartolomeo, Dufwenberg, Papa y Passarelli, 2023).';
+    expect(citationsIn(text)).toEqual(['Di Bartolomeo+Dufwenberg+Papa+Passarelli 2023', 'Di Bartolomeo+Dufwenberg+Papa+Passarelli 2023']);
+    expect(numbersIn(text)).toEqual([]);
+    expect(citationsIn('the paper (Section 6 and Table 1)')).toEqual([]);
+  });
+
   it('does not check code blocks or markers as prose', () => {
     expect(numbersIn(readable('Text.\n\n```ts\nconst x = 200;\n```\n\n<!-- slot:guilt-chart -->\n'))).toEqual([]);
   });

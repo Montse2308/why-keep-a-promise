@@ -28,6 +28,8 @@ export const SOURCE_KEYS = [
   'vanberg-baseline',
   'vanberg-abstract',
   'curve-finding',
+  'working-paper-results',
+  'di-bartolomeo-2023',
 ] as const;
 export type SourceKey = (typeof SOURCE_KEYS)[number];
 
@@ -112,6 +114,14 @@ export const FIGURES: readonly Figure[] = [
   { value: '10', source: 'curve-finding', what: "personal guilt's payoff from 70 on in the robustness variant" },
   { value: '76', source: 'curve-finding', what: 'the belief that a promise will be kept, in the formula' },
   { value: '100', source: 'curve-finding', what: 'beliefs in hundredths, in the formula' },
+  // /finding's three worlds (ADR 0037): the guilt available at background trust 5 and 70; 38 and its 14.44 are above.
+  { value: '3.55', source: 'curve-finding', what: 'guilt available at background trust 5, a world where almost no one keeps their word' },
+  { value: '4.20', source: 'curve-finding', what: 'guilt available at background trust 70, a world where almost everyone does' },
+  // /finding's formula explorer (ADR 0038): the θ below which the window closes, with the belief at 76.
+  { value: '0.277', source: 'curve-finding', what: 'θ below which personal guilt never rolls, 1600 / 76², to three decimals' },
+  // /finding's other two results (ADR 0039), from the working paper's section 6.
+  { value: '60', source: 'working-paper-results', what: 'runs out of 60 in which both protocols end with the same population (20 seeds at each of three switching rates)' },
+  { value: '1/2', source: 'working-paper-results', what: 'the cut of the share of the time a promise stops binding, written "one half" / "la mitad"' },
 ];
 
 /** /finding's figures, each checked against src/data/curve.json in tests/finding.test.ts. */
@@ -132,6 +142,26 @@ export const FINDING_FIGURES = {
   peak: { trust: 38, guilt: '14.44' },
   /** The robustness variant: the cap, and personal guilt's payoff from 70 on. */
   robustness: { cap: 5, from: 70, payoff: 10 },
+  /** The three worlds (ADR 0037): background trust and the guilt available in each, rows of the file. */
+  worlds: [
+    { trust: 5, guilt: '3.55' },
+    { trust: 38, guilt: '14.44' },
+    { trust: 70, guilt: '4.20' },
+  ],
+  /**
+   * The formula explorer (ADR 0038): the θ below which personal guilt never rolls, 1600 / b², with the
+   * belief at 76, as the prose says it; and at 80, as the working paper (section 5) says it, a check
+   * of the function that the page does not show.
+   */
+  explorer: { thetaMin: '0.277', thetaMinAt80: '0.25' },
+} as const;
+
+/** /finding's other two results (ADR 0039), from the working paper's section 6, in words where the page says them in words. */
+export const RESULTS_FIGURES = {
+  /** Runs, out of 60, in which a population where both can speak ends like one where only the decider can. */
+  protocolNull: { same: 60, of: 60 },
+  /** The cut of the share of the time a promise stops binding: the other joins below it. */
+  cut: '1/2',
 } as const;
 
 /** The curve's figures as chapter 7's finding and its chart state them, each checked against src/data/curve.json. */
@@ -161,4 +191,5 @@ export const CITATIONS: readonly Citation[] = [
   { authors: ['Vanberg'], year: 2008, source: 'vanberg-2008' },
   { authors: ['Case'], year: 2017, source: 'case-2017' },
   { authors: ['Kawagoe', 'Narita'], year: 2014, source: 'kawagoe-narita-2014' },
+  { authors: ['Di Bartolomeo', 'Dufwenberg', 'Papa', 'Passarelli'], year: 2023, source: 'di-bartolomeo-2023' },
 ];
