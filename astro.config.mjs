@@ -46,6 +46,7 @@ const LOCKED_MODULES = {
   '/src/components/finding/FindingProse.astro': '/src/components/curve/Locked.astro',
   '/src/components/finding/ThreeWorlds.astro': '/src/components/curve/Locked.astro',
   '/src/components/finding/ResultFigure.astro': '/src/components/curve/Locked.astro',
+  '/src/components/finding/Explorer.astro': '/src/components/curve/Locked.astro',
   '/src/lib/film/finding.ts': '/src/lib/film/finding.locked.ts',
 };
 

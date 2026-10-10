@@ -35,8 +35,9 @@ export const MARKERS = [
   'compromiso específico a la pareja',
   'background trust',
   'confianza de fondo',
-  // /finding: its chart and its prose.
+  // /finding: its chart, its formula explorer (ADR 0038) and its prose.
   'finding-guilt',
+  'data-explorer',
   'θ',
   'identification result',
   'resultado de identificación',
@@ -56,8 +57,8 @@ export const MARKERS = [
 export const UNLOCKED_PAGES = {
   'index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason', 'Montse2308/Dilema-del-Prisionero'],
   'es/index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason', 'Montse2308/Dilema-del-Prisionero'],
-  'finding/index.html': ['data-locked-content', 'finding-guilt', 'identification result', 'Montse2308/Dilema-del-Prisionero'],
-  'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'resultado de identificación', 'Montse2308/Dilema-del-Prisionero'],
+  'finding/index.html': ['data-locked-content', 'finding-guilt', 'data-explorer', 'identification result', 'Montse2308/Dilema-del-Prisionero'],
+  'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'data-explorer', 'resultado de identificación', 'Montse2308/Dilema-del-Prisionero'],
   'how-its-built/index.html': ['data-locked-content', 'by imitation', 'Montse2308/Dilema-del-Prisionero'],
   'es/how-its-built/index.html': ['data-locked-content', 'por imitación', 'Montse2308/Dilema-del-Prisionero'],
   // /sources lists the finding's sources only behind the lock (ADR 0035).

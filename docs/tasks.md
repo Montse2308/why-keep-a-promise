@@ -1245,9 +1245,15 @@ que cada commit quede en verde.
       `guilt-chart` sale). Abajo, la culpa personal gruesa en tinta (debajo, como en el capítulo 7,
       para que se vean las otras dos en 10), el compromiso en dorado, la culpa general punteada y la
       variante discontinua solo en su cola, de 65 a 76. Leyenda y tabla oculta propias.
-- [ ] **9.4** El explorador de la fórmula: un módulo puro con su test, controles nativos, una región
+- [x] **9.4** El explorador de la fórmula: un módulo puro con su test, controles nativos, una región
       viva, sin animación con movimiento reducido; su script solo en `/finding`, con su techo de
       peso y `src/data/weight.json` al día. Sin JS no aparece.
+      Hecho: `src/lib/finding/explorer.ts` (el test lo fija en 10.1, 65.9, 14.44 en 38, 0.277 y 0.25,
+      y en cada fila de la curva), `Explorer.astro` y su script, que dibuja en pixeles del ancho real
+      y no anima nada. El bloque con «Pruébalo» queda `hidden` hasta que corre el script. El techo:
+      8 KiB de JS en `/finding` (`finding-script`); pesa 2.8 KiB. El módulo puro no importa nada,
+      para que el script no comparta módulos con el de la película: al compartirlos, Vite los partía y
+      el home subía 0.3 KiB. `weight.json` no cambia: los home pesan lo mismo.
 - [x] **9.5** El registro de cifras y las fuentes: 60 de 60, la mitad, las filas de los tres mundos
       y el umbral del explorador, con su fuente en `docs/sources.md`; Di Bartolomeo, Dufwenberg, Papa
       y Passarelli (2023), sin cifras; `/sources` lista lo nuevo con el candado abierto.

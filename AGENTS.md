@@ -87,7 +87,7 @@ not by reading test output.
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
 | `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034), or if a link leaving the site does not open in a new tab with its notice, or one inside it does (8.3) |
-| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
+| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load) or /finding's JS (ADR 0038), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
 | `npm run check:launch` | Builds, then fails while a link is still a `*_PENDING` placeholder in `dist/`, `src/` or the READMEs (ADR 0034). Not in CI; step 3 of the launch checklist and `deploy.yml` run it |
 
 `check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
@@ -173,6 +173,8 @@ src/
                          glances, the waiting die's rock, asked by the frame loop)
     back.ts              when a notebook link back to the film goes back in the tab's history
     finding/worlds.ts    /finding's three worlds and the payoff panel's variant tail, from curve.json
+    finding/explorer.ts  /finding's formula explorer: the guilt available, its window, peak and θmin
+                         (ADR 0038); pure, imports nothing, pinned to the register by its test
     cite.ts              /finding's «How to cite»: the working paper (APA, BibTeX) and the engine, from config.ts
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light
@@ -221,7 +223,8 @@ src/
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
                          finding/ (/finding's own, behind the lock, ADR 0037: MinuteLinks, the buttons
-                         of «In one minute»; ThreeWorlds; ResultFigure, the two panels, GuiltChart on
+                         of «In one minute»; Explorer, with explorer.ts, its script, the only one
+                         on /finding besides the panel's; ThreeWorlds; ResultFigure, the two panels, GuiltChart on
                          top; Cite; FindingProse, the styles of its blocks of prose);
                          LanguageSwitch; PaperStatus, the status sentence (ADR 0034); Hero, the
                          home's cover (ADR 0036)

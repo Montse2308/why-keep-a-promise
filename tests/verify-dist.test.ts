@@ -9,6 +9,7 @@ import findingOwn from '../src/components/finding/ResultFigure.astro?raw';
 import findingWorlds from '../src/components/finding/ThreeWorlds.astro?raw';
 import findingMinute from '../src/components/finding/MinuteLinks.astro?raw';
 import findingCite from '../src/components/finding/Cite.astro?raw';
+import findingExplorer from '../src/components/finding/Explorer.astro?raw';
 import filmComponent from '../src/components/film/Film.astro?raw';
 import findingComponent from '../src/components/film/chapters/Finding.astro?raw';
 import myResearch from '../src/components/film/chapters/MyResearch.astro?raw';
@@ -123,6 +124,7 @@ const lockedSources = [
   findingWorlds,
   findingMinute,
   findingCite,
+  findingExplorer,
   curveController,
   findingComponent,
   findingBeats,
@@ -246,6 +248,7 @@ describe('verify:dist (ADR 0034)', () => {
       ['/src/components/finding/FindingProse.astro', '/src/components/curve/Locked.astro'],
       ['/src/components/finding/ThreeWorlds.astro', '/src/components/curve/Locked.astro'],
       ['/src/components/finding/ResultFigure.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/Explorer.astro', '/src/components/curve/Locked.astro'],
       ['/src/lib/film/finding.ts', '/src/lib/film/finding.locked.ts'],
     ]);
     // The component stub is only its frontmatter; the timeline stub knows no beats.

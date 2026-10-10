@@ -1,6 +1,6 @@
 // Weighs every page of the built site against the budgets of ADR 0025 (src/lib/budgets.ts). Run
 // after `npm run build`: it prints each page's first load and fails if any page goes over a ceiling:
-// the home's JavaScript, the fonts of a first load, or the whole first load. It also fails while the
+// the home's JavaScript, /finding's (ADR 0038), the fonts of a first load, or the whole first load. It also fails while the
 // homes' weights /how-its-built cites (src/data/weight.json) differ from the build's;
 // `npm run budgets -- --write` writes them from the build.
 
@@ -8,7 +8,7 @@ import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
-import { BUDGETS, homeWeights, kilobytes, overruns, recordDrift, weigh } from '../src/lib/budgets.ts';
+import { BUDGETS, holdsOn, homeWeights, kilobytes, overruns, recordDrift, weigh } from '../src/lib/budgets.ts';
 import { DEFAULT_LOCALE } from '../src/lib/locales.ts';
 
 const BASE = '/why-keep-a-promise/';
@@ -70,7 +70,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const width = Math.max(...weights.map((w) => w.page.length));
   console.log(`${'page'.padEnd(width)}  ${BUDGETS.map((b) => `${b.id} (≤ ${kilobytes(b.bytes)})`.padStart(28)).join('')}`);
   for (const weight of weights.sort((a, b) => a.page.localeCompare(b.page))) {
-    const cells = BUDGETS.map((b) => (b.home && !weight.home ? '—' : kilobytes(weight.totals[b.id])).padStart(28));
+    const cells = BUDGETS.map((b) => (holdsOn(b, weight) ? kilobytes(weight.totals[b.measure]) : '—').padStart(28));
     console.log(`${weight.page.padEnd(width)}  ${cells.join('')}`);
   }
   const over = overruns(weights);
