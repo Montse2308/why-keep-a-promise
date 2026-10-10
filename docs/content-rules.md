@@ -87,6 +87,10 @@ de una población.
 
 Una página del cuaderno no repite las leyendas de la película: solo agrega.
 
+- Lo que no se repite son las *frases*. `/finding` puede mostrar los mismos datos que la curva del
+  capítulo 7 (el pago de cada razón en cada fila), siempre con frases y leyendas distintas
+  (ADR 0037).
+
 ## (i) Frases prohibidas
 
 - Estas cadenas no aparecen en ningún archivo del sitio ni en su código, en ningún idioma y sin
@@ -111,13 +115,15 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
   - ni el hallazgo, la curva, los parámetros o qué motivo paga dónde.
 - **La portada del home** (ADR 0036) dice de la investigación lo mismo que la parte abierta del
   capítulo 7: la pregunta y el motor en TypeScript. No lleva la frase de estado ni el nombre de la
-  autora.
+  autora. Con el candado abierto, su tarjeta «La investigación» enlaza también a `/finding`, sin
+  cambiar lo que dice (ADR 0040).
 - La aritmética exacta y los tests que detienen el build son de la página, y se cuentan en
   `/how-its-built`.
 - Los enlaces al hallazgo, a `/finding` y al repositorio del motor existen solo con el candado
   abierto (ADR 0034).
-- **`/about`** lleva el nombre completo de la autora, GitHub y LinkedIn, y nada más: sin escuela,
-  trabajo, ciudad ni biografía (decisión de Montse, ADR 0024).
+- **`/about`** lleva el nombre completo de la autora, GitHub, LinkedIn, ORCID y su página de autora
+  en SSRN (esta, con el candado abierto), todos con `rel="me"`, y nada más: sin escuela, trabajo,
+  ciudad ni biografía (decisiones de Montse, ADR 0024 y ADR 0041).
 
 ## (k) La película
 
@@ -141,6 +147,10 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
 - No se publica el resultado: ni datos de la curva, ni parámetros del modelo, ni qué motivo paga
   dónde, fuera del candado (ADR 0034).
 - Los parámetros del modelo no se muestran nunca, salvo θ, c, la culpa disponible y la variante de
-  robustez en `/finding`, y solo detrás del candado. Detrás del candado, `/sources` lista las cifras
+  robustez en `/finding`, y solo detrás del candado. También ahí, la sección «Otros dos resultados»
+  nombra **con palabras** la parte de las veces en que una promesa deja de atar y su corte en la
+  mitad, y el 60 de 60 del nulo del protocolo: sin la letra `s`, φ, N, generaciones ni semillas con
+  nombre, y sin el 59 % ni el 43 % del laboratorio (ADR 0039). El explorador de `/finding` mueve θ,
+  la confianza de fondo y la creencia de que la promesa se cumplirá, y nada más (ADR 0038). Detrás del candado, `/sources` lista las cifras
   de `/finding` del registro y nombra θ y c, nunca sus valores (ADR 0035).
 - Sin fechas de sometimiento ni correspondencia con otros autores en ningún archivo (ADR 0034).

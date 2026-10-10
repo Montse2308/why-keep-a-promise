@@ -3,6 +3,8 @@
 **Estado:** aceptada (P8, paso 8.5). Precisa el ADR 0021 (qué abre el home, dónde va la pregunta y
 cómo se llama la página ante quien la lee) y el ADR 0024 (una entrada más al cuaderno). Decisiones de
 Montse en el paso 8.4 y al revisar el 8.5.
+Enmendado por el ADR 0040: con el candado abierto, la puerta de la investigación también enlaza a
+`/finding`.
 
 ## Contexto
 

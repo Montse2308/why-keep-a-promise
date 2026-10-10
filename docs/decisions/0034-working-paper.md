@@ -5,6 +5,9 @@ reescribe lo que sigue vigente de ellos. Precisa el ADR 0001 (la página se lanz
 esté publicado en una revista), el 0012 (el historial se revisó y se deja como está), el 0016 (que
 ahora precisa el punto sobre revistas de este ADR) y el 0024 (su «frase de estado del manuscrito» es
 la frase de estado de aquí).
+Precisado por el ADR 0038 (en `/finding`, el explorador mueve también la creencia de que la promesa
+se cumplirá) y por el 0039 (`/finding` nombra con palabras la parte de las veces en que una promesa
+deja de atar, con su corte en la mitad).
 
 ## Contexto
 

@@ -113,8 +113,9 @@ the weights beside it come from `src/data/weight.json`.
   ADR 0030 sounds, each with what the stage shows.
 - Memory: the film remembers what was played only in `history.state` of its own tab entry
   (ADR 0029). No `localStorage`, `sessionStorage`, IndexedDB, cookies or analytics; nothing is sent.
-- Budgets: home JS ≤ 40 KiB gzipped (the two homes), fonts ≤ 160 KiB and first load ≤ 450 KiB (every
-  page), LCP ≤ 2.5 s on a mid-range phone. KiB, and which pages, by ADR 0028.
+- Budgets: home JS ≤ 40 KiB gzipped (the two homes), `/finding`'s JS ≤ 8 KiB gzipped (ADR 0038),
+  fonts ≤ 160 KiB and first load ≤ 450 KiB (every page), LCP ≤ 2.5 s on a mid-range phone. KiB, and
+  which pages, by ADR 0028.
 - The only new dependency the plan allows is `@resvg/resvg-js`, as a dev dependency, for Open Graph
   posters (in since P6). Anything else: ask first.
 - No `@types/node`: code that needs Node's API at build time is plain `.mjs` (`scripts/`,
@@ -270,8 +271,12 @@ scratch/                 local notes, git-ignored, never committed
   - The lock covers chapter 7's finding, `/finding`, the engine part of `/how-its-built`, the
     finding's sources on `/sources` (ADR 0035), and the links to them and to the engine repository. It opens once the working paper is public on SSRN.
   - Model parameters never appear, except θ, c, the guilt available and the robustness variant on
-    `/finding`, behind the lock. Behind the lock, `/sources` lists `/finding`'s figures from the
-    register and names θ and c, never their values (ADR 0035).
+    `/finding`, behind the lock. There too, «Two more results» names in words the share of the
+    time a promise stops binding and its cut at one half, and the protocol null's 60 out of 60: no
+    letter `s`, no φ, N, generations or named seeds, and not the lab's 59 % or 43 % (ADR 0039). The
+    formula explorer moves only θ, background trust and the belief that a promise will be kept
+    (ADR 0038). Behind the lock, `/sources` lists `/finding`'s figures from the register and names θ
+    and c, never their values (ADR 0035).
   - Outside the lock, chapter 7 says only the question and that Montse built a simulation engine in
     TypeScript. Nothing about the engine's tests, seed, generations, imitation or provenance
     (rule (j)).
@@ -290,14 +295,17 @@ scratch/                 local notes, git-ignored, never committed
   - No visualising populations or dynamics: no agents, grids or one dot per person.
   - No playable repeated prisoner's dilemma anywhere: link to *The Evolution of Trust* instead. The
     dilemma in chapter 1 is played once.
-  - No charts beyond chapter 7's curve and `/finding`'s guilt chart, both behind the lock.
-  - No interaction outside the list in ADR 0023.
+  - No charts beyond chapter 7's curve and `/finding`'s figures (the guilt chart, what each reason
+    earns, the three worlds' meters and the formula explorer, ADR 0037 and 0038), all behind the
+    lock, and the miniature on `/finding`'s poster.
+  - No interaction outside the list in ADR 0023, with the formula explorer of ADR 0038.
   - The scroll is never hijacked.
 - **Naming a journal** for Montse's text, which goes to no journal (it is a working paper on SSRN,
   ADR 0034), submission dates or correspondence with other authors, in any file. Third-party
   references carry their journal, as any bibliography (ADR 0016).
 - **Inventing personal data** (display name, profile URLs, email, photo, school, job, city,
-  biography). `/about` carries only the name, GitHub and LinkedIn.
+  biography). `/about` carries only the name, GitHub, LinkedIn, ORCID and the SSRN author page
+  (ADR 0041).
 - **Caricaturing a real person** as a character.
 - Writing chapter or notebook prose outside the phase that owns it.
 - Adding dependencies outside ADR 0025 without asking.

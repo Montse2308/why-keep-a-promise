@@ -1220,13 +1220,14 @@ aprobó el 10-oct, tal cual; una frase cambia solo si choca con una regla o un t
 reporta con la frase original y la nueva. Las cifras de 9.5 entran antes que el texto de 9.2, para
 que cada commit quede en verde.
 
-- [ ] **9.0** La fase en los documentos: P9 en `docs/phases.md` y aquí, y la fase activa en
+- [x] **9.0** La fase en los documentos: P9 en `docs/phases.md` y aquí, y la fase activa en
       `AGENTS.md`.
-- [ ] **9.1** Los ADR, antes de tocar `src/`, con `docs/decisions/README.md`,
+- [x] **9.1** Los ADR, antes de tocar `src/`, con `docs/decisions/README.md`,
       `docs/content-rules.md` y `AGENTS.md` al día: `/finding` por sí sola; un explorador de la
       fórmula en `/finding` (enmienda el 0001 y el 0025); el hallazgo nombra sus otros dos
       resultados; la portada enlaza al hallazgo (enmienda el 0036); `/about` suma ORCID y SSRN
-      (enmienda el 0024).
+      (enmienda el 0024). Son los ADR 0037 a 0041; el del explorador también precisa la lista de
+      interacciones del 0023 y el candado del 0034.
 - [ ] **9.2** El texto de `/finding`, EN y ES, con sus secciones en orden y sus slots; los enlaces
       al paper y al motor salen de `src/config.ts`; la frase de estado al final, sin cambios.
 - [ ] **9.3** Los tres mundos (tarjetas sin JS, con su medidor) y la figura de dos paneles (el

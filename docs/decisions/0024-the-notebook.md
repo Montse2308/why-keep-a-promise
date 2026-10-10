@@ -5,6 +5,8 @@
 la frase de estado del working paper, y el candado del cuaderno está en el 0034 (antes, el 0026).
 Precisada por el ADR 0036: al cuaderno también se llega desde la portada del home, por sus cinco
 páginas, sin `/finding`.
+Precisada por el ADR 0037: `/finding` se entiende sola, con su orden de secciones. Enmendada por
+el ADR 0041: `/about` suma ORCID y la página de autora en SSRN.
 
 ## Contexto
 
