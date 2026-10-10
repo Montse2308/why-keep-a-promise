@@ -46,9 +46,10 @@ const seventh = (locale: Locale) =>
 /**
  * Words per page and language, tables not counted: the F4 session's budget, kept by the notebook
  * (ADR 0024). /sources is its register, so its own prose is only the lead; /about is its slot alone.
- * /finding stands on its own since P9, with a budget of its own (ADR 0037).
+ * /finding stands on its own since P9, with a budget of its own, and /how-its-built's engine section
+ * grew with it (ADR 0037).
  */
-const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 1600, 'how-its-built': 600, sources: 120, about: 0 };
+const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 1600, 'how-its-built': 700, sources: 120, about: 0 };
 
 describe('subpage files', () => {
   it('exist for every subpage in every locale, named by its slug', () => {

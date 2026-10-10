@@ -58,8 +58,12 @@ Al final sigue la frase de estado (regla (b)), sin cambios, y el enlace de vuelt
 - Sigue entera detrás del candado (ADR 0034): con el candado cerrado muestra su título y la frase
   de estado, nada más.
 - El tope de palabras de su prosa sube de 700 a **1 600**, sin contar tablas, código ni el texto de
-  los componentes (las tarjetas, las figuras y los bloques para citar). Las demás páginas conservan
-  el suyo.
+  los componentes (las tarjetas, las figuras y los bloques para citar). El de `/how-its-built` sube
+  de 600 a **700**, porque su sección del motor se reescribe con el texto que Montse aprobó con este
+  (P9, E4: cuatro decisiones del motor y su `choose()`). Las demás páginas conservan el suyo.
+- El bloque de código de la sección del motor de `/how-its-built` cita el `choose()` del motor, no
+  código de este sitio: el test de los bloques citados lo comprueba aparte, igual en los dos idiomas,
+  porque el motor no se abre desde aquí (ADR 0010).
 
 ### De dónde sale cada cosa
 

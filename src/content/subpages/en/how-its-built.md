@@ -98,10 +98,28 @@ replaced. A decision changes only through a new record; the old one is archived,
 
 ## The engine
 
-The curve comes from a simulation engine written in TypeScript. Its random numbers come from a
-seeded generator, so the same seed repeats the same run. Reasons spread by imitation: from one
-generation to the next, the reasons that earn more are copied more. The engine exports the curve
-with its provenance: the engine's commit, the seed and the command that produced it. On this side,
-a test fails if the curve changes or if the file is missing.
+The curve comes from a simulation engine of its own, written in TypeScript with no runtime
+dependencies. Four choices shape it:
 
-The engine's repository: {engine}.
+- **Selection sees money, not feelings.** Guilt changes what an agent chooses; what spreads is what
+  it earns.
+- **One draw, one number.** Every random draw takes exactly one number from a seeded generator, even
+  when its outcome is certain. Two runs that differ in one setting stay aligned, so a difference
+  between them comes from the setting, not from the dice.
+- **Only what could be seen counts.** The belief that a promise will be kept is updated only from
+  encounters in which the other person joined.
+- **Every result carries its origin.** The scripts that regenerate the paper's runs refuse to run
+  while the code has uncommitted changes, and write the commit, the seeds and every setting next to
+  each result.
+
+```ts
+/** Rolls only if it is strictly better. At a tie, Don't. */
+export function choose(spec, sens, match, cap) {
+  const roll = utility(spec, "roll", sens, match, cap);
+  const dont = utility(spec, "dont", sens, match, cap);
+  return roll > dont ? "roll" : "dont";
+}
+```
+
+The engine exports the curve with its provenance; on this side, a test fails if the curve changes or
+if the file is missing. {engine}

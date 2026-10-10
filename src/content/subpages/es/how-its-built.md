@@ -102,10 +102,28 @@ reescribe.
 
 ## El motor
 
-La curva viene de un motor de simulación escrito en TypeScript. Sus números aleatorios salen de un
-generador con semilla, así que la misma semilla repite la misma corrida. Las razones se propagan por
-imitación: de una generación a la siguiente, las razones que ganan más se copian más. El motor
-exporta la curva con su procedencia: el commit del motor, la semilla y el comando que la produjo.
-Aquí, una prueba falla si la curva cambia o si falta el archivo.
+La curva sale de un motor de simulación propio, escrito en TypeScript y sin dependencias en tiempo
+de ejecución. Cuatro decisiones le dan forma:
 
-El repositorio del motor: {engine}.
+- **La selección ve dinero, no sentimientos.** La culpa cambia lo que un agente elige; lo que se
+  propaga es lo que gana.
+- **Un sorteo, un número.** Cada sorteo toma exactamente un número de un generador con semilla,
+  aunque su resultado sea seguro. Dos corridas que difieren en un ajuste se mantienen alineadas, así
+  que una diferencia entre ellas viene del ajuste, no de los dados.
+- **Solo cuenta lo que se pudo ver.** La creencia de que la promesa se cumplirá se actualiza solo
+  con los encuentros en los que el otro entró.
+- **Cada resultado lleva su origen.** Los scripts que regeneran las corridas del paper se niegan a
+  correr mientras el código tenga cambios sin commitear, y escriben el commit, las semillas y cada
+  ajuste junto a cada resultado.
+
+```ts
+/** Rolls only if it is strictly better. At a tie, Don't. */
+export function choose(spec, sens, match, cap) {
+  const roll = utility(spec, "roll", sens, match, cap);
+  const dont = utility(spec, "dont", sens, match, cap);
+  return roll > dont ? "roll" : "dont";
+}
+```
+
+El motor exporta la curva con su procedencia; de este lado, un test falla si la curva cambia o si
+falta el archivo. {engine}

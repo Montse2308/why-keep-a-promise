@@ -41,11 +41,9 @@ export const MARKERS = [
   'θ',
   'identification result',
   'resultado de identificación',
-  // /how-its-built: the engine.
+  // /how-its-built: the engine (its section since P9, E4, says no more «by imitation»).
   'seeded generator',
   'generador con semilla',
-  'by imitation',
-  'por imitación',
   // The engine's repository (src/config.ts), linked only behind the lock (src/lib/engine.ts).
   'Montse2308/Dilema-del-Prisionero',
   // Chapter 7's finding: the cards the envelope holds, and the timeline's first beat past it.
@@ -59,8 +57,8 @@ export const UNLOCKED_PAGES = {
   'es/index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason', 'Montse2308/Dilema-del-Prisionero'],
   'finding/index.html': ['data-locked-content', 'finding-guilt', 'data-explorer', 'identification result', 'Montse2308/Dilema-del-Prisionero'],
   'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'data-explorer', 'resultado de identificación', 'Montse2308/Dilema-del-Prisionero'],
-  'how-its-built/index.html': ['data-locked-content', 'by imitation', 'Montse2308/Dilema-del-Prisionero'],
-  'es/how-its-built/index.html': ['data-locked-content', 'por imitación', 'Montse2308/Dilema-del-Prisionero'],
+  'how-its-built/index.html': ['data-locked-content', 'seeded generator', 'Montse2308/Dilema-del-Prisionero'],
+  'es/how-its-built/index.html': ['data-locked-content', 'generador con semilla', 'Montse2308/Dilema-del-Prisionero'],
   // /sources lists the finding's sources only behind the lock (ADR 0035).
   'sources/index.html': ['data-locked-content', 'Kawagoe', 'Montse2308/Dilema-del-Prisionero'],
   'es/sources/index.html': ['data-locked-content', 'Kawagoe', 'Montse2308/Dilema-del-Prisionero'],
