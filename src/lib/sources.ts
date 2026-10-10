@@ -145,6 +145,7 @@ export const FINDING_WORKS: readonly Work[] = [
     cite: 'Di Bartolomeo, Dufwenberg, Papa and Passarelli (2023)',
     reference: {
       text: 'Di Bartolomeo, G., Dufwenberg, M., Papa, S., & Passarelli, F. (2023). Promises or agreements? Moral commitments in bilateral communication. *Economics Letters*, 222, 110931.',
+      url: 'https://doi.org/10.1016/j.econlet.2022.110931',
     },
   },
   {

@@ -156,6 +156,8 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
     const theirs = CITATIONS.find((c) => c.source === 'di-bartolomeo-2023');
     expect(diBartolomeo?.cite).toBe(`${theirs?.authors.slice(0, -1).join(', ')} and ${theirs?.authors.at(-1)} (${theirs?.year})`);
     expect(diBartolomeo?.reference.text).toContain('*Economics Letters*, 222, 110931.');
+    // Linked to its DOI, as checked in Crossref (docs/sources.md).
+    expect(diBartolomeo?.reference.url).toBe('https://doi.org/10.1016/j.econlet.2022.110931');
     // The working paper: its title and link from src/config.ts, the same as the status sentence's.
     expect(paper?.reference.text).toBe(`Hernández Gallegos, M. X. (2026). *${WORKING_PAPER.title}* [{type}]. SSRN.`);
     // Linked to its DOI, as the other references are; the status sentence keeps its page on SSRN.

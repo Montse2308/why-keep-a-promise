@@ -349,15 +349,19 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
 
 - **Referencia:** Di Bartolomeo, G., Dufwenberg, M., Papa, S. y Passarelli, F. (2023). Promises or
   agreements? Moral commitments in bilateral communication. *Economics Letters*, 222, 110931.
+  DOI: <https://doi.org/10.1016/j.econlet.2022.110931> (comprobado en Crossref por la sesión de
+  contexto, 2026-10-10).
 - **Clave:** `di-bartolomeo-2023` (la cita «Di Bartolomeo, Dufwenberg, Papa and Passarelli, 2023»,
   entre paréntesis, en la prosa).
 - **Uso:** en `/finding`, detrás del candado, la sección «Otros dos resultados» (ADR 0039): en el
   laboratorio, un acuerdo, en el que prometen los dos, se cumple más que una promesa de un solo
   lado.
+  Usada en: `/finding` (`src/content/subpages/{en,es}/finding.md`); `/sources`, detrás del candado,
+  con su DOI enlazado.
 - **Verificada:** el texto que la cita, contra el working paper, por la sesión de contexto de P9
-  (aprobado por Montse, 2026-10-10); la referencia viene de esa sesión.
-- PENDIENTE(doi): cotejar la ficha del artículo y, entonces, enlazar su DOI en `/sources`.
-  Usada en: `/finding` (`src/content/subpages/{en,es}/finding.md`); `/sources`, detrás del candado.
+  (aprobado por Montse, 2026-10-10); la referencia viene de esa sesión. La ficha en Crossref (el DOI,
+  *Economics Letters* 222, 110931, y los cuatro autores en este orden) coincide con la referencia,
+  comprobada por la sesión de contexto (2026-10-10).
 - **Cifras:** —
 
 ### Curva del motor (`src/data/curve.json`)
