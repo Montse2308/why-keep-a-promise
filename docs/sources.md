@@ -15,10 +15,10 @@ una cita que no están registrados, o si una clave no existe aquí.
 `/sources` (P5, ADR 0024) muestra ese registro al visitante (`src/lib/sources.ts`): cada obra con su
 referencia completa y, debajo, cada clave con sus cifras, dónde está en la fuente y dónde se usa. Su
 parte abierta se ve igual en los dos estados (ADR 0034). Las claves del hallazgo
-(`vanberg-second-order`, `kawagoe-narita-2014`, `curve` y `curve-finding`, en `FINDING_ENTRIES`) se
-suman solo detrás del candado, con sus cifras, salvo los valores de θ y c, que se nombran pero solo
-se dan en `/finding` (ADR 0035); `curve` y `curve-finding` van bajo el working paper en SSRN, con el
-motor (su repo y el DOI de su release) como su material. Las que ya no se muestran
+(`vanberg-second-order`, `kawagoe-narita-2014`, `curve`, `curve-finding`, `di-bartolomeo-2023` y
+`working-paper-results`, en `FINDING_ENTRIES`) se suman solo detrás del candado, con sus cifras, salvo los valores de θ y c, que se nombran pero solo
+se dan en `/finding` (ADR 0035); `curve`, `curve-finding` y `working-paper-results` van bajo el
+working paper en SSRN, con el motor (su repo y el DOI de su release) como su material. Las que ya no se muestran
 (`vanberg-switch` y `vanberg-chat`, en `RETIRED`) no se listan. Un test exige que cada clave esté en
 uno solo de esos tres lugares.
 Lo que `/sources` dice de cada clave y dónde está en la fuente vive en las claves `sources.*` de
@@ -345,6 +345,25 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   de secciones del working paper no se cita: no aplica a la versión publicada.
 - **Cifras:** —
 
+### Di Bartolomeo, Dufwenberg, Papa y Passarelli (2023)
+
+- **Referencia:** Di Bartolomeo, G., Dufwenberg, M., Papa, S. y Passarelli, F. (2023). Promises or
+  agreements? Moral commitments in bilateral communication. *Economics Letters*, 222, 110931.
+  DOI: <https://doi.org/10.1016/j.econlet.2022.110931> (comprobado en Crossref por la sesión de
+  contexto, 2026-10-10).
+- **Clave:** `di-bartolomeo-2023` (la cita «Di Bartolomeo, Dufwenberg, Papa and Passarelli, 2023»,
+  entre paréntesis, en la prosa).
+- **Uso:** en `/finding`, detrás del candado, la sección «Otros dos resultados» (ADR 0039): en el
+  laboratorio, un acuerdo, en el que prometen los dos, se cumple más que una promesa de un solo
+  lado.
+  Usada en: `/finding` (`src/content/subpages/{en,es}/finding.md`); `/sources`, detrás del candado,
+  con su DOI enlazado.
+- **Verificada:** el texto que la cita, contra el working paper, por la sesión de contexto de P9
+  (aprobado por Montse, 2026-10-10); la referencia viene de esa sesión. La ficha en Crossref (el DOI,
+  *Economics Letters* 222, 110931, y los cuatro autores en este orden) coincide con la referencia,
+  comprobada por la sesión de contexto (2026-10-10).
+- **Cifras:** —
+
 ### Curva del motor (`src/data/curve.json`)
 
 - **Archivo:** `src/data/curve.json`, generado por el motor de simulación y copiado sin cambios por
@@ -432,6 +451,45 @@ La única cuenta es la cuadrática del corte analítico, y solo en un test, para
   Clave: `curve-finding`.
   Fuente: `params.capRobustness` (`enabled`, `outsideOption` = 5) y `grid[].robustness.payoffPgaCapOn`.
   Usada en: `/finding`.
+- Cifra: los tres mundos (ADR 0037). Con la confianza de fondo en "5", "38" y "70", la culpa
+  disponible es "3.55", "14.44" y "4.20"; solo la de 38 pasa del umbral de 20/3.
+  Clave: `curve-finding`.
+  Fuente: `grid[].guilt` y `grid[].rolls.PGA` de `curve.json`, en esas tres filas; las tarjetas las
+  leen del archivo en el build, y `tests/finding.test.ts` comprueba `FINDING_FIGURES.worlds`.
+  Usada en: `/finding` (las tarjetas de los tres mundos, `src/components/finding/ThreeWorlds.astro`).
+- Cifra: el explorador de la fórmula (ADR 0038). Con la creencia de que la promesa se cumplirá en 76,
+  la culpa personal no tira nunca con θ por debajo de "0.277" (1600 / 76², a tres decimales).
+  Clave: `curve-finding`.
+  Fuente: la fórmula de esta sección, en `src/lib/finding/explorer.ts`. Su test fija la función en
+  los valores del registro: con 76 y θ = 0.6, la ventana de 10.1 a 65.9 y el pico de 14.44 en 38;
+  `θmin(76)` = 0.277; y `θmin(80)` = 0.25, el valor que da el working paper (sección 5), que la
+  página no muestra. Los números que el explorador calcula en vivo no se registran uno por uno.
+  Usada en: `/finding` (el texto del explorador, solo con JS).
+
+#### Otros dos resultados del working paper (P9, ADR 0039)
+
+Solo en `/finding` y solo detrás del candado. No salen de `curve.json`: son del working paper y usan
+otros ajustes que la curva, que el paper lista (sección 6 y Tabla 1). La tasa con que una promesa deja
+de atar se dice solo con palabras, sin su letra ni otros valores (ni φ, ni N, ni generaciones).
+
+- **Clave:** `working-paper-results`.
+- Cifra: "60" de "60". Corridas en que los dos protocolos (pueden hablar los dos, o solo quien decide)
+  terminan con la misma población: 20 semillas en cada una de tres tasas con que una promesa deja de
+  atar.
+  Clave: `working-paper-results`.
+  Fuente: el working paper, sección 6; los resultados del motor del nulo del protocolo (20 de 20
+  semillas con la misma población final en cada tasa). Comprobado por la sesión de contexto de P9 y
+  aprobado por Montse (2026-10-10).
+  Usada en: `/finding` («Who speaks does not decide» / «Quién habla no decide»).
+- Cifra: "1/2", dicha «one half» / «la mitad»: el corte de la parte de las veces en que una promesa
+  deja de atar. El otro entra con quien solo tira cuando está atado si esa parte es menor que la
+  mitad, porque entonces 10 por la parte en que sí ata pasa de 5. Entre cero y la mitad sobreviven la
+  culpa personal y el compromiso específico a la pareja; de la mitad en adelante, la culpa general y
+  el compromiso general. La franja estrecha justo debajo de la mitad no se cita como cifra.
+  Clave: `working-paper-results`.
+  Fuente: el working paper, sección 6, y los resultados del motor sobre esa tasa. Comprobado por la
+  sesión de contexto de P9 y aprobado por Montse (2026-10-10).
+  Usada en: `/finding` («When a promise can stop binding» / «Cuando una promesa puede dejar de atar»).
 
 ## Formato de una cifra
 

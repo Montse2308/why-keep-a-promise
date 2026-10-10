@@ -3,13 +3,13 @@
  * sensitivity θ and the fixed cost c from `params.sens`, and the robustness variant. Read from
  * src/data/curve.json as it is; nothing here recomputes the model or interpolates between rows.
  *
- * Build time only, and only behind the lock: the one component that imports this module is
- * src/components/curve/Curve.astro, which a locked build replaces with an empty stub
+ * Build time only, and only behind the lock: the components that read it (/finding's guilt chart and
+ * its own components in src/components/finding/) are replaced with an empty stub in a locked build
  * (astro.config.mjs). No other parameter of the file is read.
  */
 import { fraction, type Fraction } from '../table/fraction';
 import { PAYOFFS } from '../table/game';
-import { readCurve, type Curve } from './curve';
+import { readCurve, SERIES_IDS, type Curve } from './curve';
 
 export interface GuiltRow {
   /** Background trust, out of 100. */
@@ -20,6 +20,8 @@ export interface GuiltRow {
   readonly pulls: boolean;
   /** Personal guilt's payoff in the robustness variant. */
   readonly robust: number;
+  /** Whether, moved by partner-specific commitment, you roll the die here (when the promise binds you). */
+  readonly partnerRolls: boolean;
 }
 
 export interface Finding {
@@ -47,6 +49,11 @@ function object(value: unknown, where: string): Json {
 function integer(value: unknown, where: string): number {
   if (!Number.isSafeInteger(value)) throw new Error(`${where}: expected an integer, got ${String(value)}`);
   return value as number;
+}
+
+function boolean(value: unknown, where: string): boolean {
+  if (typeof value !== 'boolean') throw new Error(`${where}: expected a boolean, got ${String(value)}`);
+  return value;
 }
 
 /** A decimal written in the file, such as 0.6, as the exact fraction it spells (3/5). */
@@ -79,6 +86,7 @@ export function readFinding(raw: unknown): Finding {
       guilt: integer(guilt.num, `${where}.guilt.num`),
       pulls: base.pulls,
       robust: integer(object(row.robustness, `${where}.robustness`).payoffPgaCapOn, `${where}.robustness.payoffPgaCapOn`),
+      partnerRolls: boolean(object(row.rolls, `${where}.rolls`)[SERIES_IDS.partner], `${where}.rolls.${SERIES_IDS.partner}`),
     };
   });
 

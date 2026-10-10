@@ -13,10 +13,10 @@ describe('splitSubpage', () => {
   });
 
   it('moves everything after the lock marker to the locked part, slots included', () => {
-    const parts = splitSubpage('<p>Open.</p><!-- lock --><p>Locked.</p><!--slot:guilt-chart--><p>More.</p>');
+    const parts = splitSubpage('<p>Open.</p><!-- lock --><p>Locked.</p><!--slot:result-figure--><p>More.</p>');
     expect(parts.open).toEqual([{ kind: 'html', html: '<p>Open.</p>' }]);
     expect(parts.locked.map((segment) => segment.kind)).toEqual(['html', 'slot', 'html']);
-    expect(slotsIn(parts.locked)).toEqual(['guilt-chart']);
+    expect(slotsIn(parts.locked)).toEqual(['result-figure']);
   });
 
   it('locks a whole page when the marker comes first', () => {

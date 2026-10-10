@@ -37,12 +37,17 @@ export function readable(body: string, { tables = true } = {}): string {
     .join('\n');
 }
 
-/** "Author (year)", or with a section, "Author (year, §3.2(ii))", or a table, "Author (year, Table I)". */
-export const CITATION = /(\p{Lu}[\p{L}'-]+(?:\s+(?:and|y)\s+\p{Lu}[\p{L}'-]+)*)\s+\((\d{4})(?:,\s*(?:§\d+(?:\.\d+)*(?:\([ivx]+\))?|(?:Table|Tabla)\s+[IVX]+))?\)/gu;
+/**
+ * "Author (year)", or with a section, "Author (year, §3.2(ii))", or a table, "Author (year, Table I)";
+ * or, all in parentheses, "(Di Bartolomeo, Dufwenberg, Papa and Passarelli, 2023)", whose surnames
+ * may take two words.
+ */
+export const CITATION =
+  /(\p{Lu}[\p{L}'-]+(?:\s+(?:and|y)\s+\p{Lu}[\p{L}'-]+)*)\s+\((\d{4})(?:,\s*(?:§\d+(?:\.\d+)*(?:\([ivx]+\))?|(?:Table|Tabla)\s+[IVX]+))?\)|\(((?:\p{Lu}[\p{L}'-]+\s)?\p{Lu}[\p{L}'-]+(?:,\s+(?:\p{Lu}[\p{L}'-]+\s)?\p{Lu}[\p{L}'-]+)*(?:,?\s+(?:and|y)\s+(?:\p{Lu}[\p{L}'-]+\s)?\p{Lu}[\p{L}'-]+)?),\s+(\d{4})\)/gu;
 const NUMBER = /\d+(?:[/.,]\d+)*/g;
 
 export function citationsIn(text: string): string[] {
-  return [...text.matchAll(CITATION)].map((m) => `${(m[1] ?? '').split(/\s+(?:and|y)\s+/).join('+')} ${m[2]}`);
+  return [...text.matchAll(CITATION)].map((m) => `${(m[1] ?? m[3] ?? '').split(/,\s+|\s+(?:and|y)\s+/).join('+')} ${m[2] ?? m[4]}`);
 }
 
 export function numbersIn(text: string): string[] {

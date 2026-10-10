@@ -67,7 +67,8 @@ describe('the magnifiers (ADR 0024)', () => {
     expect(placed(realPeople)).toEqual([['real-people', 'expected']]);
     // Chapter 7's finding puts it on its last card only; that component exists only behind the lock.
     expect(placed(finding)).toEqual([['my-research', 'last']]);
-    expect(finding).toMatch(/\{b\.id === last && <Magnifier locale=\{locale\} chapter="my-research" beat=\{b\.id\} \/>\}/);
+    // There it is drawn as a button, like the cover's «Start» (P9, E6).
+    expect(finding).toMatch(/\{b\.id === last && <Magnifier locale=\{locale\} chapter="my-research" beat=\{b\.id\} button \/>\}/);
   });
 });
 

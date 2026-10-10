@@ -46,8 +46,10 @@ const seventh = (locale: Locale) =>
 /**
  * Words per page and language, tables not counted: the F4 session's budget, kept by the notebook
  * (ADR 0024). /sources is its register, so its own prose is only the lead; /about is its slot alone.
+ * /finding stands on its own since P9, with a budget of its own, and /how-its-built's engine section
+ * grew with it (ADR 0037).
  */
-const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 700, 'how-its-built': 600, sources: 120, about: 0 };
+const SUBPAGE_BUDGET: Record<Subpage, number> = { dilemma: 600, vanberg: 700, finding: 1600, 'how-its-built': 700, sources: 120, about: 0 };
 
 describe('subpage files', () => {
   it('exist for every subpage in every locale, named by its slug', () => {
@@ -97,8 +99,15 @@ describe('figures in the prose', () => {
     expect(numbersIn('as Kawagoe and Narita (2014, §3.2(ii)) derive')).toEqual([]);
   });
 
+  it('reads a citation all in parentheses, with a surname of two words, as a citation', () => {
+    const text = 'kept more often (Di Bartolomeo, Dufwenberg, Papa and Passarelli, 2023). Or (Di Bartolomeo, Dufwenberg, Papa y Passarelli, 2023).';
+    expect(citationsIn(text)).toEqual(['Di Bartolomeo+Dufwenberg+Papa+Passarelli 2023', 'Di Bartolomeo+Dufwenberg+Papa+Passarelli 2023']);
+    expect(numbersIn(text)).toEqual([]);
+    expect(citationsIn('the paper (Section 6 and Table 1)')).toEqual([]);
+  });
+
   it('does not check code blocks or markers as prose', () => {
-    expect(numbersIn(readable('Text.\n\n```ts\nconst x = 200;\n```\n\n<!-- slot:guilt-chart -->\n'))).toEqual([]);
+    expect(numbersIn(readable('Text.\n\n```ts\nconst x = 200;\n```\n\n<!-- slot:result-figure -->\n'))).toEqual([]);
   });
 
   it('points every figure and citation at an entry in docs/sources.md', () => {

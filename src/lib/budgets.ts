@@ -9,28 +9,56 @@
  * compressed. A font counts when the page preloads it, or when its family's @font-face covers a
  * character the page holds (its `unicode-range`); every family the page declares is taken as used.
  * A kilobyte is 1024 bytes (a KiB), as Lighthouse counts its budgets, and the fonts and first-load
- * ceilings hold on every page (ADR 0028, which makes ADR 0025's budgets precise).
+ * ceilings hold on every page (ADR 0028, which makes ADR 0025's budgets precise). /finding's
+ * JavaScript, its formula explorer and the notebook's panel, has a ceiling of its own (ADR 0038).
  */
 
 export const KB = 1024;
 
+/**
+ * What is weighed on every page: its JavaScript (named for the home's budget, the first to weigh it),
+ * the fonts of its first load, and the whole first load.
+ */
 export const BUDGET_IDS = ['home-script', 'fonts', 'first-load'] as const;
 export type BudgetId = (typeof BUDGET_IDS)[number];
 
+/** The pages a budget holds on, besides the home pages and every page: /finding, in each language. */
+export type BudgetPage = 'finding';
+
 export interface Budget {
-  readonly id: BudgetId;
+  readonly id: BudgetId | 'finding-script';
+  /** What it weighs, of a page's totals. */
+  readonly measure: BudgetId;
   /** The ceiling, in bytes as they travel. */
   readonly bytes: number;
-  /** Whether it holds on the home pages only (the film's script) or on every page. */
+  /** Whether it holds on the home pages only (the film's script). */
   readonly home: boolean;
+  /** Or on one notebook page only, in every language; otherwise it holds on every page. */
+  readonly page?: BudgetPage;
 }
 
-/** ADR 0025, read as ADR 0028 says: the home's JavaScript, the fonts of a first load, and the whole first load. */
+/**
+ * ADR 0025, read as ADR 0028 says: the home's JavaScript, the fonts of a first load, and the whole
+ * first load; and /finding's JavaScript (ADR 0038).
+ */
 export const BUDGETS: readonly Budget[] = [
-  { id: 'home-script', bytes: 40 * KB, home: true },
-  { id: 'fonts', bytes: 160 * KB, home: false },
-  { id: 'first-load', bytes: 450 * KB, home: false },
+  { id: 'home-script', measure: 'home-script', bytes: 40 * KB, home: true },
+  { id: 'fonts', measure: 'fonts', bytes: 160 * KB, home: false },
+  { id: 'first-load', measure: 'first-load', bytes: 450 * KB, home: false },
+  { id: 'finding-script', measure: 'home-script', bytes: 8 * KB, home: false, page: 'finding' },
 ];
+
+/** Whether a page, by its URL from the site's root, is a given notebook page in some language: `…/finding/`. */
+export function isPage(url: string, page: BudgetPage): boolean {
+  return url.endsWith(`/${page}/`);
+}
+
+/** Whether a budget holds on a page. */
+export function holdsOn(budget: Budget, weight: Pick<PageWeight, 'page' | 'home'>): boolean {
+  if (budget.home) return weight.home;
+  if (budget.page) return isPage(weight.page, budget.page);
+  return true;
+}
 
 /** The other target of ADR 0025, measured with Lighthouse on an emulated mid-range phone over 4G. */
 export const LCP_CEILING_MS = 2500;
@@ -53,7 +81,7 @@ export interface PageWeight {
 
 export interface Overrun {
   readonly page: string;
-  readonly budget: BudgetId;
+  readonly budget: Budget['id'];
   readonly bytes: number;
   readonly ceiling: number;
 }
@@ -254,9 +282,9 @@ export function weigh(page: string, html: string, htmlBytes: number, home: boole
 export function overruns(weights: readonly PageWeight[], budgets: readonly Budget[] = BUDGETS): Overrun[] {
   return weights.flatMap((weight) =>
     budgets
-      .filter((budget) => !budget.home || weight.home)
-      .filter((budget) => weight.totals[budget.id] > budget.bytes)
-      .map((budget) => ({ page: weight.page, budget: budget.id, bytes: weight.totals[budget.id], ceiling: budget.bytes })),
+      .filter((budget) => holdsOn(budget, weight))
+      .filter((budget) => weight.totals[budget.measure] > budget.bytes)
+      .map((budget) => ({ page: weight.page, budget: budget.id, bytes: weight.totals[budget.measure], ceiling: budget.bytes })),
   );
 }
 

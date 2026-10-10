@@ -99,6 +99,15 @@ describe("/finding's figures, checked against src/data/curve.json", () => {
     expect(finding.rows.find((row) => row.trust < F.robustness.from && row.trust > F.window.to)).toBeUndefined();
   });
 
+  it('reads the three worlds from the file: the guilt available at 5, 38 and 70, above the threshold only at 38 (ADR 0037)', () => {
+    for (const world of F.worlds) {
+      const row = finding.rows.find((candidate) => candidate.trust === world.trust);
+      expect(row, `trust ${world.trust}`).toBeDefined();
+      expect(hundredths(row?.guilt ?? -1)).toBe(world.guilt);
+      expect(row?.pulls).toBe(world.trust === F.peak.trust);
+    }
+  });
+
   it('evaluates the quadratic where the guilt is known: at 38 it is above 20/3', () => {
     expect(g(38n, 1n) > 0n).toBe(true);
   });

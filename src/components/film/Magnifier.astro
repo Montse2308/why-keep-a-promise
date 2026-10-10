@@ -3,7 +3,8 @@
  * A magnifier (ADR 0024): a small link on a card of the film, where curiosity is born, to the
  * notebook page that goes deeper. It is a plain link in the card's flow, so it never interrupts the
  * scroll. Which page it opens comes from src/lib/notebook.ts (`MAGNIFIERS`), so a magnifier placed
- * on a beat the list does not name breaks the build.
+ * on a beat the list does not name breaks the build. As a `button`, it is drawn like the cover's «Start»
+ * (P9, E6): the end of chapter 7's finding, «The finding, in depth», a pill in ink.
  */
 import type { ChapterId } from '../../lib/chapters';
 import { FILM } from '../../lib/design/film';
@@ -16,16 +17,18 @@ interface Props {
   locale: Locale;
   chapter: ChapterId;
   beat: string;
+  /** Drawn as a button, in ink, like the cover's «Start». */
+  button?: boolean;
 }
 
-const { locale, chapter, beat } = Astro.props;
+const { locale, chapter, beat, button = false } = Astro.props;
 const found = magnifierOn(chapter, beat);
 if (!found) throw new Error(`No magnifier on the beat "${beat}" of chapter "${chapter}"`);
 const tr = useTranslations(locale);
 const label = fill(tr('film.deeper'), { title: tr(notebookPage(found.page).titleKey) });
 ---
 
-<p class="magnifier">
+<p class:list={['magnifier', { 'magnifier--button': button }]}>
   <a href={href(locale, found.page)}>
     <svg viewBox="-16 -16 32 32" aria-hidden="true">
       <path d="M5 5 L13 13" stroke={FILM.ink} stroke-width="5" stroke-linecap="round" />
@@ -56,6 +59,31 @@ const label = fill(tr('film.deeper'), { title: tr(notebookPage(found.page).title
 
   .magnifier a:hover {
     text-decoration-color: currentColor;
+  }
+
+  /* As the cover's «Start»: a pill in ink with the card's rim for its text, a full-size target. */
+  .magnifier--button a {
+    padding: 0 1.15rem;
+    border: 2.5px solid var(--film-ink);
+    border-radius: 999px;
+    background: var(--film-ink);
+    color: var(--film-rim);
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+
+  /* The lens is drawn in ink, so on the pill it would vanish: the button is its words alone. */
+  .magnifier--button svg {
+    display: none;
+  }
+
+  .magnifier--button a:hover {
+    background: #2c2952;
+  }
+
+  .magnifier--button a:focus-visible {
+    outline: 3px solid var(--film-ink);
+    outline-offset: 3px;
   }
 
   .magnifier svg {

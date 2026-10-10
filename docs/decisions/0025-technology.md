@@ -4,6 +4,9 @@
 Reemplaza también los párrafos sobre el JavaScript del sitio de los ADR 0015 y 0017 (archivados).
 Precisado por el ADR 0028: los KB de los presupuestos de peso son KiB, y los de fuentes y primera
 carga valen en cada página. Precisado por el ADR 0030: la lista cerrada de las señales del sonido.
+Enmendado por el ADR 0038: un script más, el explorador de la fórmula, solo en `/finding`, con su
+techo de peso. Precisado por el ADR 0037: el póster de `/finding` lleva su línea y una miniatura de
+la gráfica de pago.
 
 ## Contexto
 

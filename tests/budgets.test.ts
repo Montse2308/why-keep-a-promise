@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import adr from '../docs/decisions/0025-technology.md?raw';
 import precision from '../docs/decisions/0028-budget-units.md?raw';
+import findingAdr from '../docs/decisions/0038-formula-explorer.md?raw';
 import decisions from '../docs/decisions/README.md?raw';
 import agents from '../AGENTS.md?raw';
 import ci from '../.github/workflows/ci.yml?raw';
@@ -13,6 +14,7 @@ import {
   codePointsOf,
   covers,
   fontFacesOf,
+  holdsOn,
   homeLocale,
   homeWeights,
   importsOf,
@@ -39,17 +41,23 @@ describe('the budgets', () => {
     expect(ceiling('home-script')).toBe(40 * 1024);
     expect(ceiling('fonts')).toBe(160 * 1024);
     expect(ceiling('first-load')).toBe(450 * 1024);
+    expect(ceiling('finding-script')).toBe(8 * 1024);
     expect(LCP_CEILING_MS).toBe(2500);
     for (const line of ['JavaScript del home: ≤ 40 KB', 'Fuentes: ≤ 160 KB', 'Primera carga completa: ≤ 450 KB', 'LCP ≤ 2.5 s']) expect(adr).toContain(line);
   });
 
-  it('hold the film’s script to the home pages, and the fonts and the first load to every page', () => {
+  it('hold the film’s script to the home pages, /finding’s to /finding, and the fonts and the first load to every page', () => {
     expect(BUDGETS.filter((b) => b.home).map((b) => b.id)).toEqual(['home-script']);
+    expect(BUDGETS.filter((b) => b.page).map((b) => [b.id, b.page, b.measure])).toEqual([['finding-script', 'finding', 'home-script']]);
+    const finding = BUDGETS.find((b) => b.id === 'finding-script');
+    expect(finding && holdsOn(finding, { page: '/b/es/finding/', home: false })).toBe(true);
+    expect(finding && holdsOn(finding, { page: '/b/how-its-built/', home: false })).toBe(false);
+    expect(findingAdr).toContain('**JavaScript de `/finding`: ≤ 8 KiB comprimido** (8 192 bytes)');
   });
 
   it('are read as ADR 0028 decides: KiB, with the same bytes as its table', () => {
     // Grouped by thousands with a space, as docs/ writes figures.
-    for (const bytes of BUDGETS.map((b) => b.bytes)) expect(precision).toContain(`| ${String(bytes).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} |`);
+    for (const bytes of BUDGETS.filter((b) => !b.page).map((b) => b.bytes)) expect(precision).toContain(`| ${String(bytes).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} |`);
     expect(precision).toContain('**Un KB de los presupuestos es un KiB, 1024 bytes,**');
     expect(adr).toContain('Precisado por el ADR 0028');
     expect(decisions).toContain('[0028](0028-budget-units.md)');
@@ -232,7 +240,7 @@ describe('the homes’ weights /how-its-built cites', () => {
     expect(weight.pages.map((p) => p.locale)).toEqual([DEFAULT_LOCALE, ...LOCALES.filter((l) => l !== DEFAULT_LOCALE)]);
     for (const page of weight.pages) {
       expect(page.route).toBe('home');
-      for (const budget of BUDGETS) expect(page.bytes[budget.id], `${page.locale} ${budget.id}`).toBeLessThanOrEqual(budget.bytes);
+      for (const budget of BUDGETS.filter((b) => !b.page)) expect(page.bytes[budget.measure], `${page.locale} ${budget.id}`).toBeLessThanOrEqual(budget.bytes);
     }
     expect(agents).toContain('npm run budgets -- --write');
   });

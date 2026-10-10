@@ -3,7 +3,7 @@ import { CHAPTER_IDS, OPEN_CHAPTERS } from './chapters';
 import { deltaE, parseHex, toLab } from './design/color';
 import { frame, isClose, wholeScreen, type Area, type Viewport } from './film/camera';
 import { stageAt } from './film/stage';
-import { COVER_PAGES, COVER_SKY, DOORS, dawnSkyAt } from './hero';
+import { COVER_PAGES, COVER_SKY, DOORS, dawnSkyAt, researchPages } from './hero';
 import { linkable } from './notebook';
 
 const distance = (a: string, b: string) => deltaE(toLab(parseHex(a)), toLab(parseHex(b)));
@@ -23,6 +23,11 @@ describe('the home’s cover (ADR 0036)', () => {
   it('links the same notebook pages in either state of the lock: never /finding', () => {
     expect(COVER_PAGES.map((entry) => entry.page)).toEqual(linkable(false).map((entry) => entry.page));
     expect(COVER_PAGES.some((entry) => entry.page === 'finding')).toBe(false);
+  });
+
+  it('links the research door to /finding too, under chapter 7, only once the lock is open (ADR 0040)', () => {
+    expect(researchPages(true).map((entry) => [entry.page, entry.titleKey])).toEqual([['finding', 'notebook.finding.title']]);
+    expect(researchPages(false)).toEqual([]);
   });
 
   it('starts in the dawn’s sky and ends in the colour the stage begins with, on any screen (ADR 0027: no cuts)', () => {

@@ -5,6 +5,8 @@ un cuaderno para profundizar; sigue sin ser un simulador. Los juegos que acota e
 (antes, la mesa del ADR 0003, hoy archivado). Precisada por el ADR 0034: el texto no va a una
 revista; la página se lanza con el working paper público en SSRN (el ADR 0011 que cita está
 archivado).
+Enmendada por el ADR 0038: `/finding` tiene un explorador de la fórmula de la culpa disponible, y
+nada más; sigue sin ser un simulador.
 
 ## Contexto
 

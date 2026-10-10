@@ -1,0 +1,192 @@
+---
+/**
+ * /finding's formula explorer (ADR 0038): three native sliders, background trust `a`, the belief that a
+ * promise will be kept `b` and θ, over the formula of the guilt available (src/lib/finding/explorer.ts).
+ * Its script draws the hill, the threshold, the window where personal guilt rolls, the point at `a` and
+ * the peak, and says the state in a polite live region. It runs no model, reads no curve.json and
+ * shows no population.
+ *
+ * It sits in the explorer's block of /finding's prose, hidden until this script runs: without
+ * JavaScript, neither it nor its text appears, and the three worlds below say the same with three
+ * fixed values. Nothing in it moves by itself, so reduced motion changes nothing: every change is a cut.
+ *
+ * Render this only inside the lock (ADR 0034): a locked build resolves it to ../curve/Locked.astro
+ * (astro.config.mjs), so neither it nor its script reaches dist/.
+ */
+import { CONTROLS, read } from '../../lib/finding/explorer';
+import { fill } from '../../lib/template';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import type { ExplorerStrings } from './explorer';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const strings: ExplorerStrings = {
+  rolls: tr('finding.explorer.rolls'),
+  not: tr('finding.explorer.not'),
+  window: tr('finding.explorer.window'),
+  closed: tr('finding.explorer.closed'),
+  peak: tr('finding.explorer.peak'),
+  axis: tr('finding.explorer.axis'),
+};
+const start = read(CONTROLS.a.start, CONTROLS.b.start, CONTROLS.theta.start);
+const sliders = [
+  { id: 'a', label: tr('finding.explorer.a'), min: CONTROLS.a.min, max: start.b, step: CONTROLS.a.step, value: start.a, shown: String(start.a) },
+  { id: 'b', label: tr('finding.explorer.b'), min: CONTROLS.b.min, max: CONTROLS.b.max, step: CONTROLS.b.step, value: start.b, shown: String(start.b) },
+  { id: 'theta', label: tr('finding.explorer.theta'), min: CONTROLS.theta.min, max: CONTROLS.theta.max, step: CONTROLS.theta.step, value: start.theta, shown: start.theta.toFixed(2) },
+];
+---
+
+<div class="explorer" data-explorer data-strings={JSON.stringify(strings)}>
+  <div class="explorer__controls">
+    {
+      sliders.map((slider) => (
+        <div class="explorer__control">
+          <label for={`explorer-${slider.id}`}>{slider.label}</label>
+          {/* The value, for the eye: a slider says its own to a screen reader, and an <output> would be one more live region. */}
+          <span class="explorer__value" aria-hidden="true" data-shows={slider.id}>{slider.shown}</span>
+          <input id={`explorer-${slider.id}`} type="range" min={slider.min} max={slider.max} step={slider.step} value={slider.value} aria-valuetext={slider.shown} data-control={slider.id} />
+        </div>
+      ))
+    }
+  </div>
+  <svg class="explorer__svg" width="100%" height="236" aria-hidden="true" focusable="false" data-plot></svg>
+  <p class="explorer__status" aria-live="polite" data-status>{fill(start.rolls ? strings.rolls : strings.not, { a: start.a })}</p>
+  <p class="explorer__facts" data-facts></p>
+</div>
+
+<script>
+  import { mountExplorers } from './explorer';
+
+  mountExplorers();
+</script>
+
+<style>
+  .explorer {
+    display: grid;
+    gap: var(--space-4);
+    margin: var(--space-6) 0 var(--space-2);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  @media (min-width: 40rem) {
+    .explorer {
+      padding: var(--space-6);
+    }
+  }
+
+  .explorer__controls {
+    display: grid;
+    gap: var(--space-3) var(--space-6);
+  }
+
+  @media (min-width: 48rem) {
+    .explorer__controls {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .explorer__control {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 0 var(--space-3);
+  }
+
+  .explorer__control label {
+    font-weight: 700;
+  }
+
+  .explorer__value {
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A native slider, a full-size target for a finger, in the page's colours. */
+  .explorer__control input {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: var(--target-min);
+    margin: 0;
+    accent-color: var(--color-fg);
+  }
+
+  .explorer__control input:focus-visible {
+    outline: var(--focus-width) solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .explorer__svg {
+    display: block;
+    overflow: visible;
+    font-size: var(--step-n2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .explorer__status {
+    margin: 0;
+    font-weight: 800;
+  }
+
+  .explorer__facts {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .explorer :global(.ex-grid) {
+    stroke: var(--color-border);
+    stroke-width: 1;
+  }
+
+  .explorer :global(.ex-tick) {
+    fill: var(--color-muted);
+  }
+
+  .explorer :global(.ex-window) {
+    fill: var(--color-accent);
+    opacity: 0.16;
+  }
+
+  .explorer :global(.ex-edge) {
+    stroke: var(--color-accent);
+    stroke-width: 1.5;
+  }
+
+  .explorer :global(.ex-hill) {
+    fill: none;
+    stroke: var(--color-fg);
+    stroke-width: 3;
+  }
+
+  .explorer :global(.ex-threshold) {
+    stroke: var(--color-fg);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 4;
+  }
+
+  .explorer :global(.ex-peak) {
+    stroke: var(--color-control);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  .explorer :global(.ex-point) {
+    stroke: var(--color-fg);
+    stroke-width: 2.5;
+    fill: var(--color-surface);
+  }
+
+  .explorer :global(.ex-point[data-rolls]) {
+    fill: var(--color-fg);
+  }
+</style>

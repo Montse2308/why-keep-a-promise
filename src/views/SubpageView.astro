@@ -2,6 +2,7 @@
 /**
  * A page of the notebook (ADR 0024): the prose of src/content/subpages/<locale>/<slug>.md, with the
  * components its slots name, and a link back to the film's chapter it deepens (src/lib/notebook.ts).
+ * /finding's prose wraps some of its blocks in plain HTML, with their styles in FindingProse (ADR 0037).
  * What follows the prose's lock marker renders only behind the lock (ADR 0034); /finding is locked
  * whole, so a locked build shows its title and the status sentence and nothing else.
  */
@@ -12,7 +13,12 @@ import Sources from '../components/notebook/Sources.astro';
 import Vignette from '../components/notebook/Vignette.astro';
 import Weight from '../components/notebook/Weight.astro';
 import PaperStatus from '../components/PaperStatus.astro';
-import GuiltChart from '../components/curve/GuiltChart.astro';
+import Cite from '../components/finding/Cite.astro';
+import Explorer from '../components/finding/Explorer.astro';
+import FindingProse from '../components/finding/FindingProse.astro';
+import MinuteLinks from '../components/finding/MinuteLinks.astro';
+import ResultFigure from '../components/finding/ResultFigure.astro';
+import ThreeWorlds from '../components/finding/ThreeWorlds.astro';
 import Matrix from '../components/pd/Matrix.astro';
 import SwitchTable from '../components/vanberg/SwitchTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -24,6 +30,7 @@ import { findingUnlocked } from '../lib/lock';
 import { notebookPage } from '../lib/notebook';
 import { href, type Subpage } from '../lib/routes';
 import { focusableCode, splitSubpage, type Segment } from '../lib/subpages';
+import { findingGraph, jsonLd } from '../lib/jsonld';
 import { fill } from '../lib/template';
 
 interface Props {
@@ -48,15 +55,19 @@ const showStatus = subpage === 'finding';
 // Back to the chapter of the film the page deepens; every page has the way back to the film in its footer.
 const chapterEntry = page.film && (await getCollection('chapters', (candidate) => candidate.id.startsWith(`${locale}/`) && candidate.data.chapter === page.film))[0];
 if (page.film && !chapterEntry) throw new Error(`No chapter "${page.film}" for subpage ${subpage} in ${locale}`);
+// /finding's structured data, the working paper and its engine, only behind the lock (ADR 0037).
+const structured = subpage === 'finding' && unlocked ? jsonLd(findingGraph(t(locale, 'author.name'))) : null;
 const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntry.data.title }) : null;
 ---
 
 <BaseLayout locale={locale} route={subpage} title={`${heading} · ${t(locale, 'site.title')}`} codeFont={subpage === 'how-its-built'}>
+  {structured && <script type="application/ld+json" slot="head" is:inline set:html={structured} />}
   <article class="container column subpage" aria-labelledby="subpage-title" data-locked-content={unlocked && hasLocked ? '' : undefined}>
     <header class="subpage__head">
       {!lockedWhole && <Vignette page={subpage} />}
       <h1 id="subpage-title">{heading}</h1>
     </header>
+    {subpage === 'finding' && !lockedWhole && <FindingProse />}
     {
       segments.map((segment) =>
         segment.kind === 'html' ? (
@@ -65,8 +76,16 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
           <Matrix locale={locale} />
         ) : segment.name === 'switch-table' ? (
           <SwitchTable locale={locale} />
-        ) : segment.name === 'guilt-chart' ? (
-          <GuiltChart locale={locale} id="finding-guilt" />
+        ) : segment.name === 'result-figure' ? (
+          <ResultFigure locale={locale} />
+        ) : segment.name === 'explorer' ? (
+          <Explorer locale={locale} />
+        ) : segment.name === 'three-worlds' ? (
+          <ThreeWorlds locale={locale} />
+        ) : segment.name === 'minute-links' ? (
+          <MinuteLinks locale={locale} />
+        ) : segment.name === 'cite' ? (
+          <Cite locale={locale} />
         ) : segment.name === 'sources' ? (
           <Sources locale={locale} />
         ) : segment.name === 'author' ? (

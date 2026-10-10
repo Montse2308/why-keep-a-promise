@@ -73,6 +73,8 @@ const noindex = route === 'finding' && !findingUnlocked(WORKING_PAPER.ssrn, impo
     <meta property="og:image:height" content={String(POSTER.height)} />
     <meta property="og:image:alt" content={posterAlt} />
     <meta name="twitter:card" content="summary_large_image" />
+    {/* What a page adds to its head: /finding's structured data, behind the lock (ADR 0037). */}
+    <slot name="head" />
     {
       /*
        * Only a browser that runs the film's module gets the film's layout; any other keeps the

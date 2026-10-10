@@ -21,13 +21,15 @@ It is **not** a simulator and **not** the instrument of a paper. Details: `docs/
 (P6, the polish, with PR #9). F5 (QA) and F6 (launch) are closed: the site is live at
 `https://montse2308.github.io/why-keep-a-promise/`, with the lock open. The repository is public,
 Pages publishes with GitHub Actions, and `deploy.yml` ran on 2026-10-08 (run 37860472991, on `main`
-after PR #19); every step of `docs/launch-checklist.md` is marked. The active phase is P8 (polish
-after the launch), on the branch `polish/round-2`, pushed only when Montse decides: the Spanish home
-title fitting on a computer, sharp card titles in the film, external links in a new tab (internal
-ones stay in the tab, ADR 0029), and a new hero, prototyped in `scratch/`, chosen by Montse and
-built with ADR 0036 (steps 8.1 to 8.6 in `docs/tasks.md`; 8.1 to 8.5 are done, and 8.6, its QA, is
-ready for Montse's review). What is live is the version before P8; P8 reaches the site when Montse
-merges it into `main` and runs `deploy.yml` again.
+after PR #19); every step of `docs/launch-checklist.md` is marked. P8 (polish after the launch: the
+Spanish home title on a computer, sharp card titles, external links in a new tab, ADR 0029, and the
+cover of ADR 0036) reached `main` with PR #20. The active phase is P9, **/finding on its own**, on
+the branch `p9/finding`, pushed only when Montse decides: /finding becomes the page Montse shares,
+understood without the story (the text she approved on 2026-10-10, the three worlds, a two-panel
+figure, a formula explorer, how to cite), with the rest of the site around it (its poster and
+JSON-LD, the cover's link to it, the engine on /how-its-built, ORCID and SSRN on /about). Steps 9.0
+to 9.9 in `docs/tasks.md`. P8 and P9 reach the site when Montse merges them into `main` and runs
+`deploy.yml` again.
 P7, the fixes from an external review, was planned in small steps (one per session) in
 `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
@@ -85,7 +87,7 @@ not by reading test output.
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
 | `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034), or if a link leaving the site does not open in a new tab with its notice, or one inside it does (8.3) |
-| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
+| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load) or /finding's JS (ADR 0038), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
 | `npm run check:launch` | Builds, then fails while a link is still a `*_PENDING` placeholder in `dist/`, `src/` or the READMEs (ADR 0034). Not in CI; step 3 of the launch checklist and `deploy.yml` run it |
 
 `check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
@@ -111,8 +113,9 @@ the weights beside it come from `src/data/weight.json`.
   ADR 0030 sounds, each with what the stage shows.
 - Memory: the film remembers what was played only in `history.state` of its own tab entry
   (ADR 0029). No `localStorage`, `sessionStorage`, IndexedDB, cookies or analytics; nothing is sent.
-- Budgets: home JS ≤ 40 KiB gzipped (the two homes), fonts ≤ 160 KiB and first load ≤ 450 KiB (every
-  page), LCP ≤ 2.5 s on a mid-range phone. KiB, and which pages, by ADR 0028.
+- Budgets: home JS ≤ 40 KiB gzipped (the two homes), `/finding`'s JS ≤ 8 KiB gzipped (ADR 0038),
+  fonts ≤ 160 KiB and first load ≤ 450 KiB (every page), LCP ≤ 2.5 s on a mid-range phone. KiB, and
+  which pages, by ADR 0028.
 - The only new dependency the plan allows is `@resvg/resvg-js`, as a dev dependency, for Open Graph
   posters (in since P6). Anything else: ask first.
 - No `@types/node`: code that needs Node's API at build time is plain `.mjs` (`scripts/`,
@@ -169,6 +172,11 @@ src/
                          the beads under the spool); idle.ts (life at rest: blinks, the square's
                          glances, the waiting die's rock, asked by the frame loop)
     back.ts              when a notebook link back to the film goes back in the tab's history
+    finding/worlds.ts    /finding's three worlds and the payoff panel's variant tail, from curve.json
+    finding/explorer.ts  /finding's formula explorer: the guilt available, its window, peak and θmin
+                         (ADR 0038); pure, imports nothing, pinned to the register by its test
+    jsonld.ts            /finding's structured data: the working paper and the engine, from config.ts
+    cite.ts              /finding's «How to cite»: the working paper (APA, BibTeX) and the engine, from config.ts
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light
     notebook.ts          the notebook's six pages, their order, titles and lines, the chapter each
@@ -186,7 +194,8 @@ src/
     sitemap.ts           the sitemap, with each page's languages; /finding only behind the lock
     budgets.ts           the weight budgets and how a built page is weighed against them
     details.ts           the tab's title while away and the console's note
-    posters/             the Open Graph posters: poster.ts (the drawing, the lines set to fit),
+    posters/             the Open Graph posters: poster.ts (the drawing, the lines set to fit, and
+                         /finding's miniature behind the lock),
                          metrics.ts (advance widths from TrueType), render.ts + fonts.mjs (PNG
                          with resvg at build time); icon.ts, the home-screen icon
     table/               Vanberg's game: exact payoffs (PAYOFFS), the decision (chapter 3), the
@@ -215,6 +224,10 @@ src/
                          curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
+                         finding/ (/finding's own, behind the lock, ADR 0037: MinuteLinks, the buttons
+                         of «In one minute»; Explorer, with explorer.ts, its script, the only one
+                         on /finding besides the panel's; ThreeWorlds; ResultFigure, the two panels, GuiltChart on
+                         top; Cite; FindingProse, the styles of its blocks of prose);
                          LanguageSwitch; PaperStatus, the status sentence (ADR 0034); Hero, the
                          home's cover (ADR 0036)
   layouts/BaseLayout.astro
@@ -268,8 +281,12 @@ scratch/                 local notes, git-ignored, never committed
   - The lock covers chapter 7's finding, `/finding`, the engine part of `/how-its-built`, the
     finding's sources on `/sources` (ADR 0035), and the links to them and to the engine repository. It opens once the working paper is public on SSRN.
   - Model parameters never appear, except θ, c, the guilt available and the robustness variant on
-    `/finding`, behind the lock. Behind the lock, `/sources` lists `/finding`'s figures from the
-    register and names θ and c, never their values (ADR 0035).
+    `/finding`, behind the lock. There too, «Two more results» names in words the share of the
+    time a promise stops binding and its cut at one half, and the protocol null's 60 out of 60: no
+    letter `s`, no φ, N, generations or named seeds, and not the lab's 59 % or 43 % (ADR 0039). The
+    formula explorer moves only θ, background trust and the belief that a promise will be kept
+    (ADR 0038). Behind the lock, `/sources` lists `/finding`'s figures from the register and names θ
+    and c, never their values (ADR 0035).
   - Outside the lock, chapter 7 says only the question and that Montse built a simulation engine in
     TypeScript. Nothing about the engine's tests, seed, generations, imitation or provenance
     (rule (j)).
@@ -288,14 +305,17 @@ scratch/                 local notes, git-ignored, never committed
   - No visualising populations or dynamics: no agents, grids or one dot per person.
   - No playable repeated prisoner's dilemma anywhere: link to *The Evolution of Trust* instead. The
     dilemma in chapter 1 is played once.
-  - No charts beyond chapter 7's curve and `/finding`'s guilt chart, both behind the lock.
-  - No interaction outside the list in ADR 0023.
+  - No charts beyond chapter 7's curve and `/finding`'s figures (the guilt chart, what each reason
+    earns, the three worlds' meters and the formula explorer, ADR 0037 and 0038), all behind the
+    lock, and the miniature on `/finding`'s poster.
+  - No interaction outside the list in ADR 0023, with the formula explorer of ADR 0038.
   - The scroll is never hijacked.
 - **Naming a journal** for Montse's text, which goes to no journal (it is a working paper on SSRN,
   ADR 0034), submission dates or correspondence with other authors, in any file. Third-party
   references carry their journal, as any bibliography (ADR 0016).
 - **Inventing personal data** (display name, profile URLs, email, photo, school, job, city,
-  biography). `/about` carries only the name, GitHub and LinkedIn.
+  biography). `/about` carries only the name, GitHub, LinkedIn, ORCID and the SSRN author page
+  (ADR 0041).
 - **Caricaturing a real person** as a character.
 - Writing chapter or notebook prose outside the phase that owns it.
 - Adding dependencies outside ADR 0025 without asking.

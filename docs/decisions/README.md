@@ -29,6 +29,11 @@ números no se reutilizan.
 | [0034](0034-working-paper.md) | Working paper en SSRN en vez de sometimiento a revista: el disparador del lanzamiento, un solo texto de estado, el PDF enlazado y no alojado, el repo privado hasta F6, las reglas de fechas y el candado completo (qué cubre, cómo se cierra en el build, `verify:dist` y cómo se abre). |
 | [0035](0035-sources-lists-the-finding.md) | `/sources` lista las cifras del hallazgo con el candado abierto, θ y c solo nombrados; cerrado, se ve como antes. |
 | [0036](0036-the-cover.md) | La portada del home: la pregunta, una línea y tres puertas (la historia, la investigación y el cuaderno), sobre el cielo del amanecer; «historia», no «película». |
+| [0037](0037-finding-on-its-own.md) | `/finding` se entiende sola: primero la intuición y después la fórmula, sus secciones en orden, los mismos datos que la curva con frases distintas (regla (h)), su póster y su JSON-LD. |
+| [0038](0038-formula-explorer.md) | Un explorador de la fórmula de la culpa disponible en `/finding`, y nada más: cómo se prueba, su script y su techo de peso. |
+| [0039](0039-two-more-results.md) | `/finding` nombra sus otros dos resultados: quién habla no decide (60 de 60) y la parte de las veces en que una promesa deja de atar, con palabras y su corte en la mitad. |
+| [0040](0040-cover-links-finding.md) | La tarjeta «La investigación» de la portada enlaza también a `/finding`, con el candado abierto. |
+| [0041](0041-about-orcid-ssrn.md) | `/about` suma ORCID y la página de autora en SSRN, con `rel="me"`, y nada más. |
 
 Archivados (no rigen): 0002, 0003, 0004, 0007, 0009, 0011, 0014, 0015, 0017, 0018, 0019, 0020, 0022
 y 0026, en [`docs/archivo/decisiones/`](../archivo/decisiones/).

@@ -28,10 +28,18 @@ export const DOORS: readonly Door[] = [
 ];
 
 /**
- * The notebook's pages the cover links: all but /finding, in either state of the lock, so the cover
- * never changes with it. The research door leads to chapter 7, which both states show.
+ * The notebook's pages the cover links: all but /finding, in either state of the lock. The research door
+ * leads to chapter 7, which both states show.
  */
 export const COVER_PAGES: readonly NotebookPage[] = NOTEBOOK.filter((entry) => entry.page !== 'finding');
+
+/**
+ * The research door's second link, under its way to chapter 7 (ADR 0040): /finding, by its title in the
+ * notebook, and only behind the lock, as every link to it (ADR 0034). The door says the same either way.
+ */
+export function researchPages(unlocked: boolean): readonly NotebookPage[] {
+  return unlocked ? NOTEBOOK.filter((entry) => entry.page === 'finding') : [];
+}
 
 const DAWN = (() => {
   const dawn = LIGHT_POINTS[0];

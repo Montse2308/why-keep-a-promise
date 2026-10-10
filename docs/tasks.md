@@ -3,16 +3,16 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P8, los retoques después del lanzamiento (rama `polish/round-2`); 8.1 a 8.5
-hechos y 8.6 en la revisión de Montse. F6, el lanzamiento, cerrada: el repo es público, Pages
+**Fase activa:** P9, `/finding` por sí sola (rama `p9/finding`). P8, los retoques después del
+lanzamiento, llegó a `main` con el PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
-línea en `https://montse2308.github.io/why-keep-a-promise/`, con la versión anterior a P8. F5, la
-QA, cerrada en la rama `launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7
-cerradas: Montse las revisó (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR
-#17). P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película entera.
+línea en `https://montse2308.github.io/why-keep-a-promise/`. F5, la QA, cerrada en la rama
+`launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7 cerradas: Montse las revisó
+(PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
+como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** ninguna planeada. P8 llega al sitio cuando Montse hace el merge a `main` y
-vuelve a correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
+**Fase siguiente:** ninguna planeada. P8 y P9 llegan al sitio cuando Montse hace el merge a `main`
+y vuelve a correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
 
 **El lanzamiento (F6)** lo disparó el working paper público en SSRN y el repo del motor público
 (ADR 0034). Su preparación y sus pasos, todos hechos, están en la sección F6.
@@ -1208,6 +1208,184 @@ anterior a P8, y P8 llega a él con el merge a `main` y otro `deploy.yml`, que c
 - [x] **8.5b** «Historia», no «película», en todo lo que lee el visitante (decisión de Montse,
       ADR 0036): 10 claves por idioma, 13 lugares de la prosa y los README. `tests/story-name.test.ts`
       lo comprueba. El código y `docs/` conservan «la película» como nombre interno.
+
+P8 llegó a `main` con el PR #20.
+
+## P9 · /finding por sí sola
+
+En la rama `p9/finding`, desde `main` en `b5cb604`; sin push y sin `deploy.yml`, que decide y corre
+Montse. Cada paso termina en verde (`check`, `test`, `build`, `verify:dist`, `budgets` y
+`check:launch`) y lleva su número en el commit (`9.3`). El texto de `/finding` es el que Montse
+aprobó el 10-oct, tal cual; una frase cambia solo si choca con una regla o un test, y el cambio se
+reporta con la frase original y la nueva. Las cifras de 9.5 entran antes que el texto de 9.2, para
+que cada commit quede en verde.
+
+- [x] **9.0** La fase en los documentos: P9 en `docs/phases.md` y aquí, y la fase activa en
+      `AGENTS.md`.
+- [x] **9.1** Los ADR, antes de tocar `src/`, con `docs/decisions/README.md`,
+      `docs/content-rules.md` y `AGENTS.md` al día: `/finding` por sí sola; un explorador de la
+      fórmula en `/finding` (enmienda el 0001 y el 0025); el hallazgo nombra sus otros dos
+      resultados; la portada enlaza al hallazgo (enmienda el 0036); `/about` suma ORCID y SSRN
+      (enmienda el 0024). Son los ADR 0037 a 0041; el del explorador también precisa la lista de
+      interacciones del 0023 y el candado del 0034.
+- [x] **9.2** El texto de `/finding`, EN y ES, con sus secciones en orden y sus slots; los enlaces
+      al paper y al motor salen de `src/config.ts`; la frase de estado al final, sin cambios.
+      Hecho: la línea bajo el título, el recuadro «En un minuto» con sus tres botones
+      (`MinuteLinks`), las dos columnas como lista de definiciones, los slots de los tres mundos,
+      del explorador y de la figura, y «Cómo citar» (`Cite`, de `src/lib/cite.ts`, con su test). Una
+      frase cambió: la primera de «Lo que agrega» repetía el párrafo de Vanberg de la §5, que se
+      queda; ahora dice solo que las dos razones caen en el mismo par. El «(§6)» enlaza a «Otros dos
+      resultados». El tope de palabras de `/finding` sube a 1 600 (ADR 0037), y la prueba de citas lee
+      también la forma entre paréntesis de Di Bartolomeo et al. (2023). Build cerrado de prueba:
+      `verify:dist` en verde.
+- [x] **9.3** Los tres mundos (tarjetas sin JS, con su medidor) y la figura de dos paneles (el
+      mecanismo arriba y lo que gana cada razón abajo), de `curve.json`, con leyenda y tabla
+      accesible. Hecho: `ThreeWorlds` y `ResultFigure`, con `src/lib/finding/worlds.ts` y su test.
+      `GuiltChart` pasa a ser el panel de arriba, sin marco ni etiquetas del eje x (el slot
+      `guilt-chart` sale). Abajo, la culpa personal gruesa en tinta (debajo, como en el capítulo 7,
+      para que se vean las otras dos en 10), el compromiso en dorado, la culpa general punteada y la
+      variante discontinua solo en su cola, de 65 a 76. Leyenda y tabla oculta propias.
+- [x] **9.4** El explorador de la fórmula: un módulo puro con su test, controles nativos, una región
+      viva, sin animación con movimiento reducido; su script solo en `/finding`, con su techo de
+      peso y `src/data/weight.json` al día. Sin JS no aparece.
+      Hecho: `src/lib/finding/explorer.ts` (el test lo fija en 10.1, 65.9, 14.44 en 38, 0.277 y 0.25,
+      y en cada fila de la curva), `Explorer.astro` y su script, que dibuja en pixeles del ancho real
+      y no anima nada. El bloque con «Pruébalo» queda `hidden` hasta que corre el script. El techo:
+      8 KiB de JS en `/finding` (`finding-script`); pesa 2.8 KiB. El módulo puro no importa nada,
+      para que el script no comparta módulos con el de la película: al compartirlos, Vite los partía y
+      el home subía 0.3 KiB. `weight.json` no cambia: los home pesan lo mismo.
+- [x] **9.5** El registro de cifras y las fuentes: 60 de 60, la mitad, las filas de los tres mundos
+      y el umbral del explorador, con su fuente en `docs/sources.md`; Di Bartolomeo, Dufwenberg, Papa
+      y Passarelli (2023), sin cifras; `/sources` lista lo nuevo con el candado abierto.
+- [x] **9.6** Lo demás del sitio: el póster de `/finding` (E1), su JSON-LD (E2), el segundo enlace
+      de la portada (E3), la sección del motor en `/how-its-built` (E4), ORCID y SSRN en `/about`
+      (E5) y el enlace del final del capítulo 7 como botón (E6).
+      Hecho, todo detrás del candado salvo ORCID: el póster lleva la línea de la §0 (clave
+      `finding.line`, atada por test al Markdown) y la miniatura del escalón y la línea plana, sin
+      números; el JSON-LD (`src/lib/jsonld.ts`) va en el `<head>` por un slot nuevo del layout; la
+      portada suma «The finding» bajo «Go to chapter 7»; `/about` suma ORCID y, abierto, SSRN; el
+      capítulo 7 termina en un botón en tinta, sin la lupa. E4 con el texto aprobado: el tope de
+      palabras de `/how-its-built` sube a 700 (ADR 0037), el test de código cita aparte el `choose()`
+      del motor, y `verify:dist` busca «seeded generator» en vez de «by imitation», que ya no se dice.
+      Los home pesan 0.1 KiB más (`weight.json` al día).
+- [x] **9.7** La QA: anchos (320 a 1440), sin JS, movimiento reducido, teclado y lector de pantalla,
+      axe, enlaces, JSON-LD y póster, pesos y Lighthouse de `/finding`, y los tests de reglas.
+      Capturas en `scratch/p9/`, con su README. Hecha; el detalle, en «Estado al corte».
+- [ ] **9.8 (Montse)** Revisa las capturas y abre a mano los enlaces de SSRN (el working paper y la
+      página de autora), que responden 403 a los bots.
+- [ ] **9.9 (Montse)** El PR de P9 a `main`, y `deploy.yml` cuando ella lo decida.
+
+### Estado al corte (2026-10-10)
+
+La sesión se cortó por cambio de máquina, con la parte del agente de P9 terminada. La rama
+`p9/finding` se subió a `origin` (sin PR, sin `main` y sin `deploy.yml`). No hay commit WIP.
+
+**Pasos hechos**
+
+- [x] 9.0 `e58a0e3` · 9.1 `561e284` · 9.5 `0e1302c` (antes que 9.2, para que el texto entrara con sus
+  cifras) · 9.2 `db971b0` · 9.3 `31bdd32` · 9.4 `ef943d6` · 9.6 `c62ad3c` (E3, E6), `e70c52f` (E5),
+  `ead54ce` (E4), `3bdf9e1` (E1, E2) · 9.7 `0fa4417` (los dos arreglos de la QA) y el commit de este
+  registro.
+
+**Paso en curso:** ninguno. **Sin empezar:** 9.8 y 9.9, los de Montse.
+
+**ADR asignados:** 0037 (`/finding` se entiende sola), 0038 (el explorador de la fórmula), 0039 (los
+otros dos resultados), 0040 (la portada enlaza al hallazgo) y 0041 (`/about` suma ORCID y SSRN).
+
+**Frases del texto aprobado que cambiaron**
+
+- §2, «Lo que agrega», primera celda (regla del Anexo para la §5: si el párrafo «Vanberg's design
+  separates the two pairs…» repite la §2, se queda en la §5 y se quita de la §2):
+  - EN, original: «Vanberg's design splits four reasons into two pairs, and cannot see inside a pair.
+    Personal guilt and partner-specific commitment fall in the same pair, so his result fits both.»
+    Nueva: «Personal guilt and partner-specific commitment fall in the same pair of Vanberg's design,
+    so his result fits both.»
+  - ES, original: «El diseño de Vanberg reparte cuatro razones en dos pares, y no ve dentro de un par.
+    La culpa personal y el compromiso específico a la pareja caen en el mismo par, así que su
+    resultado le queda a las dos.» Nueva: «La culpa personal y el compromiso específico a la pareja
+    caen en el mismo par del diseño de Vanberg, así que su resultado le queda a las dos.»
+- Ninguna otra. La cita «(Di Bartolomeo, Dufwenberg, Papa and Passarelli, 2023)» se quedó igual: se
+  amplió el test de citas (`tests/prose.ts`) para que lea esa forma entre paréntesis. La frase de
+  Vanberg de la §2 («a preference for keeping one's word in itself») no choca con la regla (h): el
+  test compara frases enteras y la frase de la §2 no es la de la película.
+- §2, «Lo que agrega», última fila: el texto del enlace a «Otros dos resultados», porque la página
+  no numera sus secciones; el enlace es el mismo. Decisión de Montse (2026-10-10).
+  - EN, original: «A negative result: who gets to speak does not change who survives (§6).» Nueva:
+    «A negative result: who gets to speak does not change who survives (below).»
+  - ES, original: «Un resultado negativo: quién puede hablar no cambia quién sobrevive (§6).» Nueva:
+    «Un resultado negativo: quién puede hablar no cambia quién sobrevive (más abajo).»
+
+**Decisiones tomadas en la sesión, fuera del prompt**
+
+- El ADR 0038 también precisa la lista cerrada de interacciones del ADR 0023 (el explorador es la 11)
+  y el punto 2 del candado del ADR 0034, y `AGENTS.md` permite las figuras nuevas de `/finding` y la
+  miniatura del póster; el prompt solo nombraba el 0001 y el 0025.
+- Topes de palabras: `/finding` de 700 a 1 600 y `/how-its-built` de 600 a 700 (el texto de E4 no
+  cabía), los dos registrados en el ADR 0037.
+- Techo de JS de `/finding`: 8 KiB (`finding-script`, todo el JS de la página); pesa 2.8 KiB.
+  `weight.json` sigue registrando solo los home.
+- El módulo del explorador no importa nada (su `COST = 4` y su `fillIn` están fijados por test contra
+  `PAYOFFS` y `fill`), porque al compartir módulos con la película el home subía 0.3 KiB.
+- La página de autora en SSRN, en `/about`, solo con el candado abierto (lista el working paper); ORCID
+  en los dos estados. El JSON-LD, el póster nuevo y el segundo enlace de la portada, también solo
+  abiertos.
+- «§6» en la §2 enlaza a «Otros dos resultados»: la página no numera sus secciones (ver abajo).
+- Las tres tarjetas van lado a lado desde 56rem (~896 px), alineadas con `subgrid`; abajo, una bajo
+  otra. A 768 no cabían.
+- El panel de abajo de la figura dibuja la culpa personal debajo (como el capítulo 7), para que se
+  vean las otras dos en 10, y la variante solo en su cola, de 65 a 76.
+- El bloque de `choose()` de E4 no está en `src/`: el test de código lo comprueba aparte (igual en los
+  dos idiomas). `verify:dist` busca «seeded generator» / «generador con semilla» en `/how-its-built`,
+  porque «by imitation» ya no se dice, y suma la marca `data-explorer`.
+- `AUTHOR` suma `cite` y `bibtex`, `WORKING_PAPER` suma `published` y `year`, y `ENGINE` suma
+  `title`, `version`, `year` y `license`, para armar la cita y el JSON-LD desde `src/config.ts`.
+- La referencia de Di Bartolomeo et al. (2023) va sin enlace en `/sources`, con
+  `PENDIENTE(doi)` en `docs/sources.md`: no se cotejó la ficha del artículo.
+
+**La QA (9.7), sobre `npm run preview` del build abierto**
+
+| Punto | Cómo | Resultado | Arreglo |
+| ----- | ---- | --------- | ------- |
+| Anchos | `qa-overflow.mjs` a 320, 360, 768, 1024 y 1440 en /finding, /about, /how-its-built y /sources (EN y ES), y los home y la 404 a 320, 360 y 1440 | 0 desbordes | Las tarjetas, apretadas a 768: tres columnas desde 56rem, con `subgrid` (`0fa4417`) |
+| Sin JS | `explorer.mjs nojs` y captura completa | Sin el explorador ni su texto, sin huecos | — |
+| Movimiento reducido | `explorer.mjs reduced` con teclas reales | Funciona; nada se anima | — |
+| Teclado | `qa-keys-pages.mjs` en /finding | 26 paradas, todas con anillo y en orden | — |
+| Lector de pantalla | `axtree-page.mjs` (EN 1440, ES 360) | Los `<output>` eran 3 regiones vivas más; θ se leía «0.6000000238» | `<span aria-hidden>` y `aria-valuetext` (`0fa4417`) |
+| Toque | `touch-explorer.mjs` a 360 | Los tres controles se arrastran; la página no se mueve | — |
+| axe 4.14.0 | Home, /finding, /how-its-built, /about, /sources y 404, EN y ES, 1440 y 360, claro y oscuro (44); sin JS (24); contraste con el papel aplanado (12) | 0 violaciones | — |
+| Enlaces | `verify:dist` y `curl` | Externos con `target`, `rel` y aviso; ORCID, GitHub y SPDX 200; los dos DOI redirigen; SSRN y Zenodo, 403 a bots | — |
+| JSON-LD y póster | Parseado en el build | Los campos pedidos; `og:image` al póster nuevo, 1200×630 | — |
+| Pesos | `npm run budgets` | /finding: JS 2.8 KiB (≤ 8), fuentes 118.6 KiB, primera carga 140.5 / 140.8 KiB; home +0.1 KiB (`weight.json` al día) | — |
+| Lighthouse 13.5.0 | 3 corridas por idioma | /finding: LCP 1.81 s EN y ES, puntaje 0.98–0.99, CLS 0 | — |
+| Tests de reglas | `npm test` | Frases prohibidas, «solo agregar» y registro de cifras en verde | — |
+| Build cerrado de prueba | `locked-check.sh` | `verify:dist` en verde; sin SSRN en /about, sin enlace a /finding en la portada, póster de antes | — |
+
+**Lo que se encontró y no se arregló**
+
+- `src/components/finding/Explorer.astro`: el árbol de accesibilidad del CDP de Chrome 154 muestra el
+  valor crudo del control de θ aunque tenga `aria-valuetext` (ya visto en F5); los lectores usan el
+  `aria-valuetext`.
+- `docs/sources.md`, Di Bartolomeo et al. (2023): `PENDIENTE(doi)`.
+
+**Para abrir a mano (Montse):** el working paper en SSRN
+(`https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218`), su DOI (`https://doi.org/10.2139/ssrn.7580218`),
+la página de autora (`https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=13503109`) y el DOI del
+motor en Zenodo (`https://doi.org/10.5281/zenodo.23222610`).
+
+**Capturas:** `scratch/p9/` (19 capturas, su README y `qa/`), solo en la máquina de esta sesión. Para
+seguir no hacen falta: se rehacen con las herramientas de `scratch/tools/` (`explorer.mjs`,
+`touch-explorer.mjs`, `axtree-page.mjs`, `ch7-button.mjs`, `locked-check.sh`, `gate-p9.sh`,
+`commit-step.sh`), que tampoco viajan.
+
+**Continuación (2026-10-10, otra máquina)**
+
+- [x] 9.2 `b31847d` (el «(§6)» de la §2 dice «(below)» / «(más abajo)», con el mismo enlace) ·
+  9.5 `b285aaf` (el DOI de Di Bartolomeo et al. (2023), comprobado en Crossref, en
+  `docs/sources.md` y enlazado en `/sources` con el candado abierto) · 9.6 `e852937` (el comentario
+  de `ENGINE` en `src/config.ts`: el DOI ya no es un placeholder).
+- Montse acepta las decisiones tomadas en la sesión, fuera del prompt, como quedaron arriba (el ADR
+  0038 precisa el 0023 y el 0034; los topes de palabras; el techo de JS de `/finding`; lo que va solo
+  con el candado abierto).
 
 ## F6 · Lanzamiento
 

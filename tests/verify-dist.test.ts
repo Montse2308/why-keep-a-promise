@@ -5,6 +5,11 @@ import curveComponent from '../src/components/curve/Curve.astro?raw';
 import curveController from '../src/components/curve/controller.ts?raw';
 import curveStub from '../src/components/curve/Locked.astro?raw';
 import guiltChart from '../src/components/curve/GuiltChart.astro?raw';
+import findingOwn from '../src/components/finding/ResultFigure.astro?raw';
+import findingWorlds from '../src/components/finding/ThreeWorlds.astro?raw';
+import findingMinute from '../src/components/finding/MinuteLinks.astro?raw';
+import findingCite from '../src/components/finding/Cite.astro?raw';
+import findingExplorer from '../src/components/finding/Explorer.astro?raw';
 import filmComponent from '../src/components/film/Film.astro?raw';
 import findingComponent from '../src/components/film/chapters/Finding.astro?raw';
 import myResearch from '../src/components/film/chapters/MyResearch.astro?raw';
@@ -88,8 +93,8 @@ const parts = Object.entries(subpages).map(([path, raw]) => {
 const seventh = [chapterEn, chapterEs].map((raw) => splitAtLock(raw.replace(/^---[\s\S]*?---/, '')));
 
 /**
- * UI strings only the locked components use: the curve's, those of chapter 7's finding, and those of
- * the finding's sources on /sources (ADR 0035).
+ * UI strings only the locked components use: the curve's, those of chapter 7's finding, /finding's own
+ * (`finding.*`, ADR 0037) and those of the finding's sources on /sources (ADR 0035).
  */
 const findingSourceKeys = new Set([
   'sources.engine',
@@ -99,7 +104,7 @@ const findingSourceKeys = new Set([
   ...FINDING.flatMap((key) => [`sources.${key}`, `sources.at.${key}`]),
 ]);
 const isLockedKey = (key: string) =>
-  key.startsWith('curve.') || key.startsWith('film.finding.') || findingSourceKeys.has(key) || key === 'finding.description';
+  key.startsWith('curve.') || key.startsWith('film.finding.') || key.startsWith('finding.') || findingSourceKeys.has(key);
 const keys = (dictionary: Record<string, string>, locked: boolean) =>
   Object.entries(dictionary)
     .filter(([key]) => isLockedKey(key) === locked)
@@ -115,6 +120,11 @@ const lockedSources = [
   keys(es, true),
   curveComponent,
   guiltChart,
+  findingOwn,
+  findingWorlds,
+  findingMinute,
+  findingCite,
+  findingExplorer,
   curveController,
   findingComponent,
   findingBeats,
@@ -233,6 +243,12 @@ describe('verify:dist (ADR 0034)', () => {
       ['/src/components/curve/GuiltChart.astro', '/src/components/curve/Locked.astro'],
       ['/src/components/film/chapters/Finding.astro', '/src/components/curve/Locked.astro'],
       ['/src/components/notebook/SourcesFinding.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/MinuteLinks.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/Cite.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/FindingProse.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/ThreeWorlds.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/ResultFigure.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/Explorer.astro', '/src/components/curve/Locked.astro'],
       ['/src/lib/film/finding.ts', '/src/lib/film/finding.locked.ts'],
     ]);
     // The component stub is only its frontmatter; the timeline stub knows no beats.

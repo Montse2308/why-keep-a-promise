@@ -1,0 +1,65 @@
+---
+/**
+ * /finding's «How to cite» (ADR 0037): the working paper as APA and BibTeX, and the engine as APA, in
+ * blocks of plain text a visitor selects and copies, without JavaScript (src/lib/cite.ts). Its heading
+ * is the target of the «How to cite» button in «In one minute» (`#cite`).
+ *
+ * Render this only inside the lock (ADR 0034): a locked build resolves it to ../curve/Locked.astro
+ * (astro.config.mjs).
+ */
+import { engineApa, paperApa, paperBibtex } from '../../lib/cite';
+import { useTranslations, type Locale } from '../../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+// References are written in English, as any bibliography's; only the kind of document is in the page's language.
+const english = locale === 'en' ? undefined : 'en';
+---
+
+<section class="cite" aria-labelledby="cite">
+  <h2 id="cite">{tr('finding.cite.title')}</h2>
+  <h3>{tr('finding.cite.paper')}</h3>
+  <pre class="cite__block cite__block--wrap" tabindex="0" lang={english}>{paperApa(tr('sources.working-paper.type'))}</pre>
+  <pre class="cite__block" tabindex="0" lang={english}><code>{paperBibtex()}</code></pre>
+  <h3>{tr('finding.cite.engine')}</h3>
+  <pre class="cite__block cite__block--wrap" tabindex="0" lang={english}>{engineApa()}</pre>
+</section>
+
+<style>
+  .cite {
+    display: grid;
+    min-width: 0;
+  }
+
+  .cite__block {
+    margin-block: var(--space-3);
+    padding: var(--space-4);
+    overflow-x: auto;
+    font-family: var(--font-code);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    user-select: text;
+  }
+
+  .cite__block code {
+    font-family: inherit;
+  }
+
+  /* A reference is one long line: it wraps, its address anywhere, so a phone does not scroll it sideways. */
+  .cite__block--wrap {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .cite__block:focus-visible {
+    outline: var(--focus-width) solid var(--color-focus);
+    outline-offset: 2px;
+  }
+</style>
