@@ -2,6 +2,7 @@
 /**
  * A page of the notebook (ADR 0024): the prose of src/content/subpages/<locale>/<slug>.md, with the
  * components its slots name, and a link back to the film's chapter it deepens (src/lib/notebook.ts).
+ * /finding's prose wraps some of its blocks in plain HTML, with their styles in FindingProse (ADR 0037).
  * What follows the prose's lock marker renders only behind the lock (ADR 0034); /finding is locked
  * whole, so a locked build shows its title and the status sentence and nothing else.
  */
@@ -13,6 +14,9 @@ import Vignette from '../components/notebook/Vignette.astro';
 import Weight from '../components/notebook/Weight.astro';
 import PaperStatus from '../components/PaperStatus.astro';
 import GuiltChart from '../components/curve/GuiltChart.astro';
+import Cite from '../components/finding/Cite.astro';
+import FindingProse from '../components/finding/FindingProse.astro';
+import MinuteLinks from '../components/finding/MinuteLinks.astro';
 import Matrix from '../components/pd/Matrix.astro';
 import SwitchTable from '../components/vanberg/SwitchTable.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -57,6 +61,7 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
       {!lockedWhole && <Vignette page={subpage} />}
       <h1 id="subpage-title">{heading}</h1>
     </header>
+    {subpage === 'finding' && !lockedWhole && <FindingProse />}
     {
       segments.map((segment) =>
         segment.kind === 'html' ? (
@@ -65,8 +70,12 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
           <Matrix locale={locale} />
         ) : segment.name === 'switch-table' ? (
           <SwitchTable locale={locale} />
-        ) : segment.name === 'guilt-chart' ? (
+        ) : segment.name === 'guilt-chart' || segment.name === 'result-figure' ? (
           <GuiltChart locale={locale} id="finding-guilt" />
+        ) : segment.name === 'minute-links' ? (
+          <MinuteLinks locale={locale} />
+        ) : segment.name === 'cite' ? (
+          <Cite locale={locale} />
         ) : segment.name === 'sources' ? (
           <Sources locale={locale} />
         ) : segment.name === 'author' ? (

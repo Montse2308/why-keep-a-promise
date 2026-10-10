@@ -1,0 +1,84 @@
+---
+/**
+ * The three buttons of /finding's «In one minute» (ADR 0037): the working paper on SSRN, the engine's
+ * repository and «How to cite», further down the page. Plain links, without JavaScript; the two that
+ * leave the site open in a new tab with their notice (P8, 8.3). The addresses come from src/config.ts.
+ *
+ * Render this only inside the lock (ADR 0034): a locked build resolves it to ../curve/Locked.astro
+ * (astro.config.mjs), since it links to the engine's repository.
+ */
+import { ENGINE, WORKING_PAPER } from '../../config';
+import { externalAttrs, externalMark } from '../../lib/external';
+import { useTranslations, type Locale } from '../../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const links = [
+  { url: WORKING_PAPER.ssrn, label: tr('finding.minute.paper'), main: true },
+  { url: ENGINE.repository, label: tr('finding.minute.engine'), main: false },
+  { url: '#cite', label: tr('finding.minute.cite'), main: false },
+];
+---
+
+<ul class="minute__links" role="list">
+  {
+    links.map((link) => (
+      <li>
+        <a class:list={['minute__link', { 'minute__link--main': link.main }]} href={link.url} {...externalAttrs(link.url)}>
+          {link.label}
+          <Fragment set:html={externalMark(link.url, locale)} />
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .minute__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: var(--space-6) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .minute__links li {
+    margin: 0;
+  }
+
+  .minute__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    min-height: var(--target-min);
+    padding: 0 var(--space-6);
+    border: var(--border-width) solid var(--color-control);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-fg);
+    font-family: var(--font-ui);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .minute__link:hover {
+    border-color: var(--color-fg);
+  }
+
+  /* The paper, the one to read first: in ink, as the cover's «Start». */
+  .minute__link--main {
+    border-color: var(--color-fg);
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+
+  .minute__link--main:hover {
+    background: var(--color-muted);
+    border-color: var(--color-muted);
+  }
+</style>

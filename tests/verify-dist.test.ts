@@ -233,6 +233,9 @@ describe('verify:dist (ADR 0034)', () => {
       ['/src/components/curve/GuiltChart.astro', '/src/components/curve/Locked.astro'],
       ['/src/components/film/chapters/Finding.astro', '/src/components/curve/Locked.astro'],
       ['/src/components/notebook/SourcesFinding.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/MinuteLinks.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/Cite.astro', '/src/components/curve/Locked.astro'],
+      ['/src/components/finding/FindingProse.astro', '/src/components/curve/Locked.astro'],
       ['/src/lib/film/finding.ts', '/src/lib/film/finding.locked.ts'],
     ]);
     // The component stub is only its frontmatter; the timeline stub knows no beats.

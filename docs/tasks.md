@@ -1228,8 +1228,16 @@ que cada commit quede en verde.
       resultados; la portada enlaza al hallazgo (enmienda el 0036); `/about` suma ORCID y SSRN
       (enmienda el 0024). Son los ADR 0037 a 0041; el del explorador también precisa la lista de
       interacciones del 0023 y el candado del 0034.
-- [ ] **9.2** El texto de `/finding`, EN y ES, con sus secciones en orden y sus slots; los enlaces
+- [x] **9.2** El texto de `/finding`, EN y ES, con sus secciones en orden y sus slots; los enlaces
       al paper y al motor salen de `src/config.ts`; la frase de estado al final, sin cambios.
+      Hecho: la línea bajo el título, el recuadro «En un minuto» con sus tres botones
+      (`MinuteLinks`), las dos columnas como lista de definiciones, los slots de los tres mundos,
+      del explorador y de la figura, y «Cómo citar» (`Cite`, de `src/lib/cite.ts`, con su test). Una
+      frase cambió: la primera de «Lo que agrega» repetía el párrafo de Vanberg de la §5, que se
+      queda; ahora dice solo que las dos razones caen en el mismo par. El «(§6)» enlaza a «Otros dos
+      resultados». El tope de palabras de `/finding` sube a 1 600 (ADR 0037), y la prueba de citas lee
+      también la forma entre paréntesis de Di Bartolomeo et al. (2023). Build cerrado de prueba:
+      `verify:dist` en verde.
 - [ ] **9.3** Los tres mundos (tarjetas sin JS, con su medidor) y la figura de dos paneles (el
       mecanismo arriba y lo que gana cada razón abajo), de `curve.json`, con leyenda y tabla
       accesible.
