@@ -1,10 +1,12 @@
-# Deploys the site to GitHub Pages.
+# Deploys main to GitHub Pages.
 #
-# DO NOT RUN UNTIL F6 (launch). It is manual-only on purpose: there is no partial
-# deploy. Run it only as step 7 of docs/launch-checklist.md, after the repository
-# is public and Pages is set to "Source: GitHub Actions". It refuses a dist/ that
-# still carries unwritten content (a TODO marker), a source to be verified, or a
-# placeholder for the working paper's or the engine's link (ADR 0034).
+# The manual way to publish main, and the only one: there is no deploy on push. It
+# first ran as step 7 of docs/launch-checklist.md (F6); since then, Montse runs it
+# after merging into main, with confirm = launch. Before publishing it checks main
+# again as that step did: check, tests, build, verify:dist and the budgets, and it
+# refuses a dist/ that still carries unwritten content (a TODO marker), a source to
+# be verified, or a placeholder for the working paper's or the engine's link
+# (ADR 0034). Agents never run it.
 
 name: Deploy to GitHub Pages
 
