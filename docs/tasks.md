@@ -1257,9 +1257,17 @@ que cada commit quede en verde.
 - [x] **9.5** El registro de cifras y las fuentes: 60 de 60, la mitad, las filas de los tres mundos
       y el umbral del explorador, con su fuente en `docs/sources.md`; Di Bartolomeo, Dufwenberg, Papa
       y Passarelli (2023), sin cifras; `/sources` lista lo nuevo con el candado abierto.
-- [ ] **9.6** Lo demás del sitio: el póster de `/finding` (E1), su JSON-LD (E2), el segundo enlace
+- [x] **9.6** Lo demás del sitio: el póster de `/finding` (E1), su JSON-LD (E2), el segundo enlace
       de la portada (E3), la sección del motor en `/how-its-built` (E4), ORCID y SSRN en `/about`
       (E5) y el enlace del final del capítulo 7 como botón (E6).
+      Hecho, todo detrás del candado salvo ORCID: el póster lleva la línea de la §0 (clave
+      `finding.line`, atada por test al Markdown) y la miniatura del escalón y la línea plana, sin
+      números; el JSON-LD (`src/lib/jsonld.ts`) va en el `<head>` por un slot nuevo del layout; la
+      portada suma «The finding» bajo «Go to chapter 7»; `/about` suma ORCID y, abierto, SSRN; el
+      capítulo 7 termina en un botón en tinta, sin la lupa. E4 con el texto aprobado: el tope de
+      palabras de `/how-its-built` sube a 700 (ADR 0037), el test de código cita aparte el `choose()`
+      del motor, y `verify:dist` busca «seeded generator» en vez de «by imitation», que ya no se dice.
+      Los home pesan 0.1 KiB más (`weight.json` al día).
 - [ ] **9.7** La QA: anchos (320 a 1440), sin JS, movimiento reducido, teclado y lector de pantalla,
       axe, enlaces, JSON-LD y póster, pesos y Lighthouse de `/finding`, y los tests de reglas.
       Capturas en `scratch/p9/`, con su README.

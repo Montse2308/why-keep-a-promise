@@ -175,6 +175,7 @@ src/
     finding/worlds.ts    /finding's three worlds and the payoff panel's variant tail, from curve.json
     finding/explorer.ts  /finding's formula explorer: the guilt available, its window, peak and θmin
                          (ADR 0038); pure, imports nothing, pinned to the register by its test
+    jsonld.ts            /finding's structured data: the working paper and the engine, from config.ts
     cite.ts              /finding's «How to cite»: the working paper (APA, BibTeX) and the engine, from config.ts
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
                          film without the finding, the clock of the day's light
@@ -193,7 +194,8 @@ src/
     sitemap.ts           the sitemap, with each page's languages; /finding only behind the lock
     budgets.ts           the weight budgets and how a built page is weighed against them
     details.ts           the tab's title while away and the console's note
-    posters/             the Open Graph posters: poster.ts (the drawing, the lines set to fit),
+    posters/             the Open Graph posters: poster.ts (the drawing, the lines set to fit, and
+                         /finding's miniature behind the lock),
                          metrics.ts (advance widths from TrueType), render.ts + fonts.mjs (PNG
                          with resvg at build time); icon.ts, the home-screen icon
     table/               Vanberg's game: exact payoffs (PAYOFFS), the decision (chapter 3), the

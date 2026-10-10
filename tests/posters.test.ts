@@ -11,10 +11,10 @@ import es from '../src/i18n/es.json';
 import { FILM, LIGHT_POINTS } from '../src/lib/design/film';
 import { LOCALES } from '../src/lib/locales';
 import { hasGlyph, lineWidth, readMetrics, type FontMetrics } from '../src/lib/posters/metrics';
-import { balance, CARD, cutout, escapeXml, fit, POSTER, POSTER_FONTS, POSTER_SCENES, posterPath, posterSvg, SIGNATURE_WIDTH, wrap, type PosterFont } from '../src/lib/posters/poster';
+import { balance, CARD, chartSvg, cutout, escapeXml, fit, POSTER, POSTER_FONTS, POSTER_SCENES, posterPath, posterSvg, SIGNATURE_WIDTH, wrap, type PosterFont } from '../src/lib/posters/poster';
 import { readPosterFont } from '../src/lib/posters/fonts.mjs';
 import { ICON_SHAPES, TOUCH_ICON, touchIconSvg } from '../src/lib/posters/icon';
-import { posterLayout, posterMetrics, posterPng, posterText, touchIconPng } from '../src/lib/posters/render';
+import { findingChart, posterLayout, posterMetrics, posterPng, posterText, touchIconPng } from '../src/lib/posters/render';
 import { ROUTES } from '../src/lib/routes';
 
 const PAGES = LOCALES.flatMap((locale) => ROUTES.map((route) => [locale, route] as const));
@@ -174,5 +174,44 @@ describe("the icon for a phone's home screen (point 13 of the external review)",
     expect([view.getUint32(16), view.getUint32(20)]).toEqual([TOUCH_ICON, TOUCH_ICON]);
     expect(TOUCH_ICON).toBe(180);
     expect(touchIconEndpoint).toContain('touchIconPng()');
+  });
+});
+
+describe("/finding's poster behind the lock (ADR 0037, E1)", () => {
+  const ledes = import.meta.glob('../src/content/subpages/*/finding.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+
+  it.each(LOCALES)('%s: says the line under /finding’s title, word for word, under its title', (locale) => {
+    const dictionary: Record<string, string> = locale === 'en' ? en : es;
+    const markdown = Object.entries(ledes).find(([path]) => path.includes(`/${locale}/`))?.[1] ?? '';
+    expect(/<p class="lede">([^<]+)<\/p>/.exec(markdown)?.[1]).toBe(dictionary['finding.line']);
+    const text = posterText(locale, 'finding', true);
+    expect(text).toEqual({ name: dictionary['poster.name'], title: dictionary['notebook.finding.title'], subtitle: dictionary['finding.line'], author: dictionary['author.name'], long: true });
+    // Locked, it is the poster of before: the site's question under the title.
+    expect(posterText(locale, 'finding', false).subtitle).toBe(dictionary['site.title']);
+  });
+
+  it.each(LOCALES)('%s: fits its card in four lines at most, with a glyph for every character, and no number or status sentence', (locale) => {
+    const dictionary: Record<string, string> = locale === 'en' ? en : es;
+    const set = posterLayout(locale, 'finding', true);
+    const width = CARD.width - 2 * CARD.padding;
+    expect(set.subtitle?.lines.length).toBeLessThanOrEqual(4);
+    for (const line of set.subtitle?.lines ?? []) expect(lineWidth(line, posterMetrics().subtitle, set.subtitle?.size ?? 0)).toBeLessThanOrEqual(width);
+    expect(set.titleTop + set.title.lines.length * set.title.size * 1.08).toBeLessThanOrEqual(CARD.y + CARD.height - CARD.padding - (set.subtitle?.lines.length ?? 0) * (set.subtitle?.size ?? 0) * 1.25);
+    for (const char of (dictionary['finding.line'] ?? '').replace(/\s/g, '')) expect(hasGlyph(fontBytes('subtitle'), char), char).toBe(true);
+    const text = Object.values(posterText(locale, 'finding', true)).join(' ');
+    expect(text).not.toMatch(/\d/);
+    expect(text).not.toContain(dictionary['paper.status']?.split('{title}')[0]);
+  });
+
+  it('draws its miniature of what each reason earns without a number, in the film’s palette', () => {
+    const chart = findingChart();
+    const svg = chartSvg(chart);
+    expect(svg).not.toContain('<text');
+    const allowed = new Set([...Object.values(FILM)].map((c) => c.toLowerCase()));
+    expect((svg.match(/#[0-9a-f]{3,8}\b/gi) ?? []).filter((c) => !allowed.has(c.toLowerCase()))).toEqual([]);
+    expect(posterSvg('finding', posterLayout('en', 'finding', true), chart)).toContain(svg);
+    // Personal guilt steps between two payoffs; partner-specific commitment stays at the top.
+    expect(new Set(chart.personal.flatMap((s) => [s.y1, s.y2])).size).toBe(2);
+    expect(new Set(chart.partner.flatMap((s) => [s.y1, s.y2]))).toEqual(new Set([chart.high]));
   });
 });

@@ -5,7 +5,10 @@
  * day's light: a paper card with the project's name (ADR 0021: «I promise» / «Te lo prometo») and
  * the page's title, the author's name as a small signature after the golden stroke under the
  * project's name (ADR 0032), and the circle and the square tied by the golden thread. It carries
- * nothing else: no status sentence, nothing behind the lock (ADR 0034), no figure.
+ * nothing else: no status sentence, nothing behind the lock (ADR 0034), no figure. Behind the lock,
+ * /finding's poster carries its line instead of the site's question and, on the right, a miniature of
+ * what each reason earns: personal guilt's step and partner-specific commitment's flat line, with no
+ * numbers on its axes (ADR 0037).
  *
  * The renderer does not wrap text, so titles are broken into lines here, measured with the fonts'
  * own advance widths (./metrics.ts), at the largest size that fits the card.
@@ -14,6 +17,7 @@ import { FILM, LIGHT_POINTS, type LightPoint } from '../design/film';
 import { FACES, type Mood } from '../film/faces';
 import { threadBetween } from '../film/stage';
 import type { Locale } from '../locales';
+import type { Segment } from '../curve/chart';
 import type { Route } from '../routes';
 import { lineWidth, type FontMetrics } from './metrics';
 
@@ -55,7 +59,24 @@ export interface PosterText {
   readonly subtitle?: string;
   /** The author's full name, the poster's signature (ADR 0032). */
   readonly author: string;
+  /** The subtitle is a page's own line, longer than the site's question: set smaller, on more lines. */
+  readonly long?: true;
 }
+
+/**
+ * /finding's miniature, behind the lock (ADR 0037): personal guilt's step and partner-specific
+ * commitment's line, in data units (background trust, payoff), from the curve. No numbers are drawn.
+ */
+export interface PosterChart {
+  readonly personal: readonly Segment[];
+  readonly partner: readonly Segment[];
+  readonly axis: { readonly min: number; readonly max: number };
+  /** The highest payoff: the top of the miniature. */
+  readonly high: number;
+}
+
+/** Where the miniature sits: a paper card on the right, above the cast. */
+export const CHART = { x: 744, y: 64, width: 400, height: 236, padding: 36 } as const;
 
 /** The card's text box, in poster pixels. */
 export const CARD = { x: 56, y: 56, width: 648, height: 518, padding: 52 } as const;
@@ -69,6 +90,8 @@ const SIGNATURE = { size: 20, x: TEXT_X + STROKE.length + 18, y: STROKE.y + 7 } 
 export const SIGNATURE_WIDTH = TEXT_X + TEXT_WIDTH - SIGNATURE.x;
 const TITLE = { top: LABEL.y + 74, sizes: [84, 78, 72, 68, 64, 60, 56, 52, 48], leading: 1.08 } as const;
 const SUBTITLE = { size: 28, leading: 1.25, maxLines: 2, bottom: CARD.y + CARD.height - CARD.padding } as const;
+/** A page's own line, as /finding's: smaller, up to four lines. */
+const LONG_SUBTITLE = { size: 24, maxLines: 4 } as const;
 
 /** Breaks a text into lines no wider than `width`, word by word. A word wider than the line stays whole. */
 export function wrap(text: string, width: number, metrics: FontMetrics, size: number, letterSpacing = 0): string[] {
@@ -127,10 +150,16 @@ export interface PosterLayout {
   readonly signature: string;
 }
 
+/** The size and line count a poster's subtitle may take. */
+function subtitleSet(text: PosterText): { readonly size: number; readonly maxLines: number } {
+  return text.long ? LONG_SUBTITLE : SUBTITLE;
+}
+
 export function layout(text: PosterText, metrics: Record<PosterFont, FontMetrics>): PosterLayout {
-  const subtitle = text.subtitle ? fit(text.subtitle, TEXT_WIDTH, metrics.subtitle, [SUBTITLE.size], SUBTITLE.maxLines) : null;
+  const sub = subtitleSet(text);
+  const subtitle = text.subtitle ? fit(text.subtitle, TEXT_WIDTH, metrics.subtitle, [sub.size], sub.maxLines) : null;
   if (text.subtitle && !subtitle) throw new Error(`The poster's subtitle does not fit: "${text.subtitle}"`);
-  const subtitleHeight = subtitle ? subtitle.lines.length * SUBTITLE.size * SUBTITLE.leading + 24 : 0;
+  const subtitleHeight = subtitle ? subtitle.lines.length * subtitle.size * SUBTITLE.leading + 24 : 0;
   const room = SUBTITLE.bottom - subtitleHeight - TITLE.top;
   const title = TITLE.sizes
     .map((size) => fit(text.title, TEXT_WIDTH, metrics.title, [size], Math.floor(room / (size * TITLE.leading))))
@@ -192,8 +221,27 @@ const STARS: readonly (readonly [number, number, number])[] = [
   [820, 210, 2.2],
 ];
 
-/** The poster of a page, as SVG. */
-export function posterSvg(route: Route, set: PosterLayout): string {
+/** /finding's miniature as SVG: a paper card, a baseline, partner-specific commitment's line under personal guilt's step. */
+export function chartSvg(chart: PosterChart): string {
+  const left = CHART.x + CHART.padding;
+  const right = CHART.x + CHART.width - CHART.padding;
+  const top = CHART.y + CHART.padding;
+  const bottom = CHART.y + CHART.height - CHART.padding;
+  const x = (trust: number) => (left + ((trust - chart.axis.min) / (chart.axis.max - chart.axis.min)) * (right - left)).toFixed(1);
+  // From no payoff at the baseline to the highest at the top: the lower payoff sits halfway up.
+  const y = (payoff: number) => (bottom - (payoff / chart.high) * (bottom - top)).toFixed(1);
+  const path = (segments: readonly Segment[]) => segments.map((s) => `M${x(s.x1)} ${y(s.y1)} L${x(s.x2)} ${y(s.y2)}`).join(' ');
+  return [
+    `<g filter="url(#paper)"><rect x="${CHART.x}" y="${CHART.y}" width="${CHART.width}" height="${CHART.height}" rx="24" fill="${FILM.card}"/></g>`,
+    `<path d="M${left} ${bottom + 8} H ${right}" stroke="${FILM['card-muted']}" stroke-width="2" stroke-linecap="round"/>`,
+    `<path d="${path(chart.personal)}" fill="none" stroke="${FILM.ink}" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter"/>`,
+    `<path d="${path(chart.partner)}" fill="none" stroke="${FILM['thread-edge']}" stroke-width="8" stroke-linecap="round"/>`,
+    `<path d="${path(chart.partner)}" fill="none" stroke="${FILM.thread}" stroke-width="4" stroke-linecap="round"/>`,
+  ].join('');
+}
+
+/** The poster of a page, as SVG; /finding's carries its miniature behind the lock. */
+export function posterSvg(route: Route, set: PosterLayout, chart?: PosterChart): string {
   const scene = POSTER_SCENES[route];
   const light = LIGHT_POINTS.find((point) => point.name === scene.light);
   if (!light) throw new Error(`No light point "${scene.light}"`);
@@ -206,8 +254,9 @@ export function posterSvg(route: Route, set: PosterLayout): string {
   const subtitleLines = set.subtitle
     ? set.subtitle.lines
         .map((line, i, all) => {
-          const y = SUBTITLE.bottom - (all.length - 1 - i) * SUBTITLE.size * SUBTITLE.leading;
-          return `<text x="${TEXT_X}" y="${y.toFixed(1)}" font-size="${SUBTITLE.size}" ${fontAttributes('subtitle')} fill="${FILM['card-muted']}">${escapeXml(line)}</text>`;
+          const size = set.subtitle?.size ?? SUBTITLE.size;
+          const y = SUBTITLE.bottom - (all.length - 1 - i) * size * SUBTITLE.leading;
+          return `<text x="${TEXT_X}" y="${y.toFixed(1)}" font-size="${size}" ${fontAttributes('subtitle')} fill="${FILM['card-muted']}">${escapeXml(line)}</text>`;
         })
         .join('')
     : '';
@@ -241,6 +290,7 @@ export function posterSvg(route: Route, set: PosterLayout): string {
     `<text x="${SIGNATURE.x}" y="${SIGNATURE.y}" font-size="${SIGNATURE.size}" ${fontAttributes('label')} fill="${FILM['card-muted']}">${escapeXml(set.signature)}</text>`,
     titleLines,
     subtitleLines,
+    chart ? chartSvg(chart) : '',
     '</svg>',
   ].join('');
 }

@@ -30,6 +30,7 @@ import { findingUnlocked } from '../lib/lock';
 import { notebookPage } from '../lib/notebook';
 import { href, type Subpage } from '../lib/routes';
 import { focusableCode, splitSubpage, type Segment } from '../lib/subpages';
+import { findingGraph, jsonLd } from '../lib/jsonld';
 import { fill } from '../lib/template';
 
 interface Props {
@@ -54,10 +55,13 @@ const showStatus = subpage === 'finding';
 // Back to the chapter of the film the page deepens; every page has the way back to the film in its footer.
 const chapterEntry = page.film && (await getCollection('chapters', (candidate) => candidate.id.startsWith(`${locale}/`) && candidate.data.chapter === page.film))[0];
 if (page.film && !chapterEntry) throw new Error(`No chapter "${page.film}" for subpage ${subpage} in ${locale}`);
+// /finding's structured data, the working paper and its engine, only behind the lock (ADR 0037).
+const structured = subpage === 'finding' && unlocked ? jsonLd(findingGraph(t(locale, 'author.name'))) : null;
 const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntry.data.title }) : null;
 ---
 
 <BaseLayout locale={locale} route={subpage} title={`${heading} · ${t(locale, 'site.title')}`} codeFont={subpage === 'how-its-built'}>
+  {structured && <script type="application/ld+json" slot="head" is:inline set:html={structured} />}
   <article class="container column subpage" aria-labelledby="subpage-title" data-locked-content={unlocked && hasLocked ? '' : undefined}>
     <header class="subpage__head">
       {!lockedWhole && <Vignette page={subpage} />}
