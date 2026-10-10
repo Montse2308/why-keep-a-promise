@@ -1268,12 +1268,110 @@ que cada commit quede en verde.
       palabras de `/how-its-built` sube a 700 (ADR 0037), el test de código cita aparte el `choose()`
       del motor, y `verify:dist` busca «seeded generator» en vez de «by imitation», que ya no se dice.
       Los home pesan 0.1 KiB más (`weight.json` al día).
-- [ ] **9.7** La QA: anchos (320 a 1440), sin JS, movimiento reducido, teclado y lector de pantalla,
+- [x] **9.7** La QA: anchos (320 a 1440), sin JS, movimiento reducido, teclado y lector de pantalla,
       axe, enlaces, JSON-LD y póster, pesos y Lighthouse de `/finding`, y los tests de reglas.
-      Capturas en `scratch/p9/`, con su README.
+      Capturas en `scratch/p9/`, con su README. Hecha; el detalle, en «Estado al corte».
 - [ ] **9.8 (Montse)** Revisa las capturas y abre a mano los enlaces de SSRN (el working paper y la
       página de autora), que responden 403 a los bots.
 - [ ] **9.9 (Montse)** El PR de P9 a `main`, y `deploy.yml` cuando ella lo decida.
+
+### Estado al corte (2026-10-10)
+
+La sesión se cortó por cambio de máquina, con la parte del agente de P9 terminada. La rama
+`p9/finding` se subió a `origin` (sin PR, sin `main` y sin `deploy.yml`). No hay commit WIP.
+
+**Pasos hechos**
+
+- [x] 9.0 `e58a0e3` · 9.1 `561e284` · 9.5 `0e1302c` (antes que 9.2, para que el texto entrara con sus
+  cifras) · 9.2 `db971b0` · 9.3 `31bdd32` · 9.4 `ef943d6` · 9.6 `c62ad3c` (E3, E6), `e70c52f` (E5),
+  `ead54ce` (E4), `3bdf9e1` (E1, E2) · 9.7 `0fa4417` (los dos arreglos de la QA) y el commit de este
+  registro.
+
+**Paso en curso:** ninguno. **Sin empezar:** 9.8 y 9.9, los de Montse.
+
+**ADR asignados:** 0037 (`/finding` se entiende sola), 0038 (el explorador de la fórmula), 0039 (los
+otros dos resultados), 0040 (la portada enlaza al hallazgo) y 0041 (`/about` suma ORCID y SSRN).
+
+**Frases del texto aprobado que cambiaron**
+
+- §2, «Lo que agrega», primera celda (regla del Anexo para la §5: si el párrafo «Vanberg's design
+  separates the two pairs…» repite la §2, se queda en la §5 y se quita de la §2):
+  - EN, original: «Vanberg's design splits four reasons into two pairs, and cannot see inside a pair.
+    Personal guilt and partner-specific commitment fall in the same pair, so his result fits both.»
+    Nueva: «Personal guilt and partner-specific commitment fall in the same pair of Vanberg's design,
+    so his result fits both.»
+  - ES, original: «El diseño de Vanberg reparte cuatro razones en dos pares, y no ve dentro de un par.
+    La culpa personal y el compromiso específico a la pareja caen en el mismo par, así que su
+    resultado le queda a las dos.» Nueva: «La culpa personal y el compromiso específico a la pareja
+    caen en el mismo par del diseño de Vanberg, así que su resultado le queda a las dos.»
+- Ninguna otra. La cita «(Di Bartolomeo, Dufwenberg, Papa and Passarelli, 2023)» se quedó igual: se
+  amplió el test de citas (`tests/prose.ts`) para que lea esa forma entre paréntesis. La frase de
+  Vanberg de la §2 («a preference for keeping one's word in itself») no choca con la regla (h): el
+  test compara frases enteras y la frase de la §2 no es la de la película.
+
+**Decisiones tomadas en la sesión, fuera del prompt**
+
+- El ADR 0038 también precisa la lista cerrada de interacciones del ADR 0023 (el explorador es la 11)
+  y el punto 2 del candado del ADR 0034, y `AGENTS.md` permite las figuras nuevas de `/finding` y la
+  miniatura del póster; el prompt solo nombraba el 0001 y el 0025.
+- Topes de palabras: `/finding` de 700 a 1 600 y `/how-its-built` de 600 a 700 (el texto de E4 no
+  cabía), los dos registrados en el ADR 0037.
+- Techo de JS de `/finding`: 8 KiB (`finding-script`, todo el JS de la página); pesa 2.8 KiB.
+  `weight.json` sigue registrando solo los home.
+- El módulo del explorador no importa nada (su `COST = 4` y su `fillIn` están fijados por test contra
+  `PAYOFFS` y `fill`), porque al compartir módulos con la película el home subía 0.3 KiB.
+- La página de autora en SSRN, en `/about`, solo con el candado abierto (lista el working paper); ORCID
+  en los dos estados. El JSON-LD, el póster nuevo y el segundo enlace de la portada, también solo
+  abiertos.
+- «§6» en la §2 enlaza a «Otros dos resultados»: la página no numera sus secciones (ver abajo).
+- Las tres tarjetas van lado a lado desde 56rem (~896 px), alineadas con `subgrid`; abajo, una bajo
+  otra. A 768 no cabían.
+- El panel de abajo de la figura dibuja la culpa personal debajo (como el capítulo 7), para que se
+  vean las otras dos en 10, y la variante solo en su cola, de 65 a 76.
+- El bloque de `choose()` de E4 no está en `src/`: el test de código lo comprueba aparte (igual en los
+  dos idiomas). `verify:dist` busca «seeded generator» / «generador con semilla» en `/how-its-built`,
+  porque «by imitation» ya no se dice, y suma la marca `data-explorer`.
+- `AUTHOR` suma `cite` y `bibtex`, `WORKING_PAPER` suma `published` y `year`, y `ENGINE` suma
+  `title`, `version`, `year` y `license`, para armar la cita y el JSON-LD desde `src/config.ts`.
+- La referencia de Di Bartolomeo et al. (2023) va sin enlace en `/sources`, con
+  `PENDIENTE(doi)` en `docs/sources.md`: no se cotejó la ficha del artículo.
+
+**La QA (9.7), sobre `npm run preview` del build abierto**
+
+| Punto | Cómo | Resultado | Arreglo |
+| ----- | ---- | --------- | ------- |
+| Anchos | `qa-overflow.mjs` a 320, 360, 768, 1024 y 1440 en /finding, /about, /how-its-built y /sources (EN y ES), y los home y la 404 a 320, 360 y 1440 | 0 desbordes | Las tarjetas, apretadas a 768: tres columnas desde 56rem, con `subgrid` (`0fa4417`) |
+| Sin JS | `explorer.mjs nojs` y captura completa | Sin el explorador ni su texto, sin huecos | — |
+| Movimiento reducido | `explorer.mjs reduced` con teclas reales | Funciona; nada se anima | — |
+| Teclado | `qa-keys-pages.mjs` en /finding | 26 paradas, todas con anillo y en orden | — |
+| Lector de pantalla | `axtree-page.mjs` (EN 1440, ES 360) | Los `<output>` eran 3 regiones vivas más; θ se leía «0.6000000238» | `<span aria-hidden>` y `aria-valuetext` (`0fa4417`) |
+| Toque | `touch-explorer.mjs` a 360 | Los tres controles se arrastran; la página no se mueve | — |
+| axe 4.14.0 | Home, /finding, /how-its-built, /about, /sources y 404, EN y ES, 1440 y 360, claro y oscuro (44); sin JS (24); contraste con el papel aplanado (12) | 0 violaciones | — |
+| Enlaces | `verify:dist` y `curl` | Externos con `target`, `rel` y aviso; ORCID, GitHub y SPDX 200; los dos DOI redirigen; SSRN y Zenodo, 403 a bots | — |
+| JSON-LD y póster | Parseado en el build | Los campos pedidos; `og:image` al póster nuevo, 1200×630 | — |
+| Pesos | `npm run budgets` | /finding: JS 2.8 KiB (≤ 8), fuentes 118.6 KiB, primera carga 140.5 / 140.8 KiB; home +0.1 KiB (`weight.json` al día) | — |
+| Lighthouse 13.5.0 | 3 corridas por idioma | /finding: LCP 1.81 s EN y ES, puntaje 0.98–0.99, CLS 0 | — |
+| Tests de reglas | `npm test` | Frases prohibidas, «solo agregar» y registro de cifras en verde | — |
+| Build cerrado de prueba | `locked-check.sh` | `verify:dist` en verde; sin SSRN en /about, sin enlace a /finding en la portada, póster de antes | — |
+
+**Lo que se encontró y no se arregló**
+
+- `src/content/subpages/{en,es}/finding.md`, §2: «(§6)» viene del texto aprobado, pero la página no
+  numera sus secciones; enlaza a «Otros dos resultados». Montse decide si se queda.
+- `src/components/finding/Explorer.astro`: el árbol de accesibilidad del CDP de Chrome 154 muestra el
+  valor crudo del control de θ aunque tenga `aria-valuetext` (ya visto en F5); los lectores usan el
+  `aria-valuetext`.
+- `docs/sources.md`, Di Bartolomeo et al. (2023): `PENDIENTE(doi)`.
+
+**Para abrir a mano (Montse):** el working paper en SSRN
+(`https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218`), su DOI (`https://doi.org/10.2139/ssrn.7580218`),
+la página de autora (`https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=13503109`) y el DOI del
+motor en Zenodo (`https://doi.org/10.5281/zenodo.23222610`).
+
+**Capturas:** `scratch/p9/` (19 capturas, su README y `qa/`), solo en la máquina de esta sesión. Para
+seguir no hacen falta: se rehacen con las herramientas de `scratch/tools/` (`explorer.mjs`,
+`touch-explorer.mjs`, `axtree-page.mjs`, `ch7-button.mjs`, `locked-check.sh`, `gate-p9.sh`,
+`commit-step.sh`), que tampoco viajan.
 
 ## F6 · Lanzamiento
 

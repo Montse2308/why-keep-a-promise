@@ -244,7 +244,7 @@ P8 llegó a `main` con el PR #20.
 
 ## P9 · /finding por sí sola
 
-**Estado:** activa (rama `p9/finding`, desde `main` en `b5cb604`).
+**Estado:** activa (rama `p9/finding`, desde `main` en `b5cb604`); 9.0 a 9.7 hechos, 9.8 y 9.9 de Montse.
 
 `/finding` es la página que Montse va a compartir (LinkedIn, correos), y hasta P8 funcionaba como
 apéndice del capítulo 7: empezaba con la tabla de las cuatro razones sin decir la pregunta, su única
