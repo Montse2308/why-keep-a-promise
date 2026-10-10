@@ -4,6 +4,7 @@
  * src/config.ts), and nothing else: no school, job, city or biography.
  */
 import { AUTHOR } from '../../config';
+import { externalAttrs, externalMark } from '../../lib/external';
 import { useTranslations, type Locale } from '../../lib/i18n';
 
 interface Props {
@@ -17,8 +18,8 @@ const tr = useTranslations(locale);
 <div class="author">
   <p class="author__name">{tr('author.name')}</p>
   <ul class="author__links" role="list">
-    <li><a href={AUTHOR.github} rel="me">{tr('author.github')}</a></li>
-    <li><a href={AUTHOR.linkedin} rel="me">{tr('author.linkedin')}</a></li>
+    <li><a href={AUTHOR.github} {...externalAttrs(AUTHOR.github, 'me')}>{tr('author.github')}<Fragment set:html={externalMark(AUTHOR.github, locale)} /></a></li>
+    <li><a href={AUTHOR.linkedin} {...externalAttrs(AUTHOR.linkedin, 'me')}>{tr('author.linkedin')}<Fragment set:html={externalMark(AUTHOR.linkedin, locale)} /></a></li>
   </ul>
 </div>
 

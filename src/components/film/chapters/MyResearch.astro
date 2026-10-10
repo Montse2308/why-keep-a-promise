@@ -105,10 +105,17 @@ const seal = `M${edge(16, 0)} ${Array.from({ length: 10 }, (_, i) => `Q${edge(23
    * (`--opened`, from the film's script; open at once without it).
    */
   /* Specific enough to win over the beat's own card padding. */
+  /* The envelope is drawn to the card's edges, so the whole card tilts with it, not only its paper (8.2). */
   :global(.film .card.card--envelope) {
     position: relative;
     padding-top: calc(var(--space-6) + 5.5rem);
     background: linear-gradient(var(--film-card), #fbf3e3);
+    box-shadow: var(--paper-shadow);
+    transform: var(--paper-tilt);
+  }
+
+  :global(.film .card.card--envelope::before) {
+    content: none;
   }
 
   /*

@@ -1,9 +1,10 @@
 ---
 /**
- * The home is the film (ADR 0021): nine chapters that end in chapter 8's credits, which lead to the
- * notebook (ADR 0024).
+ * The home: its cover (ADR 0036), which says what the page holds, then the film (ADR 0021), nine
+ * chapters that end in chapter 8's credits, which lead to the notebook (ADR 0024).
  */
 import Film from '../components/film/Film.astro';
+import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { t, type Locale } from '../lib/i18n';
 
@@ -16,5 +17,6 @@ const title = t(locale, 'site.title');
 ---
 
 <BaseLayout locale={locale} route="home" title={title} film>
+  <Hero locale={locale} />
   <Film locale={locale} />
 </BaseLayout>

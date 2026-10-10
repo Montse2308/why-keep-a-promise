@@ -109,6 +109,9 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
 - **Lo que no dice**, fuera del candado:
   - nada de tests del motor, semilla, generaciones, imitación ni procedencia;
   - ni el hallazgo, la curva, los parámetros o qué motivo paga dónde.
+- **La portada del home** (ADR 0036) dice de la investigación lo mismo que la parte abierta del
+  capítulo 7: la pregunta y el motor en TypeScript. No lleva la frase de estado ni el nombre de la
+  autora.
 - La aritmética exacta y los tests que detienen el build son de la página, y se cuentan en
   `/how-its-built`.
 - Los enlaces al hallazgo, a `/finding` y al repositorio del motor existen solo con el candado

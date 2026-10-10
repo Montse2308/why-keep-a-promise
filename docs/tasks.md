@@ -3,16 +3,19 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** F6, el lanzamiento: los pasos 1 a 4 del checklist están hechos (rama
-`launch/f5-qa`); siguen los de Montse, del 5 al 8. F5, la QA, cerrada en la misma rama, sobre el
-build con el candado abierto. P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7,
-los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos, como ella lo pidió: dio
-por hecho el de la película entera.
+**Fase activa:** P8, los retoques después del lanzamiento (rama `polish/round-2`); 8.1 a 8.5
+hechos y 8.6 en la revisión de Montse. F6, el lanzamiento, cerrada: el repo es público, Pages
+publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
+línea en `https://montse2308.github.io/why-keep-a-promise/`, con la versión anterior a P8. F5, la
+QA, cerrada en la rama `launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7
+cerradas: Montse las revisó (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR
+#17). P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** ninguna: después de F6, la página está en línea.
+**Fase siguiente:** ninguna planeada. P8 llega al sitio cuando Montse hace el merge a `main` y
+vuelve a correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
 
-**El lanzamiento (F6)** ya no espera un sometimiento: lo dispara el working paper público en SSRN y
-el repo del motor público (ADR 0034). Su preparación y sus pasos abiertos están en la sección F6.
+**El lanzamiento (F6)** lo disparó el working paper público en SSRN y el repo del motor público
+(ADR 0034). Su preparación y sus pasos, todos hechos, están en la sección F6.
 
 **Estado del código:** la película cuenta sus nueve capítulos y termina en los créditos del
 capítulo 8, con su sonido, apagado hasta que el visitante lo enciende; el cuaderno tiene sus seis
@@ -1103,6 +1106,109 @@ con un README.
       mundos con distinta confianza de fondo.» Nombra las razones del hallazgo, así que es contenido
       bloqueado: cerrado, sigue siendo la pregunta del sitio.
 
+## P8 · Retoques después del lanzamiento
+
+En la rama `polish/round-2`; el push lo decide Montse. Como en P7, cada paso cabe en una sesión
+corta, termina en verde (`check`, `test`, `build`, `verify:dist` y `budgets`) y lleva su número en
+el commit (`8.3`). Un paso **(Montse)** es una decisión o revisión suya: el agente prepara
+prototipos, capturas u opciones, pero no decide. Se planeó como «antes de publicar», con los pasos
+5 a 8 de F6 esperando a P8, pero esos pasos ya estaban hechos: el sitio en línea es la versión
+anterior a P8, y P8 llega a él con el merge a `main` y otro `deploy.yml`, que corre Montse.
+
+- [x] **8.1** El título del home en español cabe en computadora. Hay una regla solo para español
+      en `Arrival.astro` (`:lang(es)`): `clamp(2rem, 5vw, 4.25rem)` y 24ch, en lugar de
+      `clamp(2rem, 6.4vw, 5rem)` y 16ch. A 1440, 1280 y 1024 queda en 2 renglones (antes 3, y a
+      1440 medía 235 px de alto; ahora 133). A 360, de lado (ADR 0031) y en inglés no cambia nada;
+      sin JS, a 1440, son 3 renglones a 68 px. `src/data/weight.json` está al día. Capturas antes y
+      después en `scratch/p8/8.1/`.
+- [x] **8.2** Los títulos de las tarjetas de la película se ven nítidos en computadora. La causa era
+      el giro de −0.4° de la tarjeta: sacaba el texto de la rejilla de pixeles. No eran ni el tamaño
+      óptico (el Fraunces del sitio quedó fijado en opsz 14, un corte de texto) ni el peso. Montse
+      eligió la variante C: en `Beat.astro`, el papel y su sombra giran en un `::before` detrás del
+      texto, que queda derecho. Con DPR 1, los medios tonos del título bajan de 52.7 % a 34.2 %. El
+      sobre del capítulo 7 y la tarjeta de lado (ADR 0031) siguen girando enteros. `weight.json` está
+      al día. El diagnóstico está en `scratch/p8/8.2/` y las capturas de antes y después (1440 con
+      DPR 1 y 2, y 360) en `scratch/p8/8.2/before-after/`.
+- [x] **8.3** Todos los enlaces externos abren en otra pestaña. Los internos, no: se quedan en la
+      misma, porque la memoria de la película vive en la entrada de la pestaña (ADR 0029).
+      `src/lib/external.ts` (puro, con su test) da a cada enlace externo `target="_blank"`,
+      `rel="noopener noreferrer"` y una ↗ pequeña con `aria-hidden`, más el aviso oculto
+      `link.newTab`, «(opens in a new tab)» / «(se abre en otra pestaña)». Lo hace en los componentes
+      (la frase de estado, /sources y /about, donde se conserva `rel="me"`) y en la prosa ya
+      convertida (las leyendas de la película, las páginas del cuaderno y los enlaces del motor).
+      `verify:dist` falla si un enlace externo de `dist/` no tiene `target`, `rel` y el aviso en el
+      idioma de la página, o si uno interno abre en otro lado. Pasa con el candado abierto (86
+      externos) y cerrado (20). En /sources, entre la referencia y su dirección ahora hay un
+      espacio, y ya no un margen, para que la ↗ no caiga sola en otro renglón a 360. Las páginas de
+      inicio pesan 0.3 KiB más (`src/data/weight.json` al día). Capturas en `scratch/p8/8.3/` (1440 y
+      360, EN y ES): la tarjeta, /sources y /about, con un clic o un toque reales. Las 12 abren otra
+      pestaña y los internos se quedan en la misma.
+- [x] **8.4 (Montse)** Prototipos del hero en `scratch/` y la elección de Montse. Cinco maquetas
+      sobre la película real, en `scratch/p8/hero/`: A, la portada en el amanecer; B, la noche con el
+      elenco; C, un subtítulo; D y E, «el mapa», con el fondo de A y de B. Montse descartó C, pidió
+      que la página no se llame «película» y que la portada diga todo lo que es la página, y eligió D.
+- [x] **8.5** ADR 0036 con el hero elegido (y `docs/decisions/README.md` al día), y el hero
+      construido. La portada (`Hero.astro`, `src/lib/hero.ts` con su test) lleva la pregunta, una
+      línea y tres puertas: la historia, la investigación y el cuaderno.
+      - **Cielo y costura:** va sobre el cielo del amanecer y termina en el color con que empieza el
+        escenario, calculado del mismo degradado (menos de 1 ΔE*ab a 1440, 1024, 360, 320 y de
+        lado). Su borde proyecta una sombra de papel sobre el escenario.
+      - **El capítulo 0:** pierde el título (queda «Capítulo 0: Llegada» oculto) y su plano amplio
+        (la cámara empieza en la mesa). Su tarjeta sube con el escenario y ya no tapa al elenco, y
+        el botón del sonido ya no espera en el celular.
+      - **Los saltos a un capítulo** caen en su primer cuadro.
+      - **Comprobado** con el build abierto y con uno cerrado de prueba:
+        - el título en español, en 2 renglones a 1024, 1280 y 1440;
+        - sin scroll horizontal a 320;
+        - «Empezar» y «Ir al capítulo 7», con un clic real, en las pantallas 0 y 29.4;
+        - el boleto del capítulo 0, con el teclado;
+        - la memoria al recargar y con Atrás, a 360, 1440 y 844×390, sin caer en la portada;
+        - sin JS y con movimiento reducido.
+      - **Pesos:** primera carga +1.3 KiB y script −41 B (`weight.json` al día).
+      - **Capturas:** `scratch/p8/8.5/`.
+- [ ] **8.6 (Montse)** QA de lo que cambió, los pesos y Lighthouse otra vez
+      (`src/data/weight.json` y `src/data/lighthouse.json`), y los documentos al día; capturas a
+      360 y 1440 px, EN y ES, y la revisión del PR de P8. Dep.: 8.1 a 8.5.
+      Hecha la parte del agente; falta la revisión de Montse y el PR. Sobre `npm run preview` del
+      build abierto, con las herramientas de `scratch/tools/` (las de P7.7 y unas nuevas); salidas
+      y capturas en `scratch/p8/review/`, con un README.
+      - **El lanzamiento, anotado:** F6 estaba hecha desde antes de P8 (sección F6), y `deploy.yml`
+        se describe como la forma manual de publicar `main`, sin cambiar su lógica.
+      - **La historia con clics o toques reales:** las 17 decisiones a 1440, 360, 320 y 844×390, EN
+        y ES, y con movimiento reducido a 1440 EN y 360 ES (11 recorridos), sin scroll horizontal ni
+        errores.
+      - **La portada:** «Empezar» cae en el capítulo 0 con su boleto en pantalla e «Ir al capítulo
+        7» en su primer cuadro; una página del cuaderno abre en la misma pestaña y Atrás vuelve a la
+        portada; EN/ES va a la misma ruta. EN y ES, a 1440 y 360.
+      - **Enlaces:** los 86 externos de las 14 páginas (44 en las páginas y 42 en el panel), con un
+        clic real: cada uno abre otra pestaña, con su aviso, y la página se queda donde estaba. Los
+        internos se quedan en la misma.
+      - **Teclado:** la historia entera (21 interacciones) a 1440 EN, 1440 ES con movimiento reducido
+        y 844×390; las 15 páginas y el panel, en claro y oscuro. Igual que en P7.7: con scroll suave,
+        el foco tarda hasta 0.9 s en llegar en los saltos largos (ahora también al control de la
+        curva), y los enlaces en dos renglones dan falsos positivos.
+      - **Sin JS y con el script bloqueado:** la portada y los 9 cuadros, sin botones muertos ni
+        desborde. En las páginas, el enlace «Cuaderno» lleva a la lista del pie.
+      - **Movimiento reducido:** 0 cuadros en reposo y nada animándose (la flecha de «Empezar» se
+        detiene), el dado quieto y las monedas de una vez.
+      - **axe-core 4.14.0:** 228 corridas, cero violaciones (las 15 páginas, el panel, la historia
+        desde la portada y sin JS). El texto de la portada sobre el cielo, medido por pixel: el
+        título, 7.25:1 o más, y la línea, 7.24:1 o más.
+      - **Hallazgos y arreglos:**
+        - El idioma actual, sobre el cielo de la portada, daba 4.44:1 (4.10:1 de lado, bajo una
+          nube), por debajo de AA. Ahora va en la tinta de la película, como en el storyboard desde
+          7.7.6: 10.0:1 o más. Montse lo aprobó así (2026-10-10): el idioma en que se está no es
+          enlace y va en tinta, y el otro va subrayado, sin otra marca.
+        - Al volver de una página del cuaderno a la historia, la consola decía `AbortError:
+          Transition was skipped` (desde 7.5.5). Ahora se atrapa ese rechazo, con su test.
+      - **Lighthouse** 13.5.0, tres corridas por home: LCP de 2.12 s en EN y 2.11 s en ES, y el
+        elemento del LCP es ahora el título de la portada. `src/data/lighthouse.json` al día; los
+        pesos de `src/data/weight.json` no cambiaron.
+      - **Los README:** la imagen de cuatro cuadros abre con la portada.
+- [x] **8.5b** «Historia», no «película», en todo lo que lee el visitante (decisión de Montse,
+      ADR 0036): 10 claves por idioma, 13 lugares de la prosa y los README. `tests/story-name.test.ts`
+      lo comprueba. El código y `docs/` conservan «la película» como nombre interno.
+
 ## F6 · Lanzamiento
 
 El texto ya no se somete a ninguna revista: se publica como working paper en SSRN, sin revisión por
@@ -1153,10 +1259,16 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
 - [x] **4.** La auditoría del historial: decidido, se deja como está (ADR 0034). Queda que Montse
       borre la rama remota `claude/nifty-hopper-xagnu9`.
       Montse la borró: `git ls-remote origin` ya no la lista.
-- [ ] **5.** El repo público.
-- [ ] **6.** Pages con *Source = GitHub Actions*.
-- [ ] **7.** `deploy.yml`.
-- [ ] **8.** `/` y `/es/` en línea, con los enlaces a SSRN y al motor.
+- [x] **5.** El repo público.
+      Público desde el 2026-09-25 (el `PublicEvent` de la API de GitHub), antes de los pasos 3 y 4;
+      se anotó en P8 (8.6).
+- [x] **6.** Pages con *Source = GitHub Actions*.
+      `build_type: workflow`, `https_enforced: true`.
+- [x] **7.** `deploy.yml`.
+      2026-10-08, run 37860472991, sobre `main` en `e74420a` (el merge del PR #19), en verde.
+- [x] **8.** `/` y `/es/` en línea, con los enlaces a SSRN y al motor.
+      2026-10-09: 200, `lang`, canonical y `hreflang` recíprocos, el switch EN/ES y los enlaces a
+      SSRN, al repo del motor y a su DOI. SSRN bloquea a los bots; Montse abrió los enlaces a mano.
 
 ## Preguntas abiertas
 

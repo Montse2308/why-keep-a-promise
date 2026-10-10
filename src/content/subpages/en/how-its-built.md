@@ -6,12 +6,12 @@ title: How it's built
 
 Astro builds every page ahead of time, into plain HTML and CSS. The home is
 first a storyboard: each chapter a still frame, its cards in order, every result written out. One
-script turns it into the film; without it, the whole story is still there. The logic lives in small
-pure modules with their tests, and JavaScript runs only in the film and in the notebook's panel.
+script sets it moving with the scroll; without it, the whole story is still there. The logic lives in small
+pure modules with their tests, and JavaScript runs only in the story and in the notebook's panel.
 
 ## A scene engine of its own
 
-The film moves on a scene engine written for it, in TypeScript. Tracks hold values keyed to the
+The story moves on a scene engine written for it, in TypeScript. Tracks hold values keyed to the
 scroll; the engine eases between them, so nothing starts or stops with a jolt, and frames the camera
 for the shape of each screen. One loop reads the native scroll and paints what the tracks say:
 nothing captures the wheel or the finger, and only transforms, opacity and colours change.
@@ -24,7 +24,7 @@ export function easeInOut(t: number): number {
 }
 ```
 
-It mixes colours by hue, in OKLCH, never channel by channel. That is why the film's day has a
+It mixes colours by hue, in OKLCH, never channel by channel. That is why the story's day has a
 sunrise:
 
 <!-- slot:day -->
@@ -67,24 +67,24 @@ const esCoversEn: Record<keyof typeof en, string> = es;
 const enCoversEs: Record<keyof typeof es, string> = en;
 ```
 
-**A register of figures.** Every number the page may say is listed with its source; the film's
+**A register of figures.** Every number the page may say is listed with its source; the story's
 captions hold none, only names that the build fills from the code. A test fails on any other number,
 or on a citation that matches no source.
 
-**Only adding.** A test fails if this notebook repeats a sentence of the film.
+**Only adding.** A test fails if this notebook repeats a sentence of the story.
 
 **Forbidden phrases.** Another test fails on a short list of phrases the page must never say.
 
 ## Access
 
 Every choice is a native button that works from the keyboard, and each result is spoken through a
-live region. With reduced motion, the film cuts between still frames and every game still works.
+live region. With reduced motion, the story cuts between still frames and every game still works.
 Contrast is tested at every point of the day's light, and the cast stays apart for the two commonest
 kinds of colour blindness.
 
 ## Weight and speed
 
-The home's script, its fonts and its first load each have a ceiling, set before the film was
+The home's script, its fonts and its first load each have a ceiling, set before the story was
 written; a script checks every build against them.
 
 <!-- slot:weight -->

@@ -16,7 +16,8 @@
 // In both states it also checks the status sentence (docs/content-rules.md, rule (b)): it stands
 // alone exactly `STATUS_ON_HOME` times on each home page, each time linked to the working paper. And
 // every page has its description, the same in Open Graph, without the status sentence and, while
-// locked, without a mark of the locked content.
+// locked, without a mark of the locked content. Every link that leaves the site opens in a new tab,
+// with rel="noopener noreferrer" and its notice, and every link inside it stays in the tab (P8, 8.3).
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
@@ -153,7 +154,66 @@ export function statusSentence(dictionary, title) {
  * @param {string} html
  */
 export function withoutInlineTags(html) {
-  return html.replace(/<\/?(?:a|cite|em|i)\b[^>]*>/gi, '');
+  return html.replace(LINK_MARK, '').replace(/<\/?(?:a|cite|em|i)\b[^>]*>/gi, '');
+}
+
+/**
+ * The mark that ends a link leaving the site (src/lib/external.ts): a small arrow hidden from a screen
+ * reader, then the notice that the link opens in a new tab, in the page's language.
+ */
+const LINK_MARK = /<span class="link-out"><span aria-hidden="true">↗<\/span><span class="visually-hidden" lang="([a-z]+)">([^<]*)<\/span><\/span>/g;
+
+/** The UI key of the notice that a link opens in a new tab. */
+export const NEW_TAB_KEY = 'link.newTab';
+
+/**
+ * Whether a link leaves the site: the rule of `isExternal` in src/lib/external.ts, which a test keeps
+ * the same.
+ * @param {string} href
+ */
+export function isExternalLink(href) {
+  return /^(?:https?:)?\/\//i.test(href.trim());
+}
+
+/**
+ * The value of an attribute among an HTML start tag's attributes, decoded; `null` if it has none.
+ * @param {string} attributes
+ * @param {string} name
+ */
+function attributeOf(attributes, name) {
+  const found = new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'>]+))`, 'i').exec(attributes);
+  return found ? decodeAttribute(found[1] ?? found[2] ?? found[3] ?? '') : null;
+}
+
+/**
+ * Problems with where links open (step 8.3 of P8): every link that leaves the site opens in a new
+ * tab, with `rel="noopener noreferrer"`, and ends in its mark, the notice in the page's language;
+ * every link inside it stays in the tab, where the film keeps what was played (ADR 0029).
+ * @param {Record<string, Record<string, string>>} dictionaries the UI strings, by locale
+ * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
+ * @returns {string[]}
+ */
+export function linkTargetProblems(dictionaries, pages) {
+  return Object.entries(pages).flatMap(([page, html]) => {
+    const locale = /<html\b[^>]*\blang="([^"]+)"/i.exec(html)?.[1];
+    const notice = locale ? dictionaries[locale]?.[NEW_TAB_KEY] : undefined;
+    if (!notice) return [`${page}: no language with a notice for links that open a new tab`];
+    return [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)].flatMap(([, attributes, inner]) => {
+      const href = attributeOf(attributes, 'href');
+      if (href === null) return [];
+      const target = attributeOf(attributes, 'target');
+      if (!isExternalLink(href)) return target === null ? [] : [`${page}: ${href} is inside the site but opens in target="${target}"`];
+      const problems = [];
+      if (target !== '_blank') problems.push(`${page}: ${href} leaves the site but does not open in a new tab`);
+      const rel = (attributeOf(attributes, 'rel') ?? '').split(/\s+/);
+      if (!rel.includes('noopener') || !rel.includes('noreferrer')) problems.push(`${page}: ${href} has no rel="noopener noreferrer"`);
+      const mark = [...inner.matchAll(LINK_MARK)];
+      const [, lang, text] = mark[0] ?? [];
+      if (mark.length !== 1 || !inner.trimEnd().endsWith(mark[0]?.[0] ?? '\0')) problems.push(`${page}: ${href} does not end in the arrow and the notice`);
+      else if (lang !== locale || decodeAttribute(text ?? '').trim() !== notice) problems.push(`${page}: ${href} does not say, in ${locale}, that it opens in a new tab`);
+      return problems;
+    });
+  });
 }
 
 /**
@@ -406,6 +466,12 @@ function main() {
     console.error(`verify:dist: the sitemap is off:\n  ${mapping.join('\n  ')}`);
     process.exit(1);
   }
+  const targets = linkTargetProblems(dictionaries, pages);
+  if (targets.length > 0) {
+    console.error(`verify:dist: links open in the wrong place:\n  ${targets.join('\n  ')}`);
+    process.exit(1);
+  }
+  const external = Object.values(pages).reduce((sum, html) => sum + [...html.matchAll(/<a\b[^>]*\btarget="_blank"/gi)].length, 0);
 
   if (locked) {
     const leaks = files.flatMap((file) => lockedMarks(readFileSync(file, 'utf8'), paper.title).map((mark) => `${relative(root, file)}: ${mark}`));
@@ -419,7 +485,7 @@ function main() {
       process.exit(1);
     }
     console.log(
-      `verify:dist: locked (the working paper's link is still ${paper.ssrn}); ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page or the sitemap links to /finding and it is noindex, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, and all ${described} pages have a clean description.`,
+      `verify:dist: locked (the working paper's link is still ${paper.ssrn}); ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page or the sitemap links to /finding and it is noindex, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, all ${described} pages have a clean description, and the ${external} links that leave the site open in a new tab with their notice.`,
     );
     return;
   }
@@ -434,7 +500,7 @@ function main() {
     process.exit(1);
   }
   console.log(
-    `verify:dist: unlocked (the working paper is public) on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content and /finding is indexed and in the sitemap, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, and all ${described} pages have a clean description.`,
+    `verify:dist: unlocked (the working paper is public) on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content and /finding is indexed and in the sitemap, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, all ${described} pages have a clean description, and the ${external} links that leave the site open in a new tab with their notice.`,
   );
 }
 

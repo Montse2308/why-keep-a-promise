@@ -4,19 +4,20 @@
 
 **[Open the site](https://montse2308.github.io/why-keep-a-promise/)**
 
-![Four frames of the film as the day goes by: the title at dawn, the prisoner's dilemma at midday, a new partner at the table in the afternoon while the thread of the promise still runs to the one who left, and the first table again at night.](.github/readme/film-en.webp)
+![Four frames of the page as the day goes by: the cover at dawn, with the title and its three doors, the prisoner's dilemma at midday, a new partner at the table in the afternoon while the thread of the promise still runs to the one who left, and the first table again at night.](.github/readme/film-en.webp)
 
 The outreach page of a personal research project on why people keep promises that no longer pay
-them. The home is a short scroll-driven film in nine chapters, from the prisoner's dilemma to the
-partner-switching game of Vanberg (2008), and a notebook one tap away holds the depth.
+them. The home opens on a cover with a door to each part of the page, then a short illustrated
+story in nine chapters that moves with the scroll, from the prisoner's dilemma to the partner-switching game of Vanberg (2008),
+and a notebook one tap away holds the depth.
 
 ## What is worth a look
 
 - **A storyboard first.** Every page is static HTML. Without JavaScript the home is a storyboard:
-  each chapter a still frame with its captions, every result written out. One script turns it into
-  the film, on the native scroll, which it never captures.
+  each chapter a still frame with its captions, every result written out. One script sets it moving
+  with the native scroll, which it never captures.
 - **A scene engine of its own.** Tracks, easing, colours mixed in OKLCH and a camera framed for each
-  screen, written in TypeScript for this film: pure modules with their tests, no animation library
+  screen, written in TypeScript for this story: pure modules with their tests, no animation library
   and no canvas.
 - **A lock outside the build.** Part of the site stays closed until the
   [working paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218) is public on SSRN. That part is left out of the build, not

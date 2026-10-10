@@ -15,6 +15,7 @@ import { LOCKED_BEATS } from '../../../lib/chapters';
 import { CURVE_VALUES } from '../../../lib/curve/values';
 import { splitBeats } from '../../../lib/film/captions';
 import { withEngine } from '../../../lib/engine';
+import { externalLinks } from '../../../lib/external';
 import type { Locale } from '../../../lib/i18n';
 import { fill } from '../../../lib/template';
 import Curve from '../../curve/Curve.astro';
@@ -28,7 +29,7 @@ interface Props {
 }
 
 const { locale, captions } = Astro.props;
-const beats = splitBeats(fill(withEngine(captions), CURVE_VALUES), LOCKED_BEATS.map((b) => b.id));
+const beats = splitBeats(fill(externalLinks(withEngine(captions), locale), CURVE_VALUES), LOCKED_BEATS.map((b) => b.id));
 const last = LOCKED_BEATS.at(-1)?.id;
 ---
 

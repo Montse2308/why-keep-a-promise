@@ -3,6 +3,8 @@
 **Estado:** aceptada (P0). Reemplaza el ADR 0004 (archivado). Precisa el ADR 0005: suma `/sources` y
 `/about`. La regla (h) no cambia. Precisada por el ADR 0034: la «frase de estado del manuscrito» es
 la frase de estado del working paper, y el candado del cuaderno está en el 0034 (antes, el 0026).
+Precisada por el ADR 0036: al cuaderno también se llega desde la portada del home, por sus cinco
+páginas, sin `/finding`.
 
 ## Contexto
 

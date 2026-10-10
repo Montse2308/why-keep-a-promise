@@ -18,8 +18,16 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
-(P6, the polish, with PR #9). The active phase is F6 (launch): steps 1 to 4 of the checklist and
-F5 (QA) are done on the branch `launch/f5-qa`, with the lock open; steps 5 to 8 are Montse's.
+(P6, the polish, with PR #9). F5 (QA) and F6 (launch) are closed: the site is live at
+`https://montse2308.github.io/why-keep-a-promise/`, with the lock open. The repository is public,
+Pages publishes with GitHub Actions, and `deploy.yml` ran on 2026-10-08 (run 37860472991, on `main`
+after PR #19); every step of `docs/launch-checklist.md` is marked. The active phase is P8 (polish
+after the launch), on the branch `polish/round-2`, pushed only when Montse decides: the Spanish home
+title fitting on a computer, sharp card titles in the film, external links in a new tab (internal
+ones stay in the tab, ADR 0029), and a new hero, prototyped in `scratch/`, chosen by Montse and
+built with ADR 0036 (steps 8.1 to 8.6 in `docs/tasks.md`; 8.1 to 8.5 are done, and 8.6, its QA, is
+ready for Montse's review). What is live is the version before P8; P8 reaches the site when Montse
+merges it into `main` and runs `deploy.yml` again.
 P7, the fixes from an external review, was planned in small steps (one per session) in
 `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
@@ -35,8 +43,7 @@ still frames that draw only what their pose shows, chapter 4's citation line, th
 the notebook's panel, the author's signature on the posters) is closed; Montse approved it
 (7.6.11). P7.7 (the READMEs, Lighthouse and the weights again, and the full review: sizes,
 sideways, both languages, keyboard, reduced motion, no JS, a blocked script and axe, with its four
-fixes) is closed; Montse approved it (7.7.7), and its PR is merged (#17). F5 (QA) is done, and F6
-(launch) has its steps 1 to 4 done, the lock open. The film tells all nine chapters, chapter 7's finding
+fixes) is closed; Montse approved it (7.7.7), and its PR is merged (#17). The film tells all nine chapters, chapter 7's finding
 behind the lock, and ends in chapter 8's credits, with «Watch again» under them; it has its sound,
 off until pressed, its progress under the spool, its cast alive at rest, and remembers what was
 played in its tab entry. The notebook has its six pages, its panel on every page (with the finding's
@@ -50,7 +57,7 @@ Read these before changing anything, in this order:
 
 1. `docs/plan.md`: what the page is (decided; do not reopen).
 2. `docs/content-rules.md`: what may and may not be written, anywhere.
-3. `docs/phases.md`: phases P0–P7, then F5 (QA) and F6 (launch), with their exit criteria.
+3. `docs/phases.md`: phases P0–P8, F5 (QA) and F6 (launch), with their exit criteria.
 4. `docs/tasks.md`: current tasks; only work on the active phase. P7 is split into numbered steps
    (`7.1.3`), each small enough for one short session and left green; when asked to continue P7,
    take the first open step whose dependencies are met, and stop at steps marked **(Montse)**.
@@ -77,7 +84,7 @@ not by reading test output.
 | `npm test`        | Vitest, once                                      |
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
-| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034) |
+| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034), or if a link leaving the site does not open in a new tab with its notice, or one inside it does (8.3) |
 | `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
 | `npm run check:launch` | Builds, then fails while a link is still a `*_PENDING` placeholder in `dist/`, `src/` or the READMEs (ADR 0034). Not in CI; step 3 of the launch checklist and `deploy.yml` run it |
 
@@ -139,6 +146,10 @@ src/
     lock.ts              the lock: full content only once the working paper's link is real, or in
                          dev (ADR 0034); the status sentence's parts
     engine.ts            the engine's links, where the prose behind the lock writes {engine}
+    external.ts          links that leave the site: a new tab, rel and the ↗ with its notice, in
+                         components and in rendered prose (8.3); internal links stay in the tab
+    hero.ts              the home's cover (ADR 0036): its three doors, the notebook pages it
+                         links (never /finding) and its sky, which ends in the stage's first colour
     film/                the scene engine: tracks, easing, colours (OKLCH), camera, chapter
                          spans; timeline.ts (screens, beats, the native scroll mapped to the film);
                          faces.ts (the moods); stage.ts (what the stage shows at each point);
@@ -189,8 +200,9 @@ src/
   assets/fonts/          self-hosted woff2, OFL licences, provenance; posters/ static TrueType
                          cuts for the posters only, never shipped
   styles/                tokens.css, base.css
-  components/            film/ (Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
-                         Voices, Signs, Engine, Magnifier, chapters/ one .astro per chapter plus
+  components/            film/ (Film, Chapter, ChapterTitle (a chapter's title, read as one name),
+                         Beat, Ticket(s), World, Board, Coins, Character, Voices, Signs, Engine,
+                         Magnifier, chapters/ one .astro per chapter plus
                          Finding, the locked part of chapter 7, and beside each its controller
                          (arrival.ts, two-rooms.ts, …: its choices, noted and played back);
                          film.ts the frame loop and the stage's state, context.ts what it hands
@@ -203,7 +215,8 @@ src/
                          curve/Curve (chapter 7's curve) + GuiltChart (/finding's) + Locked (the
                          stub a locked build uses for both and for chapter 7's finding);
                          pd/Matrix and vanberg/SwitchTable (static tables of the notebook);
-                         LanguageSwitch; PaperStatus, the status sentence (ADR 0034)
+                         LanguageSwitch; PaperStatus, the status sentence (ADR 0034); Hero, the
+                         home's cover (ADR 0036)
   layouts/BaseLayout.astro
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale; posters/[locale]/[route].png.ts
@@ -218,7 +231,8 @@ tests/                   repo-level tests (page parity, prose figures and budget
                          film's captions, forbidden phrases, curve and /finding figures,
                          verify:dist markers, code quoted on /how-its-built, budgets, posters,
                          the Lighthouse measurement, the film's fallback and its memory, the
-                         pages' heads, the 404 page and the sitemap)
+                         pages' heads, the 404 page and the sitemap, the launch's workflows and
+                         checklist, the story's name and the notebook's transitions)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy); archivo/ = history;
                          prototipo/ = the round-4 prototype
 scratch/                 local notes, git-ignored, never committed
@@ -262,8 +276,8 @@ scratch/                 local notes, git-ignored, never committed
   - The status sentence (the working paper's title, linked to SSRN) is never reworded or added to,
     even as the stamp (rule (b)). There is no other state: nothing says under review, accepted,
     peer-reviewed or published in a journal.
-  - Do not change the repository's visibility, do not enable GitHub Pages, and do not run
-    `deploy.yml` (manual-only, F6).
+  - Do not change the repository's visibility or its GitHub Pages settings, and do not run
+    `deploy.yml`: it is manual-only, and only Montse runs it, after merging into `main`.
 - **Copying the working paper or the paper's context.** Do not read or copy the working paper or its
   working files, wherever they live (local folders, Drive). If something is missing, ask.
 - **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,

@@ -4,7 +4,7 @@ title: Vanberg's experiment
 
 ## The whole design
 
-The instructions and screens that Vanberg (2008) published fill in what the film leaves out.
+The instructions and screens that Vanberg (2008) published fill in what the story leaves out.
 
 - The experiment has 8 rounds. In each one you are matched with another participant, chosen at
   random, and never with the same one twice.
@@ -22,7 +22,7 @@ The instructions and screens that Vanberg (2008) published fill in what the film
 
 ## Every cell of the switch treatment
 
-The film compares two of the cells. The treatment has six: whether the dictator promised, crossed
+The story compares two of the cells. The treatment has six: whether the dictator promised, crossed
 with whom they faced: the same partner, a new partner who had been promised by another dictator, or
 a new partner whom no one had promised anything. Each count is of decisions, one per dictator and
 round, written as it is in the data, over the cell's total.

@@ -30,6 +30,13 @@ import { voicePlaces, type Point } from './voices';
 
 export const WORLD = { width: 1600, centre: 800, floor: 640, tableTop: 560 } as const;
 
+/**
+ * The sky behind the whole world: one square, its gradient from the light's sky-top at its top edge to
+ * its sky-bottom at its bottom edge. Drawn this large so any screen shape only shows more sky. The
+ * home's cover (ADR 0036) reads it to end in the colour the stage begins with.
+ */
+export const SKY = { x: -4000, y: -4000, size: 9600 } as const;
+
 /** Every chapter's share of the whole film, in order. */
 export const SPANS: readonly Span<ChapterId>[] = spans(CHAPTERS);
 
@@ -152,8 +159,6 @@ export interface StageView {
   readonly moods: { readonly you: Mood; readonly other: Mood; readonly partner: Mood };
   /** The golden thread, from the circle to the square wherever it stands, and how much of it shows. */
   readonly thread: { readonly state: ThreadState; readonly drawn: number; readonly shown: number };
-  /** How far the chapter 0 title has gone, from 0 (fully shown) to 1 (gone). */
-  readonly titleGone: number;
 }
 
 /** A beat takes the stage a little before its stretch starts: its card is already coming up. */
@@ -280,8 +285,8 @@ function poseOf(chapter: ChapterId, beat: string): number {
 /**
  * With reduced motion the stage cuts between still poses instead of moving (ADR 0027): from each
  * cut's point on, everything that moves stands where it stands at the cut's pose. In screens.
- * Chapter 0 cuts from the wide shot of the title to the table, and halfway to the other still
- * waiting for an answer; every later beat cuts as its card takes the stage.
+ * Chapter 0 cuts to the other asking, and halfway to the other still waiting for an answer; every
+ * later beat cuts as its card takes the stage.
  */
 export const CUTS: readonly { readonly from: number; readonly pose: number }[] = [
   { from: 0, pose: 0 },
@@ -311,8 +316,8 @@ export const KEY_POSE: Partial<Record<ChapterId, number>> = {
 };
 
 /**
- * The camera: wide on the title, closing in on the table as the other asks, wide again for the
- * rooms and the fold, close on the table for the decision, a little wider and higher when the two
+ * The camera: on the table from the first frame, as the other asks (the title is the cover's, above
+ * the film, ADR 0036), wide for the rooms and the fold, close on the table for the decision, a little wider and higher when the two
  * voices come to float over the circle, and wider still once the square has gone to another table.
  * At nightfall it rises a little for the stars and the lamp, then closes in on the engine. Back at
  * the first table it frames the two and their voices, and it opens up for the curtain call.
@@ -320,8 +325,7 @@ export const KEY_POSE: Partial<Record<ChapterId, number>> = {
 const SHOTS = {
   cx: track([{ at: 0, value: 800 }, { at: at(3), value: 800 }]),
   cy: track([
-    { at: 0, value: 470 },
-    { at: at(1.8), value: 505 },
+    { at: 0, value: 505 },
     { at: at(INTO_ROOMS[0]), value: 505 },
     { at: at(INTO_ROOMS[1]), value: 480 },
     { at: at(DECIDE[0]), value: 480 },
@@ -342,8 +346,7 @@ const SHOTS = {
     { at: at(CREDITS_IN[1]), value: 485 },
   ]),
   width: track([
-    { at: 0, value: 1500 },
-    { at: at(1.8), value: 1180 },
+    { at: 0, value: 1180 },
     { at: at(INTO_ROOMS[0]), value: 1180 },
     { at: at(INTO_ROOMS[1]), value: 1450 },
     { at: at(DECIDE[0]), value: 1450 },
@@ -364,8 +367,7 @@ const SHOTS = {
     { at: at(CREDITS_IN[1]), value: 1450 },
   ]),
   widthPortrait: track([
-    { at: 0, value: 660 },
-    { at: at(1.8), value: 600 },
+    { at: 0, value: 600 },
     { at: at(INTO_ROOMS[0]), value: 600 },
     { at: at(INTO_ROOMS[1]), value: 620 },
     { at: at(DECIDE[0]), value: 620 },
@@ -791,7 +793,6 @@ export function stageAt(p: number, state: StageState, portrait: boolean, reduced
     bubbles,
     moods: moodsAt({ chapter: beat.chapter, id: beat.beat.id }, state, asked),
     thread,
-    titleGone: easeInOut(progress(p, at(0.36), at(1.2))),
   };
 }
 

@@ -4,7 +4,7 @@ title: El experimento de Vanberg
 
 ## El diseño completo
 
-Las instrucciones y las pantallas que publicó Vanberg (2008) completan lo que la película deja
+Las instrucciones y las pantallas que publicó Vanberg (2008) completan lo que la historia deja
 fuera.
 
 - El experimento tiene 8 rondas. En cada una te toca otra persona, elegida al azar, y nunca la
@@ -24,7 +24,7 @@ fuera.
 
 ## Todas las celdas del tratamiento con cambio de pareja
 
-La película compara dos de las celdas. El tratamiento tiene seis: si el dictador prometió, cruzado
+La historia compara dos de las celdas. El tratamiento tiene seis: si el dictador prometió, cruzado
 con a quién tuvo enfrente: la misma pareja, una pareja nueva a la que otro dictador le había
 prometido, o una pareja nueva a la que nadie le había prometido nada. Cada cuenta es de decisiones,
 una por dictador y ronda, escrita como está en los datos, sobre el total de su celda.

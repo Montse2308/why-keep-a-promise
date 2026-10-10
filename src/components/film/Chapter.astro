@@ -46,10 +46,15 @@ const { locale, id, labelledby, still, stillLabel } = Astro.props;
   }
 
   /* The film: the chapter is its beats, end to end; the live stage replaces the still. */
+  /*
+   * A link to a chapter (the cover's doors, a notebook page's way back) lands on the chapter's first
+   * frame: the page's scroll padding, kept for reading, would stop it a little short.
+   */
   :global(html.js) .chapter {
     display: block;
     padding: 0;
     max-width: none;
+    scroll-margin-top: calc(var(--space-4) * -1);
   }
 
   :global(html.js) .chapter__still {

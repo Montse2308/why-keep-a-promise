@@ -7,7 +7,7 @@
  */
 import { FILM } from '../../lib/design/film';
 import { frame, viewBoxAttribute } from '../../lib/film/camera';
-import { brokenBetween, threadBetween, WORLD, type StageView } from '../../lib/film/stage';
+import { brokenBetween, SKY, threadBetween, WORLD, type StageView } from '../../lib/film/stage';
 import { bubbleTransform, bulbTransform, eyesTransform, PIP_AT, PIPS, placeTransform, shadeTransform, shadowTransform, wallTransform, type Pip } from '../../lib/film/parts';
 import type { Locale } from '../../lib/i18n';
 import Board from './Board.astro';
@@ -82,7 +82,7 @@ const star = 'M0 -11 L3 -3 L11 0 L3 3 L0 11 L-3 3 L-11 0 L-3 -3 Z';
     </filter>
   </defs>
 
-  <rect x="-4000" y="-4000" width="9600" height="9600" fill={`url(#${sky})`} />
+  <rect x={SKY.x} y={SKY.y} width={SKY.size} height={SKY.size} fill={`url(#${sky})`} />
 
   <g data-part="far">
     <circle cx="1250" cy="190" r="64" fill="#fff4c2" filter={`url(#${shadow})`} />

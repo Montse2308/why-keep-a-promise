@@ -210,13 +210,10 @@ const noindex = route === 'finding' && !findingUnlocked(WORKING_PAPER.ssrn, impo
     pointer-events: auto;
   }
 
-  /* Only the corner's own switch: the notebook's panel, inside the corner, has its own and follows the theme. */
+  /* Only the corner's own switch: the notebook's panel, inside the corner, has its own and follows the theme.
+     It sits on the cover's dawn sky, or on the storyboard's peach paper without JS: on both the muted ink
+     falls under 4.5:1, so the language you are reading is in the ink, and the other one is the link. */
   .corner--film .corner__end > :global(.lang .lang__current) {
-    color: var(--film-card-muted);
-  }
-
-  /* The storyboard's peach paper is darker than the film's dawn sky: there, the muted ink is too faint, so the ink. */
-  :global(html:not(.js)) .corner--film .corner__end > :global(.lang .lang__current) {
     color: var(--film-ink);
   }
 

@@ -15,7 +15,7 @@ decides sees the switch, and the one who receives never does.
 ### A new partner, holding a promise of their own.
 
 They were promised too, by someone else who decides, as you do. In the experiment the switch came
-at random; in this film it is always this case, a fixed example.
+at random; in this story it is always this case, a fixed example.
 
 What the other expects is still there. Your word is not: you gave it to someone who left.
 

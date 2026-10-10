@@ -83,21 +83,20 @@ describe('chapter 0, the arrival (ADR 0021)', () => {
     expect(stageAt(inArrival(0.5), { promised: null }, false, false).thread.state).toBe('none');
   });
 
-  it('fades the title out as the camera closes in on the table', () => {
+  it('opens on the table: the title is on the cover, so chapter 0 holds one shot while the other asks', () => {
     const top = stageAt(0, { promised: null }, false, false);
     const later = stageAt(inArrival(0.6), { promised: null }, false, false);
-    expect(top.titleGone).toBe(0);
-    expect(later.titleGone).toBe(1);
-    expect(later.shot.width).toBeLessThan(top.shot.width);
+    expect(later.shot).toEqual(top.shot);
   });
 
-  it('cuts between two shots instead of moving, with reduced motion, until the next chapter takes the stage', () => {
+  it('holds one shot instead of moving, with reduced motion, until the next chapter takes the stage', () => {
     // The first cut to a later chapter's pose comes a little before chapter 0's stretch ends.
     const next = CUTS.find((cut) => at(cut.pose) >= arrival.to)?.from ?? arrival.to * TOTAL_SCREENS;
     const shots = new Set(
       Array.from({ length: 41 }, (_, i) => (i / 40) * next * 0.999).map((screens) => stageAt(at(screens), { promised: null }, false, true).shot.width),
     );
-    expect(shots.size).toBe(2);
+    // Chapter 0 opens on the table (ADR 0036): one shot, never a move.
+    expect(shots.size).toBe(1);
   });
 
   it('changes halfway: the other, still waiting for an answer, brings up its bubble, and it goes with the rooms', () => {
