@@ -1,11 +1,13 @@
 ---
 /**
- * /about (ADR 0024, rule (j)): the author's full name, GitHub and LinkedIn (`AUTHOR` in
- * src/config.ts), and nothing else: no school, job, city or biography.
+ * /about (ADR 0024, ADR 0041, rule (j)): the author's full name, GitHub, LinkedIn, ORCID and her author
+ * page on SSRN (`AUTHOR` in src/config.ts), each with rel="me", and nothing else: no school, job, city
+ * or biography. The SSRN page lists the working paper, so it is linked only behind the lock (ADR 0034).
  */
-import { AUTHOR } from '../../config';
+import { AUTHOR, WORKING_PAPER } from '../../config';
 import { externalAttrs, externalMark } from '../../lib/external';
-import { useTranslations, type Locale } from '../../lib/i18n';
+import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
+import { findingUnlocked } from '../../lib/lock';
 
 interface Props {
   locale: Locale;
@@ -13,13 +15,19 @@ interface Props {
 
 const { locale } = Astro.props;
 const tr = useTranslations(locale);
+const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);
+const profiles: { url: string; key: UiKey }[] = [
+  { url: AUTHOR.github, key: 'author.github' },
+  { url: AUTHOR.linkedin, key: 'author.linkedin' },
+  { url: AUTHOR.orcid, key: 'author.orcid' },
+  ...(unlocked ? [{ url: AUTHOR.ssrn, key: 'author.ssrn' as const }] : []),
+];
 ---
 
 <div class="author">
   <p class="author__name">{tr('author.name')}</p>
   <ul class="author__links" role="list">
-    <li><a href={AUTHOR.github} {...externalAttrs(AUTHOR.github, 'me')}>{tr('author.github')}<Fragment set:html={externalMark(AUTHOR.github, locale)} /></a></li>
-    <li><a href={AUTHOR.linkedin} {...externalAttrs(AUTHOR.linkedin, 'me')}>{tr('author.linkedin')}<Fragment set:html={externalMark(AUTHOR.linkedin, locale)} /></a></li>
+    {profiles.map((profile) => <li><a href={profile.url} {...externalAttrs(profile.url, 'me')}>{tr(profile.key)}<Fragment set:html={externalMark(profile.url, locale)} /></a></li>)}
   </ul>
 </div>
 

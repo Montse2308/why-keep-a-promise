@@ -1,6 +1,9 @@
 export const AUTHOR = {
   github: 'https://github.com/Montse2308',
   linkedin: 'https://www.linkedin.com/in/montserrat-ximena-hern%C3%A1ndez-gallegos-536195276',
+  /** Her academic profiles (ADR 0041): ORCID, and her author page on SSRN, which /about links only behind the lock. */
+  orcid: 'https://orcid.org/0009-0003-8778-0440',
+  ssrn: 'https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=13503109',
   /** The author as a reference names her (APA), and as BibTeX spells her, accents escaped: /finding's «How to cite». */
   cite: 'Hernández Gallegos, M. X.',
   bibtex: "Hern{\\'a}ndez Gallegos, Montserrat Ximena",
