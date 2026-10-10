@@ -200,8 +200,9 @@ src/
   assets/fonts/          self-hosted woff2, OFL licences, provenance; posters/ static TrueType
                          cuts for the posters only, never shipped
   styles/                tokens.css, base.css
-  components/            film/ (Film, Chapter, Beat, Ticket(s), World, Board, Coins, Character,
-                         Voices, Signs, Engine, Magnifier, chapters/ one .astro per chapter plus
+  components/            film/ (Film, Chapter, ChapterTitle (a chapter's title, read as one name),
+                         Beat, Ticket(s), World, Board, Coins, Character, Voices, Signs, Engine,
+                         Magnifier, chapters/ one .astro per chapter plus
                          Finding, the locked part of chapter 7, and beside each its controller
                          (arrival.ts, two-rooms.ts, …: its choices, noted and played back);
                          film.ts the frame loop and the stage's state, context.ts what it hands
@@ -230,7 +231,8 @@ tests/                   repo-level tests (page parity, prose figures and budget
                          film's captions, forbidden phrases, curve and /finding figures,
                          verify:dist markers, code quoted on /how-its-built, budgets, posters,
                          the Lighthouse measurement, the film's fallback and its memory, the
-                         pages' heads, the 404 page and the sitemap)
+                         pages' heads, the 404 page and the sitemap, the launch's workflows and
+                         checklist, the story's name and the notebook's transitions)
 docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy); archivo/ = history;
                          prototipo/ = the round-4 prototype
 scratch/                 local notes, git-ignored, never committed
