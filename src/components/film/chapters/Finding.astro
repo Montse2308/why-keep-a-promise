@@ -38,7 +38,7 @@ const last = LOCKED_BEATS.at(-1)?.id;
     LOCKED_BEATS.map((b) => (
       <Beat id={b.id} screens={b.screens} caption={beats.get(b.id)}>
         {b.id === 'curve' && <Curve locale={locale} id="finding-curve" />}
-        {b.id === last && <Magnifier locale={locale} chapter="my-research" beat={b.id} />}
+        {b.id === last && <Magnifier locale={locale} chapter="my-research" beat={b.id} button />}
       </Beat>
     ))
   }

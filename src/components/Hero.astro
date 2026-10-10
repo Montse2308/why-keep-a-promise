@@ -3,11 +3,14 @@
  * The home's cover (ADR 0036): before the film, the page says what it holds. The question is the
  * page's title; under it, one line and a door to each part of the page (src/lib/hero.ts): the story,
  * the research and the notebook. HTML and CSS only: it is the same with or without JavaScript, and its
- * links are plain links, to the film's chapters or to the notebook's pages. Its sky is the film's dawn,
- * with the stage's sun and clouds, and ends in the colour the stage begins with.
+ * links are plain links, to the film's chapters or to the notebook's pages; behind the lock, the
+ * research door also links to /finding (ADR 0040). Its sky is the film's dawn, with the stage's sun
+ * and clouds, and ends in the colour the stage begins with.
  */
 import { FILM } from '../lib/design/film';
-import { COVER_PAGES, COVER_SKY, DOORS, type Door } from '../lib/hero';
+import { WORKING_PAPER } from '../config';
+import { COVER_PAGES, COVER_SKY, DOORS, researchPages, type Door } from '../lib/hero';
+import { findingUnlocked } from '../lib/lock';
 import { useTranslations, type Locale } from '../lib/i18n';
 import { href } from '../lib/routes';
 
@@ -20,6 +23,8 @@ const tr = useTranslations(locale);
 const sky = `--cover-top: ${COVER_SKY.top}; --cover-glow: ${COVER_SKY.glow}; --cover-foot: ${COVER_SKY.foot}`;
 const [story, research, notebook] = DOORS as readonly [Door, Door, Door];
 const chapterHref = (door: Door) => href(locale, 'home', door.chapter ?? undefined);
+// The research door's second link, to /finding, only behind the lock (ADR 0040).
+const researchMore = researchPages(findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV));
 ---
 
 <section class="cover" aria-labelledby="cover-title" style={sky}>
@@ -66,7 +71,10 @@ const chapterHref = (door: Door) => href(locale, 'home', door.chapter ?? undefin
         <h2 class="door__name">{tr(research.titleKey)}</h2>
       </div>
       <p class="door__text">{tr(research.textKey)}</p>
-      <a class="door__go" href={chapterHref(research)}>{research.goKey && tr(research.goKey)}</a>
+      <div class="door__links">
+        <a class="door__go" href={chapterHref(research)}>{research.goKey && tr(research.goKey)}</a>
+        {researchMore.map((entry) => <a class="door__go" href={href(locale, entry.page)}>{tr(entry.titleKey)}</a>)}
+      </div>
     </li>
     <li class="door">
       <div class="door__head">
@@ -241,6 +249,19 @@ const chapterHref = (door: Door) => href(locale, 'home', door.chapter ?? undefin
     border: 2.5px solid var(--film-ink);
     background: var(--film-card);
     font-size: 0.92rem;
+  }
+
+  /* The research door's two links, one under the other, at the foot of the card. */
+  .door__links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+
+  .door__links .door__go {
+    margin-top: 0;
   }
 
   .door__go--first {
