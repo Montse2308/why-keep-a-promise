@@ -4,7 +4,7 @@
 
 **[Abrir el sitio](https://montse2308.github.io/why-keep-a-promise/es/)**
 
-![Cuatro cuadros de la historia a lo largo del día: el título al amanecer, el dilema del prisionero a mediodía, una pareja nueva en la mesa por la tarde mientras el hilo de la promesa sigue yendo a quien se fue, y otra vez la primera mesa de noche.](.github/readme/film-es.webp)
+![Cuatro cuadros de la página a lo largo del día: la portada al amanecer, con el título y sus tres puertas, el dilema del prisionero a mediodía, una pareja nueva en la mesa por la tarde mientras el hilo de la promesa sigue yendo a quien se fue, y otra vez la primera mesa de noche.](.github/readme/film-es.webp)
 
 La página de divulgación de un proyecto personal de investigación sobre por qué la gente cumple
 promesas que ya no le convienen. El home abre con una portada con una puerta a cada parte de la

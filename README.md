@@ -4,7 +4,7 @@
 
 **[Open the site](https://montse2308.github.io/why-keep-a-promise/)**
 
-![Four frames of the story as the day goes by: the title at dawn, the prisoner's dilemma at midday, a new partner at the table in the afternoon while the thread of the promise still runs to the one who left, and the first table again at night.](.github/readme/film-en.webp)
+![Four frames of the page as the day goes by: the cover at dawn, with the title and its three doors, the prisoner's dilemma at midday, a new partner at the table in the afternoon while the thread of the promise still runs to the one who left, and the first table again at night.](.github/readme/film-en.webp)
 
 The outreach page of a personal research project on why people keep promises that no longer pay
 them. The home opens on a cover with a door to each part of the page, then a short illustrated
