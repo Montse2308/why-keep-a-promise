@@ -51,7 +51,7 @@ Comparar mundos con distinta confianza de fondo, sí.
   script se carga solo ahí.
 - **El motor, en vivo.** En /finding, el motor de simulación del paper corre en tu navegador en tres
   mundos fijos, con las semillas del paper, y una prueba lo compara con las corridas del paper. Su
-  código se carga solo al pulsar «Correr».
+  código se carga solo al pulsar «Correr el motor».
 - **Para todos, y privada.** Cada juego funciona con teclado y anuncia su resultado al lector de
   pantalla, y con movimiento reducido nada gira. Nada se guarda ni se envía: sin cookies, sin
   analítica, y lo que eliges en la historia se queda en la pestaña.

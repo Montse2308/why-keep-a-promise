@@ -3,7 +3,8 @@
  * The still figure of /finding's «When the reasons compete» (ADR 0042): where each run ended, after
  * the last generation, in the three worlds of the cards. A row per world and one dot per run, placed
  * at the share of its population with personal guilt, from 0 to 100 %; runs that end at the same
- * share, or a near one, stack (src/lib/finding/still.ts). Computed at build time by the paper's engine, with the
+ * share, or a near one, stack (src/lib/finding/still.ts), placed for a phone's plot and, from 600 px,
+ * for a wide one. Computed at build time by the paper's engine, with the
  * module the live engine's worker runs, so it is what the page shows on load and without JavaScript.
  *
  * Personal guilt in ink, on the notebook's paper. A dot is a run, never a person (rule (d)). The plot
@@ -38,10 +39,11 @@ const summary = rows.map((row) => fill(tr('finding.compete.done'), { trust: row.
       rows.map((row) => (
         <div class="still__row">
           <p class="still__name">{label(row.world.id, row.world.trust)}</p>
-          <div class="still__track" style={`--levels: ${row.levels}`}>
-            {row.dots.map((dot) => (
-              <span class="still__dot" style={`--x: ${dot.x}; --level: ${dot.level}; --column: ${dot.column * dot.side}`} />
-            ))}
+          <div class="still__track" style={`--levels: ${row.levels}; --levels-wide: ${row.wideLevels}`}>
+            {row.dots.map((dot, i) => {
+              const wide = row.wide[i] ?? dot;
+              return <span class="still__dot" style={`--x: ${dot.x}; --level: ${dot.level}; --column: ${dot.column * dot.side}; --level-wide: ${wide.level}; --column-wide: ${wide.column * wide.side}`} />;
+            })}
           </div>
         </div>
       ))
@@ -116,9 +118,11 @@ const summary = rows.map((row) => fill(tr('finding.compete.done'), { trust: row.
     line-height: var(--leading-tight);
   }
 
+  /* The plot is the container its dots are placed for: a phone's, or from 600 px a wide one (WIDE_FROM). */
   .still__plot {
     display: grid;
     gap: var(--space-4);
+    container: still / inline-size;
   }
 
   .still__row {
@@ -146,6 +150,18 @@ const summary = rows.map((row) => fill(tr('finding.compete.done'), { trust: row.
     height: var(--dot);
     border-radius: 50%;
     background: var(--color-fg);
+  }
+
+  /* A wide plot keeps no room a phone needs: its dots take the places src/lib/finding/still.ts gives a wide one. */
+  @container still (min-width: 600px) {
+    .still__track {
+      height: calc(var(--levels-wide) * var(--step));
+    }
+
+    .still__dot {
+      left: calc(var(--x) * (100% - var(--dot)) + var(--column-wide) * var(--step));
+      bottom: calc(var(--level-wide) * var(--step) + 1px);
+    }
   }
 
   .still__axis {

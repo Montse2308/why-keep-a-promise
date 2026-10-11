@@ -1457,7 +1457,8 @@ repo, y el cambio se reporta con el original y el nuevo.
       EN y ES, de 320 a 1440); axe 4.14.0, 16 corridas y cero violaciones (portada y
       `/how-its-built`, 360 y 1440, claro y oscuro); el build cerrado de prueba, con `verify:dist`
       en verde, la tarjeta solo con «Go to chapter 7» y las líneas cerradas.
-- [ ] **M1.9 (Montse)** Revisa las capturas, el PR y el deploy.
+- [x] **M1.9 (Montse)** Revisa las capturas, el PR y el deploy.
+      Hecho: PR #23 fusionado y desplegado el 2026-10-11.
 
 ## P10 · El motor en /finding
 
@@ -1563,14 +1564,16 @@ corre igual.
 **Lo que se encontró y no se arregló**
 
 - `src/lib/finding/still.ts` (`stack`): en la fila de 38, en pantallas anchas, la segunda columna
-  de la pila en 0 empieza un nivel arriba, porque el punto de una corrida cercana a 0 la toca en el
-  ancho de un teléfono. Es solo cómo se ve; ningún punto se encima con otro.
+  de la pila en 0 empezaba dos niveles arriba, porque el punto de una corrida cercana a 0 la toca en
+  el ancho de un teléfono. → resuelto después de la QA: los puntos se acomodan dos veces, para la
+  gráfica de un teléfono y para una de 600 px o más (`NARROW` y `WIDE`, con una container query en
+  `CompeteStill.astro`); en la ancha, la segunda columna empieza en el eje, como la primera.
 - `src/components/finding/compete-live.ts`: al elegir un mundo que ya terminó, la región viva dice
   otra vez su frase final. Es a propósito (quien usa lector de pantalla oye el resultado del mundo
-  que eligió), pero no es «al terminar de correr».
+  que eligió), pero no es «al terminar de correr». Montse decidió dejarlo así.
 - El tiempo con la CPU frenada 4× no se pudo medir para el motor: DevTools no frena workers.
-- `README.es.md`: el punto nuevo dice «al pulsar «Correr»», y el botón dice «Correr el motor»; es el
-  texto dado, sin cambios.
+- `README.es.md`: el punto nuevo decía «al pulsar «Correr»», y el botón dice «Correr el motor».
+  → resuelto después de la QA: los dos README nombran el botón completo (decisión de Montse).
 - [ ] **10.8 (Montse)** Revisa las capturas y el video de 38 corriendo.
 - [ ] **10.9 (Montse)** El PR de P10 a `main`, y `deploy.yml` cuando ella lo decida.
 
