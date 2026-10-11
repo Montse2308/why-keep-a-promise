@@ -126,5 +126,5 @@ export function choose(spec, sens, match, cap) {
 }
 ```
 
-El motor exporta la curva con su procedencia; de este lado, un test falla si la curva cambia o si
+El motor exporta la curva con su procedencia; de este lado, una prueba falla si la curva cambia o si
 falta el archivo. {engine}

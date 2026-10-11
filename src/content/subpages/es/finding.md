@@ -162,7 +162,7 @@ anunció antes de correr la medición.
 ## De dónde salen los números
 
 De un motor de simulación que escribí en TypeScript. Es determinista: cada corrida tiene una
-semilla explícita, y la misma semilla repite la misma corrida. Sus tests fijan la curva de esta
+semilla explícita, y la misma semilla repite la misma corrida. Sus pruebas fijan la curva de esta
 página, y un comando regenera todas las corridas del paper. Está archivado con un DOI. {engine}
 
 <!-- slot:cite -->
