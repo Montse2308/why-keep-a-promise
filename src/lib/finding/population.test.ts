@@ -7,6 +7,7 @@ import citation from 'dilema-prisionero/CITATION.cff?raw';
 import lock from '../../../package-lock.json?raw';
 import manifest from '../../../package.json?raw';
 import { ENGINE } from '../../config';
+import { ENGINE_RUNS_FIGURES, FIGURES } from '../../content/figures';
 import { BELIEF, COMPETE_WORLDS, ENGINE_COMMIT, GENERATIONS, PARAMS, SIZE, START_WORLD, competeWorld, finalCounts, runWorld, seedNames, share, tally, type CompeteWorld } from './population';
 
 /** Where each world's runs are in r6: 70 is checked against 0.74, whose 20 runs are the same, generation by generation. */
@@ -65,6 +66,18 @@ describe("the worlds and the paper's settings (ADR 0042)", () => {
     expect(competeWorld('between').seeds).toEqual(r6.seeds.q9b);
     expect(seedNames('q9', 2)).toEqual(['q9-0', 'q9-1']);
     expect(START_WORLD).toBe('between');
+  });
+});
+
+describe('the register of figures (ADR 0042)', () => {
+  it("says the generations and the runs of each world as the module runs them and r6 lists them", () => {
+    expect(ENGINE_RUNS_FIGURES.generations).toBe(GENERATIONS);
+    expect(ENGINE_RUNS_FIGURES.generations).toBe(r6.params.generations);
+    for (const world of COMPETE_WORLDS) expect(ENGINE_RUNS_FIGURES.runs[world.id], world.id).toBe(world.seeds.length);
+    expect(ENGINE_RUNS_FIGURES.runs.few).toBe(r6.seeds.q9.length);
+    expect(ENGINE_RUNS_FIGURES.runs.between).toBe(r6.seeds.q9b.length);
+    const registered = FIGURES.filter((figure) => figure.source === 'engine-runs').map((figure) => figure.value);
+    expect(registered).toEqual([String(GENERATIONS), String(ENGINE_RUNS_FIGURES.runs.few), String(ENGINE_RUNS_FIGURES.runs.between)]);
   });
 });
 

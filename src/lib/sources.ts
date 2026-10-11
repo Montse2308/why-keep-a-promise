@@ -175,6 +175,7 @@ export const FINDING_ENTRIES: readonly Entry[] = [
   { source: 'curve-finding', work: 'working-paper', places: [page('finding')] },
   { source: 'di-bartolomeo-2023', work: 'di-bartolomeo-2023', places: [page('finding')] },
   { source: 'working-paper-results', work: 'working-paper', places: [page('finding')] },
+  { source: 'engine-runs', work: 'working-paper', places: [page('finding')] },
 ];
 
 /** The finding's source keys. */

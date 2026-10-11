@@ -155,6 +155,8 @@
   "sources.di-bartolomeo-2023": "Para qué la cita la página del hallazgo, sin cifras: en el laboratorio, un acuerdo, en el que prometen los dos, se cumple más que una promesa de un solo lado.",
   "sources.working-paper-results": "Los otros dos resultados del paper, como los dice la página del hallazgo: quién puede hablar no cambia quién sobrevive, y qué pasa cuando una promesa puede dejar de atar.",
   "sources.at.working-paper-results": "La sección 6 del documento de trabajo.",
+  "sources.engine-runs": "Lo que la página del hallazgo corre en vivo con el motor del paper: cuántas generaciones dura cada corrida y cuántas corridas tiene cada uno de sus tres mundos, con las semillas del paper.",
+  "sources.at.engine-runs": "Las corridas del motor que ilustran la curva, results/r6-curve-illustration.json: sus generaciones y sus dos grupos de semillas.",
   "paper.status": "Documento de trabajo: {title} (SSRN).",
   "table.switch.same": "Misma pareja",
   "table.rate": "{p} %",

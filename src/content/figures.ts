@@ -30,6 +30,7 @@ export const SOURCE_KEYS = [
   'curve-finding',
   'working-paper-results',
   'di-bartolomeo-2023',
+  'engine-runs',
 ] as const;
 export type SourceKey = (typeof SOURCE_KEYS)[number];
 
@@ -122,6 +123,12 @@ export const FIGURES: readonly Figure[] = [
   // /finding's other two results (ADR 0039), from the working paper's section 6.
   { value: '60', source: 'working-paper-results', what: 'runs out of 60 in which both protocols end with the same population (20 seeds at each of three switching rates)' },
   { value: '1/2', source: 'working-paper-results', what: 'the cut of the share of the time a promise stops binding, written "one half" / "la mitad"' },
+  // /finding's «When the reasons compete» (ADR 0042): the engine's runs, from results/r6-curve-illustration.json of the
+  // pinned engine. src/lib/finding/population.test.ts checks ENGINE_RUNS_FIGURES against the module and r6, and pins the
+  // counts the engine computes live there, seed by seed, instead of listing them here.
+  { value: '400', source: 'engine-runs', what: 'generations of each run (r6, params.generations)' },
+  { value: '20', source: 'engine-runs', what: 'runs at background trust 5 and at 70, seeds q9-0 to q9-19 (r6, seeds.q9)' },
+  { value: '40', source: 'engine-runs', what: 'runs at background trust 38, seeds q9b-0 to q9b-39 (r6, seeds.q9b)' },
 ];
 
 /** /finding's figures, each checked against src/data/curve.json in tests/finding.test.ts. */
@@ -162,6 +169,16 @@ export const RESULTS_FIGURES = {
   protocolNull: { same: 60, of: 60 },
   /** The cut of the share of the time a promise stops binding: the other joins below it. */
   cut: '1/2',
+} as const;
+
+/**
+ * /finding's «When the reasons compete» (ADR 0042): the generations of each run and the runs of each world, as the
+ * page says them, checked against src/lib/finding/population.ts and the engine's r6 in population.test.ts. The
+ * engine's version, 1.0.0, is ENGINE.version (src/config.ts).
+ */
+export const ENGINE_RUNS_FIGURES = {
+  generations: 400,
+  runs: { few: 20, between: 40, most: 20 },
 } as const;
 
 /** The curve's figures as chapter 7's finding and its chart state them, each checked against src/data/curve.json. */

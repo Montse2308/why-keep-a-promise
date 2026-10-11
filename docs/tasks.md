@@ -1518,8 +1518,12 @@ trae la dependencia, en `node_modules`.
       `/finding` pasa de 2.8 a 4.1 KiB, bajo sus 8 (ADR 0042, al día). `budgets` encuentra lo que se
       carga después en los `import()` y los `new URL(…, import.meta.url)`. `weight.json` no cambia:
       los home pesan lo mismo. `tests/memory.test.ts` revisa también los scripts del motor en vivo.
-- [ ] **10.5** El registro de cifras: 400, 20 y 40, con su fuente en `docs/sources.md`; `/sources`
+- [x] **10.5** El registro de cifras: 400, 20 y 40, con su fuente en `docs/sources.md`; `/sources`
       lista lo nuevo con el candado abierto.
+      Hecho: la clave `engine-runs` (400, 20 y 40), bajo el working paper en `/sources`, con su
+      entrada en `docs/sources.md` (fuente: `r6`, `params.generations`, `seeds.q9` y `seeds.q9b`).
+      `ENGINE_RUNS_FIGURES` en `src/content/figures.ts`; el test de `population.ts` lo compara con el
+      módulo y con `r6`. Los conteos en vivo no van al registro: el mismo test los fija contra `r6`.
 - [ ] **10.6** Fuera de la sección: el final del primer párrafo de `/how-its-built` y un punto nuevo
       en «How it's built» / «Cómo está hecho» de los README.
 - [ ] **10.7** La QA: anchos, sin JS, red, tiempos (normal y con la CPU frenada 4×), teclado y
