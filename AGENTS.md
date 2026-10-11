@@ -124,9 +124,11 @@ the weights beside it come from `src/data/weight.json`.
   (ADR 0029). No `localStorage`, `sessionStorage`, IndexedDB, cookies or analytics; nothing is sent.
 - Budgets: home JS ≤ 40 KiB gzipped (the two homes), `/finding`'s JS ≤ 8 KiB gzipped (ADR 0038),
   fonts ≤ 160 KiB and first load ≤ 450 KiB (every page), LCP ≤ 2.5 s on a mid-range phone. KiB, and
-  which pages, by ADR 0028.
-- The only new dependency the plan allows is `@resvg/resvg-js`, as a dev dependency, for Open Graph
-  posters (in since P6). Anything else: ask first.
+  which pages, by ADR 0028. What /finding loads only when «Run the engine» is pressed (the live
+  engine's code and its worker) has a ceiling of its own (ADR 0042).
+- The only new dependencies the plan allows are `@resvg/resvg-js`, as a dev dependency, for Open
+  Graph posters (in since P6), and the paper's engine, `dilema-prisionero`, pinned to the commit of
+  its `v1.0.0` tag (ADR 0043). Anything else: ask first.
 - No `@types/node`: code that needs Node's API at build time is plain `.mjs` (`scripts/`,
   `src/lib/posters/fonts.mjs`). Check current versions with the official tools; never pin
   versions from memory.
@@ -296,8 +298,11 @@ scratch/                 local notes, git-ignored, never committed
     time a promise stops binding and its cut at one half, and the protocol null's 60 out of 60: no
     letter `s`, no φ, N, generations or named seeds, and not the lab's 59 % or 43 % (ADR 0039). The
     formula explorer moves only θ, background trust and the belief that a promise will be kept
-    (ADR 0038). Behind the lock, `/sources` lists `/finding`'s figures from the register and names θ
-    and c, never their values (ADR 0035).
+    (ADR 0038). In /finding's «When the reasons compete», and only there, the page says the
+    generations (400) and the number of runs (20 and 40), and nothing more: no other setting of the
+    engine and no seed by name; the visitor only chooses one of three worlds (ADR 0042). Behind the
+    lock, `/sources` lists `/finding`'s figures from the register and names θ and c, never their
+    values (ADR 0035).
   - Outside the lock, chapter 7 says only the question and that Montse built a simulation engine in
     TypeScript. Nothing about the engine's tests, seed, generations, imitation or provenance
     (rule (j)).
@@ -309,17 +314,24 @@ scratch/                 local notes, git-ignored, never committed
 - **Copying the working paper or the paper's context.** Do not read or copy the working paper or its
   working files, wherever they live (local folders, Drive). If something is missing, ask.
 - **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,
-  local folder `dilema-prisionero`) is never opened, added as a dependency, submodule or alias, and
-  no file is copied from it. Its output reaches this repo only as `src/data/curve.json` (ADR 0010).
+  local folder `dilema-prisionero`) is never opened or cloned, added as a submodule or alias, or
+  edited, and no file is copied from it. Its curve reaches this repo only as `src/data/curve.json`
+  (ADR 0010). The one exception (ADR 0043): the dependency `dilema-prisionero`, pinned to the commit
+  of the `v1.0.0` tag, whose `src/index.ts` only `src/lib/finding/population.ts` imports, for
+  /finding's «When the reasons compete» (ADR 0042); of the engine, only what that dependency brings
+  into `node_modules` is used, and a test checks it against the paper's runs (`results/r6`).
 - **Visuals and games outside ADR 0023/0027.**
   - No WebGL, WebGPU, PixiJS, canvas, GSAP or Lottie.
-  - No visualising populations or dynamics: no agents, grids or one dot per person.
+  - No visualising populations or dynamics: no agents, grids or one dot per person. The one
+    exception is /finding's «When the reasons compete», behind the lock (ADR 0042): the share of a
+    population with personal guilt, one line per run (one dot per run in its still figure).
   - No playable repeated prisoner's dilemma anywhere: link to *The Evolution of Trust* instead. The
     dilemma in chapter 1 is played once.
   - No charts beyond chapter 7's curve and `/finding`'s figures (the guilt chart, what each reason
-    earns, the three worlds' meters and the formula explorer, ADR 0037 and 0038), all behind the
-    lock, and the miniature on `/finding`'s poster.
-  - No interaction outside the list in ADR 0023, with the formula explorer of ADR 0038.
+    earns, the three worlds' meters, the formula explorer, ADR 0037 and 0038, and the live engine's
+    chart and still figure, ADR 0042), all behind the lock, and the miniature on `/finding`'s poster.
+  - No interaction outside the list in ADR 0023, with the formula explorer of ADR 0038 and the live
+    engine of ADR 0042.
   - The scroll is never hijacked.
 - **Naming a journal** for Montse's text, which goes to no journal (it is a working paper on SSRN,
   ADR 0034), submission dates or correspondence with other authors, in any file. Third-party

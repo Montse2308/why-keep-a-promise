@@ -4,6 +4,8 @@
 sobre los parámetros del modelo («no se muestran nunca, salvo θ, c, la culpa disponible y la variante
 de robustez en `/finding`»), y precisa el punto 2 del candado del ADR 0034. Decisión de Montse
 (2026-10-10, D2).
+Precisado por el ADR 0042: en la sección «Cuando las razones compiten» de `/finding`, y solo ahí, se
+dicen las generaciones (400) y el número de corridas (20 y 40), y nada más.
 
 ## Contexto
 

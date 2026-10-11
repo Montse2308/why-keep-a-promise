@@ -54,7 +54,10 @@ de estado, el mismo en los dos estados del candado (ADR 0034):
 
 - Sin bi-estabilidad, saltos ni volteos de población.
 - No se visualizan poblaciones ni dinámicas: ni agentes, ni rejillas, ni un punto por persona
-  (ADR 0023).
+  (ADR 0023). **Salvo** en la sección «Cuando las razones compiten» de `/finding`, y solo ahí, detrás
+  del candado (ADR 0042): se muestra la parte de una población con culpa personal, **una línea por
+  corrida** en la gráfica del motor en vivo y un punto por corrida en la figura fija, sin agentes,
+  puntos por persona ni rejillas.
 - No se presenta el modelo como si reprodujera tasas de experimentos. Las cifras publicadas de
   Vanberg (2008), con cita, sí se muestran (regla (a)).
 - Sin cuatro paneles: los cuatro cuadros de protocolo por emparejamiento. Los cuadros quietos del
@@ -152,6 +155,9 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
   nombra **con palabras** la parte de las veces en que una promesa deja de atar y su corte en la
   mitad, y el 60 de 60 del nulo del protocolo: sin la letra `s`, φ, N, generaciones ni semillas con
   nombre, y sin el 59 % ni el 43 % del laboratorio (ADR 0039). El explorador de `/finding` mueve θ,
-  la confianza de fondo y la creencia de que la promesa se cumplirá, y nada más (ADR 0038). Detrás del candado, `/sources` lista las cifras
-  de `/finding` del registro y nombra θ y c, nunca sus valores (ADR 0035).
+  la confianza de fondo y la creencia de que la promesa se cumplirá, y nada más (ADR 0038). En la
+  sección «Cuando las razones compiten» de `/finding`, y solo ahí, se dicen las generaciones (400) y
+  el número de corridas (20 y 40), y nada más: ni los demás ajustes del motor ni las semillas por
+  nombre; el visitante solo elige uno de tres mundos (ADR 0042). Detrás del candado, `/sources` lista
+  las cifras de `/finding` del registro y nombra θ y c, nunca sus valores (ADR 0035).
 - Sin fechas de sometimiento ni correspondencia con otros autores en ningún archivo (ADR 0034).

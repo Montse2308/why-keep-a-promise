@@ -7,11 +7,11 @@ números no se reutilizan.
 
 | ADR | Decide |
 | --- | ------ |
-| [0001](0001-outreach-not-instrument.md) | Divulgación, no instrumento: sin simulador y sin explorar parámetros. |
+| [0001](0001-outreach-not-instrument.md) | Divulgación, no instrumento: sin simulador y sin explorar parámetros (salvo el explorador del 0038 y el motor en tres mundos fijos del 0042). |
 | [0005](0005-i18n-routes-keys-markdown.md) | Inglés en `/`, español en `/es/`, texto de interfaz en claves y prosa en Markdown, con paridad completa. |
 | [0006](0006-artifact-languages.md) | Código y README en inglés; `docs/` en español, una sola copia. |
 | [0008](0008-github-pages.md) | GitHub Pages, `base` y URLs con barra final. |
-| [0010](0010-precomputed-curve-provenance.md) | La curva llega precalculada con procedencia; el motor nunca se importa. |
+| [0010](0010-precomputed-curve-provenance.md) | La curva llega precalculada con procedencia; el motor no se importa, salvo lo que permite el 0043. |
 | [0012](0012-versioned-docs-scratch-audit.md) | `docs/` versionado, `scratch/` ignorado, auditoría del historial antes de hacerlo público. |
 | [0013](0013-language-switch-plain-link.md) | El enlace EN/ES es un enlace simple, sin memoria ni redirección. |
 | [0016](0016-journal-rule-precision.md) | Ningún archivo nombra la revista del manuscrito; la bibliografía de terceros sí lleva la suya. |
@@ -34,6 +34,8 @@ números no se reutilizan.
 | [0039](0039-two-more-results.md) | `/finding` nombra sus otros dos resultados: quién habla no decide (60 de 60) y la parte de las veces en que una promesa deja de atar, con palabras y su corte en la mitad. |
 | [0040](0040-cover-links-finding.md) | La tarjeta «La investigación» de la portada enlaza también a `/finding`, con el candado abierto; desde M1, primero y como botón principal. |
 | [0041](0041-about-orcid-ssrn.md) | `/about` suma ORCID y la página de autora en SSRN, con `rel="me"`, y nada más. |
+| [0042](0042-engine-runs-on-finding.md) | El motor corre en `/finding`: la sección «Cuando las razones compiten», en tres mundos fijos con las semillas del paper, sin nada que ajustar; su figura fija, su gráfica de una línea por corrida, la interacción 12 y su script, que se carga solo al pulsar. |
+| [0043](0043-engine-code-on-the-page.md) | El código del motor en la página: la dependencia fijada al commit de `v1.0.0`, lo que se importa, cómo se prueba contra las corridas del paper y qué pasa si cambia la versión. |
 
 Archivados (no rigen): 0002, 0003, 0004, 0007, 0009, 0011, 0014, 0015, 0017, 0018, 0019, 0020, 0022
 y 0026, en [`docs/archivo/decisiones/`](../archivo/decisiones/).

@@ -1472,10 +1472,14 @@ trae la dependencia, en `node_modules`.
 
 - [x] **10.0** La fase en los documentos: P10 en `docs/phases.md` y aquí, y la fase activa en
       `AGENTS.md`.
-- [ ] **10.1** Los ADR, antes de tocar `src/`, con `docs/decisions/README.md`,
+- [x] **10.1** Los ADR, antes de tocar `src/`, con `docs/decisions/README.md`,
       `docs/content-rules.md` y `AGENTS.md` al día: el motor corre en `/finding` (enmienda el 0001,
       el 0023, el 0025 y la regla (d); precisa el 0039) y el código del motor en la página (enmienda
       el 0010).
+      Hecho: los ADR 0042 («El motor corre en `/finding`») y 0043 («El código del motor en la
+      página»). Con la entrada, la prosa de `/finding` mide 1 418 palabras (EN) y 1 561 (ES): el tope
+      de 1 600 no cambia. El techo de lo que se carga al pulsar se fija en 10.4, después de medirlo.
+      La gráfica en vivo es SVG: `AGENTS.md` prohíbe canvas, y el ADR 0042 no lo enmienda.
 - [ ] **10.2** El motor como dependencia, fijada al commit del tag `v1.0.0`, que funcione en Vite
       (cliente y worker), Vitest, el build de Astro y `astro check` (si no, una copia sin cambios en
       `vendor/engine-v1.0.0/`, con su procedencia y su hash); el módulo puro

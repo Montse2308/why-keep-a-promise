@@ -1,6 +1,9 @@
 # 0010 · Curva precalculada con procedencia; el motor nunca se importa
 
-**Estado:** aceptada (F0)
+**Estado:** aceptada (F0). Enmendada por el ADR 0043: además de `curve.json`, la página usa el código
+del motor en su `v1.0.0`, como dependencia fijada a su commit, solo en la sección «Cuando las razones
+compiten» de `/finding` (ADR 0042), y un test lo compara con las corridas del paper. La curva sigue
+llegando precalculada, con procedencia.
 
 ## Contexto
 
