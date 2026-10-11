@@ -1423,23 +1423,40 @@ rama `m1/post-launch`, desde `main` en `895305b` (el merge del PR #22); sin push
 (`M1.3`). Los textos son los que Montse dio; uno cambia solo si choca con una regla o un hecho del
 repo, y el cambio se reporta con el original y el nuevo.
 
-- [ ] **M1.1** `/how-its-built`: el párrafo de «El candado» en pasado (el candado ya está abierto;
+- [x] **M1.1** `/how-its-built`: el párrafo de «El candado» en pasado (el candado ya está abierto;
       el plugin y `verify:dist` siguen corriendo en cada build), y el primer párrafo dice que
       JavaScript corre también en el explorador de la fórmula de `/finding`.
-- [ ] **M1.2** Las líneas del cuaderno de `/about` (suma ORCID y SSRN) y de `/how-its-built` (suma
+      Hecho. El plugin `lock-finding` está en todo build (`astro.config.mjs`) y `verify:dist` corre
+      en `ci.yml` y `deploy.yml`. El texto en español se acortó, con el mismo sentido, para caber en
+      el tope de 700 palabras de `/how-its-built` (ADR 0037): con el texto dado medía 715; ahora 699.
+- [x] **M1.2** Las líneas del cuaderno de `/about` (suma ORCID y SSRN) y de `/how-its-built` (suma
       el motor de simulación), cada una con su versión cerrada; en español, «test» → «prueba» en
       `/how-its-built` y en «De dónde salen los números» de `/finding` (decisión de Montse).
-- [ ] **M1.3** La portada: con el candado abierto, «The finding» va primero en la tarjeta de la
+      Hecho. Cerradas, las líneas son `notebook.about.line.locked` y
+      `notebook.how-its-built.line.locked` (`lineKeyOf` en `src/lib/notebook.ts`), en el panel y en
+      la descripción de cada página. No quedan otros «test» en la prosa en español. Los home pesan
+      0.1 KiB más de primera carga (`weight.json` al día).
+- [x] **M1.3** La portada: con el candado abierto, «The finding» va primero en la tarjeta de la
       investigación, como botón principal, y «Go to chapter 7» debajo (decisión de Montse,
       2026-10-10); cerrado, no cambia. La línea de estado del ADR 0040 lo registra.
-- [ ] **M1.4** Los documentos internos de antes del lanzamiento, marcados como historia:
+      Hecho (`researchLinks` en `src/lib/hero.ts`). Los dos enlaces tenían el mismo estilo, con
+      contorno; Montse eligió que «The finding» lleve el relleno en tinta de «Start the story». El
+      de «Go to chapter 7» no cambia, abierto o cerrado. La regla (j) y el índice de los ADR, al día.
+- [x] **M1.4** Los documentos internos de antes del lanzamiento, marcados como historia:
       `AGENTS.md`, `docs/plan.md`, `docs/content-rules.md` y `docs/phases.md` (P8 cerrada, PR #20).
-- [ ] **M1.5** Los documentos de P7 al archivo: `docs/p7-external-review.md`,
+- [x] **M1.5** Los documentos de P7 al archivo: `docs/p7-external-review.md`,
       `docs/p7-review-plan.md` y `docs/prototipo/`, con sus referencias corregidas.
-- [ ] **M1.6** La versión: `1.0.0` en `package.json` y `package-lock.json`.
-- [ ] **M1.7** Los README, EN y ES, reescritos, con cada afirmación comprobada contra el repo.
-- [ ] **M1.8** La comprobación: las seis puertas, sin scroll horizontal de 320 a 1440, axe, un build
+- [x] **M1.6** La versión: `1.0.0` en `package.json` y `package-lock.json`.
+- [x] **M1.7** Los README, EN y ES, reescritos, con cada afirmación comprobada contra el repo.
+      Hecho. «θ» se dice con palabras, «cuánto pesa la culpa», porque los parámetros del modelo solo
+      se nombran en `/finding` (y en `/sources`, ADR 0035). El ancla de la cita del motor no se
+      comprobó: el repo del motor no se abre.
+- [x] **M1.8** La comprobación: las seis puertas, sin scroll horizontal de 320 a 1440, axe, un build
       cerrado de prueba y capturas en `scratch/m1/`, con su README.
+      Hecho: 1399 pruebas; 42 corridas sin scroll horizontal (portada, `/how-its-built` y `/about`,
+      EN y ES, de 320 a 1440); axe 4.14.0, 16 corridas y cero violaciones (portada y
+      `/how-its-built`, 360 y 1440, claro y oscuro); el build cerrado de prueba, con `verify:dist`
+      en verde, la tarjeta solo con «Go to chapter 7» y las líneas cerradas.
 - [ ] **M1.9 (Montse)** Revisa las capturas, el PR y el deploy.
 
 ## F6 · Lanzamiento
