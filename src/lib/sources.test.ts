@@ -47,7 +47,7 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
   });
 
   it("keeps the finding's sources out of the open part, which looks the same in both states (ADR 0034, ADR 0035)", () => {
-    expect([...FINDING].sort()).toEqual(['curve', 'curve-finding', 'di-bartolomeo-2023', 'kawagoe-narita-2014', 'vanberg-second-order', 'working-paper-results']);
+    expect([...FINDING].sort()).toEqual(['curve', 'curve-finding', 'di-bartolomeo-2023', 'engine-runs', 'kawagoe-narita-2014', 'vanberg-second-order', 'working-paper-results']);
     for (const entry of ENTRIES) {
       for (const place of entry.places) expect('page' in place && place.page === 'finding', entry.source).toBe(false);
       expect(FINDING).not.toContain(entry.source);
@@ -123,7 +123,7 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
     expect(findingWorksOf().map((group) => [group.work.id, group.entries.map((entry) => entry.source)])).toEqual([
       ['kawagoe-narita-2014', ['kawagoe-narita-2014']],
       ['di-bartolomeo-2023', ['di-bartolomeo-2023']],
-      ['working-paper', ['curve', 'curve-finding', 'working-paper-results']],
+      ['working-paper', ['curve', 'curve-finding', 'working-paper-results', 'engine-runs']],
     ]);
     // Every finding entry leads to chapter 7's finding or to /finding, and nowhere else.
     for (const entry of FINDING_ENTRIES) {
@@ -134,6 +134,8 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
     // The other two results: the protocol null's 60 out of 60, and the cut at one half (ADR 0039); the new citation has none.
     expect(figuresOf('working-paper-results')).toEqual(['60', '1/2']);
     expect(figuresOf('di-bartolomeo-2023')).toEqual([]);
+    // The live engine's runs (ADR 0042): its generations and the runs of its worlds.
+    expect(figuresOf('engine-runs')).toEqual(['400', '20', '40']);
   });
 
   it('names θ and c on /sources but never gives their values, which only /finding shows (ADR 0035)', () => {

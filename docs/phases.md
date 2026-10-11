@@ -5,8 +5,8 @@ Cada sesión de trabajo autoriza una fase. Las fases anteriores (F0–F4 y el re
 checklist y varios ADR los citan. P7, los ajustes de la revisión externa, va entre P6 y F5, partida
 en subfases (P7.0 a P7.7). P8, los retoques después del lanzamiento, se planeó para ir antes de los
 pasos 5 a 8 del checklist de F6, pero esos pasos ya estaban hechos: va después de F6. P9, `/finding`
-por sí sola, sigue a P8. Después de P9 no hay fase activa: lo que sigue es mantenimiento, con ramas
-cortas (M1, la puesta al día después del lanzamiento, en `docs/tasks.md`).
+por sí sola, sigue a P8. Después de P9 vino mantenimiento, con ramas cortas (M1, la puesta al día
+después del lanzamiento, en `docs/tasks.md`). P10, el motor en `/finding`, sigue a M1.
 
 **Toda fase se cierra con:**
 
@@ -284,6 +284,57 @@ programa), en 3 (quien tiene curiosidad) y en 5 (quien investiga).
 - La QA de lo que cambió (anchos, sin JS, teclado, lector de pantalla, axe, enlaces, JSON-LD,
   pesos y Lighthouse de `/finding`).
 - Capturas para Montse, a 360 y 1440 px, EN y ES; P9 llega a `main` con su PR, que decide ella.
+
+## P10 · El motor en /finding
+
+**Estado:** activa (rama `p10/engine-live`).
+
+`/finding` dice que la culpa personal gana mucho en el medio de la confianza de fondo y poco en los
+extremos, y que el compromiso específico a la pareja gana igual en todas partes. No muestra qué pasa
+cuando las dos razones **compiten dentro de una población**. P10 agrega a `/finding` una sección,
+«Cuando las razones compiten», donde el motor de simulación del paper, en su versión 1.0.0, corre en
+el navegador en los tres mundos fijos de las tarjetas (confianza de fondo 5, 38 y 70), con las
+semillas del paper. No hay nada que ajustar: solo se elige uno de tres mundos. Montse lo decidió el
+10 y el 11-oct, con maquetas, y aprobó los textos (EN y ES).
+
+**Alcance**
+
+- **Los ADR**, antes de tocar `src/`: el motor corre en `/finding` (enmienda los ADR 0001, 0023 y
+  0025, la regla (d) y precisa el 0039) y el código del motor en la página (enmienda el ADR 0010).
+- **El motor como dependencia**, fijada al commit del tag `v1.0.0`, y un módulo puro,
+  `src/lib/finding/population.ts`, con los mundos, las semillas y los ajustes de la ilustración de la
+  curva del motor; un test lo compara, semilla por semilla, con las corridas del paper
+  (`results/r6-curve-illustration.json`).
+- **La figura fija**, calculada en el build y visible sin JS: dónde terminó cada corrida después de
+  400 generaciones, un punto por corrida, en los tres mundos.
+- **El motor en vivo**, solo al pulsar «Correr el motor»: un Web Worker que corre el mundo elegido y
+  una gráfica con una línea por corrida, con sus controles, su conteo y una región viva que habla al
+  terminar un mundo.
+- **El registro de cifras** (400, 20 y 40, con su fuente), `/how-its-built` y los README.
+
+**Lo que queda fuera**
+
+- **Un simulador libre:** ni `s`, `p`, φ, θ, c, el tamaño de la población, las semillas ni las
+  generaciones se pueden ajustar.
+- **Cualquier parámetro ajustable**, también la confianza de fondo: no cambia durante una corrida ni
+  conecta un mundo con otro.
+- **Otros mundos** que los tres de las tarjetas, y otras corridas que las del paper.
+- Agentes, puntos por persona o rejillas: una línea por corrida.
+- Nada se guarda en el navegador, y nada corre si nadie pulsa el botón.
+- La curva, el explorador, las tarjetas de los tres mundos y la figura de dos paneles no cambian.
+
+**Criterio de salida**
+
+- Las seis puertas en verde: `check`, `test`, `build`, `verify:dist`, `budgets` y `check:launch`,
+  con paridad EN/ES.
+- El test contra las corridas del paper, en verde.
+- La primera carga de `/finding` no cambia de techo; lo que se carga al pulsar tiene el suyo.
+- La sección se entiende sin JS (la figura fija), y con JS funciona con teclado, lector de pantalla
+  y movimiento reducido.
+- La QA de lo que cambió (anchos, sin JS, red, tiempos, teclado y lector de pantalla, movimiento
+  reducido, axe, pesos y Lighthouse de `/finding`, los tests de reglas y un build cerrado de prueba).
+- Capturas y, si se puede, un video de 38 corriendo, para Montse; P10 llega a `main` con su PR, que
+  decide ella.
 
 ## F5 · QA
 

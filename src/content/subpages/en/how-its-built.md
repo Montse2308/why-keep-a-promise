@@ -7,8 +7,8 @@ title: How it's built
 Astro builds every page ahead of time, into plain HTML and CSS. The home is
 first a storyboard: each chapter a still frame, its cards in order, every result written out. One
 script sets it moving with the scroll; without it, the whole story is still there. The logic lives in small
-pure modules with their tests, and JavaScript runs only in the story, in the notebook's panel and in
-the formula explorer on /finding.
+pure modules with their tests, and JavaScript runs only in the story, in the notebook's panel and on
+/finding.
 
 ## A scene engine of its own
 

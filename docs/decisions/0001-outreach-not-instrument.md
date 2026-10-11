@@ -7,6 +7,8 @@ revista; la página se lanza con el working paper público en SSRN (el ADR 0011 
 archivado).
 Enmendada por el ADR 0038: `/finding` tiene un explorador de la fórmula de la culpa disponible, y
 nada más; sigue sin ser un simulador.
+Enmendada por el ADR 0042: `/finding` corre el motor del paper en tres mundos fijos, sin parámetros;
+sigue sin ser un simulador.
 
 ## Contexto
 

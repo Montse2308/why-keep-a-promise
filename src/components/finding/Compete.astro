@@ -1,0 +1,24 @@
+---
+/**
+ * /finding's «When the reasons compete» (ADR 0042): what follows its entry in the prose. The still
+ * figure, computed at build time and shown on load and without JavaScript; then the live engine,
+ * which only JavaScript shows and only a press runs.
+ *
+ * Render this only inside the lock (ADR 0034): a locked build resolves it to ../curve/Locked.astro
+ * (astro.config.mjs), so neither its figure, its script nor the engine reaches dist/.
+ */
+import CompeteLive from './CompeteLive.astro';
+import CompeteStill from './CompeteStill.astro';
+import type { Locale } from '../../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<div class="compete" data-compete>
+  <CompeteStill locale={locale} />
+  <CompeteLive locale={locale} />
+</div>

@@ -1,0 +1,207 @@
+---
+/**
+ * The still figure of /finding's «When the reasons compete» (ADR 0042): where each run ended, after
+ * the last generation, in the three worlds of the cards. A row per world and one dot per run, placed
+ * at the share of its population with personal guilt, from 0 to 100 %; runs that end at the same
+ * share, or a near one, stack (src/lib/finding/still.ts), placed for a phone's plot and, from 600 px,
+ * for a wide one. Computed at build time by the paper's engine, with the
+ * module the live engine's worker runs, so it is what the page shows on load and without JavaScript.
+ *
+ * Personal guilt in ink, on the notebook's paper. A dot is a run, never a person (rule (d)). The plot
+ * is one image to a screen reader, told by the sentences the live engine says when a world ends; a
+ * visually hidden table gives each world's counts.
+ *
+ * Render this only inside the lock (ADR 0034): a locked build resolves it to ../curve/Locked.astro
+ * (astro.config.mjs).
+ */
+import { GENERATIONS } from '../../lib/finding/population';
+import { stillRows } from '../../lib/finding/still';
+import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
+import { fill } from '../../lib/template';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const rows = stillRows();
+const percent = new Intl.NumberFormat(locale, { style: 'percent' });
+const ticks = [0, 0.5, 1];
+const label = (id: string, trust: number) => fill(tr('finding.compete.world'), { name: tr(`finding.worlds.${id}` as UiKey), trust });
+const summary = rows.map((row) => fill(tr('finding.compete.done'), { trust: row.world.trust, total: GENERATIONS, ...row.tally })).join(' ');
+---
+
+<figure class="still wide" data-compete-still aria-labelledby="compete-still-title">
+  <p class="still__title" id="compete-still-title">{fill(tr('finding.compete.still.title'), { generations: GENERATIONS })}</p>
+  <div class="still__plot" role="img" aria-label={summary}>
+    {
+      rows.map((row) => (
+        <div class="still__row">
+          <p class="still__name">{label(row.world.id, row.world.trust)}</p>
+          <div class="still__track" style={`--levels: ${row.levels}; --levels-wide: ${row.wideLevels}`}>
+            {row.dots.map((dot, i) => {
+              const wide = row.wide[i] ?? dot;
+              return <span class="still__dot" style={`--x: ${dot.x}; --level: ${dot.level}; --column: ${dot.column * dot.side}; --level-wide: ${wide.level}; --column-wide: ${wide.column * wide.side}`} />;
+            })}
+          </div>
+        </div>
+      ))
+    }
+    <div class="still__axis" aria-hidden="true">
+      {ticks.map((tick) => <span class="still__tick" style={`--x: ${tick}`}>{percent.format(tick)}</span>)}
+    </div>
+    <p class="still__label" aria-hidden="true">{tr('finding.compete.axis.y')}</p>
+  </div>
+
+  {/* A table ignores width and overflow, so the div does the hiding and keeps the page from scrolling sideways. */}
+  <div class="visually-hidden">
+    <table>
+      <caption>{fill(tr('finding.compete.still.title'), { generations: GENERATIONS })}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{tr('finding.worlds.trust')}</th>
+          <th scope="col">{tr('finding.compete.table.runs')}</th>
+          <th scope="col">{tr('finding.compete.table.gone')}</th>
+          <th scope="col">{tr('finding.compete.table.full')}</th>
+          <th scope="col">{tr('finding.compete.table.mixed')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row) => (
+            <tr>
+              <th scope="row">{label(row.world.id, row.world.trust)}</th>
+              <td>{row.tally.runs}</td>
+              <td>{row.tally.gone}</td>
+              <td>{row.tally.full}</td>
+              <td>{row.tally.mixed}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <figcaption class="still__caption">{tr('finding.compete.still.caption')}</figcaption>
+</figure>
+
+<style>
+  .still {
+    --dot: 0.625rem;
+    --step: calc(var(--dot) + 2px);
+
+    display: grid;
+    gap: var(--space-4);
+    margin: var(--space-6) auto;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  @media (min-width: 40rem) {
+    .still {
+      padding: var(--space-6);
+    }
+  }
+
+  .still__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--step-0);
+    font-weight: 800;
+    line-height: var(--leading-tight);
+  }
+
+  /* The plot is the container its dots are placed for: a phone's, or from 600 px a wide one (WIDE_FROM). */
+  .still__plot {
+    display: grid;
+    gap: var(--space-4);
+    container: still / inline-size;
+  }
+
+  .still__row {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .still__name {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  /* Each run's dot sits at its share, stacked over its neighbours at the same share; the axis under it. */
+  .still__track {
+    position: relative;
+    height: calc(var(--levels) * var(--step));
+    border-bottom: var(--border-width) solid var(--color-control);
+  }
+
+  .still__dot {
+    position: absolute;
+    left: calc(var(--x) * (100% - var(--dot)) + var(--column) * var(--step));
+    bottom: calc(var(--level) * var(--step) + 1px);
+    width: var(--dot);
+    height: var(--dot);
+    border-radius: 50%;
+    background: var(--color-fg);
+  }
+
+  /* A wide plot keeps no room a phone needs: its dots take the places src/lib/finding/still.ts gives a wide one. */
+  @container still (min-width: 600px) {
+    .still__track {
+      height: calc(var(--levels-wide) * var(--step));
+    }
+
+    .still__dot {
+      left: calc(var(--x) * (100% - var(--dot)) + var(--column-wide) * var(--step));
+      bottom: calc(var(--level-wide) * var(--step) + 1px);
+    }
+  }
+
+  .still__axis {
+    position: relative;
+    height: 1.25em;
+    font-size: var(--step-n2);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-muted);
+  }
+
+  /* Each tick under the centre of a dot at its share; the ends kept inside the plot. */
+  .still__tick {
+    position: absolute;
+    left: calc(var(--x) * (100% - var(--dot)) + var(--dot) / 2);
+    transform: translateX(-50%);
+  }
+
+  .still__tick:first-child {
+    transform: none;
+    left: 0;
+  }
+
+  .still__tick:last-child {
+    transform: none;
+    left: auto;
+    right: 0;
+  }
+
+  .still__label {
+    margin: calc(-1 * var(--space-2)) 0 0;
+    font-size: var(--step-n2);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .still__caption {
+    margin: 0;
+    color: var(--color-muted);
+  }
+</style>

@@ -5,7 +5,10 @@
 papel con la consecuencia, no gestos de manos. Precisado por el ADR 0029: «Nada se guarda ni se
 envía» se lee «nada sale de la pestaña ni se envía»; la película recuerda lo jugado en esa pestaña.
 Precisado por el ADR 0038: la lista suma una interacción, la 11, el explorador de la fórmula en
-`/finding`, con el candado abierto.
+`/finding`, con el candado abierto. Precisado por el ADR 0042: la lista suma la interacción 12, el
+motor en vivo de `/finding` (elegir uno de tres mundos, correr, pausar y seguir, volver a empezar, el
+deslizador de generación y resaltar otra corrida), con el candado abierto; ahí, y solo ahí, se ve la
+parte de una población con culpa personal, una línea por corrida.
 
 ## Contexto
 

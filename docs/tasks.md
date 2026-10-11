@@ -3,8 +3,8 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** ninguna. Lo que sigue es mantenimiento, con ramas cortas: ahora M1, la puesta al
-día después del lanzamiento (rama `m1/post-launch`, sección M1). P9, `/finding` por sí sola, llegó
+**Fase activa:** P10, el motor en `/finding` (rama `p10/engine-live`, sección P10). M1, la puesta
+al día después del lanzamiento, llegó a `main` con el PR #23. P9, `/finding` por sí sola, llegó
 a `main` con el PR #21 (y su cierre con el #22); P8, los retoques después del lanzamiento, con el
 PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
@@ -13,7 +13,7 @@ línea en `https://montse2308.github.io/why-keep-a-promise/`. F5, la QA, cerrada
 (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
 como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** ninguna planeada. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
+**Fase siguiente:** ninguna planeada después de P10. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
 que llega a `main` llega al sitio cuando Montse vuelve a correr `deploy.yml`
 (`docs/launch-checklist.md`, «Después del lanzamiento»).
 
@@ -1457,7 +1457,125 @@ repo, y el cambio se reporta con el original y el nuevo.
       EN y ES, de 320 a 1440); axe 4.14.0, 16 corridas y cero violaciones (portada y
       `/how-its-built`, 360 y 1440, claro y oscuro); el build cerrado de prueba, con `verify:dist`
       en verde, la tarjeta solo con «Go to chapter 7» y las líneas cerradas.
-- [ ] **M1.9 (Montse)** Revisa las capturas, el PR y el deploy.
+- [x] **M1.9 (Montse)** Revisa las capturas, el PR y el deploy.
+      Hecho: PR #23 fusionado y desplegado el 2026-10-11.
+
+## P10 · El motor en /finding
+
+En la rama `p10/engine-live`, desde `main` en `f086fb8` (el merge del PR #23); sin push, sin PR y sin
+`deploy.yml`, que decide y corre Montse. No toca el despliegue (`deploy.yml`,
+`docs/launch-checklist.md`, `scripts/check-launch.mjs`), ni `src/data/curve.json`, el explorador, las
+tarjetas de los tres mundos o la figura de dos paneles. Cada paso termina en verde (`check`, `test`,
+`build`, `verify:dist`, `budgets` y `check:launch`) y lleva su número en el commit (`10.3`). Los
+textos son los que Montse aprobó el 11-oct (EN y ES), tal cual; una frase cambia solo si choca con
+una regla o un test, y el cambio se reporta con la original y la nueva. Del motor solo se usa lo que
+trae la dependencia, en `node_modules`.
+
+- [x] **10.0** La fase en los documentos: P10 en `docs/phases.md` y aquí, y la fase activa en
+      `AGENTS.md`.
+- [x] **10.1** Los ADR, antes de tocar `src/`, con `docs/decisions/README.md`,
+      `docs/content-rules.md` y `AGENTS.md` al día: el motor corre en `/finding` (enmienda el 0001,
+      el 0023, el 0025 y la regla (d); precisa el 0039) y el código del motor en la página (enmienda
+      el 0010).
+      Hecho: los ADR 0042 («El motor corre en `/finding`») y 0043 («El código del motor en la
+      página»). Con la entrada, la prosa de `/finding` mide 1 418 palabras (EN) y 1 561 (ES): el tope
+      de 1 600 no cambia. El techo de lo que se carga al pulsar se fija en 10.4, después de medirlo.
+      La gráfica en vivo es SVG: `AGENTS.md` prohíbe canvas, y el ADR 0042 no lo enmienda.
+- [x] **10.2** El motor como dependencia, fijada al commit del tag `v1.0.0`, que funcione en Vite
+      (cliente y worker), Vitest, el build de Astro y `astro check` (si no, una copia sin cambios en
+      `vendor/engine-v1.0.0/`, con su procedencia y su hash); el módulo puro
+      `src/lib/finding/population.ts` y su test contra `results/r6-curve-illustration.json`, semilla
+      por semilla, con los conteos finales y la media de 38 fijados.
+      Hecho, con la dependencia y sin copia en `vendor/`: funciona sin configuración en Vitest,
+      `astro check`, `tsc`, el build de Astro y Vite (cliente y worker, en `preview` y en `dev`),
+      probado con una página que no se guardó. `resolved` en `package-lock.json` es el commit
+      `4e59df7…`; `npm ci` lo baja sin SSH. El test: las 80 corridas terminan, semilla por semilla,
+      con la cuenta de `r6` (70 contra 0.74); 38 da 15 · 14 · 11 de 40, 5 y 70 dan 20 de 20 sin
+      culpa personal, y la media de 38 es 94.45. El `package.json` del motor no declara versión: el
+      test compara `ENGINE.version` con la de su `CITATION.cff` (ADR 0043, al día).
+- [x] **10.3** La figura fija, sin JS: dónde terminó cada corrida después de 400 generaciones, un
+      punto por corrida en tres filas, calculada en el build, con su leyenda, su descripción
+      accesible y una tabla oculta con los conteos; la sección nueva en la prosa de `/finding`, con
+      su entrada y su slot, entre «Lo que gana cada razón» y «Para quien quiera la cuenta».
+      Hecho: `Compete` (el slot `compete`, cerrado con el candado en `astro.config.mjs`) con
+      `CompeteStill`, de `src/lib/finding/still.ts` y su test. Los puntos, en tinta, se apilan donde
+      se tocarían (a 320 px, el ancho más angosto), hasta 10 de alto y después en otra columna, pegada,
+      hacia el centro. La descripción accesible son las tres frases de «Al terminar»; la tabla oculta
+      da los conteos de cada mundo. «400» sale de `GENERATIONS`, no de la clave. `verify:dist` busca
+      `data-compete`. Textos que no estaban en el Anexo, para la tabla oculta: sus encabezados
+      «Personal guilt gone» / «Sin culpa personal», «Only personal guilt» / «Solo culpa personal» y
+      «Still mixed» / «Todavía mezcladas», tomados del conteo aprobado, y «Runs» / «Corridas».
+- [x] **10.4** El motor en vivo: el botón que carga el worker solo al pulsar, la gráfica con una
+      línea por corrida, los controles, el conteo, la región viva que habla al terminar, el
+      movimiento reducido, el fallo del worker y el techo de peso de lo que se carga al pulsar, con
+      `src/data/weight.json` al día.
+      Hecho: `CompeteLive` con su arranque (`compete.ts`), el módulo que se carga al pulsar
+      (`compete-live.ts`) y el worker (`compete.worker.ts`), con `src/lib/finding/live.ts` y su test.
+      La gráfica es SVG: una línea por corrida en tinta y la resaltada en el oro del hilo; el
+      deslizador va bajo el eje de las generaciones. En el navegador: antes de pulsar no se descarga
+      nada del motor; al pulsar, el módulo y el worker; los tres mundos terminan con los conteos de
+      `r6`. Si no hay workers, la figura fija se queda y el estado lo dice; el botón conserva el foco
+      (`aria-disabled`). El techo nuevo, `finding-press`: 7 KiB (pesa 5.3); la primera carga de JS de
+      `/finding` pasa de 2.8 a 4.1 KiB, bajo sus 8 (ADR 0042, al día; en 10.7 baja a 3.4). `budgets`
+      encuentra lo que se carga después en los `import()` y los `new URL(…, import.meta.url)` (y,
+      desde 10.7, en los atributos `data-later-*`). `weight.json` no cambia:
+      los home pesan lo mismo. `tests/memory.test.ts` revisa también los scripts del motor en vivo.
+- [x] **10.5** El registro de cifras: 400, 20 y 40, con su fuente en `docs/sources.md`; `/sources`
+      lista lo nuevo con el candado abierto.
+      Hecho: la clave `engine-runs` (400, 20 y 40), bajo el working paper en `/sources`, con su
+      entrada en `docs/sources.md` (fuente: `r6`, `params.generations`, `seeds.q9` y `seeds.q9b`).
+      `ENGINE_RUNS_FIGURES` en `src/content/figures.ts`; el test de `population.ts` lo compara con el
+      módulo y con `r6`. Los conteos en vivo no van al registro: el mismo test los fija contra `r6`.
+- [x] **10.6** Fuera de la sección: el final del primer párrafo de `/how-its-built` y un punto nuevo
+      en «How it's built» / «Cómo está hecho» de los README.
+      Hecho, con los textos dados: «…and on /finding» y «…y en /finding»; el punto «The engine,
+      live» / «El motor, en vivo», después de «A formula you can move» / «Una fórmula que se puede
+      mover». «The research» / «La investigación» no cambia.
+- [x] **10.7** La QA: anchos, sin JS, red, tiempos (normal y con la CPU frenada 4×), teclado y
+      lector de pantalla, movimiento reducido, axe, pesos y Lighthouse de `/finding`, los tests de
+      reglas y un build cerrado de prueba. Capturas en `scratch/p10/`, con su README.
+      Hecha, con dos arreglos, en `1ff5a66`: el botón se quedaba en
+      «Starting the engine…» cuando el motor ya corría, y el arranque del motor en vivo, como script
+      aparte, subía el LCP de `/finding` de 1.81 a 1.96 s. Ahora va dentro del HTML y carga el módulo
+      y el worker de las URL que el build escribe (ADR 0042, al día). El detalle, en la tabla de abajo.
+
+### QA de P10 (paso 10.7)
+
+Sobre `npm run preview` del build abierto, con Chrome sin interfaz y las sondas de `scratch/p10/qa/`.
+
+| Punto | Cómo | Resultado | Arreglo |
+| ----- | ---- | --------- | ------- |
+| 1. Anchos | `widths.mjs`: /finding a 320, 360, 768, 1024 y 1440, EN y ES, en reposo y con 38 corrido | 0 desbordes (la tabla oculta queda dentro de `.visually-hidden`, como la de la figura de dos paneles) | — |
+| 2. Sin JS | `nojs.mjs`, 360 y 1440, EN y ES | Título, entrada, figura fija (80 puntos) y leyenda; el bloque del motor no se ve (0 px), 0 controles, nada del motor descargado | — |
+| 3. Red | `live.mjs`, EN y ES (`performance` de la página) | Antes de pulsar, ningún archivo del motor; al pulsar, el módulo y el worker | — |
+| 4. Tiempo | `timing.mjs` y `live.mjs`, tres mundos seguidos | Sin movimiento reducido, cada mundo termina en 13.4–13.7 s (lo marca el ritmo de 30 generaciones por segundo). El cálculo del motor (con movimiento reducido): 38 en 2.2–4.0 s, 5 y 70 en 1.0–2.2 s, según la carga del equipo. Con la CPU frenada 4×, el dibujo no cambia (13.4–13.7 s); el worker no se puede frenar: Chrome responde «Operation is only supported for pages, not workers» | — |
+| 5. Teclado y lector de pantalla | `keys.mjs`, EN y ES, claro y oscuro; árbol de accesibilidad del CDP | 2 paradas antes de pulsar y 5 al terminar, todas con anillo; flechas en los mundos, Enter y Espacio en el botón, Inicio y Fin en el deslizador; la región viva habló una vez, en la generación 400. Nombres: el grupo «Choose a world», los tres `radio`, los botones y el deslizador «Generations» | El botón se quedaba en «Starting the engine…» |
+| 6. Movimiento reducido | `reduced.mjs`, EN y ES | Ninguna línea mientras corre; las 40 de golpe al terminar | — |
+| 7. axe 4.14.0 | `axe.mjs`: /finding, /how-its-built y /sources, EN y ES, 360 y 1440, claro y oscuro, y /finding con 38 corrido (32 corridas) | 0 violaciones. Las líneas (tinta al 55 %) dan unos 3.8:1 en claro y 5.3:1 en oscuro, sobre el 3:1 de los gráficos | — |
+| 8. Pesos y Lighthouse 13.5.0 | `npm run budgets`; 3 corridas por idioma, y 3 de `main` en las mismas condiciones | JS de primera carga de /finding 3.4 KiB (antes 2.8; techo 8), sin ningún script aparte; al pulsar 5.3 KiB (techo 7); primera carga 144.3 / 144.7 KiB. LCP 1.81 s EN y ES, como `main` (1.81 s); puntaje 0.99, CLS 0, TBT 0. `weight.json` no cambia | Con el arranque como script aparte, el LCP era 1.96 s: ahora va dentro del HTML |
+| 9. Tests de reglas | `npm test` | Frases prohibidas, «solo agregar», registro de cifras y `memory.test.ts` (que ahora revisa también el motor en vivo) en verde | — |
+| 10. Build cerrado | `locked-check.sh` | `verify:dist` en verde; en `dist/` no hay `data-compete`, ni los scripts del motor en vivo, ni el motor, ni el título de la sección | — |
+
+Además, el fallo: sin workers, con el módulo bloqueado en la red (`blocked.mjs`) y con el worker
+apuntando a una URL que no existe (`badworker.mjs`), la figura fija se queda y el estado dice que
+el motor no pudo correr; el botón conserva el foco (`aria-disabled`). En `npm run dev` el motor
+corre igual.
+
+**Lo que se encontró y no se arregló**
+
+- `src/lib/finding/still.ts` (`stack`): en la fila de 38, en pantallas anchas, la segunda columna
+  de la pila en 0 empezaba dos niveles arriba, porque el punto de una corrida cercana a 0 la toca en
+  el ancho de un teléfono. → resuelto después de la QA: los puntos se acomodan dos veces, para la
+  gráfica de un teléfono y para una de 600 px o más (`NARROW` y `WIDE`, con una container query en
+  `CompeteStill.astro`); en la ancha, la segunda columna empieza en el eje, como la primera.
+- `src/components/finding/compete-live.ts`: al elegir un mundo que ya terminó, la región viva dice
+  otra vez su frase final. Es a propósito (quien usa lector de pantalla oye el resultado del mundo
+  que eligió), pero no es «al terminar de correr». Montse decidió dejarlo así.
+- El tiempo con la CPU frenada 4× no se pudo medir para el motor: DevTools no frena workers.
+- `README.es.md`: el punto nuevo decía «al pulsar «Correr»», y el botón dice «Correr el motor».
+  → resuelto después de la QA: los dos README nombran el botón completo (decisión de Montse).
+- [ ] **10.8 (Montse)** Revisa las capturas y el video de 38 corriendo.
+- [ ] **10.9 (Montse)** El PR de P10 a `main`, y `deploy.yml` cuando ella lo decida.
 
 ## F6 · Lanzamiento
 

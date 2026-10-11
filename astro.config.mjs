@@ -47,6 +47,8 @@ const LOCKED_MODULES = {
   '/src/components/finding/ThreeWorlds.astro': '/src/components/curve/Locked.astro',
   '/src/components/finding/ResultFigure.astro': '/src/components/curve/Locked.astro',
   '/src/components/finding/Explorer.astro': '/src/components/curve/Locked.astro',
+  // «When the reasons compete» (ADR 0042): the still figure, the live engine and, with them, the engine.
+  '/src/components/finding/Compete.astro': '/src/components/curve/Locked.astro',
   '/src/lib/film/finding.ts': '/src/lib/film/finding.locked.ts',
 };
 
@@ -83,6 +85,9 @@ export default defineConfig({
   output: 'static',
   vite: {
     plugins: [lockFinding()],
+    // /finding's live engine (ADR 0042): its module and its worker are bundled apart as ES modules, the
+    // module loaded with `import()` when «Run the engine» is pressed (src/components/finding/compete.ts).
+    worker: { format: 'es' },
   },
   // Every internal URL ends in "/" so it matches what GitHub Pages serves.
   trailingSlash: 'always',

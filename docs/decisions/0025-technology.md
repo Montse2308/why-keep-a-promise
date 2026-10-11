@@ -7,6 +7,9 @@ carga valen en cada página. Precisado por el ADR 0030: la lista cerrada de las 
 Enmendado por el ADR 0038: un script más, el explorador de la fórmula, solo en `/finding`, con su
 techo de peso. Precisado por el ADR 0037: el póster de `/finding` lleva su línea y una miniatura de
 la gráfica de pago.
+Enmendado por el ADR 0042: un script más, el del motor en vivo, solo en `/finding`, que descarga su
+código y su worker solo al pulsar, con su propio techo de peso. Enmendado por el ADR 0043: una
+dependencia más, el motor del paper en su `v1.0.0`, fijada a su commit.
 
 ## Contexto
 

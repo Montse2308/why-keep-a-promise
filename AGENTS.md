@@ -28,10 +28,13 @@ page Montse shares, understood without the story: the text she approved on 2026-
 worlds, a two-panel figure, a formula explorer, how to cite; with the rest of the site around it:
 its poster and JSON-LD, the cover's link to it, the engine on /how-its-built, ORCID and SSRN on
 /about), reached `main` with PR #21, and `deploy.yml` ran on 2026-10-10; its last details after the
-deploy are step 9.10 in `docs/tasks.md`. There is no active phase: what follows is maintenance, with
-plain commits to `main` or short branches, and `deploy.yml` run by Montse. The current one is M1,
-the post-launch catch-up of what was still written as before the launch (branch `m1/post-launch`,
-section M1 of `docs/tasks.md`).
+deploy are step 9.10 in `docs/tasks.md`. M1, the post-launch catch-up of what was still written as
+before the launch, reached `main` with PR #23. The active phase is **P10, the engine on /finding**
+(branch `p10/engine-live`, section P10 of `docs/tasks.md`): a section of /finding where the paper's
+simulation engine, v1.0.0, runs in the browser in the three fixed worlds of the cards (background
+trust 5, 38 and 70), with the paper's seeds and nothing to set. Its steps are numbered (`10.3`), each
+left green and committed with its number, without push or `deploy.yml`; stop at steps marked
+**(Montse)**.
 P7, the fixes from an external review, was planned in small steps (one per session) in
 `docs/archivo/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
@@ -62,7 +65,7 @@ Read these before changing anything, in this order:
 1. `docs/plan.md`: what the page is (decided; do not reopen).
 2. `docs/content-rules.md`: what may and may not be written, anywhere.
 3. `docs/phases.md`: phases P0–P9, F5 (QA) and F6 (launch), with their exit criteria.
-4. `docs/tasks.md`: current tasks; only work on the active phase. When there is none, as now, the
+4. `docs/tasks.md`: current tasks; only work on the active phase (now P10). When there is none, the
    work is maintenance: a short branch from `main` (such as `m1/post-launch`) with its own section
    in `docs/tasks.md`, its steps numbered (`M1.3`), each left green and committed with its number,
    without push or `deploy.yml`, which Montse decides and runs; stop at steps marked **(Montse)**.
@@ -93,7 +96,7 @@ not by reading test output.
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
 | `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034), or if a link leaving the site does not open in a new tab with its notice, or one inside it does (8.3) |
-| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load) or /finding's JS (ADR 0038), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
+| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), /finding's JS (ADR 0038) or what /finding loads when «Run the engine» is pressed (ADR 0042), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
 | `npm run check:launch` | Builds, then fails while a link is still a `*_PENDING` placeholder in `dist/`, `src/` or the READMEs (ADR 0034). Not in CI; step 3 of the launch checklist and `deploy.yml` run it |
 
 `check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
@@ -121,9 +124,11 @@ the weights beside it come from `src/data/weight.json`.
   (ADR 0029). No `localStorage`, `sessionStorage`, IndexedDB, cookies or analytics; nothing is sent.
 - Budgets: home JS ≤ 40 KiB gzipped (the two homes), `/finding`'s JS ≤ 8 KiB gzipped (ADR 0038),
   fonts ≤ 160 KiB and first load ≤ 450 KiB (every page), LCP ≤ 2.5 s on a mid-range phone. KiB, and
-  which pages, by ADR 0028.
-- The only new dependency the plan allows is `@resvg/resvg-js`, as a dev dependency, for Open Graph
-  posters (in since P6). Anything else: ask first.
+  which pages, by ADR 0028. What /finding loads only when «Run the engine» is pressed (the live
+  engine's code and its worker) has a ceiling of its own (ADR 0042).
+- The only new dependencies the plan allows are `@resvg/resvg-js`, as a dev dependency, for Open
+  Graph posters (in since P6), and the paper's engine, `dilema-prisionero`, pinned to the commit of
+  its `v1.0.0` tag (ADR 0043). Anything else: ask first.
 - No `@types/node`: code that needs Node's API at build time is plain `.mjs` (`scripts/`,
   `src/lib/posters/fonts.mjs`). Check current versions with the official tools; never pin
   versions from memory.
@@ -182,6 +187,14 @@ src/
     finding/worlds.ts    /finding's three worlds and the payoff panel's variant tail, from curve.json
     finding/explorer.ts  /finding's formula explorer: the guilt available, its window, peak and θmin
                          (ADR 0038); pure, imports nothing, pinned to the register by its test
+    finding/population.ts  /finding's «When the reasons compete» (ADR 0042): the three worlds, the
+                         paper's seeds and settings, every run generation by generation, and the
+                         tally; the only module that imports the engine (ADR 0043), checked seed by
+                         seed against the paper's runs (`results/r6`) by its test
+    finding/still.ts     the still figure of «When the reasons compete»: one dot per run where it
+                         ended, stacked where they would touch; build time only
+    finding/live.ts      the live engine's messages, pace (30 generations a second), each run's line
+                         and the main button's label; imports only types, never the engine
     jsonld.ts            /finding's structured data: the working paper and the engine, from config.ts
     cite.ts              /finding's «How to cite»: the working paper (APA, BibTeX) and the engine, from config.ts
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
@@ -234,7 +247,11 @@ src/
                          finding/ (/finding's own, behind the lock, ADR 0037: MinuteLinks, the buttons
                          of «In one minute»; Explorer, with explorer.ts, its script, the only one
                          on /finding besides the panel's; ThreeWorlds; ResultFigure, the two panels, GuiltChart on
-                         top; Cite; FindingProse, the styles of its blocks of prose);
+                         top; Compete, «When the reasons compete» (ADR 0042), with CompeteStill, its
+                         still figure, and CompeteLive, the live engine: compete.ts its small
+                         first-load script, compete-live.ts the chart and controls loaded on the
+                         press, compete.worker.ts the worker with the engine; Cite; FindingProse, the
+                         styles of its blocks of prose);
                          LanguageSwitch; PaperStatus, the status sentence (ADR 0034); Hero, the
                          home's cover (ADR 0036)
   layouts/BaseLayout.astro
@@ -293,8 +310,11 @@ scratch/                 local notes, git-ignored, never committed
     time a promise stops binding and its cut at one half, and the protocol null's 60 out of 60: no
     letter `s`, no φ, N, generations or named seeds, and not the lab's 59 % or 43 % (ADR 0039). The
     formula explorer moves only θ, background trust and the belief that a promise will be kept
-    (ADR 0038). Behind the lock, `/sources` lists `/finding`'s figures from the register and names θ
-    and c, never their values (ADR 0035).
+    (ADR 0038). In /finding's «When the reasons compete», and only there, the page says the
+    generations (400) and the number of runs (20 and 40), and nothing more: no other setting of the
+    engine and no seed by name; the visitor only chooses one of three worlds (ADR 0042). Behind the
+    lock, `/sources` lists `/finding`'s figures from the register and names θ and c, never their
+    values (ADR 0035).
   - Outside the lock, chapter 7 says only the question and that Montse built a simulation engine in
     TypeScript. Nothing about the engine's tests, seed, generations, imitation or provenance
     (rule (j)).
@@ -306,17 +326,24 @@ scratch/                 local notes, git-ignored, never committed
 - **Copying the working paper or the paper's context.** Do not read or copy the working paper or its
   working files, wherever they live (local folders, Drive). If something is missing, ask.
 - **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,
-  local folder `dilema-prisionero`) is never opened, added as a dependency, submodule or alias, and
-  no file is copied from it. Its output reaches this repo only as `src/data/curve.json` (ADR 0010).
+  local folder `dilema-prisionero`) is never opened or cloned, added as a submodule or alias, or
+  edited, and no file is copied from it. Its curve reaches this repo only as `src/data/curve.json`
+  (ADR 0010). The one exception (ADR 0043): the dependency `dilema-prisionero`, pinned to the commit
+  of the `v1.0.0` tag, whose `src/index.ts` only `src/lib/finding/population.ts` imports, for
+  /finding's «When the reasons compete» (ADR 0042); of the engine, only what that dependency brings
+  into `node_modules` is used, and a test checks it against the paper's runs (`results/r6`).
 - **Visuals and games outside ADR 0023/0027.**
   - No WebGL, WebGPU, PixiJS, canvas, GSAP or Lottie.
-  - No visualising populations or dynamics: no agents, grids or one dot per person.
+  - No visualising populations or dynamics: no agents, grids or one dot per person. The one
+    exception is /finding's «When the reasons compete», behind the lock (ADR 0042): the share of a
+    population with personal guilt, one line per run (one dot per run in its still figure).
   - No playable repeated prisoner's dilemma anywhere: link to *The Evolution of Trust* instead. The
     dilemma in chapter 1 is played once.
   - No charts beyond chapter 7's curve and `/finding`'s figures (the guilt chart, what each reason
-    earns, the three worlds' meters and the formula explorer, ADR 0037 and 0038), all behind the
-    lock, and the miniature on `/finding`'s poster.
-  - No interaction outside the list in ADR 0023, with the formula explorer of ADR 0038.
+    earns, the three worlds' meters, the formula explorer, ADR 0037 and 0038, and the live engine's
+    chart and still figure, ADR 0042), all behind the lock, and the miniature on `/finding`'s poster.
+  - No interaction outside the list in ADR 0023, with the formula explorer of ADR 0038 and the live
+    engine of ADR 0042.
   - The scroll is never hijacked.
 - **Naming a journal** for Montse's text, which goes to no journal (it is a working paper on SSRN,
   ADR 0034), submission dates or correspondence with other authors, in any file. Third-party

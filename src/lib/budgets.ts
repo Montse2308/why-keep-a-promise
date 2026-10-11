@@ -11,6 +11,11 @@
  * A kilobyte is 1024 bytes (a KiB), as Lighthouse counts its budgets, and the fonts and first-load
  * ceilings hold on every page (ADR 0028, which makes ADR 0025's budgets precise). /finding's
  * JavaScript, its formula explorer and the notebook's panel, has a ceiling of its own (ADR 0038).
+ *
+ * What a page loads later, when a button is pressed, is not part of its first load: a script named
+ * by an element's `data-later-*` attribute, a dynamic `import()` or a worker's
+ * `new URL(…, import.meta.url)`, with what they import. It is weighed apart, and /finding's, the live
+ * engine and its worker, has a ceiling of its own (ADR 0042).
  */
 
 export const KB = 1024;
@@ -25,10 +30,13 @@ export type BudgetId = (typeof BUDGET_IDS)[number];
 /** The pages a budget holds on, besides the home pages and every page: /finding, in each language. */
 export type BudgetPage = 'finding';
 
+/** What a budget weighs: a total of the first load, or what a press loads later (`press`). */
+export type Measure = BudgetId | 'press';
+
 export interface Budget {
-  readonly id: BudgetId | 'finding-script';
+  readonly id: BudgetId | 'finding-script' | 'finding-press';
   /** What it weighs, of a page's totals. */
-  readonly measure: BudgetId;
+  readonly measure: Measure;
   /** The ceiling, in bytes as they travel. */
   readonly bytes: number;
   /** Whether it holds on the home pages only (the film's script). */
@@ -36,6 +44,9 @@ export interface Budget {
   /** Or on one notebook page only, in every language; otherwise it holds on every page. */
   readonly page?: BudgetPage;
 }
+
+/** /finding's live engine, its code and its worker, loaded only when «Run the engine» is pressed (ADR 0042). */
+export const PRESS_CEILING = 7 * KB;
 
 /**
  * ADR 0025, read as ADR 0028 says: the home's JavaScript, the fonts of a first load, and the whole
@@ -46,6 +57,7 @@ export const BUDGETS: readonly Budget[] = [
   { id: 'fonts', measure: 'fonts', bytes: 160 * KB, home: false },
   { id: 'first-load', measure: 'first-load', bytes: 450 * KB, home: false },
   { id: 'finding-script', measure: 'home-script', bytes: 8 * KB, home: false, page: 'finding' },
+  { id: 'finding-press', measure: 'press', bytes: PRESS_CEILING, home: false, page: 'finding' },
 ];
 
 /** Whether a page, by its URL from the site's root, is a given notebook page in some language: `…/finding/`. */
@@ -77,6 +89,13 @@ export interface PageWeight {
   readonly home: boolean;
   readonly resources: readonly Resource[];
   readonly totals: Record<BudgetId, number>;
+  /** What a press loads later, by URL, each with what it imports; not part of the first load. */
+  readonly later?: readonly Resource[];
+}
+
+/** What a page weighs by a measure: a total of its first load, or what a press loads later. */
+export function measured(weight: PageWeight, measure: Measure): number {
+  return measure === 'press' ? (weight.later ?? []).reduce((total, r) => total + r.bytes, 0) : weight.totals[measure];
 }
 
 export interface Overrun {
@@ -116,6 +135,8 @@ export interface PageRefs {
   readonly images: readonly string[];
   /** The text of every inline <style>. */
   readonly inlineStyles: readonly string[];
+  /** Scripts the page loads later, on a press, named by an element's `data-later-*` attribute. */
+  readonly later: readonly string[];
 }
 
 /** What a page's HTML asks the browser for on its first load. */
@@ -150,7 +171,8 @@ export function refsOf(html: string): PageRefs {
     if (src && attribute(match[0], 'loading') !== 'lazy') images.push(src);
   }
   for (const match of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) inlineStyles.push(match[1] ?? '');
-  return { scripts, inlineScripts, styles, preloads, images, inlineStyles };
+  const later = [...html.matchAll(/\sdata-later(?:-[a-z]+)*\s*=\s*"([^"]+)"/gi)].map((match) => match[1] ?? '');
+  return { scripts, inlineScripts, styles, preloads, images, inlineStyles, later };
 }
 
 /** The modules a script imports statically; dynamic `import()` loads later, so it is not counted. */
@@ -162,6 +184,17 @@ export function importsOf(js: string): string[] {
   for (const match of js.matchAll(/(?:^|[;}\s])export\s*(?:\*|\{[^}]*\})\s*from\s*["']([^"']+)["']/g)) {
     if (match[1]) found.add(match[1]);
   }
+  return [...found];
+}
+
+/**
+ * What a script loads later, not on the page's load: each dynamic `import()` of a literal path, and
+ * each `new URL()` of a literal path against `import.meta.url`, as a worker is started.
+ */
+export function laterOf(js: string): string[] {
+  const found = new Set<string>();
+  for (const match of js.matchAll(/\bimport\(\s*(["'`])([^"'`]+)\1\s*\)/g)) if (match[2]) found.add(match[2]);
+  for (const match of js.matchAll(/\bnew URL\(\s*(["'`])([^"'`]+)\1\s*,[^()]*?import\.meta\.url\s*\)/g)) if (match[2]) found.add(match[2]);
   return [...found];
 }
 
@@ -264,12 +297,31 @@ export function weigh(page: string, html: string, htmlBytes: number, home: boole
   }
   for (const url of refs.images) add('image', resolveUrl(url, page));
 
+  // What the page's scripts load later, on a press, and what that imports, once each and apart.
+  const later: Resource[] = [];
+  const pending = [
+    ...refs.later.map((url) => resolveUrl(url, page)),
+    ...refs.inlineScripts.flatMap((js) => laterOf(js).map((url) => resolveUrl(url, page))),
+    ...resources.filter((r) => r.kind === 'script').flatMap((r) => laterOf(read.text(r.url) ?? '').map((url) => resolveUrl(url, r.url))),
+  ];
+  while (pending.length > 0) {
+    const url = pending.shift() ?? '';
+    if (seen.has(url)) continue;
+    seen.add(url);
+    const bytes = read.bytes(url, 'script');
+    if (bytes === null) throw new Error(`${page} loads ${url} later, which dist/ does not have`);
+    later.push({ kind: 'script', url, bytes });
+    const js = read.text(url) ?? '';
+    pending.push(...importsOf(js).map((imported) => resolveUrl(imported, url)), ...laterOf(js).map((next) => resolveUrl(next, url)));
+  }
+
   const sum = (kinds: readonly ResourceKind[]) => resources.filter((r) => kinds.includes(r.kind)).reduce((total, r) => total + r.bytes, 0);
   const inline = inlineBytes.reduce((total, bytes) => total + bytes, 0);
   return {
     page,
     home,
     resources,
+    later,
     totals: {
       'home-script': sum(['script']) + inline,
       fonts: sum(['font']),
@@ -283,8 +335,8 @@ export function overruns(weights: readonly PageWeight[], budgets: readonly Budge
   return weights.flatMap((weight) =>
     budgets
       .filter((budget) => holdsOn(budget, weight))
-      .filter((budget) => weight.totals[budget.measure] > budget.bytes)
-      .map((budget) => ({ page: weight.page, budget: budget.id, bytes: weight.totals[budget.measure], ceiling: budget.bytes })),
+      .filter((budget) => measured(weight, budget.measure) > budget.bytes)
+      .map((budget) => ({ page: weight.page, budget: budget.id, bytes: measured(weight, budget.measure), ceiling: budget.bytes })),
   );
 }
 

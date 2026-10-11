@@ -15,10 +15,11 @@ una cita que no están registrados, o si una clave no existe aquí.
 `/sources` (P5, ADR 0024) muestra ese registro al visitante (`src/lib/sources.ts`): cada obra con su
 referencia completa y, debajo, cada clave con sus cifras, dónde está en la fuente y dónde se usa. Su
 parte abierta se ve igual en los dos estados (ADR 0034). Las claves del hallazgo
-(`vanberg-second-order`, `kawagoe-narita-2014`, `curve`, `curve-finding`, `di-bartolomeo-2023` y
-`working-paper-results`, en `FINDING_ENTRIES`) se suman solo detrás del candado, con sus cifras, salvo los valores de θ y c, que se nombran pero solo
-se dan en `/finding` (ADR 0035); `curve`, `curve-finding` y `working-paper-results` van bajo el
-working paper en SSRN, con el motor (su repo y el DOI de su release) como su material. Las que ya no se muestran
+(`vanberg-second-order`, `kawagoe-narita-2014`, `curve`, `curve-finding`, `di-bartolomeo-2023`,
+`working-paper-results` y `engine-runs`, en `FINDING_ENTRIES`) se suman solo detrás del candado, con
+sus cifras, salvo los valores de θ y c, que se nombran pero solo se dan en `/finding` (ADR 0035);
+`curve`, `curve-finding`, `working-paper-results` y `engine-runs` van bajo el working paper en SSRN,
+con el motor (su repo y el DOI de su release) como su material. Las que ya no se muestran
 (`vanberg-switch` y `vanberg-chat`, en `RETIRED`) no se listan. Un test exige que cada clave esté en
 uno solo de esos tres lugares.
 Lo que `/sources` dice de cada clave y dónde está en la fuente vive en las claves `sources.*` de
@@ -490,6 +491,40 @@ de atar se dice solo con palabras, sin su letra ni otros valores (ni φ, ni N, n
   Fuente: el working paper, sección 6, y los resultados del motor sobre esa tasa. Comprobado por la
   sesión de contexto de P9 y aprobado por Montse (2026-10-10).
   Usada en: `/finding` («When a promise can stop binding» / «Cuando una promesa puede dejar de atar»).
+
+### Las corridas del motor en vivo (P10, ADR 0042)
+
+Solo en `/finding` («Cuando las razones compiten») y solo detrás del candado. El motor del paper, en
+su `v1.0.0`, corre en la página (ADR 0043); su ilustración de la curva trae sus corridas en
+`results/r6-curve-illustration.json`, dentro de la dependencia fijada
+(`node_modules/dilema-prisionero/`). La página dice las generaciones y el número de corridas, y nada
+más de los ajustes (ADR 0042); las semillas no se nombran en la página.
+
+- **Clave:** `engine-runs`.
+- **Verificada:** `src/lib/finding/population.test.ts` corre los tres mundos completos y compara la
+  cuenta final de culpa personal de cada semilla con `r6` (5 contra `q9` en 0.05, 38 contra `q9b` en
+  0.38, 70 contra `q9` en 0.74, cuyas 20 corridas son las mismas que las de 0.70, generación por
+  generación, como se comprobó en la sesión de contexto de P10). Fija también los conteos finales
+  (38: sin culpa personal 15, solo culpa personal 14 y todavía mezcladas 11, de 40; 5 y 70: sin
+  culpa personal 20 de 20) y la media final de 38, 94.45 de 200. Los conteos que la página calcula en
+  vivo no se registran uno por uno: el test los fija contra `r6`, como el ADR 0038 hizo con el
+  explorador.
+- **La versión** que la página dice, 1.0.0, sale de `ENGINE.version` (`src/config.ts`); el test la
+  compara con la del `CITATION.cff` del motor.
+
+- Cifra: "400", las generaciones de cada corrida.
+  Clave: `engine-runs`.
+  Fuente: el motor, `results/r6-curve-illustration.json`, `params.generations`.
+  Usada en: `/finding` (el título de la figura fija, «Dónde terminó cada corrida, después de 400
+  generaciones», y el motor en vivo: la generación que se muestra y el anuncio al terminar).
+- Cifra: "20", las corridas en 5 y en 70, semillas `q9-0` … `q9-19`.
+  Clave: `engine-runs`.
+  Fuente: `r6`, `seeds.q9`.
+  Usada en: `/finding` (el conteo del motor en vivo, la tabla oculta de la figura fija).
+- Cifra: "40", las corridas en 38, semillas `q9b-0` … `q9b-39`.
+  Clave: `engine-runs`.
+  Fuente: `r6`, `seeds.q9b`.
+  Usada en: `/finding` (el conteo del motor en vivo, la tabla oculta de la figura fija).
 
 ## Formato de una cifra
 
