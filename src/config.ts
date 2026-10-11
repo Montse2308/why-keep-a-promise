@@ -12,9 +12,9 @@ export const AUTHOR = {
 /**
  * The working paper (ADR 0034): its title, in English in both languages, and its page on SSRN, which
  * holds the PDF. The status sentence shows the title linked to that page on chapter 7's stamp, the
- * notebook's entry for the finding and /finding (docs/content-rules.md, rule (b)). The link is a
- * placeholder until step 3 of docs/launch-checklist.md, and while it is, the lock stays closed
- * (src/lib/lock.ts).
+ * notebook's entry for the finding and /finding (docs/content-rules.md, rule (b)). The link is the
+ * working paper's page on SSRN, set at step 3 of docs/launch-checklist.md (F6); being real, it keeps
+ * the lock open (src/lib/lock.ts).
  */
 export const WORKING_PAPER = {
   title: 'Promises to whom: Identifying personal guilt and partner-specific commitment across populations',
