@@ -96,6 +96,12 @@ a:hover {
 .link-out > [aria-hidden] {
   margin-inline-start: 0.15em;
   font-size: 0.75em;
+  font-style: normal;
+}
+
+/* The arrow keeps the link's last characters with it: it never wraps onto a line of its own. */
+.link-end {
+  white-space: nowrap;
 }
 
 :focus-visible {

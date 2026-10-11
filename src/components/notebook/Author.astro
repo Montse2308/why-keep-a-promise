@@ -5,7 +5,7 @@
  * or biography. The SSRN page lists the working paper, so it is linked only behind the lock (ADR 0034).
  */
 import { AUTHOR, WORKING_PAPER } from '../../config';
-import { externalAttrs, externalMark } from '../../lib/external';
+import { externalAttrs, externalText } from '../../lib/external';
 import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
 import { findingUnlocked } from '../../lib/lock';
 
@@ -27,7 +27,7 @@ const profiles: { url: string; key: UiKey }[] = [
 <div class="author">
   <p class="author__name">{tr('author.name')}</p>
   <ul class="author__links" role="list">
-    {profiles.map((profile) => <li><a href={profile.url} {...externalAttrs(profile.url, 'me')}>{tr(profile.key)}<Fragment set:html={externalMark(profile.url, locale)} /></a></li>)}
+    {profiles.map((profile) => <li><a href={profile.url} {...externalAttrs(profile.url, 'me')}><Fragment set:html={externalText(tr(profile.key), profile.url, locale)} /></a></li>)}
   </ul>
 </div>
 

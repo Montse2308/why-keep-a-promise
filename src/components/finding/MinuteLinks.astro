@@ -8,7 +8,7 @@
  * (astro.config.mjs), since it links to the engine's repository.
  */
 import { ENGINE, WORKING_PAPER } from '../../config';
-import { externalAttrs, externalMark } from '../../lib/external';
+import { externalAttrs, externalText } from '../../lib/external';
 import { useTranslations, type Locale } from '../../lib/i18n';
 
 interface Props {
@@ -29,8 +29,7 @@ const links = [
     links.map((link) => (
       <li>
         <a class:list={['minute__link', { 'minute__link--main': link.main }]} href={link.url} {...externalAttrs(link.url)}>
-          {link.label}
-          <Fragment set:html={externalMark(link.url, locale)} />
+          <Fragment set:html={externalText(link.label, link.url, locale)} />
         </a>
       </li>
     ))
