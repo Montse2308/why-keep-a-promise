@@ -3,16 +3,19 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P9, `/finding` por sí sola (rama `p9/finding`). P8, los retoques después del
-lanzamiento, llegó a `main` con el PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
+**Fase activa:** ninguna. Lo que sigue es mantenimiento, con ramas cortas: ahora M1, la puesta al
+día después del lanzamiento (rama `m1/post-launch`, sección M1). P9, `/finding` por sí sola, llegó
+a `main` con el PR #21 (y su cierre con el #22); P8, los retoques después del lanzamiento, con el
+PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
 línea en `https://montse2308.github.io/why-keep-a-promise/`. F5, la QA, cerrada en la rama
 `launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7 cerradas: Montse las revisó
 (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
 como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** ninguna planeada. P8 y P9 llegan al sitio cuando Montse hace el merge a `main`
-y vuelve a correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
+**Fase siguiente:** ninguna planeada. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
+que llega a `main` llega al sitio cuando Montse vuelve a correr `deploy.yml`
+(`docs/launch-checklist.md`, «Después del lanzamiento»).
 
 **El lanzamiento (F6)** lo disparó el working paper público en SSRN y el repo del motor público
 (ADR 0034). Su preparación y sus pasos, todos hechos, están en la sección F6.
@@ -1409,6 +1412,35 @@ seguir no hacen falta: se rehacen con las herramientas de `scratch/tools/` (`exp
   con el candado abierto).
 
 P9 llegó a `main` con el PR #21.
+
+## M1 · Puesta al día después del lanzamiento
+
+Mantenimiento, sin fase activa: poner al día lo que quedó escrito de antes del lanzamiento. En la
+rama `m1/post-launch`, desde `main` en `895305b` (el merge del PR #22); sin push, sin PR y sin
+`deploy.yml`, que decide y corre Montse. No toca el despliegue (`deploy.yml`,
+`docs/launch-checklist.md`, `scripts/check-launch.mjs`). Cada paso termina en verde (`check`,
+`test`, `build`, `verify:dist`, `budgets` y `check:launch`) y lleva su número en el commit
+(`M1.3`). Los textos son los que Montse dio; uno cambia solo si choca con una regla o un hecho del
+repo, y el cambio se reporta con el original y el nuevo.
+
+- [ ] **M1.1** `/how-its-built`: el párrafo de «El candado» en pasado (el candado ya está abierto;
+      el plugin y `verify:dist` siguen corriendo en cada build), y el primer párrafo dice que
+      JavaScript corre también en el explorador de la fórmula de `/finding`.
+- [ ] **M1.2** Las líneas del cuaderno de `/about` (suma ORCID y SSRN) y de `/how-its-built` (suma
+      el motor de simulación), cada una con su versión cerrada; en español, «test» → «prueba» en
+      `/how-its-built` y en «De dónde salen los números» de `/finding` (decisión de Montse).
+- [ ] **M1.3** La portada: con el candado abierto, «The finding» va primero en la tarjeta de la
+      investigación, como botón principal, y «Go to chapter 7» debajo (decisión de Montse,
+      2026-10-10); cerrado, no cambia. La línea de estado del ADR 0040 lo registra.
+- [ ] **M1.4** Los documentos internos de antes del lanzamiento, marcados como historia:
+      `AGENTS.md`, `docs/plan.md`, `docs/content-rules.md` y `docs/phases.md` (P8 cerrada, PR #20).
+- [ ] **M1.5** Los documentos de P7 al archivo: `docs/p7-external-review.md`,
+      `docs/p7-review-plan.md` y `docs/prototipo/`, con sus referencias corregidas.
+- [ ] **M1.6** La versión: `1.0.0` en `package.json` y `package-lock.json`.
+- [ ] **M1.7** Los README, EN y ES, reescritos, con cada afirmación comprobada contra el repo.
+- [ ] **M1.8** La comprobación: las seis puertas, sin scroll horizontal de 320 a 1440, axe, un build
+      cerrado de prueba y capturas en `scratch/m1/`, con su README.
+- [ ] **M1.9 (Montse)** Revisa las capturas, el PR y el deploy.
 
 ## F6 · Lanzamiento
 
