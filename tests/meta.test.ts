@@ -6,7 +6,7 @@ import { LIGHT_POINTS } from '../src/lib/design/film';
 import { PALETTE } from '../src/lib/design/palette';
 import { LOCALES, t } from '../src/lib/i18n';
 import { description, descriptionKey, OG_LOCALES, themeColors } from '../src/lib/meta';
-import { NOTEBOOK } from '../src/lib/notebook';
+import { lineKeyOf, NOTEBOOK } from '../src/lib/notebook';
 import { ROUTES } from '../src/lib/routes';
 import { findMarks } from '../scripts/verify-dist.mjs';
 
@@ -35,7 +35,7 @@ describe('the descriptions (point 4 of the external review)', () => {
   it("gives each notebook page its line in the panel, and the home the description approved in 7.0.3", () => {
     for (const unlocked of states) {
       expect(descriptionKey('home', unlocked)).toBe('site.description');
-      for (const entry of NOTEBOOK.filter((page) => page.lineKey)) expect(descriptionKey(entry.page, unlocked)).toBe(entry.lineKey);
+      for (const entry of NOTEBOOK.filter((page) => page.lineKey)) expect(descriptionKey(entry.page, unlocked)).toBe(lineKeyOf(entry, unlocked));
     }
   });
 

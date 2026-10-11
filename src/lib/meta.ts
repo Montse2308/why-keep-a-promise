@@ -10,7 +10,7 @@
 import { LIGHT_POINTS } from './design/film';
 import { PALETTE } from './design/palette';
 import { t, type Locale, type UiKey } from './i18n';
-import { notebookPage } from './notebook';
+import { lineKeyOf, notebookPage } from './notebook';
 import type { Route } from './routes';
 import { fill } from './template';
 
@@ -24,7 +24,7 @@ export const OG_LOCALES: Record<Locale, string> = { en: 'en_US', es: 'es_MX' };
 export function descriptionKey(route: Route, unlocked: boolean): UiKey {
   if (route === 'home') return 'site.description';
   if (route === 'finding') return unlocked ? 'finding.description' : 'site.title';
-  return notebookPage(route).lineKey ?? 'site.title';
+  return lineKeyOf(notebookPage(route), unlocked) ?? 'site.title';
 }
 
 /** A page's description, as `<meta name="description">` and `og:description` carry it. */

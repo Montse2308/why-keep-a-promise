@@ -7,7 +7,8 @@
  *
  * The finding's entry carries the status sentence in both states of the lock, standing alone in its
  * element: on the home it is the second one, after chapter 7's stamp (rule (b), ADR 0034). While the
- * lock is closed its title is plain text, and the panel links neither to /finding nor to the engine.
+ * lock is closed its title is plain text, and the panel links neither to /finding nor to the engine;
+ * the lines of /how-its-built and /about leave out the engine section and the SSRN author page.
  *
  * Under its title, the EN/ES switch (ADR 0013): past the film's first screen the corner one is
  * gone, and the panel is a tap away from any frame.
@@ -18,7 +19,7 @@ import { engineLinks } from '../../lib/engine';
 import { externalLinks } from '../../lib/external';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import { findingUnlocked } from '../../lib/lock';
-import { NOTEBOOK, NOTEBOOK_PAGES_ID } from '../../lib/notebook';
+import { lineKeyOf, NOTEBOOK, NOTEBOOK_PAGES_ID } from '../../lib/notebook';
 import { href, type Route } from '../../lib/routes';
 import LanguageSwitch from '../LanguageSwitch.astro';
 import PaperStatus from '../PaperStatus.astro';
@@ -78,10 +79,11 @@ const label = tr('notebook.label');
               </a>
             );
             if (entry.page !== 'finding') {
+              const lineKey = lineKeyOf(entry, unlocked);
               return (
                 <li class="notebook__entry">
                   {anchor}
-                  {entry.lineKey && <span class="notebook__line">{tr(entry.lineKey)}</span>}
+                  {lineKey && <span class="notebook__line">{tr(lineKey)}</span>}
                 </li>
               );
             }
