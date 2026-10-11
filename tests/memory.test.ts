@@ -9,6 +9,12 @@ import type { Action } from '../src/lib/film/memory';
 
 const sources = import.meta.glob<string>(['../src/components/film/*.ts', '../src/components/film/chapters/*.ts'], { query: '?raw', import: 'default', eager: true });
 const film = Object.values(sources).join('\n');
+// /finding's live engine (ADR 0042): what it ran stays in the page's memory, never in the browser's.
+const live = import.meta.glob<string>(['../src/components/finding/compete*.ts', '../src/lib/finding/live.ts', '../src/lib/finding/population.ts'], {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
 const TYPES: readonly Action['type'][] = ['promise', 'round', 'column', 'message', 'decision', 'card', 'bet', 'guess', 'now', 'page'];
 
@@ -36,6 +42,13 @@ describe("the film's memory in the tab", () => {
     expect(footer).toMatch(/<a class="footer__film" href=\{href\(locale, 'home'\)\} data-film-back>/);
     expect(notebook).toMatch(/<script>\s*import \{ back \} from '\.\/back';[\s\S]*\n\s*back\(\);[\s\S]*<\/script>/);
     expect(notebook.match(/<script/g)).toHaveLength(1);
+  });
+
+  it("keeps /finding's live engine in the page's memory only: no storage, no cookies, no network", () => {
+    expect(Object.keys(live)).toHaveLength(5);
+    for (const [name, source] of Object.entries(live)) {
+      expect(source, name).not.toMatch(/localStorage|sessionStorage|indexedDB|document\.cookie|fetch\(|sendBeacon|XMLHttpRequest|WebSocket|history\.(replaceState|pushState)/);
+    }
   });
 
   it('uses no storage, no cookies and no network, in the film or in the memory', () => {

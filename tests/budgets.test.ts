@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import adr from '../docs/decisions/0025-technology.md?raw';
 import precision from '../docs/decisions/0028-budget-units.md?raw';
 import findingAdr from '../docs/decisions/0038-formula-explorer.md?raw';
+import engineAdr from '../docs/decisions/0042-engine-runs-on-finding.md?raw';
 import decisions from '../docs/decisions/README.md?raw';
 import agents from '../AGENTS.md?raw';
 import ci from '../.github/workflows/ci.yml?raw';
@@ -20,7 +21,9 @@ import {
   importsOf,
   KB,
   kilobytes,
+  laterOf,
   LCP_CEILING_MS,
+  measured,
   overruns,
   parseRanges,
   recordDrift,
@@ -42,17 +45,22 @@ describe('the budgets', () => {
     expect(ceiling('fonts')).toBe(160 * 1024);
     expect(ceiling('first-load')).toBe(450 * 1024);
     expect(ceiling('finding-script')).toBe(8 * 1024);
+    expect(ceiling('finding-press')).toBe(7 * 1024);
     expect(LCP_CEILING_MS).toBe(2500);
     for (const line of ['JavaScript del home: ≤ 40 KB', 'Fuentes: ≤ 160 KB', 'Primera carga completa: ≤ 450 KB', 'LCP ≤ 2.5 s']) expect(adr).toContain(line);
   });
 
   it('hold the film’s script to the home pages, /finding’s to /finding, and the fonts and the first load to every page', () => {
     expect(BUDGETS.filter((b) => b.home).map((b) => b.id)).toEqual(['home-script']);
-    expect(BUDGETS.filter((b) => b.page).map((b) => [b.id, b.page, b.measure])).toEqual([['finding-script', 'finding', 'home-script']]);
+    expect(BUDGETS.filter((b) => b.page).map((b) => [b.id, b.page, b.measure])).toEqual([
+      ['finding-script', 'finding', 'home-script'],
+      ['finding-press', 'finding', 'press'],
+    ]);
     const finding = BUDGETS.find((b) => b.id === 'finding-script');
     expect(finding && holdsOn(finding, { page: '/b/es/finding/', home: false })).toBe(true);
     expect(finding && holdsOn(finding, { page: '/b/how-its-built/', home: false })).toBe(false);
     expect(findingAdr).toContain('**JavaScript de `/finding`: ≤ 8 KiB comprimido** (8 192 bytes)');
+    expect(engineAdr).toContain('**Lo que se carga al pulsar «Correr el motor»: ≤ 7 KiB comprimido** (7 168 bytes)');
   });
 
   it('are read as ADR 0028 decides: KiB, with the same bytes as its table', () => {
@@ -106,6 +114,12 @@ describe('what a page asks for', () => {
       './more.js',
     ]);
     expect(resolveUrl('./chunk.js', '/b/_astro/film.js')).toBe('/b/_astro/chunk.js');
+  });
+
+  it('finds what a script loads later: dynamic imports and workers, as Vite writes them', () => {
+    const js = 'i(async()=>{let{m:e}=await import(`./live.js`);return e});new Worker(new URL(`/b/_astro/w.js`,``+import.meta.url),{type:`module`});new URL(e,import.meta.url);import("./other.js")';
+    expect(laterOf(js)).toEqual(['./live.js', './other.js', '/b/_astro/w.js']);
+    expect(laterOf('import"./chunk.js";')).toEqual([]);
     expect(resolveUrl('../x.css', '/b/es/')).toBe('/b/x.css');
   });
 
@@ -167,6 +181,14 @@ describe('weighing a page', () => {
     expect(weight.totals['home-script']).toBe(3000 + 2000 + inline);
     expect(weight.totals.fonts).toBe(30_000 + 40_000);
     expect(weight.totals['first-load']).toBe(800 + 3000 + 2000 + 1000 + 30_000 + 40_000 + 500);
+  });
+
+  it('weighs what a script loads later apart from the first load, as a press loads it (ADR 0042)', () => {
+    const weight = weigh('/b/', page('<p>Hello</p>'), 800, true, reader);
+    expect(weight.later?.map((r) => [r.url, r.bytes])).toEqual([['/b/_astro/later.js', 9000]]);
+    expect(measured(weight, 'press')).toBe(9000);
+    expect(measured(weight, 'home-script')).toBe(weight.totals['home-script']);
+    expect(weight.resources.map((r) => r.url)).not.toContain('/b/_astro/later.js');
   });
 
   it('adds the latin-ext faces once the page holds one of their characters', () => {
@@ -240,7 +262,10 @@ describe('the homes’ weights /how-its-built cites', () => {
     expect(weight.pages.map((p) => p.locale)).toEqual([DEFAULT_LOCALE, ...LOCALES.filter((l) => l !== DEFAULT_LOCALE)]);
     for (const page of weight.pages) {
       expect(page.route).toBe('home');
-      for (const budget of BUDGETS.filter((b) => !b.page)) expect(page.bytes[budget.measure], `${page.locale} ${budget.id}`).toBeLessThanOrEqual(budget.bytes);
+      for (const budget of BUDGETS) {
+        if (budget.page || budget.measure === 'press') continue;
+        expect(page.bytes[budget.measure], `${page.locale} ${budget.id}`).toBeLessThanOrEqual(budget.bytes);
+      }
     }
     expect(agents).toContain('npm run budgets -- --write');
   });

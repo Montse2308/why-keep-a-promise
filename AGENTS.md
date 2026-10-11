@@ -96,7 +96,7 @@ not by reading test output.
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
 | `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034), or if a link leaving the site does not open in a new tab with its notice, or one inside it does (8.3) |
-| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load) or /finding's JS (ADR 0038), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
+| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), /finding's JS (ADR 0038) or what /finding loads when «Run the engine» is pressed (ADR 0042), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
 | `npm run check:launch` | Builds, then fails while a link is still a `*_PENDING` placeholder in `dist/`, `src/` or the READMEs (ADR 0034). Not in CI; step 3 of the launch checklist and `deploy.yml` run it |
 
 `check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
@@ -193,6 +193,8 @@ src/
                          seed against the paper's runs (`results/r6`) by its test
     finding/still.ts     the still figure of «When the reasons compete»: one dot per run where it
                          ended, stacked where they would touch; build time only
+    finding/live.ts      the live engine's messages, pace (30 generations a second), each run's line
+                         and the main button's label; imports only types, never the engine
     jsonld.ts            /finding's structured data: the working paper and the engine, from config.ts
     cite.ts              /finding's «How to cite»: the working paper (APA, BibTeX) and the engine, from config.ts
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
@@ -246,7 +248,10 @@ src/
                          of «In one minute»; Explorer, with explorer.ts, its script, the only one
                          on /finding besides the panel's; ThreeWorlds; ResultFigure, the two panels, GuiltChart on
                          top; Compete, «When the reasons compete» (ADR 0042), with CompeteStill, its
-                         still figure; Cite; FindingProse, the styles of its blocks of prose);
+                         still figure, and CompeteLive, the live engine: compete.ts its small
+                         first-load script, compete-live.ts the chart and controls loaded on the
+                         press, compete.worker.ts the worker with the engine; Cite; FindingProse, the
+                         styles of its blocks of prose);
                          LanguageSwitch; PaperStatus, the status sentence (ADR 0034); Hero, the
                          home's cover (ADR 0036)
   layouts/BaseLayout.astro

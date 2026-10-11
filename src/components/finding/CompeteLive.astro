@@ -1,0 +1,345 @@
+---
+/**
+ * The live engine of /finding's «When the reasons compete» (ADR 0042): the paper's engine, run in the
+ * browser in the three worlds of the cards, with the paper's seeds. Nothing is set: the visitor chooses
+ * one of three worlds (native radios, 38 on load) and presses «Run the engine».
+ *
+ * Its first-load script (./compete.ts) is small: it shows this block, which stays hidden without
+ * JavaScript, swaps the world's text and count when a world is chosen, and waits for the button. Only
+ * the press loads the rest (./compete-live.ts): the chart, its controls and the worker with the
+ * engine (./compete.worker.ts). Nothing of the engine is fetched or run before.
+ *
+ * The chart draws one line per run, the share of the population with personal guilt against the
+ * generations, never a person (rule (d)); one run in the thread's gold. Its caption says it compares
+ * worlds (rule (e)). The count stays in view and follows the generation shown; the polite live region
+ * speaks only when a world ends.
+ *
+ * Render this only inside the lock (ADR 0034), through ./Compete.astro, which a locked build resolves
+ * to ../curve/Locked.astro (astro.config.mjs).
+ */
+import { ENGINE } from '../../config';
+import { fillIn as fill } from '../../lib/finding/explorer';
+import { COMPETE_WORLDS, GENERATIONS, SIZE, START_WORLD, competeWorld } from '../../lib/finding/population';
+import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
+import type { LiveStrings } from './compete';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const strings: LiveStrings = {
+  run: tr('finding.compete.run'),
+  starting: tr('finding.compete.starting'),
+  pause: tr('finding.compete.pause'),
+  resume: tr('finding.compete.resume'),
+  generation: tr('finding.compete.generation'),
+  count: tr('finding.compete.count'),
+  done: tr('finding.compete.done'),
+  failed: tr('finding.compete.failed'),
+  total: GENERATIONS,
+  size: SIZE,
+  worlds: Object.fromEntries(COMPETE_WORLDS.map((world) => [world.id, { trust: world.trust, runs: world.seeds.length }])) as LiveStrings['worlds'],
+};
+const start = competeWorld(START_WORLD);
+const runs = start.seeds.length;
+const percent = new Intl.NumberFormat(locale, { style: 'percent' });
+const yTicks = [1, 0.5, 0];
+const xTicks = [0, GENERATIONS];
+---
+
+<div class="live" data-compete-live data-strings={JSON.stringify(strings)} hidden>
+  <p class="live__engine">{fill(tr('finding.compete.engine'), { version: ENGINE.version })}</p>
+
+  <fieldset class="live__worlds">
+    <legend>{tr('finding.compete.choose')}</legend>
+    {
+      COMPETE_WORLDS.map((world) => (
+        <label class="live__world">
+          <input type="radio" name={`compete-world-${locale}`} value={world.id} checked={world.id === START_WORLD} data-world />
+          <span>{fill(tr('finding.compete.world'), { name: tr(`finding.worlds.${world.id}` as UiKey), trust: world.trust })}</span>
+        </label>
+      ))
+    }
+  </fieldset>
+
+  {
+    COMPETE_WORLDS.map((world) => (
+      <p class="live__text" data-world-text={world.id} hidden={world.id !== START_WORLD}>
+        {tr(`finding.compete.text.${world.id}` as UiKey)}
+      </p>
+    ))
+  }
+
+  <div class="live__buttons">
+    <button type="button" class="live__button live__button--main" data-run>{strings.run}</button>
+    <button type="button" class="live__button" data-restart disabled>{tr('finding.compete.restart')}</button>
+    <button type="button" class="live__button" data-highlight disabled>{tr('finding.compete.highlight')}</button>
+  </div>
+
+  <div class="live__readout">
+    <p class="live__generation" data-generation>{fill(strings.generation, { g: 0, total: GENERATIONS })}</p>
+    <p class="live__count" data-count>{fill(strings.count, { gone: 0, full: 0, mixed: runs, runs })}</p>
+  </div>
+
+  <figure class="live__chart">
+    <p class="live__axis" aria-hidden="true">{tr('finding.compete.axis.y')}</p>
+    <div class="live__frame">
+      <div class="live__ticks live__ticks--y" aria-hidden="true">
+        {yTicks.map((tick) => <span style={`--at: ${1 - tick}`}>{percent.format(tick)}</span>)}
+      </div>
+      <svg class="live__plot" viewBox={`0 0 ${GENERATIONS} ${SIZE}`} preserveAspectRatio="none" aria-hidden="true" focusable="false" data-plot>
+        <line class="live__grid" x1="0" x2={GENERATIONS} y1={SIZE / 2} y2={SIZE / 2} />
+        <g data-lines />
+        <path class="live__line live__line--highlight" d="" data-highlighted />
+      </svg>
+      <div class="live__ticks live__ticks--x" aria-hidden="true">
+        {xTicks.map((tick) => <span>{tick}</span>)}
+      </div>
+      <label class="live__slider">
+        <span class="visually-hidden">{tr('finding.compete.axis.x')}</span>
+        <input type="range" min="0" max={GENERATIONS} step="1" value="0" aria-valuetext={fill(strings.generation, { g: 0, total: GENERATIONS })} disabled data-scrub />
+      </label>
+    </div>
+    <p class="live__axis live__axis--x" aria-hidden="true">{tr('finding.compete.axis.x')}</p>
+    <figcaption class="live__caption">{tr('finding.compete.caption')}</figcaption>
+  </figure>
+
+  <p class="live__status" aria-live="polite" data-status></p>
+</div>
+
+<script>
+  import { mountCompetes } from './compete';
+
+  mountCompetes();
+</script>
+
+<style>
+  .live {
+    display: grid;
+    gap: var(--space-4);
+    margin: var(--space-6) auto;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+    font-family: var(--font-ui);
+    font-size: var(--step-n1);
+    line-height: var(--leading-ui);
+  }
+
+  .live[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 40rem) {
+    .live {
+      padding: var(--space-6);
+    }
+  }
+
+  .live p {
+    margin: 0;
+  }
+
+  .live__engine {
+    color: var(--color-muted);
+  }
+
+  .live__worlds {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .live__worlds legend {
+    margin-bottom: var(--space-2);
+    padding: 0;
+    font-weight: 800;
+  }
+
+  .live__world {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--target-min);
+    cursor: pointer;
+  }
+
+  .live__world input {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0;
+    accent-color: var(--color-fg);
+  }
+
+  .live__world input:focus-visible,
+  .live__button:focus-visible,
+  .live__slider input:focus-visible {
+    outline: var(--focus-width) solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .live__text {
+    padding-inline-start: var(--space-4);
+    border-inline-start: 3px solid var(--color-border);
+  }
+
+  .live__text[hidden] {
+    display: none;
+  }
+
+  .live__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .live__button {
+    min-height: var(--target-min);
+    padding: var(--space-2) var(--space-4);
+    border: var(--border-width) solid var(--color-fg);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-fg);
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .live__button--main {
+    min-width: 12rem;
+    background: var(--color-fg);
+    color: var(--color-surface);
+  }
+
+  .live__button--main[aria-disabled='true'] {
+    background: transparent;
+  }
+
+  .live__button:disabled,
+  .live__button[aria-disabled='true'] {
+    border-color: var(--color-control);
+    color: var(--color-muted);
+    cursor: default;
+  }
+
+  .live__readout {
+    display: grid;
+    gap: var(--space-1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .live__generation {
+    font-weight: 800;
+  }
+
+  .live__chart {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+  }
+
+  .live__axis {
+    font-size: var(--step-n2);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .live__axis--x {
+    text-align: center;
+  }
+
+  /* The plot, with room on the left for the share's ticks; the slider runs under it, over the same span. */
+  .live__frame {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: var(--space-2);
+  }
+
+  .live__plot {
+    grid-column: 2;
+    display: block;
+    width: 100%;
+    height: clamp(11rem, 40vw, 16rem);
+    overflow: visible;
+    border-bottom: var(--border-width) solid var(--color-control);
+    border-left: var(--border-width) solid var(--color-control);
+  }
+
+  .live__ticks {
+    position: relative;
+    font-size: var(--step-n2);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-muted);
+  }
+
+  .live__ticks--y {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 2.75em;
+  }
+
+  .live__ticks--y span {
+    position: absolute;
+    right: 0;
+    top: calc(var(--at) * 100%);
+    transform: translateY(-50%);
+  }
+
+  .live__ticks--x {
+    grid-column: 2;
+    display: flex;
+    justify-content: space-between;
+    padding-top: var(--space-1);
+  }
+
+  .live__slider {
+    grid-column: 2;
+    display: block;
+  }
+
+  .live__slider input {
+    display: block;
+    width: 100%;
+    min-height: var(--target-min);
+    margin: 0;
+    accent-color: var(--color-fg);
+  }
+
+  .live__grid {
+    stroke: var(--color-border);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .live :global(.live__line) {
+    fill: none;
+    stroke: var(--color-fg);
+    stroke-opacity: 0.55;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .live :global(.live__line--highlight) {
+    stroke: var(--color-accent);
+    stroke-opacity: 1;
+    stroke-width: 3.5;
+  }
+
+  .live__caption {
+    color: var(--color-muted);
+  }
+
+  .live__status {
+    font-weight: 800;
+  }
+</style>

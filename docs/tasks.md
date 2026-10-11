@@ -1504,10 +1504,20 @@ trae la dependencia, en `node_modules`.
       `data-compete`. Textos que no estaban en el Anexo, para la tabla oculta: sus encabezados
       «Personal guilt gone» / «Sin culpa personal», «Only personal guilt» / «Solo culpa personal» y
       «Still mixed» / «Todavía mezcladas», tomados del conteo aprobado, y «Runs» / «Corridas».
-- [ ] **10.4** El motor en vivo: el botón que carga el worker solo al pulsar, la gráfica con una
+- [x] **10.4** El motor en vivo: el botón que carga el worker solo al pulsar, la gráfica con una
       línea por corrida, los controles, el conteo, la región viva que habla al terminar, el
       movimiento reducido, el fallo del worker y el techo de peso de lo que se carga al pulsar, con
       `src/data/weight.json` al día.
+      Hecho: `CompeteLive` con su arranque (`compete.ts`), el módulo que se carga al pulsar
+      (`compete-live.ts`) y el worker (`compete.worker.ts`), con `src/lib/finding/live.ts` y su test.
+      La gráfica es SVG: una línea por corrida en tinta y la resaltada en el oro del hilo; el
+      deslizador va bajo el eje de las generaciones. En el navegador: antes de pulsar no se descarga
+      nada del motor; al pulsar, el módulo y el worker; los tres mundos terminan con los conteos de
+      `r6`. Si no hay workers, la figura fija se queda y el estado lo dice; el botón conserva el foco
+      (`aria-disabled`). El techo nuevo, `finding-press`: 7 KiB (pesa 5.3); la primera carga de JS de
+      `/finding` pasa de 2.8 a 4.1 KiB, bajo sus 8 (ADR 0042, al día). `budgets` encuentra lo que se
+      carga después en los `import()` y los `new URL(…, import.meta.url)`. `weight.json` no cambia:
+      los home pesan lo mismo. `tests/memory.test.ts` revisa también los scripts del motor en vivo.
 - [ ] **10.5** El registro de cifras: 400, 20 y 40, con su fuente en `docs/sources.md`; `/sources`
       lista lo nuevo con el candado abierto.
 - [ ] **10.6** Fuera de la sección: el final del primer párrafo de `/how-its-built` y un punto nuevo

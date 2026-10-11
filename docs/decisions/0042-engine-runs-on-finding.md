@@ -121,8 +121,15 @@ mismas que las de 0.74 de `r6`; el test del ADR 0043 lo usa.
 
 - **La primera carga de `/finding` no cambia de techo:** JavaScript de `/finding` ≤ 8 KiB
   comprimido (ADR 0038), contado igual, con el arranque del motor en vivo incluido.
-- **Lo que se carga al pulsar** (el código del motor en vivo y su worker) lleva su propio techo, que
-  `npm run budgets` pesa en cada build: se fija en el paso 10.4, después de medirlo.
+- **Lo que se carga al pulsar «Correr el motor»: ≤ 7 KiB comprimido** (7 168 bytes), en sus dos
+  idiomas: el módulo del motor en vivo, su worker con el motor y lo que importan, contados como el
+  resto (ADR 0028). `npm run budgets` lo pesa en cada build (`finding-press`) y falla si se pasa: busca
+  en los scripts de la página los `import()` y los `new URL(…, import.meta.url)` de los workers, que la
+  primera carga no cuenta.
+- **Medido en el paso 10.4:** la primera carga de JavaScript de `/finding` pasa de 2.8 a 4.1 KiB
+  (el arranque, con el ayudante de precarga que Vite agrega a todo `import()`), bajo su techo de
+  8 KiB; lo que se carga al pulsar pesa 5.3 KiB (1.8 el módulo, 3.5 el worker con el motor). El techo
+  de 7 KiB deja un margen chico.
 - Los demás techos no cambian.
 
 ### El tope de palabras
