@@ -10,7 +10,7 @@ promise» / «Te lo prometo», el título de la página y el círculo y el cuadr
 llevan el nombre de nadie.
 
 Cuando alguien comparte un enlace en LinkedIn o WhatsApp, el póster suele ser lo único que se ve de
-la página. La revisión externa (punto 16, `docs/p7-external-review.md`) propuso una firma pequeña
+la página. La revisión externa (punto 16, `docs/archivo/p7-external-review.md`) propuso una firma pequeña
 con la autora. Choca con el ADR 0021, que dice dónde va su nombre. Montse lo aprobó en 7.0.4.
 
 ## Decisión

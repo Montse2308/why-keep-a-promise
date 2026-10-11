@@ -8,7 +8,7 @@ import notebookComponent from '../components/notebook/Notebook.astro?raw';
 import notebookScript from '../components/notebook/notebook.ts?raw';
 import notebookFooter from '../components/notebook/NotebookFooter.astro?raw';
 import { CHAPTER_IDS, LOCKED_BEATS, OPEN_CHAPTERS, type ChapterId } from './chapters';
-import { linkable, MAGNIFIERS, magnifierOn, NOTEBOOK, NOTEBOOK_PAGES_ID, notebookPage } from './notebook';
+import { lineKeyOf, linkable, MAGNIFIERS, magnifierOn, NOTEBOOK, NOTEBOOK_PAGES_ID, notebookPage } from './notebook';
 import { SUBPAGES } from './routes';
 
 const dictionaries = { en, es } as const;
@@ -28,6 +28,24 @@ describe('the notebook (ADR 0024)', () => {
         if (entry.page === 'finding') expect(entry.lineKey).toBeNull();
         else expect(entry.lineKey && dictionary[entry.lineKey]).toBeTruthy();
       }
+    }
+  });
+
+  it('gives /how-its-built and /about a line of their own while the lock is closed, without the engine section or SSRN (ADR 0034, ADR 0041)', () => {
+    expect(NOTEBOOK.filter((entry) => entry.lockedLineKey).map((entry) => entry.page)).toEqual(['how-its-built', 'about']);
+    for (const entry of NOTEBOOK) {
+      expect(lineKeyOf(entry, true)).toBe(entry.lineKey);
+      expect(lineKeyOf(entry, false)).toBe(entry.lockedLineKey ?? entry.lineKey);
+    }
+    const line = (dictionary: typeof en | typeof es, page: 'how-its-built' | 'about', unlocked: boolean) =>
+      dictionary[lineKeyOf(notebookPage(page), unlocked) ?? 'site.title'];
+    expect(line(en, 'how-its-built', true)).toContain('the simulation engine');
+    expect(line(es, 'how-its-built', true)).toContain('el motor de simulación');
+    for (const dictionary of Object.values(dictionaries)) {
+      expect(line(dictionary, 'about', true)).toMatch(/ORCID.*SSRN/);
+      expect(line(dictionary, 'about', false)).toContain('ORCID');
+      expect(line(dictionary, 'about', false)).not.toContain('SSRN');
+      expect(line(dictionary, 'how-its-built', false)).not.toMatch(/simulation|simulación/);
     }
   });
 

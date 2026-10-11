@@ -16,6 +16,11 @@ export interface NotebookPage {
    * shows the status sentence instead, in both states of the lock (ADR 0034).
    */
   readonly lineKey: UiKey | null;
+  /**
+   * The line while the lock is closed, for a page whose line names what only the open lock holds:
+   * /how-its-built's engine section and /about's SSRN author page (ADR 0034, ADR 0041).
+   */
+  readonly lockedLineKey?: UiKey;
   /** The film's chapter the page deepens, which its back link leads to; none for a page of the whole film. */
   readonly film: ChapterId | null;
 }
@@ -24,15 +29,26 @@ export const NOTEBOOK: readonly NotebookPage[] = [
   { page: 'dilemma', titleKey: 'notebook.dilemma.title', lineKey: 'notebook.dilemma.line', film: 'two-rooms' },
   { page: 'vanberg', titleKey: 'notebook.vanberg.title', lineKey: 'notebook.vanberg.line', film: 'real-people' },
   { page: 'finding', titleKey: 'notebook.finding.title', lineKey: null, film: 'my-research' },
-  { page: 'how-its-built', titleKey: 'notebook.how-its-built.title', lineKey: 'notebook.how-its-built.line', film: 'closing' },
+  {
+    page: 'how-its-built',
+    titleKey: 'notebook.how-its-built.title',
+    lineKey: 'notebook.how-its-built.line',
+    lockedLineKey: 'notebook.how-its-built.line.locked',
+    film: 'closing',
+  },
   { page: 'sources', titleKey: 'notebook.sources.title', lineKey: 'notebook.sources.line', film: null },
-  { page: 'about', titleKey: 'notebook.about.title', lineKey: 'notebook.about.line', film: null },
+  { page: 'about', titleKey: 'notebook.about.title', lineKey: 'notebook.about.line', lockedLineKey: 'notebook.about.line.locked', film: null },
 ];
 
 export function notebookPage(page: Subpage): NotebookPage {
   const found = NOTEBOOK.find((entry) => entry.page === page);
   if (!found) throw new Error(`No notebook page "${page}"`);
   return found;
+}
+
+/** An entry's line in this state of the lock: its locked one while closed, if it has one. */
+export function lineKeyOf(entry: NotebookPage, unlocked: boolean): UiKey | null {
+  return unlocked ? entry.lineKey : (entry.lockedLineKey ?? entry.lineKey);
 }
 
 /** The pages anything may link to in this state of the lock: /finding only behind it (ADR 0034). */

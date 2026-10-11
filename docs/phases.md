@@ -5,7 +5,8 @@ Cada sesión de trabajo autoriza una fase. Las fases anteriores (F0–F4 y el re
 checklist y varios ADR los citan. P7, los ajustes de la revisión externa, va entre P6 y F5, partida
 en subfases (P7.0 a P7.7). P8, los retoques después del lanzamiento, se planeó para ir antes de los
 pasos 5 a 8 del checklist de F6, pero esos pasos ya estaban hechos: va después de F6. P9, `/finding`
-por sí sola, sigue a P8.
+por sí sola, sigue a P8. Después de P9 no hay fase activa: lo que sigue es mantenimiento, con ramas
+cortas (M1, la puesta al día después del lanzamiento, en `docs/tasks.md`).
 
 **Toda fase se cierra con:**
 
@@ -18,7 +19,7 @@ por sí sola, sigue a P8.
 
 Los ADR 0021–0026, el archivo de lo que ya no rige, `plan.md`, `content-rules.md`, `phases.md`,
 `tasks.md`, `launch-checklist.md` (paso 1b), `AGENTS.md` y los README. El prototipo, en
-`docs/prototipo/`. No toca `src/`.
+`docs/archivo/prototipo/`. No toca `src/`.
 
 **Criterio de salida**
 
@@ -115,7 +116,7 @@ El sonido, los detalles (el título de la pestaña y la consola), los pósteres 
 **Estado:** cerrada (PR #17).
 
 Los puntos de la revisión externa que Montse eligió (1, 2A, 4–13, 15 y 16, y el mínimo del 3). El porqué, el orden y
-los riesgos están en `docs/p7-review-plan.md`; los pasos, uno por sesión, en `docs/tasks.md`.
+los riesgos están en `docs/archivo/p7-review-plan.md`; los pasos, uno por sesión, en `docs/tasks.md`.
 Empieza cuando se cierre la revisión de P6. Cada subfase se cierra como toda fase: en verde
 (también `budgets`), con paridad EN/ES y con capturas o video a 360 y 1440 px para Montse.
 
@@ -216,8 +217,7 @@ Los README, Lighthouse otra vez sobre el commit final y una revisión completa.
 
 ## P8 · Retoques después del lanzamiento
 
-**Estado:** en `main` (rama `polish/round-2`, PR #20); 8.1 a 8.5 hechos y 8.6 con la parte del
-agente hecha.
+**Estado:** cerrada (PR #20).
 
 Una segunda ronda de pulido, con F5 y F6 cerradas: el título del home en español en la compu, la
 nitidez de los títulos de las tarjetas, los enlaces externos en otra pestaña y un hero nuevo, que

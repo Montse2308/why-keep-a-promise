@@ -2,6 +2,8 @@
 
 **Estado:** aceptada (P9, paso 9.1). Enmienda el ADR 0036 (la tarjeta «La investigación» de la
 portada) y precisa la regla (j) de `docs/content-rules.md`. Decisión de Montse (2026-10-10).
+Precisado en M1 (decisión de Montse, 2026-10-10): con el candado abierto, «The finding» va primero,
+como botón principal, y «Go to chapter 7» debajo.
 
 ## Contexto
 

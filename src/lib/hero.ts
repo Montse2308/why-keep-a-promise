@@ -1,7 +1,8 @@
 /**
  * The home's cover (ADR 0036): before the film, the page says what it holds. The question as the
  * page's title, one line, and a door to each of its three parts: the story, which starts at chapter 0;
- * the research, chapter 7, whose open part every state of the lock shows; and the notebook's pages.
+ * the research, chapter 7, whose open part every state of the lock shows, and behind the lock /finding
+ * first; and the notebook's pages.
  * Its sky is the film's dawn and ends in the colour the stage begins with, so the light never cuts
  * (ADR 0027).
  */
@@ -33,12 +34,26 @@ export const DOORS: readonly Door[] = [
  */
 export const COVER_PAGES: readonly NotebookPage[] = NOTEBOOK.filter((entry) => entry.page !== 'finding');
 
+export interface ResearchLink {
+  /** Where it leads: /finding, or the research door's chapter. */
+  readonly to: 'finding' | 'chapter';
+  readonly labelKey: UiKey;
+  /** Drawn as the cover's main button, in ink, as the story door's is. */
+  readonly primary: boolean;
+}
+
 /**
- * The research door's second link, under its way to chapter 7 (ADR 0040): /finding, by its title in the
- * notebook, and only behind the lock, as every link to it (ADR 0034). The door says the same either way.
+ * The research door's links, in order (ADR 0040). Behind the lock, /finding comes first, by its title in
+ * the notebook and as the main button, and the way to chapter 7 under it (Montse's decision in M1,
+ * 2026-10-10). While the lock is closed nothing links to /finding (ADR 0034), and the door keeps its way
+ * to chapter 7 alone, as before. The door says the same either way.
  */
-export function researchPages(unlocked: boolean): readonly NotebookPage[] {
-  return unlocked ? NOTEBOOK.filter((entry) => entry.page === 'finding') : [];
+export function researchLinks(unlocked: boolean): readonly ResearchLink[] {
+  const chapter: ResearchLink = { to: 'chapter', labelKey: 'hero.research.go', primary: false };
+  if (!unlocked) return [chapter];
+  const finding = NOTEBOOK.find((entry) => entry.page === 'finding');
+  if (!finding) throw new Error('The notebook has no /finding');
+  return [{ to: 'finding', labelKey: finding.titleKey, primary: true }, chapter];
 }
 
 const DAWN = (() => {

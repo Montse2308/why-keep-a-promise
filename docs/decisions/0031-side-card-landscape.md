@@ -7,7 +7,7 @@ horizontal. En la computadora las tarjetas siguen centradas, como dice el 0027.
 
 El ADR 0027 pone el texto de la película en tarjetas de papel, «abajo en el celular y centradas en
 la computadora». No dice nada del celular en horizontal. La revisión externa (punto 12,
-`docs/p7-external-review.md`) lo probó a 740 × 360:
+`docs/archivo/p7-external-review.md`) lo probó a 740 × 360:
 
 - la tarjeta tapa casi todo el escenario;
 - el título del capítulo 0 se encima con las cabezas;

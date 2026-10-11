@@ -32,7 +32,7 @@ Este ADR sale de una sesión de cinco rondas con Montse:
 4. Un prototipo navegable en dos direcciones de arte, del que eligió Papel.
 5. El plan.
 
-El prototipo de los capítulos 0 a 3 quedó en `docs/prototipo/te-lo-prometo.html` como referencia
+El prototipo de los capítulos 0 a 3 quedó en `docs/archivo/prototipo/te-lo-prometo.html` como referencia
 visual. No es código del sitio.
 
 ## Decisión

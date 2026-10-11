@@ -7,8 +7,8 @@ title: Cómo está hecho
 Astro construye cada página de antemano, en HTML y CSS simples. El
 home es primero un storyboard: cada capítulo un cuadro quieto, sus tarjetas en orden, cada resultado
 por escrito. Un script lo anima con el scroll; sin él, la historia completa sigue ahí. La lógica
-vive en módulos puros con sus pruebas, y JavaScript corre solo en la historia y el panel del
-cuaderno.
+vive en módulos puros con sus pruebas, y JavaScript corre solo en la historia, el panel del
+cuaderno y el explorador de la fórmula de /finding.
 
 ## Un motor de escenas propio
 
@@ -36,9 +36,10 @@ verse suave.
 
 ## El candado
 
-Una parte del sitio sigue cerrada hasta que el documento de trabajo sea público en SSRN. Esa parte
-se queda fuera del build, no escondida: un plugin cambia cada componente bloqueado por un stub vacío,
-y un script lee cada archivo construido y falla si se coló algún rastro. La regla es una línea:
+Parte del sitio estuvo cerrada hasta que el documento de trabajo fue público en SSRN: se quedaba
+fuera del build, no escondida. Un plugin cambiaba cada componente bloqueado por un stub vacío, y un
+script fallaba si se colaba algún rastro. Ahora está abierta, y los dos siguen corriendo en cada
+build. La regla es una línea:
 
 ```ts
 export function findingUnlocked(ssrn: string, dev: boolean): boolean {
@@ -125,5 +126,5 @@ export function choose(spec, sens, match, cap) {
 }
 ```
 
-El motor exporta la curva con su procedencia; de este lado, un test falla si la curva cambia o si
+El motor exporta la curva con su procedencia; de este lado, una prueba falla si la curva cambia o si
 falta el archivo. {engine}

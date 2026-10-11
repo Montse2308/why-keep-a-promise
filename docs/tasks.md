@@ -3,16 +3,19 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P9, `/finding` por sí sola (rama `p9/finding`). P8, los retoques después del
-lanzamiento, llegó a `main` con el PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
+**Fase activa:** ninguna. Lo que sigue es mantenimiento, con ramas cortas: ahora M1, la puesta al
+día después del lanzamiento (rama `m1/post-launch`, sección M1). P9, `/finding` por sí sola, llegó
+a `main` con el PR #21 (y su cierre con el #22); P8, los retoques después del lanzamiento, con el
+PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
 línea en `https://montse2308.github.io/why-keep-a-promise/`. F5, la QA, cerrada en la rama
 `launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7 cerradas: Montse las revisó
 (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
 como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** ninguna planeada. P8 y P9 llegan al sitio cuando Montse hace el merge a `main`
-y vuelve a correr `deploy.yml` (`docs/launch-checklist.md`, «Después del lanzamiento»).
+**Fase siguiente:** ninguna planeada. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
+que llega a `main` llega al sitio cuando Montse vuelve a correr `deploy.yml`
+(`docs/launch-checklist.md`, «Después del lanzamiento»).
 
 **El lanzamiento (F6)** lo disparó el working paper público en SSRN y el repo del motor público
 (ADR 0034). Su preparación y sus pasos, todos hechos, están en la sección F6.
@@ -39,7 +42,7 @@ queda nada en el sitio.
 - [x] `launch-checklist.md`: el paso 1b (política de la revista) y los pasos 4 y 8 con la estructura
       nueva.
 - [x] `AGENTS.md` y los README.
-- [x] El prototipo de los capítulos 0 a 3 en `docs/prototipo/te-lo-prometo.html`.
+- [x] El prototipo de los capítulos 0 a 3 en `docs/archivo/prototipo/te-lo-prometo.html`.
 - [x] Revisión de P0 por Montse (PR #1, mergeado).
 
 ## P1 · Cimientos y capítulo 0
@@ -47,7 +50,7 @@ queda nada en el sitio.
 - [x] La hoja de personajes, aprobada por Montse con tres cambios, que recoge el ADR 0027 (que
       reemplaza al 0022): el hilo dorado en lugar del diamante, los boletos en lugar de los gestos y
       el color «punto medio» entre Aciano y Aciano luminoso. De noche, la lámpara. Las hojas y
-      barajas, en `docs/prototipo/`.
+      barajas, en `docs/archivo/prototipo/`.
 - [x] Fraunces y Nunito autoalojadas: `@fontsource-variable/*@5.3.0`, solo el eje de peso (121 404
       bytes en la primera carga), OFL y procedencia. Registradas; se cargan con el capítulo 0.
 - [x] Colores de la película en `src/lib/design/film.ts` y `src/styles/film.css`: el elenco, el
@@ -458,8 +461,8 @@ queda nada en el sitio.
 
 ## P7 · Ajustes de la revisión externa
 
-El porqué de cada paso está en `docs/p7-review-plan.md`; la evidencia (archivos, líneas y
-mediciones), en `docs/p7-external-review.md`. Cada paso cabe en una sesión corta,
+El porqué de cada paso está en `docs/archivo/p7-review-plan.md`; la evidencia (archivos, líneas y
+mediciones), en `docs/archivo/p7-external-review.md`. Cada paso cabe en una sesión corta,
 termina en verde (`check`, `test`, `build`, `verify:dist` y `budgets`) y deja el sitio entero: se
 puede parar después de cualquiera. El número del paso (`7.1.3`) va en el commit. Un paso
 **(Montse)** es una decisión o aprobación suya: el agente prepara borradores, capturas u opciones,
@@ -467,8 +470,8 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
 
 ### P7.0 · Decisiones y documentos (no toca `src/`)
 
-- [x] **7.0.1** El plan en el repo: `docs/p7-review-plan.md`, la revisión copiada en
-      `docs/p7-external-review.md`, P7 en `phases.md` y en este archivo, y `AGENTS.md` al día.
+- [x] **7.0.1** El plan en el repo: `docs/archivo/p7-review-plan.md`, la revisión copiada en
+      `docs/archivo/p7-external-review.md`, P7 en `phases.md` y en este archivo, y `AGENTS.md` al día.
 - [x] **7.0.2** Borradores en EN y ES de los cuatro textos nuevos: la descripción del home, «Ver de
       nuevo», el progreso para lectores de pantalla («Capítulo 5 de 9») y la frase nueva del
       capítulo 8 (reemplaza a `film.closing.private`). En `scratch/`, para Montse.
@@ -1409,6 +1412,52 @@ seguir no hacen falta: se rehacen con las herramientas de `scratch/tools/` (`exp
   con el candado abierto).
 
 P9 llegó a `main` con el PR #21.
+
+## M1 · Puesta al día después del lanzamiento
+
+Mantenimiento, sin fase activa: poner al día lo que quedó escrito de antes del lanzamiento. En la
+rama `m1/post-launch`, desde `main` en `895305b` (el merge del PR #22); sin push, sin PR y sin
+`deploy.yml`, que decide y corre Montse. No toca el despliegue (`deploy.yml`,
+`docs/launch-checklist.md`, `scripts/check-launch.mjs`). Cada paso termina en verde (`check`,
+`test`, `build`, `verify:dist`, `budgets` y `check:launch`) y lleva su número en el commit
+(`M1.3`). Los textos son los que Montse dio; uno cambia solo si choca con una regla o un hecho del
+repo, y el cambio se reporta con el original y el nuevo.
+
+- [x] **M1.1** `/how-its-built`: el párrafo de «El candado» en pasado (el candado ya está abierto;
+      el plugin y `verify:dist` siguen corriendo en cada build), y el primer párrafo dice que
+      JavaScript corre también en el explorador de la fórmula de `/finding`.
+      Hecho. El plugin `lock-finding` está en todo build (`astro.config.mjs`) y `verify:dist` corre
+      en `ci.yml` y `deploy.yml`. El texto en español se acortó, con el mismo sentido, para caber en
+      el tope de 700 palabras de `/how-its-built` (ADR 0037): con el texto dado medía 715; ahora 699.
+- [x] **M1.2** Las líneas del cuaderno de `/about` (suma ORCID y SSRN) y de `/how-its-built` (suma
+      el motor de simulación), cada una con su versión cerrada; en español, «test» → «prueba» en
+      `/how-its-built` y en «De dónde salen los números» de `/finding` (decisión de Montse).
+      Hecho. Cerradas, las líneas son `notebook.about.line.locked` y
+      `notebook.how-its-built.line.locked` (`lineKeyOf` en `src/lib/notebook.ts`), en el panel y en
+      la descripción de cada página. No quedan otros «test» en la prosa en español. Los home pesan
+      0.1 KiB más de primera carga (`weight.json` al día).
+- [x] **M1.3** La portada: con el candado abierto, «The finding» va primero en la tarjeta de la
+      investigación, como botón principal, y «Go to chapter 7» debajo (decisión de Montse,
+      2026-10-10); cerrado, no cambia. La línea de estado del ADR 0040 lo registra.
+      Hecho (`researchLinks` en `src/lib/hero.ts`). Los dos enlaces tenían el mismo estilo, con
+      contorno; Montse eligió que «The finding» lleve el relleno en tinta de «Start the story». El
+      de «Go to chapter 7» no cambia, abierto o cerrado. La regla (j) y el índice de los ADR, al día.
+- [x] **M1.4** Los documentos internos de antes del lanzamiento, marcados como historia:
+      `AGENTS.md`, `docs/plan.md`, `docs/content-rules.md` y `docs/phases.md` (P8 cerrada, PR #20).
+- [x] **M1.5** Los documentos de P7 al archivo: `docs/p7-external-review.md`,
+      `docs/p7-review-plan.md` y `docs/prototipo/`, con sus referencias corregidas.
+- [x] **M1.6** La versión: `1.0.0` en `package.json` y `package-lock.json`.
+- [x] **M1.7** Los README, EN y ES, reescritos, con cada afirmación comprobada contra el repo.
+      Hecho. «θ» se dice con palabras, «cuánto pesa la culpa», porque los parámetros del modelo solo
+      se nombran en `/finding` (y en `/sources`, ADR 0035). El ancla de la cita del motor no se
+      comprobó: el repo del motor no se abre.
+- [x] **M1.8** La comprobación: las seis puertas, sin scroll horizontal de 320 a 1440, axe, un build
+      cerrado de prueba y capturas en `scratch/m1/`, con su README.
+      Hecho: 1399 pruebas; 42 corridas sin scroll horizontal (portada, `/how-its-built` y `/about`,
+      EN y ES, de 320 a 1440); axe 4.14.0, 16 corridas y cero violaciones (portada y
+      `/how-its-built`, 360 y 1440, claro y oscuro); el build cerrado de prueba, con `verify:dist`
+      en verde, la tarjeta solo con «Go to chapter 7» y las líneas cerradas.
+- [ ] **M1.9 (Montse)** Revisa las capturas, el PR y el deploy.
 
 ## F6 · Lanzamiento
 

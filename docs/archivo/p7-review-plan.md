@@ -10,7 +10,7 @@ a abrir.
 Al terminar P6 se hizo una revisión externa del sitio, con 16 puntos numerados, usándolo con clics
 y toques reales en Chromium (1440, 360 y 320 px y horizontal, EN/ES, teclado, movimiento reducido,
 sin JS y con el script bloqueado), axe en las 14 páginas y una lectura del código. Está copiada en
-`docs/p7-external-review.md`: ahí están la evidencia de cada punto, con sus archivos y líneas, y las
+`docs/archivo/p7-external-review.md`: ahí están la evidencia de cada punto, con sus archivos y líneas, y las
 mediciones. Montse eligió los puntos 1, 2 (en su variante A), 4 a 13, 15 y 16, y del 3 solo su
 mínimo. Lo que quedó fuera y por qué está abajo, en «Lo que no entra».
 

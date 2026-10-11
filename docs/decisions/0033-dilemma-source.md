@@ -11,7 +11,7 @@ contexto del dilema repetido de `/dilemma` (la sombra del futuro, el torneo y Ti
 citaban del libro de Axelrod (1984), con las páginas por verificar. Mientras sigan así, `/sources`
 dice «Páginas por verificar.» y `deploy.yml` no publica (`docs/sources.md`).
 
-Nadie pudo revisar el libro. La revisión externa (punto 6, `docs/p7-external-review.md`) dio tres
+Nadie pudo revisar el libro. La revisión externa (punto 6, `docs/archivo/p7-external-review.md`) dio tres
 salidas:
 
 - **B:** citar el artículo de Axelrod y Hamilton (1981);
