@@ -191,6 +191,8 @@ src/
                          paper's seeds and settings, every run generation by generation, and the
                          tally; the only module that imports the engine (ADR 0043), checked seed by
                          seed against the paper's runs (`results/r6`) by its test
+    finding/still.ts     the still figure of «When the reasons compete»: one dot per run where it
+                         ended, stacked where they would touch; build time only
     jsonld.ts            /finding's structured data: the working paper and the engine, from config.ts
     cite.ts              /finding's «How to cite»: the working paper (APA, BibTeX) and the engine, from config.ts
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
@@ -243,7 +245,8 @@ src/
                          finding/ (/finding's own, behind the lock, ADR 0037: MinuteLinks, the buttons
                          of «In one minute»; Explorer, with explorer.ts, its script, the only one
                          on /finding besides the panel's; ThreeWorlds; ResultFigure, the two panels, GuiltChart on
-                         top; Cite; FindingProse, the styles of its blocks of prose);
+                         top; Compete, «When the reasons compete» (ADR 0042), with CompeteStill, its
+                         still figure; Cite; FindingProse, the styles of its blocks of prose);
                          LanguageSwitch; PaperStatus, the status sentence (ADR 0034); Hero, the
                          home's cover (ADR 0036)
   layouts/BaseLayout.astro

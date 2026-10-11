@@ -74,6 +74,15 @@ guilt earn 10 everywhere.
 
 <!-- slot:result-figure -->
 
+## When the reasons compete
+
+The figure above shows what each reason earns in a world. Here, the two reasons compete inside one. A
+population starts half personal guilt and half partner-specific commitment. In every generation
+people play, and the reason that earned more tends to be copied. Background trust is held fixed for
+the whole run, so each world stays the world it is.
+
+<!-- slot:compete -->
+
 ## For those who want the arithmetic
 
 ### Four reasons, two pairs

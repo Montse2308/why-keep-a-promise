@@ -14,6 +14,7 @@ import Vignette from '../components/notebook/Vignette.astro';
 import Weight from '../components/notebook/Weight.astro';
 import PaperStatus from '../components/PaperStatus.astro';
 import Cite from '../components/finding/Cite.astro';
+import Compete from '../components/finding/Compete.astro';
 import Explorer from '../components/finding/Explorer.astro';
 import FindingProse from '../components/finding/FindingProse.astro';
 import MinuteLinks from '../components/finding/MinuteLinks.astro';
@@ -78,6 +79,8 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
           <SwitchTable locale={locale} />
         ) : segment.name === 'result-figure' ? (
           <ResultFigure locale={locale} />
+        ) : segment.name === 'compete' ? (
+          <Compete locale={locale} />
         ) : segment.name === 'explorer' ? (
           <Explorer locale={locale} />
         ) : segment.name === 'three-worlds' ? (

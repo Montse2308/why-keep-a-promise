@@ -1492,10 +1492,18 @@ trae la dependencia, en `node_modules`.
       con la cuenta de `r6` (70 contra 0.74); 38 da 15 · 14 · 11 de 40, 5 y 70 dan 20 de 20 sin
       culpa personal, y la media de 38 es 94.45. El `package.json` del motor no declara versión: el
       test compara `ENGINE.version` con la de su `CITATION.cff` (ADR 0043, al día).
-- [ ] **10.3** La figura fija, sin JS: dónde terminó cada corrida después de 400 generaciones, un
+- [x] **10.3** La figura fija, sin JS: dónde terminó cada corrida después de 400 generaciones, un
       punto por corrida en tres filas, calculada en el build, con su leyenda, su descripción
       accesible y una tabla oculta con los conteos; la sección nueva en la prosa de `/finding`, con
       su entrada y su slot, entre «Lo que gana cada razón» y «Para quien quiera la cuenta».
+      Hecho: `Compete` (el slot `compete`, cerrado con el candado en `astro.config.mjs`) con
+      `CompeteStill`, de `src/lib/finding/still.ts` y su test. Los puntos, en tinta, se apilan donde
+      se tocarían (a 320 px, el ancho más angosto), hasta 10 de alto y después en otra columna, pegada,
+      hacia el centro. La descripción accesible son las tres frases de «Al terminar»; la tabla oculta
+      da los conteos de cada mundo. «400» sale de `GENERATIONS`, no de la clave. `verify:dist` busca
+      `data-compete`. Textos que no estaban en el Anexo, para la tabla oculta: sus encabezados
+      «Personal guilt gone» / «Sin culpa personal», «Only personal guilt» / «Solo culpa personal» y
+      «Still mixed» / «Todavía mezcladas», tomados del conteo aprobado, y «Runs» / «Corridas».
 - [ ] **10.4** El motor en vivo: el botón que carga el worker solo al pulsar, la gráfica con una
       línea por corrida, los controles, el conteo, la región viva que habla al terminar, el
       movimiento reducido, el fallo del worker y el techo de peso de lo que se carga al pulsar, con

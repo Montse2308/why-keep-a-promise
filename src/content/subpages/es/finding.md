@@ -74,6 +74,15 @@ culpa general ganan 10 en todo el recorrido.
 
 <!-- slot:result-figure -->
 
+## Cuando las razones compiten
+
+La figura de arriba muestra lo que gana cada razón en un mundo. Aquí, las dos razones compiten
+dentro de uno. Una población empieza mitad culpa personal y mitad compromiso específico a la pareja.
+En cada generación la gente juega, y la razón que ganó más tiende a copiarse. La confianza de fondo
+se queda fija durante toda la corrida, así que cada mundo sigue siendo el que es.
+
+<!-- slot:compete -->
+
 ## Para quien quiera la cuenta
 
 ### Cuatro razones, dos pares
