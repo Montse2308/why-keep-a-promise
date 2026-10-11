@@ -23,13 +23,13 @@ It is **not** a simulator and **not** the instrument of a paper. Details: `docs/
 Pages publishes with GitHub Actions, and `deploy.yml` ran on 2026-10-08 (run 37860472991, on `main`
 after PR #19); every step of `docs/launch-checklist.md` is marked. P8 (polish after the launch: the
 Spanish home title on a computer, sharp card titles, external links in a new tab, ADR 0029, and the
-cover of ADR 0036) reached `main` with PR #20. The active phase is P9, **/finding on its own**, on
-the branch `p9/finding`, pushed only when Montse decides: /finding becomes the page Montse shares,
-understood without the story (the text she approved on 2026-10-10, the three worlds, a two-panel
-figure, a formula explorer, how to cite), with the rest of the site around it (its poster and
-JSON-LD, the cover's link to it, the engine on /how-its-built, ORCID and SSRN on /about). Steps 9.0
-to 9.9 in `docs/tasks.md`. P8 and P9 reach the site when Montse merges them into `main` and runs
-`deploy.yml` again.
+cover of ADR 0036) reached `main` with PR #20. P9, **/finding on its own** (/finding becomes the
+page Montse shares, understood without the story: the text she approved on 2026-10-10, the three
+worlds, a two-panel figure, a formula explorer, how to cite; with the rest of the site around it:
+its poster and JSON-LD, the cover's link to it, the engine on /how-its-built, ORCID and SSRN on
+/about), reached `main` with PR #21, and `deploy.yml` ran on 2026-10-10; its last details after the
+deploy are step 9.10 in `docs/tasks.md`. There is no active phase: what follows is maintenance, with
+plain commits to `main` or short branches, and `deploy.yml` run by Montse.
 P7, the fixes from an external review, was planned in small steps (one per session) in
 `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's

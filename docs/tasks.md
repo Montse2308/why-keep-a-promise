@@ -1271,9 +1271,28 @@ que cada commit quede en verde.
 - [x] **9.7** La QA: anchos (320 a 1440), sin JS, movimiento reducido, teclado y lector de pantalla,
       axe, enlaces, JSON-LD y póster, pesos y Lighthouse de `/finding`, y los tests de reglas.
       Capturas en `scratch/p9/`, con su README. Hecha; el detalle, en «Estado al corte».
-- [ ] **9.8 (Montse)** Revisa las capturas y abre a mano los enlaces de SSRN (el working paper y la
+- [x] **9.8 (Montse)** Revisa las capturas y abre a mano los enlaces de SSRN (el working paper y la
       página de autora), que responden 403 a los bots.
-- [ ] **9.9 (Montse)** El PR de P9 a `main`, y `deploy.yml` cuando ella lo decida.
+      Montse revisó las capturas y abrió los enlaces a mano; PR #21 fusionado y `deploy.yml` corrido
+      el 2026-10-10.
+- [x] **9.9 (Montse)** El PR de P9 a `main`, y `deploy.yml` cuando ella lo decida.
+      Montse revisó las capturas y abrió los enlaces a mano; PR #21 fusionado y `deploy.yml` corrido
+      el 2026-10-10.
+- [x] **9.10** Detalles después del despliegue, en la rama `p9/close`, desde `main` en `7230f6b`.
+      - **La ↗ que quedaba sola:** en /sources, a 360 px, la ↗ del DOI de Di Bartolomeo et al. (2023)
+        bajaba sola al renglón siguiente. Ahora la ↗ de todo enlace externo va pegada a los últimos
+        caracteres de su texto (la última palabra, hasta seis caracteres) en un `span` que no se parte
+        (`.link-end`, `src/lib/external.ts`); una dirección larga se sigue partiendo antes.
+        `verify:dist` falla si la ↗ de un enlace externo no va pegada. Cero ↗ sueltas a 320 y 360,
+        EN y ES, y sin scroll horizontal de 320 a 1440 (`86e255d`).
+      - **El comentario de `WORKING_PAPER`** en `src/config.ts` ya no dice que el enlace es un
+        placeholder, como el de `ENGINE` en `e852937` (`28240a1`).
+      - **El texto alternativo del póster de /finding,** con el candado abierto, describe el póster
+        nuevo: la miniatura, el título y la línea de la §0, de las mismas claves que el póster
+        (`finding.poster.alt`, con `finding.line`). Cerrado, y en las demás páginas, es el de antes
+        (`6b0c92f`).
+      - **Las dos notas de `PENDIENTE(doi)`** del «Estado al corte», marcadas como resueltas
+        (`056fbac`), y P9 cerrada en los documentos (el commit de este registro).
 
 ### Estado al corte (2026-10-10)
 
@@ -1388,6 +1407,8 @@ seguir no hacen falta: se rehacen con las herramientas de `scratch/tools/` (`exp
 - Montse acepta las decisiones tomadas en la sesión, fuera del prompt, como quedaron arriba (el ADR
   0038 precisa el 0023 y el 0034; los topes de palabras; el techo de JS de `/finding`; lo que va solo
   con el candado abierto).
+
+P9 llegó a `main` con el PR #21.
 
 ## F6 · Lanzamiento
 
