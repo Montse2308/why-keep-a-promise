@@ -5,7 +5,7 @@
  * work only the finding draws on carries `data-locked-content`; only SourcesFinding.astro passes
  * `locked`.
  */
-import { externalAttrs, externalMark } from '../../lib/external';
+import { externalAttrs, externalText } from '../../lib/external';
 import { useTranslations, type Locale } from '../../lib/i18n';
 import { citeIn, referenceHtml, referenceWithType, shownUrl, type Entry, type Work } from '../../lib/sources';
 import SourceEntry from './SourceEntry.astro';
@@ -32,7 +32,7 @@ const reference = referenceWithType(ref.text ?? '', work.typeKey ? tr(work.typeK
   </h2>
   <p class="sources__reference" lang={english}>
     <Fragment set:html={reference} />
-    {ref.url && <>{' '}<a class="sources__url" href={ref.url} {...externalAttrs(ref.url)}>{shownUrl(ref.url)}<Fragment set:html={externalMark(ref.url, locale)} /></a></>}
+    {ref.url && <>{' '}<a class="sources__url" href={ref.url} {...externalAttrs(ref.url)}><Fragment set:html={externalText(shownUrl(ref.url), ref.url, locale)} /></a></>}
   </p>
   {
     work.parts && (
@@ -42,7 +42,7 @@ const reference = referenceWithType(ref.text ?? '', work.typeKey ? tr(work.typeK
           {work.parts.map((item) => (
             <li lang={item.key ? undefined : english}>
               {item.key ? tr(item.key) : <Fragment set:html={referenceHtml(item.text ?? '')} />}
-              {item.url && <>{' '}<a class="sources__url" href={item.url} {...externalAttrs(item.url)}>{shownUrl(item.url)}<Fragment set:html={externalMark(item.url, locale)} /></a></>}
+              {item.url && <>{' '}<a class="sources__url" href={item.url} {...externalAttrs(item.url)}><Fragment set:html={externalText(shownUrl(item.url), item.url, locale)} /></a></>}
             </li>
           ))}
         </ul>
@@ -70,7 +70,8 @@ const reference = referenceWithType(ref.text ?? '', work.typeKey ? tr(work.typeK
     text-wrap: pretty;
   }
 
-  /* A space, not a margin, before it: the line may break there, so the address and its arrow keep together. */
+  /* A space, not a margin, before it: the line may break there. A long address breaks anywhere it must,
+     but its last characters keep the arrow (src/lib/external.ts). */
   .sources__url {
     overflow-wrap: anywhere;
   }

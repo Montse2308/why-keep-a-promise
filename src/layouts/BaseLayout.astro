@@ -9,7 +9,7 @@ import { AWAY_KEYS, THREADS } from '../lib/details';
 import { WORKING_PAPER } from '../config';
 import { DEFAULT_LOCALE, LOCALES, t, type Locale } from '../lib/i18n';
 import { findingUnlocked } from '../lib/lock';
-import { description, OG_LOCALES, themeColors } from '../lib/meta';
+import { description, OG_LOCALES, posterAlt, themeColors } from '../lib/meta';
 import { POSTER, posterPath } from '../lib/posters/poster';
 import { fill } from '../lib/template';
 import { absoluteHref, assetHref, href, type Route } from '../lib/routes';
@@ -36,7 +36,8 @@ const titleFont = fontData['--font-display']?.find((font) => font.style === 'ita
 const textFont = fontData['--font-body']?.find((font) => font.style === 'normal')?.src[0];
 // The page's poster for a shared link (ADR 0025), drawn by src/pages/posters/.
 const poster = new URL(assetHref(posterPath(locale, route)), site).href;
-const posterAlt = fill(t(locale, 'poster.alt'), { title, author: t(locale, 'author.name') });
+// Its alternative text names what it shows: behind the lock, /finding's miniature and line (src/lib/meta.ts).
+const imageAlt = posterAlt(locale, route, title, findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV));
 // The tab's line while the visitor is away, by the thread's state, and the console's note (src/lib/details.ts).
 const away = JSON.stringify(Object.fromEntries(THREADS.map((thread) => [thread, t(locale, AWAY_KEYS[thread])])));
 const consoleLine = fill(t(locale, 'console.line'), { url: absoluteHref(site, locale, 'how-its-built') });
@@ -71,7 +72,7 @@ const noindex = route === 'finding' && !findingUnlocked(WORKING_PAPER.ssrn, impo
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content={String(POSTER.width)} />
     <meta property="og:image:height" content={String(POSTER.height)} />
-    <meta property="og:image:alt" content={posterAlt} />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     {/* What a page adds to its head: /finding's structured data, behind the lock (ADR 0037). */}
     <slot name="head" />

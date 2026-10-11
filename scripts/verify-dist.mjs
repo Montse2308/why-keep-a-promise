@@ -149,16 +149,21 @@ export function statusSentence(dictionary, title) {
 
 /**
  * An HTML text without the tags that may sit inside the status sentence: the link to the working
- * paper and the italics of its title. What is left of its element is the sentence alone.
+ * paper, the italics of its title, and its mark with the span that keeps it to the title's last
+ * characters. What is left of its element is the sentence alone.
  * @param {string} html
  */
 export function withoutInlineTags(html) {
-  return html.replace(LINK_MARK, '').replace(/<\/?(?:a|cite|em|i)\b[^>]*>/gi, '');
+  return html
+    .replace(LINK_MARK, '')
+    .replace(/<span class="link-end">([^<]*)<\/span>/g, '$1')
+    .replace(/<\/?(?:a|cite|em|i)\b[^>]*>/gi, '');
 }
 
 /**
  * The mark that ends a link leaving the site (src/lib/external.ts): a small arrow hidden from a screen
- * reader, then the notice that the link opens in a new tab, in the page's language.
+ * reader, then the notice that the link opens in a new tab, in the page's language. It sits with the
+ * link's last characters in a span that does not wrap (`.link-end`, step 9.10 of P9).
  */
 const LINK_MARK = /<span class="link-out"><span aria-hidden="true">↗<\/span><span class="visually-hidden" lang="([a-z]+)">([^<]*)<\/span><\/span>/g;
 
@@ -186,8 +191,9 @@ function attributeOf(attributes, name) {
 
 /**
  * Problems with where links open (step 8.3 of P8): every link that leaves the site opens in a new
- * tab, with `rel="noopener noreferrer"`, and ends in its mark, the notice in the page's language;
- * every link inside it stays in the tab, where the film keeps what was played (ADR 0029).
+ * tab, with `rel="noopener noreferrer"`, and ends in its mark, the notice in the page's language,
+ * glued to the link's last characters so the arrow never wraps alone (step 9.10 of P9); every link
+ * inside it stays in the tab, where the film keeps what was played (ADR 0029).
  * @param {Record<string, Record<string, string>>} dictionaries the UI strings, by locale
  * @param {Record<string, string>} pages the text of each HTML page, by its path in dist/
  * @returns {string[]}
@@ -207,8 +213,12 @@ export function linkTargetProblems(dictionaries, pages) {
       const rel = (attributeOf(attributes, 'rel') ?? '').split(/\s+/);
       if (!rel.includes('noopener') || !rel.includes('noreferrer')) problems.push(`${page}: ${href} has no rel="noopener noreferrer"`);
       const mark = [...inner.matchAll(LINK_MARK)];
-      const [, lang, text] = mark[0] ?? [];
-      if (mark.length !== 1 || !inner.trimEnd().endsWith(mark[0]?.[0] ?? '\0')) problems.push(`${page}: ${href} does not end in the arrow and the notice`);
+      const [whole = '', lang, text] = mark[0] ?? [];
+      const at = mark[0]?.index ?? 0;
+      const before = inner.slice(0, at);
+      const after = inner.slice(at + whole.length);
+      if (mark.length !== 1 || !/^(?:\s*<\/[a-z][\da-z-]*\s*>)*\s*$/i.test(after)) problems.push(`${page}: ${href} does not end in the arrow and the notice`);
+      else if (!/<span class="link-end">[^<\s]+$/.test(before) || !after.startsWith('</span>')) problems.push(`${page}: ${href} does not keep its arrow with its last characters`);
       else if (lang !== locale || decodeAttribute(text ?? '').trim() !== notice) problems.push(`${page}: ${href} does not say, in ${locale}, that it opens in a new tab`);
       return problems;
     });

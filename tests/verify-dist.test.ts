@@ -72,7 +72,7 @@ import {
   withoutInlineTags,
 } from '../scripts/verify-dist.mjs';
 import { AUTHOR, WORKING_PAPER } from '../src/config';
-import { externalLinks, externalMark, isExternal } from '../src/lib/external';
+import { externalLinks, externalMark, externalText, isExternal } from '../src/lib/external';
 import { href } from '../src/lib/routes';
 import { findingUnlocked, isPending } from '../src/lib/lock';
 
@@ -287,6 +287,8 @@ describe('verify:dist (ADR 0034)', () => {
     expect(withoutInlineTags('<p class="a">x <a href="y" class="z"><cite>t</cite></a> <em>e</em></p>')).toBe('<p class="a">x t e</p>');
     // The mark of a link that leaves the site is not part of the sentence (src/lib/external.ts).
     expect(withoutInlineTags(`<p>x <a href="https://y">t${externalMark('https://y', 'es')}</a>.</p>`)).toBe('<p>x t.</p>');
+    // Nor is the span that keeps it to the title's last characters (step 9.10).
+    expect(withoutInlineTags(`<p>x <a href="https://y"><cite>A ${externalText('Title', 'https://y', 'en')}</cite></a>.</p>`)).toBe('<p>x A Title.</p>');
   });
 
   it('does not count the same words inside a sentence of prose', () => {
@@ -328,7 +330,7 @@ describe('verify:dist (ADR 0034)', () => {
 
     it('renders the sentence in one component, the same in both states', () => {
       expect(paperStatus).toContain(
-        "{before}<a href={WORKING_PAPER.ssrn} {...externalAttrs(WORKING_PAPER.ssrn)}><cite lang={locale === 'en' ? undefined : 'en'}>{WORKING_PAPER.title}</cite><Fragment set:html={externalMark(WORKING_PAPER.ssrn, locale)} /></a>{after}",
+        "{before}<a href={WORKING_PAPER.ssrn} {...externalAttrs(WORKING_PAPER.ssrn)}><cite lang={locale === 'en' ? undefined : 'en'}><Fragment set:html={externalText(WORKING_PAPER.title, WORKING_PAPER.ssrn, locale)} /></cite></a>{after}",
       );
       expect(paperStatus).not.toMatch(/unlocked|findingUnlocked/);
     });
@@ -490,6 +492,11 @@ describe('verify:dist (ADR 0034)', () => {
       ]);
       // The notice in the other language: the page is in Spanish, the mark in English.
       expect(linkTargetProblems(dictionaries, { 'es/p.html': page('es', marked) })).toEqual(['es/p.html: https://a.b does not say, in es, that it opens in a new tab']);
+      // The arrow apart from the link's last characters, where it could wrap alone (step 9.10).
+      const apart = `<a href="https://a.b" target="_blank" rel="noopener noreferrer">x${externalMark('https://a.b', 'en')}</a>`;
+      expect(linkTargetProblems(dictionaries, { 'p.html': page('en', apart) })).toEqual(['p.html: https://a.b does not keep its arrow with its last characters']);
+      // Glued inside the element the text ends in, it passes.
+      expect(linkTargetProblems(dictionaries, { 'p.html': page('en', externalLinks('<a href="https://a.b"><cite>A title</cite></a>', 'en')) })).toEqual([]);
     });
 
     it('fails a link inside the site that opens elsewhere, which would lose what the film remembers', () => {

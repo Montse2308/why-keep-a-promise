@@ -343,6 +343,7 @@
   "film.closing.again": "Watch again",
   "poster.name": "I promise",
   "poster.alt": "The story’s circle and square, tied by a golden thread, beside the page’s title, signed by {author}: {title}",
+  "finding.poster.alt": "The story’s circle and square, tied by a golden thread, beside a miniature of what each reason earns (a step for personal guilt, a flat line for partner-specific commitment) and the page’s title, signed by {author}: {title}. {line}",
   "tab.away.none": "A promise is waiting for you.",
   "tab.away.tied": "You promised. Come back.",
   "tab.away.kept": "You kept your promise.",
