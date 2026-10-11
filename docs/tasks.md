@@ -1340,7 +1340,8 @@ otros dos resultados), 0040 (la portada enlaza al hallazgo) y 0041 (`/about` sum
 - `AUTHOR` suma `cite` y `bibtex`, `WORKING_PAPER` suma `published` y `year`, y `ENGINE` suma
   `title`, `version`, `year` y `license`, para armar la cita y el JSON-LD desde `src/config.ts`.
 - La referencia de Di Bartolomeo et al. (2023) va sin enlace en `/sources`, con
-  `PENDIENTE(doi)` en `docs/sources.md`: no se cotejó la ficha del artículo.
+  `PENDIENTE(doi)` en `docs/sources.md`: no se cotejó la ficha del artículo. → resuelto en la
+  Continuación (`b285aaf`)
 
 **La QA (9.7), sobre `npm run preview` del build abierto**
 
@@ -1365,7 +1366,8 @@ otros dos resultados), 0040 (la portada enlaza al hallazgo) y 0041 (`/about` sum
 - `src/components/finding/Explorer.astro`: el árbol de accesibilidad del CDP de Chrome 154 muestra el
   valor crudo del control de θ aunque tenga `aria-valuetext` (ya visto en F5); los lectores usan el
   `aria-valuetext`.
-- `docs/sources.md`, Di Bartolomeo et al. (2023): `PENDIENTE(doi)`.
+- `docs/sources.md`, Di Bartolomeo et al. (2023): `PENDIENTE(doi)`. → resuelto en la Continuación
+  (`b285aaf`)
 
 **Para abrir a mano (Montse):** el working paper en SSRN
 (`https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218`), su DOI (`https://doi.org/10.2139/ssrn.7580218`),
