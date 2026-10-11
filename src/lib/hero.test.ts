@@ -3,7 +3,7 @@ import { CHAPTER_IDS, OPEN_CHAPTERS } from './chapters';
 import { deltaE, parseHex, toLab } from './design/color';
 import { frame, isClose, wholeScreen, type Area, type Viewport } from './film/camera';
 import { stageAt } from './film/stage';
-import { COVER_PAGES, COVER_SKY, DOORS, dawnSkyAt, researchPages } from './hero';
+import { COVER_PAGES, COVER_SKY, DOORS, dawnSkyAt, researchLinks } from './hero';
 import { linkable } from './notebook';
 
 const distance = (a: string, b: string) => deltaE(toLab(parseHex(a)), toLab(parseHex(b)));
@@ -25,9 +25,15 @@ describe('the home’s cover (ADR 0036)', () => {
     expect(COVER_PAGES.some((entry) => entry.page === 'finding')).toBe(false);
   });
 
-  it('links the research door to /finding too, under chapter 7, only once the lock is open (ADR 0040)', () => {
-    expect(researchPages(true).map((entry) => [entry.page, entry.titleKey])).toEqual([['finding', 'notebook.finding.title']]);
-    expect(researchPages(false)).toEqual([]);
+  it('links the research door to /finding first, as the main button, and to chapter 7 under it, only once the lock is open (ADR 0040, M1)', () => {
+    expect(researchLinks(true)).toEqual([
+      { to: 'finding', labelKey: 'notebook.finding.title', primary: true },
+      { to: 'chapter', labelKey: DOORS[1]?.goKey, primary: false },
+    ]);
+  });
+
+  it('keeps the research door to its way to chapter 7 alone while the lock is closed, as before (ADR 0034)', () => {
+    expect(researchLinks(false)).toEqual([{ to: 'chapter', labelKey: DOORS[1]?.goKey, primary: false }]);
   });
 
   it('starts in the dawn’s sky and ends in the colour the stage begins with, on any screen (ADR 0027: no cuts)', () => {

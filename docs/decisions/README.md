@@ -32,7 +32,7 @@ números no se reutilizan.
 | [0037](0037-finding-on-its-own.md) | `/finding` se entiende sola: primero la intuición y después la fórmula, sus secciones en orden, los mismos datos que la curva con frases distintas (regla (h)), su póster y su JSON-LD. |
 | [0038](0038-formula-explorer.md) | Un explorador de la fórmula de la culpa disponible en `/finding`, y nada más: cómo se prueba, su script y su techo de peso. |
 | [0039](0039-two-more-results.md) | `/finding` nombra sus otros dos resultados: quién habla no decide (60 de 60) y la parte de las veces en que una promesa deja de atar, con palabras y su corte en la mitad. |
-| [0040](0040-cover-links-finding.md) | La tarjeta «La investigación» de la portada enlaza también a `/finding`, con el candado abierto. |
+| [0040](0040-cover-links-finding.md) | La tarjeta «La investigación» de la portada enlaza también a `/finding`, con el candado abierto; desde M1, primero y como botón principal. |
 | [0041](0041-about-orcid-ssrn.md) | `/about` suma ORCID y la página de autora en SSRN, con `rel="me"`, y nada más. |
 
 Archivados (no rigen): 0002, 0003, 0004, 0007, 0009, 0011, 0014, 0015, 0017, 0018, 0019, 0020, 0022

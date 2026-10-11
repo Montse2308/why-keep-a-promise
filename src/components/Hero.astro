@@ -4,12 +4,12 @@
  * page's title; under it, one line and a door to each part of the page (src/lib/hero.ts): the story,
  * the research and the notebook. HTML and CSS only: it is the same with or without JavaScript, and its
  * links are plain links, to the film's chapters or to the notebook's pages; behind the lock, the
- * research door also links to /finding (ADR 0040). Its sky is the film's dawn, with the stage's sun
+ * research door links to /finding first, as its main button, and to chapter 7 under it (ADR 0040, M1). Its sky is the film's dawn, with the stage's sun
  * and clouds, and ends in the colour the stage begins with.
  */
 import { FILM } from '../lib/design/film';
 import { WORKING_PAPER } from '../config';
-import { COVER_PAGES, COVER_SKY, DOORS, researchPages, type Door } from '../lib/hero';
+import { COVER_PAGES, COVER_SKY, DOORS, researchLinks, type Door, type ResearchLink } from '../lib/hero';
 import { findingUnlocked } from '../lib/lock';
 import { useTranslations, type Locale } from '../lib/i18n';
 import { href } from '../lib/routes';
@@ -23,8 +23,9 @@ const tr = useTranslations(locale);
 const sky = `--cover-top: ${COVER_SKY.top}; --cover-glow: ${COVER_SKY.glow}; --cover-foot: ${COVER_SKY.foot}`;
 const [story, research, notebook] = DOORS as readonly [Door, Door, Door];
 const chapterHref = (door: Door) => href(locale, 'home', door.chapter ?? undefined);
-// The research door's second link, to /finding, only behind the lock (ADR 0040).
-const researchMore = researchPages(findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV));
+// The research door's links: behind the lock, /finding first, as the main button (ADR 0040, M1).
+const researchLinksHere = researchLinks(findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV));
+const researchHref = (link: ResearchLink) => (link.to === 'finding' ? href(locale, 'finding') : chapterHref(research));
 ---
 
 <section class="cover" aria-labelledby="cover-title" style={sky}>
@@ -72,8 +73,13 @@ const researchMore = researchPages(findingUnlocked(WORKING_PAPER.ssrn, import.me
       </div>
       <p class="door__text">{tr(research.textKey)}</p>
       <div class="door__links">
-        <a class="door__go" href={chapterHref(research)}>{research.goKey && tr(research.goKey)}</a>
-        {researchMore.map((entry) => <a class="door__go" href={href(locale, entry.page)}>{tr(entry.titleKey)}</a>)}
+        {
+          researchLinksHere.map((link) => (
+            <a class:list={['door__go', { 'door__go--first': link.primary }]} href={researchHref(link)}>
+              {tr(link.labelKey)}
+            </a>
+          ))
+        }
       </div>
     </li>
     <li class="door">
