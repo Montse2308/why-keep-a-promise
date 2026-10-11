@@ -42,7 +42,7 @@ queda nada en el sitio.
 - [x] `launch-checklist.md`: el paso 1b (política de la revista) y los pasos 4 y 8 con la estructura
       nueva.
 - [x] `AGENTS.md` y los README.
-- [x] El prototipo de los capítulos 0 a 3 en `docs/prototipo/te-lo-prometo.html`.
+- [x] El prototipo de los capítulos 0 a 3 en `docs/archivo/prototipo/te-lo-prometo.html`.
 - [x] Revisión de P0 por Montse (PR #1, mergeado).
 
 ## P1 · Cimientos y capítulo 0
@@ -50,7 +50,7 @@ queda nada en el sitio.
 - [x] La hoja de personajes, aprobada por Montse con tres cambios, que recoge el ADR 0027 (que
       reemplaza al 0022): el hilo dorado en lugar del diamante, los boletos en lugar de los gestos y
       el color «punto medio» entre Aciano y Aciano luminoso. De noche, la lámpara. Las hojas y
-      barajas, en `docs/prototipo/`.
+      barajas, en `docs/archivo/prototipo/`.
 - [x] Fraunces y Nunito autoalojadas: `@fontsource-variable/*@5.3.0`, solo el eje de peso (121 404
       bytes en la primera carga), OFL y procedencia. Registradas; se cargan con el capítulo 0.
 - [x] Colores de la película en `src/lib/design/film.ts` y `src/styles/film.css`: el elenco, el
@@ -461,8 +461,8 @@ queda nada en el sitio.
 
 ## P7 · Ajustes de la revisión externa
 
-El porqué de cada paso está en `docs/p7-review-plan.md`; la evidencia (archivos, líneas y
-mediciones), en `docs/p7-external-review.md`. Cada paso cabe en una sesión corta,
+El porqué de cada paso está en `docs/archivo/p7-review-plan.md`; la evidencia (archivos, líneas y
+mediciones), en `docs/archivo/p7-external-review.md`. Cada paso cabe en una sesión corta,
 termina en verde (`check`, `test`, `build`, `verify:dist` y `budgets`) y deja el sitio entero: se
 puede parar después de cualquiera. El número del paso (`7.1.3`) va en el commit. Un paso
 **(Montse)** es una decisión o aprobación suya: el agente prepara borradores, capturas u opciones,
@@ -470,8 +470,8 @@ pero no decide. «Dep.» dice de qué depende un paso, si depende de algo más q
 
 ### P7.0 · Decisiones y documentos (no toca `src/`)
 
-- [x] **7.0.1** El plan en el repo: `docs/p7-review-plan.md`, la revisión copiada en
-      `docs/p7-external-review.md`, P7 en `phases.md` y en este archivo, y `AGENTS.md` al día.
+- [x] **7.0.1** El plan en el repo: `docs/archivo/p7-review-plan.md`, la revisión copiada en
+      `docs/archivo/p7-external-review.md`, P7 en `phases.md` y en este archivo, y `AGENTS.md` al día.
 - [x] **7.0.2** Borradores en EN y ES de los cuatro textos nuevos: la descripción del home, «Ver de
       nuevo», el progreso para lectores de pantalla («Capítulo 5 de 9») y la frase nueva del
       capítulo 8 (reemplaza a `film.closing.private`). En `scratch/`, para Montse.

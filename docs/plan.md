@@ -77,7 +77,7 @@ Tiene que:
 - **Tipografía:** Fraunces y Nunito, autoalojadas. JetBrains Mono solo para el código.
 - **Luz y tema:** la película tiene su propia luz; el cuaderno sigue el tema claro u oscuro del
   sistema.
-- **Referencia visual:** el prototipo de los capítulos 0 a 3, en `docs/prototipo/te-lo-prometo.html`.
+- **Referencia visual:** el prototipo de los capítulos 0 a 3, en `docs/archivo/prototipo/te-lo-prometo.html`.
   Ábrelo en un navegador y elige «Papel».
 
 ## Tecnología (ADR 0025)

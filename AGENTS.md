@@ -33,7 +33,7 @@ plain commits to `main` or short branches, and `deploy.yml` run by Montse. The c
 the post-launch catch-up of what was still written as before the launch (branch `m1/post-launch`,
 section M1 of `docs/tasks.md`).
 P7, the fixes from an external review, was planned in small steps (one per session) in
-`docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
+`docs/archivo/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
 script split by chapter, the fallback to the storyboard and the memory in the tab, is closed
 (PR #11). P7.2 (each page's description and Open Graph metadata, the 404 page, `noindex` on the
@@ -69,14 +69,14 @@ Read these before changing anything, in this order:
    (Historical, while P7 was open: P7 was split into numbered steps (`7.1.3`), each small enough for
    one short session and left green; when asked to continue P7, the agent took the first open step
    whose dependencies were met.)
-5. (Historical, while P7 was open.) `docs/p7-review-plan.md` said why each P7 step existed, in what
-   order, and what was left out and must not be reopened. `docs/p7-external-review.md` is the review
-   it came from: evidence (files, lines, measurements), not rules.
+5. (Historical, while P7 was open.) `docs/archivo/p7-review-plan.md` said why each P7 step existed,
+   in what order, and what was left out and must not be reopened. `docs/archivo/p7-external-review.md`
+   is the review it came from: evidence (files, lines, measurements), not rules.
 6. `docs/decisions/README.md` and the ADRs it lists. Every ADR in `docs/decisions/` is in force in
    full. A decision changes only through a new ADR; a superseded ADR moves to `docs/archivo/`.
 
-`docs/archivo/` is history: never follow it as a rule. `docs/prototipo/` holds the round-4 prototype
-as a visual reference; it is not site code.
+`docs/archivo/` is history: never follow it as a rule. `docs/archivo/prototipo/` holds the round-4
+prototype as a visual reference; it is not site code.
 
 Work only on what the current session authorises. If two instructions conflict, stop and ask.
 Every phase ends with a video or screenshots for Montse (360 and 1440 px): she reviews by looking,
@@ -253,8 +253,8 @@ tests/                   repo-level tests (page parity, prose figures and budget
                          the Lighthouse measurement, the film's fallback and its memory, the
                          pages' heads, the 404 page and the sitemap, the launch's workflows and
                          checklist, the story's name and the notebook's transitions)
-docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy); archivo/ = history;
-                         prototipo/ = the round-4 prototype
+docs/                    plan, rules, phases, tasks, ADRs (Spanish, single copy); archivo/ = history,
+                         with P7's review and plan and, in archivo/prototipo/, the round-4 prototype
 scratch/                 local notes, git-ignored, never committed
 ```
 

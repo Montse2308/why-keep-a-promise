@@ -19,7 +19,7 @@ cortas (M1, la puesta al día después del lanzamiento, en `docs/tasks.md`).
 
 Los ADR 0021–0026, el archivo de lo que ya no rige, `plan.md`, `content-rules.md`, `phases.md`,
 `tasks.md`, `launch-checklist.md` (paso 1b), `AGENTS.md` y los README. El prototipo, en
-`docs/prototipo/`. No toca `src/`.
+`docs/archivo/prototipo/`. No toca `src/`.
 
 **Criterio de salida**
 
@@ -116,7 +116,7 @@ El sonido, los detalles (el título de la pestaña y la consola), los pósteres 
 **Estado:** cerrada (PR #17).
 
 Los puntos de la revisión externa que Montse eligió (1, 2A, 4–13, 15 y 16, y el mínimo del 3). El porqué, el orden y
-los riesgos están en `docs/p7-review-plan.md`; los pasos, uno por sesión, en `docs/tasks.md`.
+los riesgos están en `docs/archivo/p7-review-plan.md`; los pasos, uno por sesión, en `docs/tasks.md`.
 Empieza cuando se cierre la revisión de P6. Cada subfase se cierra como toda fase: en verde
 (también `budgets`), con paridad EN/ES y con capturas o video a 360 y 1440 px para Montse.
 

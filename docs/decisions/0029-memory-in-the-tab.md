@@ -6,7 +6,7 @@ pestaña, y nada sale de ella. Lo demás de los dos sigue entero.
 
 ## Contexto
 
-La revisión externa de P6 (punto 2, `docs/p7-external-review.md`) encontró que la película olvida
+La revisión externa de P6 (punto 2, `docs/archivo/p7-external-review.md`) encontró que la película olvida
 todo al salir y volver. Prometer, jugar el dilema, abrir la lupa «El dilema, a fondo» y volver con
 Atrás deja el scroll en su lugar, pero el carrete dice «Sin promesa» y los resultados se borran. Lo
 mismo pasa al recargar y con los enlaces de vuelta del cuaderno. El capítulo 3 le dice entonces «No
@@ -17,7 +17,7 @@ abrirán muchos visitantes, a menudo no guarda la página en caché al volver.
 
 La revisión daba dos salidas: recordar lo jugado en `history.state` (A) o abrir las lupas en otra
 pestaña (B). Montse eligió la A: B solo cubría las lupas, no Atrás ni la recarga
-(`docs/p7-review-plan.md`).
+(`docs/archivo/p7-review-plan.md`).
 
 El ADR 0023 dice «Nada se guarda ni se envía. No hay almacenamiento, cookies ni analítica.», y el
 0021, que nada de lo que el visitante contesta se guarda ni se envía. La intención de las dos

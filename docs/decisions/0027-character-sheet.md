@@ -17,7 +17,7 @@ capítulo 1. Al verla aprobó el elenco, las expresiones y las dos voces, con tr
    pruebas de daltonismo del repo, eligió el punto medio entre «Aciano» y «Aciano luminoso».
 
 De noche los colores se veían apagados. Se resolvió con luz, no con más color: una lámpara sobre la
-mesa en los capítulos de noche. Las hojas están en `docs/prototipo/`.
+mesa en los capítulos de noche. Las hojas están en `docs/archivo/prototipo/`.
 
 ## Decisión
 

@@ -8,7 +8,7 @@ señales nuevas. Lo demás del sonido del 0025 sigue entero.
 
 En P6 la película tenía cinco señales (`src/lib/film/sound.ts`): el dado al lanzarse y al caer, las
 burbujas del chat, el sello y el tema del final. La revisión externa (punto 8,
-`docs/p7-external-review.md`) encontró dos huecos:
+`docs/archivo/p7-external-review.md`) encontró dos huecos:
 
 - **Al encender el sonido no pasa nada.** El primer sonido puede llegar muchas pantallas después, o
   nunca, si el visitante se queda los 14 y no elige un mensaje.
@@ -17,7 +17,7 @@ burbujas del chat, el sello y el tema del final. La revisión externa (punto 8,
 
 Montse pidió que algo sonara al encender. La música de fondo quedó fuera: choca con «todo lo que
 suena también se ve» (ADR 0025), se vuelve repetitiva y compite con el lector de pantalla
-(`docs/p7-review-plan.md`). El 0025 nombra sus señales entre paréntesis, así que una señal nueva
+(`docs/archivo/p7-review-plan.md`). El 0025 nombra sus señales entre paréntesis, así que una señal nueva
 necesita este ADR. Montse aprobó la lista en 7.0.8.
 
 ## Decisión

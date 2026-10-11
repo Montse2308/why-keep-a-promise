@@ -2,7 +2,7 @@
 
 Copia de la revisión externa del sitio, hecha al terminar P6 sobre `main` (commit `9b3efda`,
 2026-10-01). **No es una regla ni un plan:** es la evidencia de la que sale P7. Qué se hace con cada
-punto, qué se descartó y por qué está en `docs/p7-review-plan.md`; las decisiones, en los ADR. Los
+punto, qué se descartó y por qué está en `docs/archivo/p7-review-plan.md`; las decisiones, en los ADR. Los
 números de línea son de ese commit y dejan de valer cuando el código cambia (por ejemplo, al partir
 `film.ts` en 7.1).
 
