@@ -47,6 +47,9 @@ different background trust can.
 - **A formula you can move.** On /finding, the formula behind the result runs in the page: move
   background trust, the belief that a promise will be kept or how much guilt weighs, and the window
   where personal guilt keeps its word opens, shifts or closes. Its script loads only there.
+- **The engine, live.** On /finding, the paper's simulation engine runs in your browser in three
+  fixed worlds, with the paper's seeds, and a test checks it against the paper's runs. Its code loads
+  only when you press Run.
 - **For everyone, and private.** Every game works with the keyboard and announces its result to
   screen readers, and with reduced motion nothing spins. Nothing is stored or sent: no cookies, no
   analytics, and your choices in the story stay in the tab.

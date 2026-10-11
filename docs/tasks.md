@@ -1524,8 +1524,11 @@ trae la dependencia, en `node_modules`.
       entrada en `docs/sources.md` (fuente: `r6`, `params.generations`, `seeds.q9` y `seeds.q9b`).
       `ENGINE_RUNS_FIGURES` en `src/content/figures.ts`; el test de `population.ts` lo compara con el
       módulo y con `r6`. Los conteos en vivo no van al registro: el mismo test los fija contra `r6`.
-- [ ] **10.6** Fuera de la sección: el final del primer párrafo de `/how-its-built` y un punto nuevo
+- [x] **10.6** Fuera de la sección: el final del primer párrafo de `/how-its-built` y un punto nuevo
       en «How it's built» / «Cómo está hecho» de los README.
+      Hecho, con los textos dados: «…and on /finding» y «…y en /finding»; el punto «The engine,
+      live» / «El motor, en vivo», después de «A formula you can move» / «Una fórmula que se puede
+      mover». «The research» / «La investigación» no cambia.
 - [ ] **10.7** La QA: anchos, sin JS, red, tiempos (normal y con la CPU frenada 4×), teclado y
       lector de pantalla, movimiento reducido, axe, pesos y Lighthouse de `/finding`, los tests de
       reglas y un build cerrado de prueba. Capturas en `scratch/p10/`, con su README.

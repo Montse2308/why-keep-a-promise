@@ -8,7 +8,7 @@ Astro construye cada página de antemano, en HTML y CSS simples. El
 home es primero un storyboard: cada capítulo un cuadro quieto, sus tarjetas en orden, cada resultado
 por escrito. Un script lo anima con el scroll; sin él, la historia completa sigue ahí. La lógica
 vive en módulos puros con sus pruebas, y JavaScript corre solo en la historia, el panel del
-cuaderno y el explorador de la fórmula de /finding.
+cuaderno y en /finding.
 
 ## Un motor de escenas propio
 
