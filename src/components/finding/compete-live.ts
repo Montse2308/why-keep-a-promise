@@ -1,7 +1,9 @@
 /**
- * /finding's live engine (ADR 0042), loaded only when «Run the engine» is pressed (./compete.ts). It
- * starts the worker with the paper's engine (./compete.worker.ts), keeps every generation it sends,
- * world by world, for as long as the page is open, and draws them: one line per run, the share of
+ * /finding's live engine (ADR 0042), loaded only when «Run the engine» is pressed (./compete.ts), from
+ * its own bundle, and mounted as it loads (at the end of this file). It starts the worker with the
+ * paper's engine (./compete.worker.ts, from the URL the build wrote in the block's
+ * `data-later-worker`), keeps every generation it sends, world by world, for as long as the page is
+ * open, and draws them: one line per run, the share of
  * the population with personal guilt against the generations, at about 30 generations a second and
  * never ahead of what arrived (src/lib/finding/live.ts).
  *
@@ -74,7 +76,7 @@ export function mountLive(root: HTMLElement, strings: LiveStrings): void {
   };
 
   try {
-    worker = new Worker(new URL('./compete.worker.ts', import.meta.url), { type: 'module' });
+    worker = new Worker(root.dataset.laterWorker ?? '', { type: 'module' });
   } catch {
     fail();
     return;
@@ -88,7 +90,10 @@ export function mountLive(root: HTMLElement, strings: LiveStrings): void {
     state.generations[message.generation] = message.counts;
     state.tallies[message.generation] = message.tally;
     if (message.world === world) {
-      if (state.phase === 'starting') state.phase = 'running';
+      if (state.phase === 'starting') {
+        state.phase = 'running';
+        controls();
+      }
       play();
     }
   });
@@ -245,4 +250,12 @@ export function mountLive(root: HTMLElement, strings: LiveStrings): void {
   // The press that loaded this module runs the chosen world.
   go();
   draw(true);
+}
+
+// Bundled apart and loaded by the first-load script when «Run the engine» is pressed (./compete.ts):
+// it mounts every block that asked for it. A module that only exported this would be bundled empty.
+for (const root of document.querySelectorAll<HTMLElement>('[data-compete-live][data-pressed]')) {
+  if (root.dataset.live !== undefined) continue;
+  root.dataset.live = '';
+  mountLive(root, JSON.parse(root.dataset.strings ?? '{}') as LiveStrings);
 }

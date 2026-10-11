@@ -1,14 +1,15 @@
 /**
  * First-load script of /finding's live engine (ADR 0042): it shows the block, which stays hidden
  * without JavaScript, and, until «Run the engine» is pressed, only swaps the chosen world's text and
- * count. The press loads the rest, ./compete-live.ts, which brings the chart, the controls and the
- * worker with the engine; nothing of the engine is fetched or run before. If that load fails, the
- * still figure stays and the status says the engine could not run.
+ * count. The press loads the rest, ./compete-live.ts, from the URL the build wrote in the block's
+ * `data-later-module` (CompeteLive.astro); it brings the chart and the controls, and starts the
+ * worker with the engine from `data-later-worker`. Nothing of the engine is fetched or run before.
+ * If that load fails, the still figure stays and the status says the engine could not run.
  *
- * It imports only ./compete-live.ts, on the press, and the explorer's template filler, already on
- * /finding, so it shares no module with the film's script.
+ * It imports nothing and loads ./compete-live.ts with a script element, so it shares no module with
+ * any other script: small and alone, Astro inlines it in the page, and /finding's first load fetches
+ * no script more than before (an extra request delayed its largest paint by 0.15 s on Lighthouse).
  */
-import { fillIn as fill } from '../../lib/finding/explorer';
 import type { WorldId } from '../../lib/finding/worlds';
 
 export interface LiveStrings {
@@ -27,6 +28,11 @@ export interface LiveStrings {
   readonly total: number;
   readonly size: number;
   readonly worlds: Readonly<Record<WorldId, { readonly trust: number; readonly runs: number }>>;
+}
+
+/** Fills a UI string's `{placeholders}`: its own, so this script imports nothing and can be inlined in the page. */
+function fill(template: string, values: Readonly<Record<string, number>>): string {
+  return template.replace(/\{([a-z]+)\}/gi, (whole, name: string) => String(values[name] ?? whole));
 }
 
 export function mountCompetes(scope: ParentNode = document): void {
@@ -69,14 +75,19 @@ function mount(root: HTMLElement): void {
     () => {
       root.removeEventListener('change', onChoose);
       run.textContent = strings.starting;
-      import('./compete-live')
-        .then(({ mountLive }) => mountLive(root, strings))
-        .catch(() => {
-          // The button keeps the focus it has: it says it does nothing now, without leaving the tab order.
-          run.textContent = strings.run;
-          run.setAttribute('aria-disabled', 'true');
-          status.textContent = strings.failed;
-        });
+      // The module is a URL the build wrote, loaded by a script element: an `import()` here, even of a
+      // variable, would keep Astro from inlining this script. It mounts every block marked as pressed.
+      root.dataset.pressed = '';
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = root.dataset.laterModule ?? '';
+      script.addEventListener('error', () => {
+        // The button keeps the focus it has: it says it does nothing now, without leaving the tab order.
+        run.textContent = strings.run;
+        run.setAttribute('aria-disabled', 'true');
+        status.textContent = strings.failed;
+      });
+      document.head.append(script);
     },
     { once: true },
   );

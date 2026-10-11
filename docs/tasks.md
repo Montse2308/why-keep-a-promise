@@ -1515,8 +1515,9 @@ trae la dependencia, en `node_modules`.
       nada del motor; al pulsar, el módulo y el worker; los tres mundos terminan con los conteos de
       `r6`. Si no hay workers, la figura fija se queda y el estado lo dice; el botón conserva el foco
       (`aria-disabled`). El techo nuevo, `finding-press`: 7 KiB (pesa 5.3); la primera carga de JS de
-      `/finding` pasa de 2.8 a 4.1 KiB, bajo sus 8 (ADR 0042, al día). `budgets` encuentra lo que se
-      carga después en los `import()` y los `new URL(…, import.meta.url)`. `weight.json` no cambia:
+      `/finding` pasa de 2.8 a 4.1 KiB, bajo sus 8 (ADR 0042, al día; en 10.7 baja a 3.4). `budgets`
+      encuentra lo que se carga después en los `import()` y los `new URL(…, import.meta.url)` (y,
+      desde 10.7, en los atributos `data-later-*`). `weight.json` no cambia:
       los home pesan lo mismo. `tests/memory.test.ts` revisa también los scripts del motor en vivo.
 - [x] **10.5** El registro de cifras: 400, 20 y 40, con su fuente en `docs/sources.md`; `/sources`
       lista lo nuevo con el candado abierto.

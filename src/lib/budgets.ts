@@ -12,9 +12,10 @@
  * ceilings hold on every page (ADR 0028, which makes ADR 0025's budgets precise). /finding's
  * JavaScript, its formula explorer and the notebook's panel, has a ceiling of its own (ADR 0038).
  *
- * What a page loads later, when a button is pressed (a dynamic `import()` and a worker's
- * `new URL(…, import.meta.url)`, with what they import), is not part of its first load: it is weighed
- * apart, and /finding's, the live engine and its worker, has a ceiling of its own (ADR 0042).
+ * What a page loads later, when a button is pressed, is not part of its first load: a script named
+ * by an element's `data-later-*` attribute, a dynamic `import()` or a worker's
+ * `new URL(…, import.meta.url)`, with what they import. It is weighed apart, and /finding's, the live
+ * engine and its worker, has a ceiling of its own (ADR 0042).
  */
 
 export const KB = 1024;
@@ -134,6 +135,8 @@ export interface PageRefs {
   readonly images: readonly string[];
   /** The text of every inline <style>. */
   readonly inlineStyles: readonly string[];
+  /** Scripts the page loads later, on a press, named by an element's `data-later-*` attribute. */
+  readonly later: readonly string[];
 }
 
 /** What a page's HTML asks the browser for on its first load. */
@@ -168,7 +171,8 @@ export function refsOf(html: string): PageRefs {
     if (src && attribute(match[0], 'loading') !== 'lazy') images.push(src);
   }
   for (const match of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) inlineStyles.push(match[1] ?? '');
-  return { scripts, inlineScripts, styles, preloads, images, inlineStyles };
+  const later = [...html.matchAll(/\sdata-later(?:-[a-z]+)*\s*=\s*"([^"]+)"/gi)].map((match) => match[1] ?? '');
+  return { scripts, inlineScripts, styles, preloads, images, inlineStyles, later };
 }
 
 /** The modules a script imports statically; dynamic `import()` loads later, so it is not counted. */
@@ -296,6 +300,7 @@ export function weigh(page: string, html: string, htmlBytes: number, home: boole
   // What the page's scripts load later, on a press, and what that imports, once each and apart.
   const later: Resource[] = [];
   const pending = [
+    ...refs.later.map((url) => resolveUrl(url, page)),
     ...refs.inlineScripts.flatMap((js) => laterOf(js).map((url) => resolveUrl(url, page))),
     ...resources.filter((r) => r.kind === 'script').flatMap((r) => laterOf(read.text(r.url) ?? '').map((url) => resolveUrl(url, r.url))),
   ];

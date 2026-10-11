@@ -4,10 +4,11 @@
  * browser in the three worlds of the cards, with the paper's seeds. Nothing is set: the visitor chooses
  * one of three worlds (native radios, 38 on load) and presses «Run the engine».
  *
- * Its first-load script (./compete.ts) is small: it shows this block, which stays hidden without
- * JavaScript, swaps the world's text and count when a world is chosen, and waits for the button. Only
- * the press loads the rest (./compete-live.ts): the chart, its controls and the worker with the
- * engine (./compete.worker.ts). Nothing of the engine is fetched or run before.
+ * Its first-load script (./compete.ts) is small and travels inside the page: it shows this block,
+ * which stays hidden without JavaScript, swaps the world's text and count when a world is chosen, and
+ * waits for the button. Only the press loads the rest, from the URLs in `data-later-module` and
+ * `data-later-worker`: ./compete-live.ts, the chart and its controls, which starts the worker with
+ * the engine, ./compete.worker.ts. Nothing of the engine is fetched or run before.
  *
  * The chart draws one line per run, the share of the population with personal guilt against the
  * generations, never a person (rule (d)); one run in the thread's gold. Its caption says it compares
@@ -22,6 +23,12 @@ import { fillIn as fill } from '../../lib/finding/explorer';
 import { COMPETE_WORLDS, GENERATIONS, SIZE, START_WORLD, competeWorld } from '../../lib/finding/population';
 import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
 import type { LiveStrings } from './compete';
+// What the press loads, each bundled apart, with its URL written in the block (`data-later-*`): the
+// module, bundled as a worker bundle so Vite builds it and gives its URL, and the worker itself. The
+// first-load script then has no `import()` of its own, which lets Astro inline it in the page, and
+// the module starts the worker from its URL (a worker inside the module's bundle is not emitted).
+import liveUrl from './compete-live.ts?worker&url';
+import workerUrl from './compete.worker.ts?worker&url';
 
 interface Props {
   locale: Locale;
@@ -49,7 +56,7 @@ const yTicks = [1, 0.5, 0];
 const xTicks = [0, GENERATIONS];
 ---
 
-<div class="live" data-compete-live data-strings={JSON.stringify(strings)} hidden>
+<div class="live" data-compete-live data-strings={JSON.stringify(strings)} data-later-module={liveUrl} data-later-worker={workerUrl} hidden>
   <p class="live__engine">{fill(tr('finding.compete.engine'), { version: ENGINE.version })}</p>
 
   <fieldset class="live__worlds">

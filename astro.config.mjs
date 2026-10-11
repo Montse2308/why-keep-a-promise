@@ -85,6 +85,9 @@ export default defineConfig({
   output: 'static',
   vite: {
     plugins: [lockFinding()],
+    // /finding's live engine (ADR 0042): its module and its worker are bundled apart as ES modules, the
+    // module loaded with `import()` when «Run the engine» is pressed (src/components/finding/compete.ts).
+    worker: { format: 'es' },
   },
   // Every internal URL ends in "/" so it matches what GitHub Pages serves.
   trailingSlash: 'always',

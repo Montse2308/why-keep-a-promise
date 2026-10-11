@@ -120,6 +120,16 @@ describe('what a page asks for', () => {
     const js = 'i(async()=>{let{m:e}=await import(`./live.js`);return e});new Worker(new URL(`/b/_astro/w.js`,``+import.meta.url),{type:`module`});new URL(e,import.meta.url);import("./other.js")';
     expect(laterOf(js)).toEqual(['./live.js', './other.js', '/b/_astro/w.js']);
     expect(laterOf('import"./chunk.js";')).toEqual([]);
+  });
+
+  it('finds what a press loads later in the page itself: each data-later-* attribute (ADR 0042)', () => {
+    const page = '<div data-compete-live data-later-module="/b/_astro/live.js" data-later-worker="/b/_astro/w.js" hidden></div>';
+    expect(refsOf(page).later).toEqual(['/b/_astro/live.js', '/b/_astro/w.js']);
+    expect(refsOf('<div data-later="/b/x.js"></div><p data-latest="no">').later).toEqual(['/b/x.js']);
+    const reader: Reader = { text: () => '', bytes: (url) => ({ '/b/_astro/live.js': 1800, '/b/_astro/w.js': 3600 })[url] ?? null, compressed: (text) => text.length };
+    const weight = weigh('/b/finding/', page, 500, false, reader);
+    expect(measured(weight, 'press')).toBe(1800 + 3600);
+    expect(weight.totals['home-script']).toBe(0);
     expect(resolveUrl('../x.css', '/b/es/')).toBe('/b/x.css');
   });
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import live from './live.ts?raw';
+import bootstrapSource from '../../components/finding/compete.ts?raw';
 import { PACE, advance, buttonLabel, linePath, nextRun } from './live';
 
 describe('the live engine, free of the engine (ADR 0042)', () => {
@@ -7,6 +8,17 @@ describe('the live engine, free of the engine (ADR 0042)', () => {
     const imports = [...live.matchAll(/^import\s+(type\s+)?/gm)];
     expect(imports.length).toBeGreaterThan(0);
     expect(imports.every((match) => match[1])).toBe(true);
+  });
+});
+
+/** The first-load script without its comments, which name what it must not do. */
+const bootstrap = bootstrapSource.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+
+describe("the live engine's first-load script", () => {
+  it('imports nothing and has no import(), so Astro inlines it and /finding fetches no script more', () => {
+    expect(bootstrap.match(/^import\s+(?!type\b).*$/gm)).toBeNull();
+    expect(bootstrap).not.toMatch(/\bimport\s*\(/);
+    expect(bootstrap).toContain("script.src = root.dataset.laterModule ?? '';");
   });
 });
 

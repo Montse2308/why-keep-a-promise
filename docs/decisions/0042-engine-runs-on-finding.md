@@ -126,10 +126,16 @@ mismas que las de 0.74 de `r6`; el test del ADR 0043 lo usa.
   resto (ADR 0028). `npm run budgets` lo pesa en cada build (`finding-press`) y falla si se pasa: busca
   en los scripts de la página los `import()` y los `new URL(…, import.meta.url)` de los workers, que la
   primera carga no cuenta.
-- **Medido en el paso 10.4:** la primera carga de JavaScript de `/finding` pasa de 2.8 a 4.1 KiB
-  (el arranque, con el ayudante de precarga que Vite agrega a todo `import()`), bajo su techo de
-  8 KiB; lo que se carga al pulsar pesa 5.3 KiB (1.8 el módulo, 3.5 el worker con el motor). El techo
-  de 7 KiB deja un margen chico.
+- **Medido en los pasos 10.4 y 10.7:** la primera carga de JavaScript de `/finding` pasa de 2.8 a
+  3.4 KiB, bajo su techo de 8 KiB; lo que se carga al pulsar pesa 5.3 KiB (1.8 el módulo, 3.5 el
+  worker con el motor). El techo de 7 KiB deja un margen chico.
+- **Cómo se carga, para que la primera carga no empeore:** el arranque no importa nada ni tiene un
+  `import()`, así que Astro lo mete en el HTML y `/finding` no pide ningún script más que antes. Con
+  el arranque como archivo aparte, Lighthouse 13.5.0 medía el LCP de `/finding` en 1.96 s; en línea,
+  1.81 s, el mismo que `main` (tres corridas por idioma). El build escribe en el bloque las URL de lo
+  que se carga al pulsar (`data-later-module` y `data-later-worker`, con `?worker&url` de Vite, que
+  los empaqueta aparte); al pulsar, el arranque agrega el módulo con un elemento `<script>` y el
+  módulo arranca el worker. `npm run budgets` pesa lo que nombran esos atributos.
 - Los demás techos no cambian.
 
 ### El tope de palabras
