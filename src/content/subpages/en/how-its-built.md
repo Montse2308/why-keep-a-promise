@@ -7,7 +7,8 @@ title: How it's built
 Astro builds every page ahead of time, into plain HTML and CSS. The home is
 first a storyboard: each chapter a still frame, its cards in order, every result written out. One
 script sets it moving with the scroll; without it, the whole story is still there. The logic lives in small
-pure modules with their tests, and JavaScript runs only in the story and in the notebook's panel.
+pure modules with their tests, and JavaScript runs only in the story, in the notebook's panel and in
+the formula explorer on /finding.
 
 ## A scene engine of its own
 
@@ -33,9 +34,10 @@ A test fails if the sky ever turns grey, or if any surface changes too fast to l
 
 ## The lock
 
-Part of the site stays closed until the working paper is public on SSRN. Until then, that part is
-left out of the build, not hidden: a plugin swaps each locked component for an empty stub, and a
-script reads every built file and fails if any trace of it got through. The rule is one line:
+Part of the site stayed closed until the working paper was public on SSRN. Until then, that part
+was left out of the build, not hidden: a plugin swapped each locked component for an empty stub, and
+a script read every built file and failed if any trace of it got through. The lock is open now; the
+plugin and the script still run on every build. The rule is one line:
 
 ```ts
 export function findingUnlocked(ssrn: string, dev: boolean): boolean {
