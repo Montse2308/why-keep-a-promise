@@ -10,6 +10,7 @@ import en from '../src/i18n/en.json';
 import es from '../src/i18n/es.json';
 import { FILM, LIGHT_POINTS } from '../src/lib/design/film';
 import { LOCALES } from '../src/lib/locales';
+import { posterAlt } from '../src/lib/meta';
 import { hasGlyph, lineWidth, readMetrics, type FontMetrics } from '../src/lib/posters/metrics';
 import { balance, CARD, chartSvg, cutout, escapeXml, fit, POSTER, POSTER_FONTS, POSTER_SCENES, posterPath, posterSvg, SIGNATURE_WIDTH, wrap, type PosterFont } from '../src/lib/posters/poster';
 import { readPosterFont } from '../src/lib/posters/fonts.mjs';
@@ -104,7 +105,10 @@ describe('each poster', () => {
   it.each(LOCALES)('%s: the poster’s alternative text names the author, as the poster shows', (locale) => {
     const dictionary: Record<string, string> = locale === 'en' ? en : es;
     expect(dictionary['poster.alt']).toContain('{author}');
-    expect(baseLayout).toContain("author: t(locale, 'author.name')");
+    expect(dictionary['finding.poster.alt']).toContain('{author}');
+    expect(posterAlt(locale, 'vanberg', 'T', true)).toBe(dictionary['poster.alt']?.replace('{author}', dictionary['author.name'] ?? '').replace('{title}', 'T'));
+    expect(baseLayout).toContain('const imageAlt = posterAlt(locale, route, title, findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV));');
+    expect(baseLayout).toContain('<meta property="og:image:alt" content={imageAlt} />');
   });
 
   it.each(PAGES)('%s/%s fits its card', (locale, route) => {
@@ -201,6 +205,22 @@ describe("/finding's poster behind the lock (ADR 0037, E1)", () => {
     const text = Object.values(posterText(locale, 'finding', true)).join(' ');
     expect(text).not.toMatch(/\d/);
     expect(text).not.toContain(dictionary['paper.status']?.split('{title}')[0]);
+  });
+
+  it.each(LOCALES)('%s: its alternative text names the miniature and says the poster’s title and line, from the same keys (9.10)', (locale) => {
+    const dictionary: Record<string, string> = locale === 'en' ? en : es;
+    const text = posterText(locale, 'finding', true);
+    const alt = posterAlt(locale, 'finding', 'The page’s own title', true);
+    expect(alt.endsWith(`: ${text.title}. ${text.subtitle}`)).toBe(true);
+    expect(alt).toContain(dictionary['author.name']);
+    expect(alt).toBe(
+      locale === 'en'
+        ? 'The story’s circle and square, tied by a golden thread, beside a miniature of what each reason earns (a step for personal guilt, a flat line for partner-specific commitment) and the page’s title, signed by Montserrat Ximena Hernández Gallegos: The finding. A lab session cannot tell personal guilt from partner-specific commitment. Comparing worlds with different background trust can.'
+        : 'El círculo y el cuadrado de la historia, unidos por un hilo dorado, junto a una miniatura de lo que gana cada razón (un escalón para la culpa personal, una línea plana para el compromiso específico a la pareja) y el título de la página, con la firma de Montserrat Ximena Hernández Gallegos: El hallazgo. Una sesión de laboratorio no distingue la culpa personal del compromiso específico a la pareja. Comparar mundos con distinta confianza de fondo, sí.',
+    );
+    expect(alt).not.toMatch(/\d/);
+    // Locked, it is the text of before: the page's title, as the poster of before carries it.
+    expect(posterAlt(locale, 'finding', 'T', false)).toBe(dictionary['poster.alt']?.replace('{author}', dictionary['author.name'] ?? '').replace('{title}', 'T'));
   });
 
   it('draws its miniature of what each reason earns without a number, in the film’s palette', () => {

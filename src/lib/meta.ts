@@ -12,6 +12,7 @@ import { PALETTE } from './design/palette';
 import { t, type Locale, type UiKey } from './i18n';
 import { notebookPage } from './notebook';
 import type { Route } from './routes';
+import { fill } from './template';
 
 /**
  * Each language as Open Graph names it (language_TERRITORY). The territory says which English and
@@ -29,6 +30,20 @@ export function descriptionKey(route: Route, unlocked: boolean): UiKey {
 /** A page's description, as `<meta name="description">` and `og:description` carry it. */
 export function description(locale: Locale, route: Route, unlocked: boolean): string {
   return t(locale, descriptionKey(route, unlocked));
+}
+
+/**
+ * The alternative text of a page's poster (`og:image:alt`): what the poster shows and the title it
+ * carries, signed by the author (ADR 0032). Behind the lock, /finding's poster shows its miniature and
+ * its line under its title (ADR 0037): its text names them, from the keys the poster draws
+ * (`notebook.finding.title`, `finding.line`; src/lib/posters/render.ts). Locked, it is the text of before.
+ */
+export function posterAlt(locale: Locale, route: Route, title: string, unlocked: boolean): string {
+  const author = t(locale, 'author.name');
+  if (route === 'finding' && unlocked) {
+    return fill(t(locale, 'finding.poster.alt'), { author, title: t(locale, notebookPage(route).titleKey), line: t(locale, 'finding.line') });
+  }
+  return fill(t(locale, 'poster.alt'), { title, author });
 }
 
 export interface ThemeColor {
