@@ -29,18 +29,20 @@ worlds, a two-panel figure, a formula explorer, how to cite; with the rest of th
 its poster and JSON-LD, the cover's link to it, the engine on /how-its-built, ORCID and SSRN on
 /about), reached `main` with PR #21, and `deploy.yml` ran on 2026-10-10; its last details after the
 deploy are step 9.10 in `docs/tasks.md`. There is no active phase: what follows is maintenance, with
-plain commits to `main` or short branches, and `deploy.yml` run by Montse.
+plain commits to `main` or short branches, and `deploy.yml` run by Montse. The current one is M1,
+the post-launch catch-up of what was still written as before the launch (branch `m1/post-launch`,
+section M1 of `docs/tasks.md`).
 P7, the fixes from an external review, was planned in small steps (one per session) in
 `docs/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
 script split by chapter, the fallback to the storyboard and the memory in the tab, is closed
 (PR #11). P7.2 (each page's description and Open Graph metadata, the 404 page, `noindex` on the
 locked /finding, the sitemap, the touch icon, Axelrod and Hamilton (1981) as the dilemma's source)
-is merged (PR #12); Montse's two steps, checking 70 and 68 against `switch.dat` (7.2.9) and
-confirming its new texts (7.2.11), are still open. P7.3 (the chat in order, the progress beads,
-life at rest, the arrival halfway, «Watch again» and the end melting into the footer) is done and
-waits for Montse's review (7.3.10). P7.4 (the new sound cues) and P7.5 (the side card with a phone
-held sideways, the notebook's transitions) are closed. P7.6 (the hills without a shadow filter,
+is closed (PR #12); Montse's two steps, checking 70 and 68 against `switch.dat` (7.2.9) and
+confirming its new texts (7.2.11), were closed before the launch. P7.3 (the chat in order, the
+progress beads, life at rest, the arrival halfway, «Watch again» and the end melting into the
+footer) is closed; Montse reviewed it (7.3.10) before the launch. P7.4 (the new sound cues) and P7.5
+(the side card with a phone held sideways, the notebook's transitions) are closed. P7.6 (the hills without a shadow filter,
 still frames that draw only what their pose shows, chapter 4's citation line, the EN/ES switch in
 the notebook's panel, the author's signature on the posters) is closed; Montse approved it
 (7.6.11). P7.7 (the READMEs, Lighthouse and the weights again, and the full review: sizes,
@@ -59,13 +61,17 @@ Read these before changing anything, in this order:
 
 1. `docs/plan.md`: what the page is (decided; do not reopen).
 2. `docs/content-rules.md`: what may and may not be written, anywhere.
-3. `docs/phases.md`: phases P0–P8, F5 (QA) and F6 (launch), with their exit criteria.
-4. `docs/tasks.md`: current tasks; only work on the active phase. P7 is split into numbered steps
-   (`7.1.3`), each small enough for one short session and left green; when asked to continue P7,
-   take the first open step whose dependencies are met, and stop at steps marked **(Montse)**.
-5. `docs/p7-review-plan.md`, while P7 is open: why each P7 step exists, in what order, and what was
-   left out and must not be reopened. Read it before any P7 step. `docs/p7-external-review.md` is
-   the review it comes from: evidence (files, lines, measurements), not rules.
+3. `docs/phases.md`: phases P0–P9, F5 (QA) and F6 (launch), with their exit criteria.
+4. `docs/tasks.md`: current tasks; only work on the active phase. When there is none, as now, the
+   work is maintenance: a short branch from `main` (such as `m1/post-launch`) with its own section
+   in `docs/tasks.md`, its steps numbered (`M1.3`), each left green and committed with its number,
+   without push or `deploy.yml`, which Montse decides and runs; stop at steps marked **(Montse)**.
+   (Historical, while P7 was open: P7 was split into numbered steps (`7.1.3`), each small enough for
+   one short session and left green; when asked to continue P7, the agent took the first open step
+   whose dependencies were met.)
+5. (Historical, while P7 was open.) `docs/p7-review-plan.md` said why each P7 step existed, in what
+   order, and what was left out and must not be reopened. `docs/p7-external-review.md` is the review
+   it came from: evidence (files, lines, measurements), not rules.
 6. `docs/decisions/README.md` and the ADRs it lists. Every ADR in `docs/decisions/` is in force in
    full. A decision changes only through a new ADR; a superseded ADR moves to `docs/archivo/`.
 
@@ -128,7 +134,8 @@ the weights beside it come from `src/data/weight.json`.
 ```
 src/
   config.ts              author links; the working paper (its title and SSRN link, which also opens
-                         the lock) and the engine's links, placeholders until launch (ADR 0034)
+                         the lock) and the engine's links; placeholders until the launch, real
+                         since its step 3 (ADR 0034)
   content.config.ts      content collections (frontmatter schemas)
   content/chapters/{en,es}/  the film's captions, one file per chapter, split into beats by
                          <!-- beat:… --> marks; a number is a {placeholder}, never a figure;
@@ -263,9 +270,10 @@ scratch/                 local notes, git-ignored, never committed
   `src/lib/routes.ts`, so `base` (`/why-keep-a-promise`) is always respected. Never hard-code `/…`
   paths.
 - **Placeholders.** Unwritten content is marked `TODO(Px)` with the phase that writes it
-  (`TODO(launch)` for step 3 of the launch checklist). Links not known until launch, the working
-  paper's SSRN page and the engine's DOI, are the literal `SSRN_URL_PENDING` and
-  `ENGINE_DOI_PENDING` in `src/config.ts` (ADR 0034).
+  (`TODO(launch)` for step 3 of the launch checklist). (Historical, before the launch: the links not
+  known until then, the working paper's SSRN page and the engine's DOI, were the literal
+  `SSRN_URL_PENDING` and `ENGINE_DOI_PENDING` in `src/config.ts` (ADR 0034). Step 3 replaced both
+  with the real links; `npm run check:launch` still fails if a `*_PENDING` comes back.)
 - **Decisions.** A superseded ADR, even partly, moves to `docs/archivo/decisiones/` with a line
   naming what replaces it; what still holds is restated in the new ADR. Keep
   `docs/decisions/README.md` in sync.

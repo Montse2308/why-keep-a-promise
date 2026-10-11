@@ -30,8 +30,9 @@ de estado, el mismo en los dos estados del candado (ADR 0034):
 - El título va en inglés en los dos idiomas, porque el documento está en inglés, en cursiva y con
   enlace a la página del working paper en SSRN.
 - La frase vive en la clave `paper.status` de `src/i18n/`, con `{title}` en lugar del título; el
-  título y el enlace están en `WORKING_PAPER` de `src/config.ts`. El enlace es `SSRN_URL_PENDING`
-  hasta el paso 3 de `docs/launch-checklist.md`.
+  título y el enlace están en `WORKING_PAPER` de `src/config.ts`. El enlace fue `SSRN_URL_PENDING`
+  hasta el paso 3 de `docs/launch-checklist.md` (histórico, antes del lanzamiento); desde entonces
+  es la página del working paper en SSRN.
 - La frase se puede mostrar grande, como sello, pero no se reescribe ni se le agrega nada: ni
   revista, ni parámetros, ni fechas. La autora va aparte.
 - En la página de inicio la frase sale exactamente dos veces: el sello del capítulo 7 y la entrada

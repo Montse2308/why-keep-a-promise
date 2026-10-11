@@ -103,8 +103,9 @@ Tiene que:
 - Cubre el hallazgo del capítulo 7, `/finding`, la parte del motor de `/how-its-built` y sus
   enlaces.
 - Cerrado, se ve un sobre sellado con la frase de estado.
-- Se abre cuando el working paper es público en SSRN: en el paso 3 del checklist, al reemplazar el
-  placeholder `SSRN_URL_PENDING` por su enlace.
+- Se abre cuando el working paper es público en SSRN. Así se abrió: en el paso 3 del checklist, al
+  reemplazar el placeholder `SSRN_URL_PENDING` por su enlace (histórico, antes del lanzamiento). Hoy
+  está abierto.
 
 ## Idiomas
 
@@ -114,7 +115,8 @@ Tiene que:
 ## Hosting
 
 - GitHub Pages en `https://montse2308.github.io/why-keep-a-promise/`.
-- El repo es privado hasta el lanzamiento (F6), con un solo lanzamiento, sin deploy parcial.
+- El repo fue privado hasta el lanzamiento (F6), con un solo lanzamiento, sin deploy parcial
+  (histórico: es público desde el 2026-09-25).
 - El lanzamiento lo dispara un hecho: el working paper ya es público en SSRN y el repo del motor ya
   es público. El texto no se somete a ninguna revista, y el PDF se enlaza en SSRN, no se aloja aquí.
 - Presupuesto cero (ADR 0008, ADR 0034).
