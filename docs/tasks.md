@@ -1530,9 +1530,47 @@ trae la dependencia, en `node_modules`.
       Hecho, con los textos dados: «…and on /finding» y «…y en /finding»; el punto «The engine,
       live» / «El motor, en vivo», después de «A formula you can move» / «Una fórmula que se puede
       mover». «The research» / «La investigación» no cambia.
-- [ ] **10.7** La QA: anchos, sin JS, red, tiempos (normal y con la CPU frenada 4×), teclado y
+- [x] **10.7** La QA: anchos, sin JS, red, tiempos (normal y con la CPU frenada 4×), teclado y
       lector de pantalla, movimiento reducido, axe, pesos y Lighthouse de `/finding`, los tests de
       reglas y un build cerrado de prueba. Capturas en `scratch/p10/`, con su README.
+      Hecha, con dos arreglos, en `1ff5a66`: el botón se quedaba en
+      «Starting the engine…» cuando el motor ya corría, y el arranque del motor en vivo, como script
+      aparte, subía el LCP de `/finding` de 1.81 a 1.96 s. Ahora va dentro del HTML y carga el módulo
+      y el worker de las URL que el build escribe (ADR 0042, al día). El detalle, en la tabla de abajo.
+
+### QA de P10 (paso 10.7)
+
+Sobre `npm run preview` del build abierto, con Chrome sin interfaz y las sondas de `scratch/p10/qa/`.
+
+| Punto | Cómo | Resultado | Arreglo |
+| ----- | ---- | --------- | ------- |
+| 1. Anchos | `widths.mjs`: /finding a 320, 360, 768, 1024 y 1440, EN y ES, en reposo y con 38 corrido | 0 desbordes (la tabla oculta queda dentro de `.visually-hidden`, como la de la figura de dos paneles) | — |
+| 2. Sin JS | `nojs.mjs`, 360 y 1440, EN y ES | Título, entrada, figura fija (80 puntos) y leyenda; el bloque del motor no se ve (0 px), 0 controles, nada del motor descargado | — |
+| 3. Red | `live.mjs`, EN y ES (`performance` de la página) | Antes de pulsar, ningún archivo del motor; al pulsar, el módulo y el worker | — |
+| 4. Tiempo | `timing.mjs` y `live.mjs`, tres mundos seguidos | Sin movimiento reducido, cada mundo termina en 13.4–13.7 s (lo marca el ritmo de 30 generaciones por segundo). El cálculo del motor (con movimiento reducido): 38 en 2.2–4.0 s, 5 y 70 en 1.0–2.2 s, según la carga del equipo. Con la CPU frenada 4×, el dibujo no cambia (13.4–13.7 s); el worker no se puede frenar: Chrome responde «Operation is only supported for pages, not workers» | — |
+| 5. Teclado y lector de pantalla | `keys.mjs`, EN y ES, claro y oscuro; árbol de accesibilidad del CDP | 2 paradas antes de pulsar y 5 al terminar, todas con anillo; flechas en los mundos, Enter y Espacio en el botón, Inicio y Fin en el deslizador; la región viva habló una vez, en la generación 400. Nombres: el grupo «Choose a world», los tres `radio`, los botones y el deslizador «Generations» | El botón se quedaba en «Starting the engine…» |
+| 6. Movimiento reducido | `reduced.mjs`, EN y ES | Ninguna línea mientras corre; las 40 de golpe al terminar | — |
+| 7. axe 4.14.0 | `axe.mjs`: /finding, /how-its-built y /sources, EN y ES, 360 y 1440, claro y oscuro, y /finding con 38 corrido (32 corridas) | 0 violaciones. Las líneas (tinta al 55 %) dan unos 3.8:1 en claro y 5.3:1 en oscuro, sobre el 3:1 de los gráficos | — |
+| 8. Pesos y Lighthouse 13.5.0 | `npm run budgets`; 3 corridas por idioma, y 3 de `main` en las mismas condiciones | JS de primera carga de /finding 3.4 KiB (antes 2.8; techo 8), sin ningún script aparte; al pulsar 5.3 KiB (techo 7); primera carga 144.3 / 144.7 KiB. LCP 1.81 s EN y ES, como `main` (1.81 s); puntaje 0.99, CLS 0, TBT 0. `weight.json` no cambia | Con el arranque como script aparte, el LCP era 1.96 s: ahora va dentro del HTML |
+| 9. Tests de reglas | `npm test` | Frases prohibidas, «solo agregar», registro de cifras y `memory.test.ts` (que ahora revisa también el motor en vivo) en verde | — |
+| 10. Build cerrado | `locked-check.sh` | `verify:dist` en verde; en `dist/` no hay `data-compete`, ni los scripts del motor en vivo, ni el motor, ni el título de la sección | — |
+
+Además, el fallo: sin workers, con el módulo bloqueado en la red (`blocked.mjs`) y con el worker
+apuntando a una URL que no existe (`badworker.mjs`), la figura fija se queda y el estado dice que
+el motor no pudo correr; el botón conserva el foco (`aria-disabled`). En `npm run dev` el motor
+corre igual.
+
+**Lo que se encontró y no se arregló**
+
+- `src/lib/finding/still.ts` (`stack`): en la fila de 38, en pantallas anchas, la segunda columna
+  de la pila en 0 empieza un nivel arriba, porque el punto de una corrida cercana a 0 la toca en el
+  ancho de un teléfono. Es solo cómo se ve; ningún punto se encima con otro.
+- `src/components/finding/compete-live.ts`: al elegir un mundo que ya terminó, la región viva dice
+  otra vez su frase final. Es a propósito (quien usa lector de pantalla oye el resultado del mundo
+  que eligió), pero no es «al terminar de correr».
+- El tiempo con la CPU frenada 4× no se pudo medir para el motor: DevTools no frena workers.
+- `README.es.md`: el punto nuevo dice «al pulsar «Correr»», y el botón dice «Correr el motor»; es el
+  texto dado, sin cambios.
 - [ ] **10.8 (Montse)** Revisa las capturas y el video de 38 corriendo.
 - [ ] **10.9 (Montse)** El PR de P10 a `main`, y `deploy.yml` cuando ella lo decida.
 
