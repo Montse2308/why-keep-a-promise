@@ -3,8 +3,8 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** ninguna. Lo que sigue es mantenimiento, con ramas cortas: ahora M1, la puesta al
-día después del lanzamiento (rama `m1/post-launch`, sección M1). P9, `/finding` por sí sola, llegó
+**Fase activa:** P10, el motor en `/finding` (rama `p10/engine-live`, sección P10). M1, la puesta
+al día después del lanzamiento, llegó a `main` con el PR #23. P9, `/finding` por sí sola, llegó
 a `main` con el PR #21 (y su cierre con el #22); P8, los retoques después del lanzamiento, con el
 PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
@@ -13,7 +13,7 @@ línea en `https://montse2308.github.io/why-keep-a-promise/`. F5, la QA, cerrada
 (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
 como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** ninguna planeada. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
+**Fase siguiente:** ninguna planeada después de P10. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
 que llega a `main` llega al sitio cuando Montse vuelve a correr `deploy.yml`
 (`docs/launch-checklist.md`, «Después del lanzamiento»).
 
@@ -1458,6 +1458,46 @@ repo, y el cambio se reporta con el original y el nuevo.
       `/how-its-built`, 360 y 1440, claro y oscuro); el build cerrado de prueba, con `verify:dist`
       en verde, la tarjeta solo con «Go to chapter 7» y las líneas cerradas.
 - [ ] **M1.9 (Montse)** Revisa las capturas, el PR y el deploy.
+
+## P10 · El motor en /finding
+
+En la rama `p10/engine-live`, desde `main` en `f086fb8` (el merge del PR #23); sin push, sin PR y sin
+`deploy.yml`, que decide y corre Montse. No toca el despliegue (`deploy.yml`,
+`docs/launch-checklist.md`, `scripts/check-launch.mjs`), ni `src/data/curve.json`, el explorador, las
+tarjetas de los tres mundos o la figura de dos paneles. Cada paso termina en verde (`check`, `test`,
+`build`, `verify:dist`, `budgets` y `check:launch`) y lleva su número en el commit (`10.3`). Los
+textos son los que Montse aprobó el 11-oct (EN y ES), tal cual; una frase cambia solo si choca con
+una regla o un test, y el cambio se reporta con la original y la nueva. Del motor solo se usa lo que
+trae la dependencia, en `node_modules`.
+
+- [x] **10.0** La fase en los documentos: P10 en `docs/phases.md` y aquí, y la fase activa en
+      `AGENTS.md`.
+- [ ] **10.1** Los ADR, antes de tocar `src/`, con `docs/decisions/README.md`,
+      `docs/content-rules.md` y `AGENTS.md` al día: el motor corre en `/finding` (enmienda el 0001,
+      el 0023, el 0025 y la regla (d); precisa el 0039) y el código del motor en la página (enmienda
+      el 0010).
+- [ ] **10.2** El motor como dependencia, fijada al commit del tag `v1.0.0`, que funcione en Vite
+      (cliente y worker), Vitest, el build de Astro y `astro check` (si no, una copia sin cambios en
+      `vendor/engine-v1.0.0/`, con su procedencia y su hash); el módulo puro
+      `src/lib/finding/population.ts` y su test contra `results/r6-curve-illustration.json`, semilla
+      por semilla, con los conteos finales y la media de 38 fijados.
+- [ ] **10.3** La figura fija, sin JS: dónde terminó cada corrida después de 400 generaciones, un
+      punto por corrida en tres filas, calculada en el build, con su leyenda, su descripción
+      accesible y una tabla oculta con los conteos; la sección nueva en la prosa de `/finding`, con
+      su entrada y su slot, entre «Lo que gana cada razón» y «Para quien quiera la cuenta».
+- [ ] **10.4** El motor en vivo: el botón que carga el worker solo al pulsar, la gráfica con una
+      línea por corrida, los controles, el conteo, la región viva que habla al terminar, el
+      movimiento reducido, el fallo del worker y el techo de peso de lo que se carga al pulsar, con
+      `src/data/weight.json` al día.
+- [ ] **10.5** El registro de cifras: 400, 20 y 40, con su fuente en `docs/sources.md`; `/sources`
+      lista lo nuevo con el candado abierto.
+- [ ] **10.6** Fuera de la sección: el final del primer párrafo de `/how-its-built` y un punto nuevo
+      en «How it's built» / «Cómo está hecho» de los README.
+- [ ] **10.7** La QA: anchos, sin JS, red, tiempos (normal y con la CPU frenada 4×), teclado y
+      lector de pantalla, movimiento reducido, axe, pesos y Lighthouse de `/finding`, los tests de
+      reglas y un build cerrado de prueba. Capturas en `scratch/p10/`, con su README.
+- [ ] **10.8 (Montse)** Revisa las capturas y el video de 38 corriendo.
+- [ ] **10.9 (Montse)** El PR de P10 a `main`, y `deploy.yml` cuando ella lo decida.
 
 ## F6 · Lanzamiento
 

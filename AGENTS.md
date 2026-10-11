@@ -28,10 +28,13 @@ page Montse shares, understood without the story: the text she approved on 2026-
 worlds, a two-panel figure, a formula explorer, how to cite; with the rest of the site around it:
 its poster and JSON-LD, the cover's link to it, the engine on /how-its-built, ORCID and SSRN on
 /about), reached `main` with PR #21, and `deploy.yml` ran on 2026-10-10; its last details after the
-deploy are step 9.10 in `docs/tasks.md`. There is no active phase: what follows is maintenance, with
-plain commits to `main` or short branches, and `deploy.yml` run by Montse. The current one is M1,
-the post-launch catch-up of what was still written as before the launch (branch `m1/post-launch`,
-section M1 of `docs/tasks.md`).
+deploy are step 9.10 in `docs/tasks.md`. M1, the post-launch catch-up of what was still written as
+before the launch, reached `main` with PR #23. The active phase is **P10, the engine on /finding**
+(branch `p10/engine-live`, section P10 of `docs/tasks.md`): a section of /finding where the paper's
+simulation engine, v1.0.0, runs in the browser in the three fixed worlds of the cards (background
+trust 5, 38 and 70), with the paper's seeds and nothing to set. Its steps are numbered (`10.3`), each
+left green and committed with its number, without push or `deploy.yml`; stop at steps marked
+**(Montse)**.
 P7, the fixes from an external review, was planned in small steps (one per session) in
 `docs/archivo/p7-review-plan.md`, `docs/phases.md` and `docs/tasks.md`, and is closed (PR #17).
 P7.0, the decisions (ADR 0029–0033) and the approved texts, is closed (PR #10). P7.1, the film's
@@ -62,7 +65,7 @@ Read these before changing anything, in this order:
 1. `docs/plan.md`: what the page is (decided; do not reopen).
 2. `docs/content-rules.md`: what may and may not be written, anywhere.
 3. `docs/phases.md`: phases P0–P9, F5 (QA) and F6 (launch), with their exit criteria.
-4. `docs/tasks.md`: current tasks; only work on the active phase. When there is none, as now, the
+4. `docs/tasks.md`: current tasks; only work on the active phase (now P10). When there is none, the
    work is maintenance: a short branch from `main` (such as `m1/post-launch`) with its own section
    in `docs/tasks.md`, its steps numbered (`M1.3`), each left green and committed with its number,
    without push or `deploy.yml`, which Montse decides and runs; stop at steps marked **(Montse)**.
