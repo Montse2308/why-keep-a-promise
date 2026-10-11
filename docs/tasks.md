@@ -1480,11 +1480,18 @@ trae la dependencia, en `node_modules`.
       página»). Con la entrada, la prosa de `/finding` mide 1 418 palabras (EN) y 1 561 (ES): el tope
       de 1 600 no cambia. El techo de lo que se carga al pulsar se fija en 10.4, después de medirlo.
       La gráfica en vivo es SVG: `AGENTS.md` prohíbe canvas, y el ADR 0042 no lo enmienda.
-- [ ] **10.2** El motor como dependencia, fijada al commit del tag `v1.0.0`, que funcione en Vite
+- [x] **10.2** El motor como dependencia, fijada al commit del tag `v1.0.0`, que funcione en Vite
       (cliente y worker), Vitest, el build de Astro y `astro check` (si no, una copia sin cambios en
       `vendor/engine-v1.0.0/`, con su procedencia y su hash); el módulo puro
       `src/lib/finding/population.ts` y su test contra `results/r6-curve-illustration.json`, semilla
       por semilla, con los conteos finales y la media de 38 fijados.
+      Hecho, con la dependencia y sin copia en `vendor/`: funciona sin configuración en Vitest,
+      `astro check`, `tsc`, el build de Astro y Vite (cliente y worker, en `preview` y en `dev`),
+      probado con una página que no se guardó. `resolved` en `package-lock.json` es el commit
+      `4e59df7…`; `npm ci` lo baja sin SSH. El test: las 80 corridas terminan, semilla por semilla,
+      con la cuenta de `r6` (70 contra 0.74); 38 da 15 · 14 · 11 de 40, 5 y 70 dan 20 de 20 sin
+      culpa personal, y la media de 38 es 94.45. El `package.json` del motor no declara versión: el
+      test compara `ENGINE.version` con la de su `CITATION.cff` (ADR 0043, al día).
 - [ ] **10.3** La figura fija, sin JS: dónde terminó cada corrida después de 400 generaciones, un
       punto por corrida en tres filas, calculada en el build, con su leyenda, su descripción
       accesible y una tabla oculta con los conteos; la sección nueva en la prosa de `/finding`, con

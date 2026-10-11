@@ -25,7 +25,8 @@ corre en la página se puede fijar y comprobar.
   ```
 
   `package-lock.json` guarda ese commit en `resolved`, y un test lo comprueba, junto con que la
-  versión del paquete es `ENGINE.version` de `src/config.ts`.
+  versión del motor es `ENGINE.version` de `src/config.ts`. El `package.json` del motor no declara
+  versión: la que se compara es la de su `CITATION.cff` (`version: 1.0.0`), que viaja con él.
 - **Se importa solo lo necesario**, desde el punto de entrada del motor (`src/index.ts`): `step`,
   `census`, `makeRng`, `uniformPopulation`, `openingCells`, `CAP_OFF`, `TRUST` y los tipos
   `MoranParams` y `MoranState`. Un solo módulo de este repo los importa,
@@ -69,13 +70,26 @@ mezcladas 11, de 40; 5 y 70: sin culpa personal 20 de 20) y la media final de cu
 Cambiar la versión del motor es un paso manual y explícito, con su propio commit: se cambia el commit
 de `package.json`, se vuelve a correr la prueba contra las corridas del paper (las de la versión
 nueva, si cambiaron, con un ADR que lo diga) y se pone al día `ENGINE.version` en `src/config.ts`,
-que la línea del motor muestra y que el test compara con la versión del paquete. Sin la prueba en
+que la línea del motor muestra y que el test compara con la del `CITATION.cff` del motor, y
+`ENGINE_COMMIT` en `src/lib/finding/population.ts`. Sin la prueba en
 verde, la versión no cambia.
 
 ### Cómo quedó
 
-Se escribe en el paso 10.2: si la dependencia funciona en las cuatro herramientas o si hizo falta la
-copia en `vendor/`, y por qué.
+**La dependencia, sin copia en `vendor/`** (paso 10.2). Funciona sin configuración en las cuatro:
+
+- **Vitest:** `src/lib/finding/population.test.ts` corre los tres mundos completos y los compara con
+  `r6`; Vite resuelve los `.js` del motor a sus `.ts`.
+- **`astro check` y `tsc --noEmit`:** sin errores; revisan también el código del motor, que compila
+  con las opciones estrictas de este repo.
+- **El build de Astro:** el motor corre en el build (una página de prueba, que no se guardó, mostró
+  los conteos finales de 5).
+- **Vite, en el cliente y en un worker:** el worker (`new Worker(new URL(…), { type: 'module' })`) se
+  empaqueta en un solo archivo y corre el motor, en el build servido con `npm run preview` y en
+  `npm run dev`, sin errores en la consola.
+
+`package-lock.json` guarda la dirección del repo como `git+ssh://`; `npm ci` la baja igual sin
+llaves SSH (por HTTPS), como en el CI: se probó con `GIT_SSH_COMMAND=false` y una caché vacía.
 
 ## Consecuencias
 

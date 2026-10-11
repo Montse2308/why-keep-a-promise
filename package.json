@@ -19,7 +19,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.3.5"
+    "astro": "^7.3.5",
+    "dilema-prisionero": "github:Montse2308/Dilema-del-Prisionero#4e59df734c29915439c51d948bda6ac1360dc38b"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

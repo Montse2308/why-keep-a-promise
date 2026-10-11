@@ -187,6 +187,10 @@ src/
     finding/worlds.ts    /finding's three worlds and the payoff panel's variant tail, from curve.json
     finding/explorer.ts  /finding's formula explorer: the guilt available, its window, peak and θmin
                          (ADR 0038); pure, imports nothing, pinned to the register by its test
+    finding/population.ts  /finding's «When the reasons compete» (ADR 0042): the three worlds, the
+                         paper's seeds and settings, every run generation by generation, and the
+                         tally; the only module that imports the engine (ADR 0043), checked seed by
+                         seed against the paper's runs (`results/r6`) by its test
     jsonld.ts            /finding's structured data: the working paper and the engine, from config.ts
     cite.ts              /finding's «How to cite»: the working paper (APA, BibTeX) and the engine, from config.ts
     chapters.ts          the nine chapters, their ids, order and beats; OPEN_CHAPTERS is the
