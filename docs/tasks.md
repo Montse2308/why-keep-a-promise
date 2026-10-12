@@ -1606,9 +1606,14 @@ número en el commit (`M2.2`).
       procedencia conserva el nombre de entonces, como el archivo, y suma el de hoy. En
       `verify:dist`, la dirección nueva sigue siendo marca de lo cerrado (no debe estar en un build
       cerrado) y de lo abierto (debe estar en los ocho archivos con candado).
-- [ ] **M2.3** La comprobación: las seis puertas; en el build, /sources, /how-its-built, /finding y
+- [x] **M2.3** La comprobación: las seis puertas; en el build, /sources, /how-its-built, /finding y
       los dos home enlazan la dirección nueva, y el JSON-LD de /finding (`SoftwareSourceCode`)
       también; la dirección nueva responde 200 y la vieja redirige.
+      Hecho. En `dist/`, la dirección nueva está enlazada dos veces en cada home, en
+      `/how-its-built` y en `/sources`, y tres en `/finding` (EN y ES); el `codeRepository` del
+      JSON-LD de `/finding`, EN y ES, es la dirección nueva. El nombre viejo no aparece en `dist/`
+      (el ancla `…el-dilema-del-prisionero` del capítulo 1 en español es el juego, no el repo). La
+      dirección nueva responde 200; la vieja, 301 a la nueva.
 - [ ] **M2.4 (Montse)** Revisa la rama, el PR a `main` y `deploy.yml`, cuando ella lo decida.
 
 ## F6 · Lanzamiento
