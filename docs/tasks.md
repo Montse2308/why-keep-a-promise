@@ -1727,6 +1727,9 @@ se borra ni se debilita. La parte 2, el cuaderno, la escribe el siguiente agente
       ser positiva: la promesa ya no agregaría nada. El texto nuevo lo dice así, en los dos idiomas.
       El home pesa un poco más por ese texto: la primera carga pasa de 184.2 a 184.3 KiB (EN) y de
       184,9 a 185,0 KiB (ES); `weight.json` se reescribe.
+- [x] **M4.1b** «ahí. Ahí». La oración que sigue a la frase nueva del capítulo 7 deja de empezar
+      «Ahí, la otra persona…» / «There, the other person…». Ahora: «En la simulación, la otra
+      persona…» / «In the simulation, the other person…». El resto de la oración no cambia.
 - [x] **M4.2** Las unidades de 70/68 (capítulo 6 y el tablero): el texto del anexo, §A3, en ES y en
       EN, y rótulos de las dos columnas del tablero que muestra «73 % · 70 / 54 % · 68»: ES
       «Tiraron» / «Esperaban (de 100)», EN «Rolled» / «Expected (of 100)». El 70 y el 68 son lo que

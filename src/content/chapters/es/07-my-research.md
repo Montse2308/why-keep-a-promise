@@ -59,8 +59,9 @@ En una simulación, se fijó la confianza de fondo en cada valor de {min} a {max
 creencia de que la promesa se cumplirá quedó fija en {belief}, un valor tomado de Vanberg (2008,
 Tabla I): en promedio, eso creían quienes decidían, sin cambio de pareja, que su pareja esperaba de
 ellos. La culpa personal pesa más justo a la mitad, en {peak}. Y la confianza de fondo no pasa de
-{belief}: arriba de ahí, tu promesa ya no agregaría nada, y por eso el eje termina ahí. Ahí, la otra
-persona ve cuál de las razones te mueve antes de jugar, y solo entra si vas a tirar; si no entra,
+{belief}: arriba de ahí, tu promesa ya no agregaría nada, y por eso el eje termina ahí. En la
+simulación, la otra persona ve cuál de las razones te mueve antes de jugar, y solo entra si vas a
+tirar; si no entra,
 cada quien se queda con {low}. Por eso tirar paga {high} y no tirar, {low}.
 
 <!-- beat:curve -->

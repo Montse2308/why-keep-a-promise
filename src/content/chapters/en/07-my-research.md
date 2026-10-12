@@ -59,8 +59,9 @@ In a simulation, background trust was fixed at each value from {min} to {max} ou
 belief that a promise will be kept was held at {belief}, a value taken from Vanberg (2008, Table I):
 on average, that is what deciders without a partner switch believed their partner expected of them.
 Personal guilt weighs most at exactly half of it, {peak}. And background trust goes no higher than
-{belief}: above it, your promise would add nothing, which is why the axis ends there. There, the
-other person sees which reason moves you before playing, and only joins if you will roll; if they
+{belief}: above it, your promise would add nothing, which is why the axis ends there. In the
+simulation, the other person sees which reason moves you before playing, and only joins if you will
+roll; if they
 don't join, each keeps {low}. That is why rolling pays {high} and not rolling pays {low}.
 
 <!-- beat:curve -->
