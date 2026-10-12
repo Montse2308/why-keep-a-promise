@@ -1577,6 +1577,31 @@ corre igual.
 - [ ] **10.8 (Montse)** Revisa las capturas y el video de 38 corriendo.
 - [ ] **10.9 (Montse)** El PR de P10 a `main`, y `deploy.yml` cuando ella lo decida.
 
+## M2 · El repo del motor cambia de nombre
+
+Mantenimiento: el repo del motor se llama ahora `Montse2308/promises-to-whom-engine` (antes
+`Montse2308/Dilema-del-Prisionero`). GitHub redirige la dirección vieja, pero la página usa la
+nueva. En la rama `m2/engine-rename`, desde `main` en `ee2ba4b` (el merge del PR #24); sin push, sin
+PR y sin `deploy.yml`, que decide y corre Montse. No toca el despliegue (`deploy.yml`,
+`docs/launch-checklist.md`, `scripts/check-launch.mjs`), ni `src/data/curve.json` (su `engineRepo`
+es la procedencia de la curva, con el nombre de entonces), ni los ADR más allá de la línea de estado
+del 0043, ni lo ya cerrado aquí. Ningún texto visible cambia, salvo la dirección del repo. Cada paso
+termina en verde (`check`, `test`, `build`, `verify:dist`, `budgets` y `check:launch`) y lleva su
+número en el commit (`M2.2`).
+
+- [ ] **M2.0** El registro: esta sección.
+- [ ] **M2.1** La dependencia: `dilema-prisionero` (la clave, el nombre del paquete, no cambia)
+      apunta a `github:Montse2308/promises-to-whom-engine`, en el mismo commit del tag `v1.0.0`
+      (`4e59df7…`); `package-lock.json` al día, con la misma `integrity`, y
+      `src/lib/finding/population.test.ts`, que fija la cadena.
+- [ ] **M2.2** Las direcciones: `ENGINE.repository` en `src/config.ts` y sus pruebas, las marcas de
+      `scripts/verify-dist.mjs`, los README (EN y ES), `AGENTS.md` y `docs/sources.md`; la línea de
+      estado del ADR 0043.
+- [ ] **M2.3** La comprobación: las seis puertas; en el build, /sources, /how-its-built, /finding y
+      los dos home enlazan la dirección nueva, y el JSON-LD de /finding (`SoftwareSourceCode`)
+      también; la dirección nueva responde 200 y la vieja redirige.
+- [ ] **M2.4 (Montse)** Revisa la rama, el PR a `main` y `deploy.yml`, cuando ella lo decida.
+
 ## F6 · Lanzamiento
 
 El texto ya no se somete a ninguna revista: se publica como working paper en SSRN, sin revisión por
