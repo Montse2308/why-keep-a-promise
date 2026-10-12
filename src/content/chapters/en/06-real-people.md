@@ -22,8 +22,9 @@ else?
 
 ### {rolledsame}% against {rolledswitched}%.
 
-In the data of Vanberg (2008), after a switch the die was rolled far less often. And what the
-recipients expected barely moved: {expectsame} against {expectswitched}.
+In the data of Vanberg (2008), after a switch the die was rolled far less often. And what
+recipients holding a promise expected, on a scale of {scalebottom} to {scaletop}, barely moved:
+{expectsame} against {expectswitched}.
 
 <!-- beat:conclusion -->
 

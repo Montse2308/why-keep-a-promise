@@ -5,18 +5,18 @@
       "locale": "en",
       "route": "home",
       "bytes": {
-        "home-script": 21627,
+        "home-script": 21644,
         "fonts": 121404,
-        "first-load": 188692
+        "first-load": 189078
       }
     },
     {
       "locale": "es",
       "route": "home",
       "bytes": {
-        "home-script": 21627,
+        "home-script": 21644,
         "fonts": 121404,
-        "first-load": 189390
+        "first-load": 189772
       }
     }
   ]

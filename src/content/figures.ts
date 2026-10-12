@@ -53,7 +53,7 @@ export const FIGURES: readonly Figure[] = [
   { value: '10', source: 'vanberg-payoffs', what: 'dictator after Roll; recipient expected after Roll' },
   { value: '14', source: 'vanberg-payoffs', what: "dictator after Don't Roll" },
   { value: '12', source: 'vanberg-payoffs', what: 'recipient after Roll, faces 2–6' },
-  { value: '0', source: 'vanberg-payoffs', what: "recipient after face 1 or Don't Roll; bottom of the belief scale" },
+  { value: '0', source: 'vanberg-payoffs', what: "recipient after face 1 or Don't Roll" },
   { value: '4', source: 'vanberg-payoffs', what: 'cost of rolling to the dictator, 14 − 10' },
   { value: '6', source: 'vanberg-payoffs', what: 'faces of the die' },
   { value: '1', source: 'vanberg-payoffs', what: 'the die face that gives the recipient 0' },
@@ -69,6 +69,7 @@ export const FIGURES: readonly Figure[] = [
   { value: '54', source: 'vanberg-rates', what: '% of promisers who rolled, new partner promised by another' },
   { value: '70', source: 'vanberg-beliefs', what: 'mean bet of promised recipients, no switch, out of 100' },
   { value: '68', source: 'vanberg-beliefs', what: 'mean bet of promised recipients, switch, out of 100' },
+  { value: '0', source: 'vanberg-beliefs', what: 'bottom of the 0–100 reading of the five-point scale' },
   { value: '100', source: 'vanberg-beliefs', what: 'top of the 0–100 belief scale' },
   // Chapter 7's finding: the curve (src/data/curve.json). tests/curve.test.ts checks CURVE_FIGURES against the file.
   { value: '76', source: 'vanberg-second-order', what: 'belief that a promise will be kept, held fixed; top of the background-trust axis' },

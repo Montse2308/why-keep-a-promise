@@ -71,7 +71,7 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
 
   it('lists the figures the register gives each key, each once, in its order', () => {
     expect(figuresOf('vanberg-rates')).toEqual(['73', '54']);
-    expect(figuresOf('vanberg-beliefs')).toEqual(['70', '68', '100']);
+    expect(figuresOf('vanberg-beliefs')).toEqual(['70', '68', '0', '100']);
     for (const entry of ENTRIES) {
       const registered = FIGURES.filter((figure) => figure.source === entry.source).map((figure) => figure.value);
       expect(figuresOf(entry.source)).toEqual([...new Set(registered)]);

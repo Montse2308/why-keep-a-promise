@@ -177,6 +177,7 @@ function run(): void {
     figure: part(`sign-${id}-figure`),
     question: part(`sign-${id}-question`),
     expected: part(`sign-${id}-expected`),
+    column: part(`sign-${id}-col`),
   }));
   const bands = [...world.querySelectorAll<SVGElement>('[data-band]')];
   const pips = [...world.querySelectorAll<SVGElement>('[data-pip]')];
@@ -417,12 +418,13 @@ function run(): void {
     const { signs } = view;
     set(parts.signs, 'opacity', signs.shown > 0.01 ? '1' : '0');
     if (signs.shown > 0) {
-      for (const { id, sign, figure, question, expected } of signParts) {
+      for (const { id, sign, figure, question, expected, column } of signParts) {
         const sway = still ? 0 : Math.sin(now / (id === 'same' ? 1300 : 1100)) * 3;
         set(sign, 'transform', `${signTransform(signs.x[id], signs.shown)} rotate(${(sway * 0.4).toFixed(2)})`);
         set(figure, 'opacity', signs[id].toFixed(3));
         set(question, 'opacity', (1 - signs[id]).toFixed(3));
         set(expected, 'opacity', signs.expected.toFixed(3));
+        set(column, 'opacity', signs.expected.toFixed(3));
       }
     }
 

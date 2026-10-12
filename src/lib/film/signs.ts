@@ -7,7 +7,7 @@
  */
 import type { GuessId } from './guess';
 
-export const SIGN = { width: 220, height: 104, top: 118 } as const;
+export const SIGN = { width: 220, height: 128, top: 118 } as const;
 
 /** Where each sign hangs, over the table and above the voices. */
 export const SIGN_X: Record<'landscape' | 'portrait', Record<GuessId, number>> = {

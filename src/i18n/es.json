@@ -332,6 +332,8 @@
   "film.real-people.percent": "{n} %",
   "film.real-people.sign.same": "Misma pareja",
   "film.real-people.sign.switched": "Pareja nueva",
+  "film.real-people.col.rolled": "Tiraron",
+  "film.real-people.col.expected": "Esperaban\n(de {scaletop})",
   "film.real-people.guess.label": "Lo que adivinas",
   "film.real-people.guess.see": "Ver la cifra real",
   "film.real-people.guess.yours": "Adivinas: {n} %",

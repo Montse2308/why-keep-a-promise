@@ -332,6 +332,8 @@
   "film.real-people.percent": "{n}%",
   "film.real-people.sign.same": "Same partner",
   "film.real-people.sign.switched": "New partner",
+  "film.real-people.col.rolled": "Rolled",
+  "film.real-people.col.expected": "Expected\n(of {scaletop})",
   "film.real-people.guess.label": "Your guess",
   "film.real-people.guess.see": "See the real figure",
   "film.real-people.guess.yours": "Your guess: {n}%",

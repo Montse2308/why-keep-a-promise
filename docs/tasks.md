@@ -1727,11 +1727,18 @@ se borra ni se debilita. La parte 2, el cuaderno, la escribe el siguiente agente
       ser positiva: la promesa ya no agregaría nada. El texto nuevo lo dice así, en los dos idiomas.
       El home pesa un poco más por ese texto: la primera carga pasa de 184.2 a 184.3 KiB (EN) y de
       184,9 a 185,0 KiB (ES); `weight.json` se reescribe.
-- [ ] **M4.2** Las unidades de 70/68 (capítulo 6 y el tablero): el texto del anexo, §A3, en ES y en
+- [x] **M4.2** Las unidades de 70/68 (capítulo 6 y el tablero): el texto del anexo, §A3, en ES y en
       EN, y rótulos de las dos columnas del tablero que muestra «73 % · 70 / 54 % · 68»: ES
       «Tiraron» / «Esperaban (de 100)», EN «Rolled» / «Expected (of 100)». El 70 y el 68 son lo que
       apostaron los receptores con una promesa, en una escala de cinco puntos leída de 0 a 100
       (Suplemento B, pantalla 5B).
+      Hecho. `docs/sources.md` ya lo decía (`vanberg-beliefs`): 70 y 68, escala de cinco puntos
+      leída de 0 a 100, Suplemento B, pantalla 5B. El 0 de esa lectura entra en el registro con esa
+      clave (el 100 ya estaba). En las leyendas, el 0 y el 100 salen de `{scalebottom}` y
+      `{scaletop}` (regla (k): ninguna cifra escrita a mano); quien lee ve el texto del anexo. Los
+      rótulos van en cada letrero, «Esperaban» y «(de 100)» en dos líneas porque en el ancho del
+      letrero no caben en una. A 360 px se leen. El home pasa de 184.3 a 184.6 KiB (EN) y de 185,0 a
+      185,3 KiB (ES); `weight.json` se reescribe.
 - [ ] **M4.3** Que la gráfica se lea (capítulo 7 y `/finding`): el mismo lenguaje visual en las dos,
       para que cada serie se distinga a 360 y a 1440, en claro y en oscuro, y con los daltonismos
       que ya se prueban; el tramo alto de la culpa personal a la vista; el compromiso y la culpa
