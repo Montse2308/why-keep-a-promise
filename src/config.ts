@@ -34,7 +34,7 @@ export const WORKING_PAPER = {
  * as /finding cites it (ADR 0037).
  */
 export const ENGINE = {
-  repository: 'https://github.com/Montse2308/Dilema-del-Prisionero',
+  repository: 'https://github.com/Montse2308/promises-to-whom-engine',
   doi: '10.5281/zenodo.23222610',
   title: 'Promises to whom: Identifying personal guilt and partner-specific commitment across populations',
   version: '1.0.0',

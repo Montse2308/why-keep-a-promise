@@ -1598,9 +1598,14 @@ número en el commit (`M2.2`).
       agregaba además `"peer": true` a seis paquetes sin relación, que no se guardaron; `npm ci`
       acepta el lock y baja el motor de la dirección nueva. `resolved` termina en
       `promises-to-whom-engine.git#4e59df7…`; la `integrity` es la misma.
-- [ ] **M2.2** Las direcciones: `ENGINE.repository` en `src/config.ts` y sus pruebas, las marcas de
+- [x] **M2.2** Las direcciones: `ENGINE.repository` en `src/config.ts` y sus pruebas, las marcas de
       `scripts/verify-dist.mjs`, los README (EN y ES), `AGENTS.md` y `docs/sources.md`; la línea de
       estado del ADR 0043.
+      Hecho. Ninguna prueba ni marca compara `curve.json` con `ENGINE.repository`, y la procedencia
+      de `curve.json` no llega a ninguna página. En `docs/sources.md`, la línea que copia esa
+      procedencia conserva el nombre de entonces, como el archivo, y suma el de hoy. En
+      `verify:dist`, la dirección nueva sigue siendo marca de lo cerrado (no debe estar en un build
+      cerrado) y de lo abierto (debe estar en los ocho archivos con candado).
 - [ ] **M2.3** La comprobación: las seis puertas; en el build, /sources, /how-its-built, /finding y
       los dos home enlazan la dirección nueva, y el JSON-LD de /finding (`SoftwareSourceCode`)
       también; la dirección nueva responde 200 y la vieja redirige.

@@ -325,7 +325,7 @@ scratch/                 local notes, git-ignored, never committed
     `deploy.yml`: it is manual-only, and only Montse runs it, after merging into `main`.
 - **Copying the working paper or the paper's context.** Do not read or copy the working paper or its
   working files, wherever they live (local folders, Drive). If something is missing, ask.
-- **Importing the engine.** The engine repository (`Montse2308/Dilema-del-Prisionero` on GitHub,
+- **Importing the engine.** The engine repository (`Montse2308/promises-to-whom-engine` on GitHub,
   local folder `dilema-prisionero`) is never opened or cloned, added as a submodule or alias, or
   edited, and no file is copied from it. Its curve reaches this repo only as `src/data/curve.json`
   (ADR 0010). The one exception (ADR 0043): the dependency `dilema-prisionero`, pinned to the commit

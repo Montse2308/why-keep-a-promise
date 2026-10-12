@@ -34,7 +34,7 @@ Comparar mundos con distinta confianza de fondo, sí.
   [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218), DOI
   [10.2139/ssrn.7580218](https://doi.org/10.2139/ssrn.7580218).
 - **El motor de simulación** detrás de cada cifra:
-  [Montse2308/Dilema-del-Prisionero](https://github.com/Montse2308/Dilema-del-Prisionero), versión
+  [Montse2308/promises-to-whom-engine](https://github.com/Montse2308/promises-to-whom-engine), versión
   v1.0.0, DOI [10.5281/zenodo.23222610](https://doi.org/10.5281/zenodo.23222610).
 
 ## Cómo está hecho
@@ -90,7 +90,7 @@ partner-specific commitment across populations* [Documento de trabajo]. SSRN.
 https://doi.org/10.2139/ssrn.7580218
 
 El motor tiene su propia cita en
-[su repositorio](https://github.com/Montse2308/Dilema-del-Prisionero/blob/main/README.es.md#cómo-citar).
+[su repositorio](https://github.com/Montse2308/promises-to-whom-engine/blob/main/README.es.md#cómo-citar).
 
 ## Licencia
 

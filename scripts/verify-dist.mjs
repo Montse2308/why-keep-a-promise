@@ -46,7 +46,7 @@ export const MARKERS = [
   'seeded generator',
   'generador con semilla',
   // The engine's repository (src/config.ts), linked only behind the lock (src/lib/engine.ts).
-  'Montse2308/Dilema-del-Prisionero',
+  'Montse2308/promises-to-whom-engine',
   // Chapter 7's finding: the cards the envelope holds, and the timeline's first beat past it.
   'data-finding',
   'third-reason',
@@ -54,15 +54,15 @@ export const MARKERS = [
 
 /** What each unlocked page must carry, by its path in dist/. */
 export const UNLOCKED_PAGES = {
-  'index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason', 'Montse2308/Dilema-del-Prisionero'],
-  'es/index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason', 'Montse2308/Dilema-del-Prisionero'],
-  'finding/index.html': ['data-locked-content', 'finding-guilt', 'data-explorer', 'data-compete', 'identification result', 'Montse2308/Dilema-del-Prisionero'],
-  'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'data-explorer', 'data-compete', 'resultado de identificación', 'Montse2308/Dilema-del-Prisionero'],
-  'how-its-built/index.html': ['data-locked-content', 'seeded generator', 'Montse2308/Dilema-del-Prisionero'],
-  'es/how-its-built/index.html': ['data-locked-content', 'generador con semilla', 'Montse2308/Dilema-del-Prisionero'],
+  'index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason', 'Montse2308/promises-to-whom-engine'],
+  'es/index.html': ['data-locked-content', 'finding-curve', 'data-finding', 'third-reason', 'Montse2308/promises-to-whom-engine'],
+  'finding/index.html': ['data-locked-content', 'finding-guilt', 'data-explorer', 'data-compete', 'identification result', 'Montse2308/promises-to-whom-engine'],
+  'es/finding/index.html': ['data-locked-content', 'finding-guilt', 'data-explorer', 'data-compete', 'resultado de identificación', 'Montse2308/promises-to-whom-engine'],
+  'how-its-built/index.html': ['data-locked-content', 'seeded generator', 'Montse2308/promises-to-whom-engine'],
+  'es/how-its-built/index.html': ['data-locked-content', 'generador con semilla', 'Montse2308/promises-to-whom-engine'],
   // /sources lists the finding's sources only behind the lock (ADR 0035).
-  'sources/index.html': ['data-locked-content', 'Kawagoe', 'Montse2308/Dilema-del-Prisionero'],
-  'es/sources/index.html': ['data-locked-content', 'Kawagoe', 'Montse2308/Dilema-del-Prisionero'],
+  'sources/index.html': ['data-locked-content', 'Kawagoe', 'Montse2308/promises-to-whom-engine'],
+  'es/sources/index.html': ['data-locked-content', 'Kawagoe', 'Montse2308/promises-to-whom-engine'],
 };
 
 /** Every mark some unlocked page must carry. */
