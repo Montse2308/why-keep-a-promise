@@ -1589,11 +1589,15 @@ del 0043, ni lo ya cerrado aquí. Ningún texto visible cambia, salvo la direcci
 termina en verde (`check`, `test`, `build`, `verify:dist`, `budgets` y `check:launch`) y lleva su
 número en el commit (`M2.2`).
 
-- [ ] **M2.0** El registro: esta sección.
-- [ ] **M2.1** La dependencia: `dilema-prisionero` (la clave, el nombre del paquete, no cambia)
+- [x] **M2.0** El registro: esta sección.
+- [x] **M2.1** La dependencia: `dilema-prisionero` (la clave, el nombre del paquete, no cambia)
       apunta a `github:Montse2308/promises-to-whom-engine`, en el mismo commit del tag `v1.0.0`
       (`4e59df7…`); `package-lock.json` al día, con la misma `integrity`, y
       `src/lib/finding/population.test.ts`, que fija la cadena.
+      Hecho. En el lock cambian solo las dos líneas de la dependencia: `npm install` (npm 11.6.1)
+      agregaba además `"peer": true` a seis paquetes sin relación, que no se guardaron; `npm ci`
+      acepta el lock y baja el motor de la dirección nueva. `resolved` termina en
+      `promises-to-whom-engine.git#4e59df7…`; la `integrity` es la misma.
 - [ ] **M2.2** Las direcciones: `ENGINE.repository` en `src/config.ts` y sus pruebas, las marcas de
       `scripts/verify-dist.mjs`, los README (EN y ES), `AGENTS.md` y `docs/sources.md`; la línea de
       estado del ADR 0043.

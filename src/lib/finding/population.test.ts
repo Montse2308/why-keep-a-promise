@@ -23,9 +23,9 @@ const final = (id: CompeteWorld['id']) => finals.get(id) ?? [];
 describe('the pinned engine (ADR 0043)', () => {
   it('is the commit of the v1.0.0 tag, in package.json and in the lock', () => {
     const spec = (JSON.parse(manifest) as { dependencies: Record<string, string> }).dependencies['dilema-prisionero'];
-    expect(spec).toBe(`github:Montse2308/Dilema-del-Prisionero#${ENGINE_COMMIT}`);
+    expect(spec).toBe(`github:Montse2308/promises-to-whom-engine#${ENGINE_COMMIT}`);
     const entry = (JSON.parse(lock) as { packages: Record<string, { resolved?: string }> }).packages['node_modules/dilema-prisionero'];
-    expect(entry?.resolved?.endsWith(`Montse2308/Dilema-del-Prisionero.git#${ENGINE_COMMIT}`)).toBe(true);
+    expect(entry?.resolved?.endsWith(`Montse2308/promises-to-whom-engine.git#${ENGINE_COMMIT}`)).toBe(true);
   });
 
   it('is the version the page says, from ENGINE.version', () => {
