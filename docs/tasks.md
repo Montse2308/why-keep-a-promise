@@ -1799,8 +1799,8 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
       Hecho. El original `scratch/m4/foto.jpg` no se sube. La versión de trabajo es
       `src/assets/about/montse.jpg`, 640 × 640, sin EXIF, ICC, IPTC ni XMP (una prueba lo fija).
       Astro la sirve en AVIF y WebP, a 160 px y a 320 px: 2.8 y 6.8 KiB en AVIF, 4.8 y 12.6 KiB en
-      WebP. El círculo es la forma; el rectángulo con `border-radius` del token grande es la otra,
-      con `data-shape`. `alt=""`. El texto es el anexo §B1: 102 palabras en ES y 99 en EN, tope
+      WebP. La forma es el rectángulo con `border-radius` del token grande: Montse lo eligió el
+      2026-10-12. `alt=""`. El texto es el anexo §B1: 102 palabras en ES y 99 en EN, tope
       120. `/about` no tenía techo propio: el de la foto es 16 KiB, el archivo más grande que
       ofrece. La primera carga queda en 137.7 KiB (EN) y 137.8 KiB (ES). Los cuatro perfiles
       conservan `rel="me"`; el repo de la página y el del motor no. El del motor, solo con el

@@ -5,8 +5,7 @@
  * SSRN (`AUTHOR` in src/config.ts), each with rel="me". The SSRN page lists the working paper, so
  * it is linked only behind the lock (ADR 0034), and so is the engine's repository. This site's
  * repository is linked either way. The photo's alt is empty because the name is written beside it.
- * The circle is the shape until Montse chooses; the rounded rectangle is the other one, for the
- * screenshots (`data-shape`).
+ * The portrait is a rounded rectangle (`--radius-lg`).
  */
 import { Picture } from 'astro:assets';
 import portrait from '../../assets/about/montse.jpg';
@@ -39,7 +38,7 @@ const code: { url: string; key: UiKey }[] = [
 {
   part === 'head' ? (
     <div class="author__head">
-      <div class="author__portrait" data-shape="circle">
+      <div class="author__portrait">
         <Picture
           src={portrait}
           alt=""
@@ -93,13 +92,6 @@ const code: { url: string; key: UiKey }[] = [
     width: 10rem;
     height: 10rem;
     object-fit: cover;
-  }
-
-  .author__portrait[data-shape='circle'] :global(img) {
-    border-radius: 50%;
-  }
-
-  .author__portrait[data-shape='rounded'] :global(img) {
     border-radius: var(--radius-lg);
   }
 
