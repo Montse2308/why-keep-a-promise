@@ -1660,11 +1660,18 @@ configuración. Cada paso termina en verde (`check`, `test`, `build`, `verify:di
       la base en una carpeta, para no perder esa cobertura), `budgets` y sus *fixtures* (la raíz; los
       casos de `homeLocale` con `/b/` se quedan y se suman los de `/`) y `verify-dist` (la base del
       caso de los enlaces a `/finding`, ahora la raíz).
-- [ ] **M3.3** Lo que la raíz permite: `public/robots.txt` con el sitemap, y el comentario de
+- [x] **M3.3** Lo que la raíz permite: `public/robots.txt` con el sitemap, y el comentario de
       `src/lib/sitemap.ts` corregido (el `noindex` del 404 se queda); en `verify:dist`, una marca
       nueva: la canónica, `og:url` y `og:image` de cada página empiezan con
       `https://whykeepapromise.org/`, y ninguna página de `dist/` lleva `montse2308.github.io` ni
       `/why-keep-a-promise/`. Con su prueba.
+      Hecho. `addressProblems` en `scripts/verify-dist.mjs`: cada página menos el 404 (que no lleva
+      canónica ni Open Graph) se nombra a sí misma y a su póster bajo el dominio; la dirección vieja
+      no está en ningún archivo de texto de `dist/` (no solo en las páginas: también JS, CSS, XML y
+      `robots.txt`), salvo `/why-keep-a-promise/` dentro de un enlace a este repo en GitHub, que
+      conserva el nombre; y `robots.txt` existe y nombra `https://whykeepapromise.org/sitemap.xml`.
+      Sus pruebas, en `tests/verify-dist.test.ts`, también fijan que `SITE_URL` es el `site` de
+      `astro.config.mjs`, sin `base`, y el texto de `robots.txt`.
 - [ ] **M3.4** Las direcciones en los documentos vivos: los README (EN y ES), `AGENTS.md` y los de
       `docs/` que describen el estado actual. La historia no cambia: los ADR (salvo la línea de
       estado del 0008), `docs/archivo/`, `docs/launch-checklist.md` ni lo cerrado aquí.

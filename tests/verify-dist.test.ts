@@ -45,7 +45,10 @@ import { LOCKED_BEATS } from '../src/lib/chapters';
 import { splitAtLock } from '../src/lib/film/captions';
 import { slotsIn, splitSubpage } from '../src/lib/subpages';
 import { FINDING, findingEntriesOf, findingWorksOf, worksOf } from '../src/lib/sources';
+import robots from '../public/robots.txt?raw';
 import {
+  addressesOf,
+  addressProblems,
   countStandalone,
   descriptionProblems,
   descriptionsOf,
@@ -65,6 +68,7 @@ import {
   noindexProblems,
   NOT_FOUND_PAGE,
   readPaper,
+  SITE_URL,
   STATUS_ON_HOME,
   statusProblems,
   statusSentence,
@@ -551,6 +555,68 @@ describe('verify:dist (ADR 0034)', () => {
     it('sets it in the layout by the lock, on /finding only', () => {
       expect(baseLayout).toContain("const noindex = route === 'finding' && !findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);");
       expect(baseLayout).toContain('{noindex && <meta name="robots" content="noindex" />}');
+    });
+  });
+
+  describe('the site at the root of its own domain (ADR 0044)', () => {
+    const head = (path: string, poster = `${SITE_URL}posters/en/home.png`) =>
+      `<head><link rel="canonical" href="${SITE_URL}${path}"><meta property="og:url" content="${SITE_URL}${path}"><meta property="og:image" content="${poster}"></head>`;
+    const site = (extra: Record<string, string> = {}) => ({
+      'index.html': head(''),
+      'es/finding/index.html': head('es/finding/', `${SITE_URL}posters/es/finding.png`),
+      '404.html': '<head><meta name="robots" content="noindex"></head>',
+      'sitemap.xml': `<loc>${SITE_URL}</loc>`,
+      'robots.txt': robots,
+      ...extra,
+    });
+
+    it('is the address astro.config.mjs builds with, with no base', () => {
+      expect(SITE_URL).toBe('https://whykeepapromise.org/');
+      expect(astroConfig).toContain(`site: '${SITE_URL.slice(0, -1)}',`);
+      expect(astroConfig).not.toMatch(/^\s*base:/m);
+    });
+
+    it('reads a page’s canonical link, og:url and og:image', () => {
+      expect(addressesOf(head('vanberg/'))).toEqual({ canonical: `${SITE_URL}vanberg/`, url: `${SITE_URL}vanberg/`, image: `${SITE_URL}posters/en/home.png` });
+      expect(addressesOf('<head></head>')).toEqual({ canonical: null, url: null, image: null });
+    });
+
+    it('passes a site whose pages name themselves under the domain, the 404 page left out', () => {
+      expect(addressProblems(site())).toEqual([]);
+    });
+
+    it('fails a page that names itself or its poster elsewhere, or not at all', () => {
+      const old = 'https://montse2308.github.io/why-keep-a-promise/';
+      expect(addressProblems(site({ 'about/index.html': head('about/').replace(`href="${SITE_URL}about/"`, `href="${old}about/"`) }))).toEqual([
+        `about/index.html: canonical link ${old}about/ is not under ${SITE_URL}`,
+        'about/index.html: carries the old address (montse2308.github.io, /why-keep-a-promise/)',
+      ]);
+      expect(addressProblems(site({ 'about/index.html': head('about/', 'https://www.whykeepapromise.org/posters/en/about.png') }))).toEqual([
+        `about/index.html: og:image https://www.whykeepapromise.org/posters/en/about.png is not under ${SITE_URL}`,
+      ]);
+      expect(addressProblems(site({ 'about/index.html': '<head></head>' }))).toEqual([
+        'about/index.html: no canonical link',
+        'about/index.html: no og:url',
+        'about/index.html: no og:image',
+      ]);
+    });
+
+    it('fails the old address anywhere in dist/, the folder alone too, but not a link to this repository', () => {
+      expect(addressProblems(site({ '_astro/film.js': 'fetch("/why-keep-a-promise/_astro/a.css")' }))).toEqual([
+        '_astro/film.js: carries the old address (/why-keep-a-promise/)',
+      ]);
+      expect(addressProblems(site({ '404.html': '<a href="https://montse2308.github.io/">home</a>' }))).toEqual(['404.html: carries the old address (montse2308.github.io)']);
+      expect(addressProblems(site({ 'sources/index.html': `${head('sources/')}<a href="https://github.com/Montse2308/why-keep-a-promise/blob/main/README.md">code</a>` }))).toEqual([]);
+    });
+
+    it('wants robots.txt, naming the sitemap on the domain', () => {
+      const { 'robots.txt': _gone, ...without } = site();
+      expect(addressProblems(without)).toEqual(['robots.txt: missing']);
+      expect(addressProblems(site({ 'robots.txt': 'User-agent: *\nAllow: /\n' }))).toEqual([`robots.txt: does not name ${SITE_URL}sitemap.xml`]);
+    });
+
+    it('lets every crawler in and points it to the sitemap', () => {
+      expect(robots).toBe(`User-agent: *\nAllow: /\nSitemap: ${SITE_URL}sitemap.xml\n`);
     });
   });
 });
