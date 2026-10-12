@@ -1680,11 +1680,26 @@ configuración. Cada paso termina en verde (`check`, `test`, `build`, `verify:di
       comprueba `verify:dist`, el hosting (con el DNS y el dominio en *Settings*, sin `CNAME`) y la
       regla de los enlaces. En `docs/`, solo `plan.md` daba la dirección como estado actual; la de
       `phases.md` es el criterio de salida de F6, ya cerrada, y se queda.
-- [ ] **M3.5** La comprobación: las seis puertas; `npm run preview` en `/`, `/es/`, `/finding/`,
+- [x] **M3.5** La comprobación: las seis puertas; `npm run preview` en `/`, `/es/`, `/finding/`,
       `/es/finding/`, `/sources/`, `/how-its-built/`, `/about/` y el 404, sin errores en la consola
       ni recursos que falten (estilos, fuentes, pósters, el explorador y el worker de «Run the
       engine»); en `dist/`, la canónica, `og:image`, el JSON-LD de `/finding`, `sitemap.xml` y
       `robots.txt` con el dominio; y lo que queda de la dirección vieja en el repo, solo historia.
+      Hecho. Las seis puertas en verde. Con `astro preview` en la raíz, a 1440 y 360 px (con ratón y
+      con toque reales), las ocho rutas cargan sin errores en la consola ni recursos que fallen: los
+      estilos, las cinco caras de las fuentes, el póster de cada página (200, `image/png`), el
+      favicon y el ícono táctil, y todos los enlaces internos (200). En `/finding` y `/es/finding`, θ
+      se mueve con las flechas (0.60 → 0.55) y «Run the engine» carga su módulo y su worker: a los
+      cinco segundos va en la generación 148–149 de 400, con sus 40 líneas. Una ruta que no existe
+      responde 404 con la página propia, en los dos idiomas. En `dist/`, la canónica, `og:url` y
+      `og:image` de cada página están en el dominio; `sitemap.xml` nombra las 14 páginas ahí, y
+      `robots.txt` está. El JSON-LD de `/finding` no lleva ninguna dirección del sitio (solo SSRN, los
+      DOI, ORCID, el repo del motor y la licencia), así que no cambia. En el repo, la dirección vieja
+      queda en la historia (los ADR 0008 y 0044, `docs/archivo/`, `docs/launch-checklist.md`, el
+      criterio de salida de F6 en `docs/phases.md` y esta sección), en la cabecera de este archivo
+      (que dice dónde está el sitio hasta que Montse ponga el dominio) y en las pruebas que la usan a
+      propósito: los casos con subcarpeta de `routes.test.ts` y los de la marca nueva de
+      `verify-dist.test.ts`.
 - [ ] **M3.6 (Montse)** Revisa la rama y la fusiona; después, en *Settings → Pages*, pone
       `whykeepapromise.org` como dominio y corre `deploy.yml`; cuando GitHub emite el certificado,
       marca *Enforce HTTPS*.
