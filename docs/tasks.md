@@ -3,18 +3,17 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M3, la página en su dominio,
-`https://whykeepapromise.org` (rama `m3/custom-domain`, sección M3). M2, el repo del motor cambia de
-nombre, llegó a `main` con el PR #25. P10, el motor en `/finding`, con el
-PR #24. M1, la puesta al día después del lanzamiento, con el PR #23. P9, `/finding` por sí sola, llegó
-a `main` con el PR #21 (y su cierre con el #22); P8, los retoques después del lanzamiento, con el
-PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
+**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M4, pulir antes de difundir
+(rama `m4/polish`, sección M4). M3, la página en su dominio, `https://whykeepapromise.org`, llegó a
+`main` con el PR #26. M2, el repo del motor cambia de nombre, llegó a `main` con el PR #25. P10, el
+motor en `/finding`, con el PR #24. M1, la puesta al día después del lanzamiento, con el PR #23. P9,
+`/finding` por sí sola, llegó a `main` con el PR #21 (y su cierre con el #22); P8, los retoques
+después del lanzamiento, con el PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
-línea en `https://montse2308.github.io/why-keep-a-promise/` hasta que Montse ponga el dominio de M3
-en *Settings → Pages*; desde entonces, en `https://whykeepapromise.org/`. F5, la QA, cerrada en la rama
-`launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7 cerradas: Montse las revisó
-(PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
-como ella lo pidió: dio por hecho el de la película entera.
+línea en `https://whykeepapromise.org/` (ADR 0044; la dirección anterior en GitHub Pages redirige
+allí). F5, la QA, cerrada en la rama `launch/f5-qa` (PR #19), sobre el build con el candado abierto.
+P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el
+PR #17). P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película entera.
 
 **Fase siguiente:** ninguna planeada. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
 que llega a `main` llega al sitio cuando Montse vuelve a correr `deploy.yml`
@@ -1703,6 +1702,48 @@ configuración. Cada paso termina en verde (`check`, `test`, `build`, `verify:di
 - [ ] **M3.6 (Montse)** Revisa la rama y la fusiona; después, en *Settings → Pages*, pone
       `whykeepapromise.org` como dominio y corre `deploy.yml`; cuando GitHub emite el certificado,
       marca *Enforce HTTPS*.
+
+## M4 · Pulir antes de difundir
+
+Mantenimiento, en dos partes, en la rama `m4/polish` desde `main`. Sin push, sin PR y sin
+`deploy.yml`, que decide y corre Montse después de la parte 2. No toca el despliegue
+(`deploy.yml`, `docs/launch-checklist.md`, `check:launch`). Los textos del anexo se escriben tal
+cual; si alguno choca con una regla, un ADR, el registro de cifras o un tope de palabras, el paso
+se detiene y se propone la forma más cercana. El 76 sigue siendo el promedio de la creencia de
+segundo orden de todos los que decidían sin cambio de pareja en Vanberg (2008, Tabla I), nunca «la
+creencia después de una promesa». Ninguna cifra nueva sin su entrada en `src/content/figures.ts` y
+su fuente en `docs/sources.md`. Cada paso de la parte 1 termina en verde (`check`, `test`, `build`,
+`verify:dist`, `budgets` y `check:launch`) y lleva su número en el commit (`M4.2`). Ninguna prueba
+se borra ni se debilita. La parte 2, el cuaderno, la escribe el siguiente agente en esta misma rama.
+
+### Parte 1 · La historia y dos gráficas
+
+- [x] **M4.0** El registro: esta sección y la cabecera.
+- [ ] **M4.1** El porqué del 38 (capítulo 7): los textos del anexo, §A2, en ES y en EN. Antes, el eje
+      de la curva termina en `{belief}` (76) y la curva no pasa de ahí.
+- [ ] **M4.2** Las unidades de 70/68 (capítulo 6 y el tablero): el texto del anexo, §A3, en ES y en
+      EN, y rótulos de las dos columnas del tablero que muestra «73 % · 70 / 54 % · 68»: ES
+      «Tiraron» / «Esperaban (de 100)», EN «Rolled» / «Expected (of 100)». El 70 y el 68 son lo que
+      apostaron los receptores con una promesa, en una escala de cinco puntos leída de 0 a 100
+      (Suplemento B, pantalla 5B).
+- [ ] **M4.3** Que la gráfica se lea (capítulo 7 y `/finding`): el mismo lenguaje visual en las dos,
+      para que cada serie se distinga a 360 y a 1440, en claro y en oscuro, y con los daltonismos
+      que ya se prueban; el tramo alto de la culpa personal a la vista; el compromiso y la culpa
+      general, que coinciden, en una sola línea o separados lo justo; el marcador del control
+      distinto de la marca del pico; en `/finding`, la línea del tope a la vista. Sin cifras nuevas.
+      Los resúmenes accesibles dicen lo mismo. Los pesos siguen dentro de sus techos.
+- [ ] **M4.4** La comprobación: las seis puertas, axe sin violaciones y sin desbordes de 320 a
+      1440 px. Capturas en `scratch/m4/parte1/` (no se sube): las dos gráficas a 360 y a 1440, en
+      claro y en oscuro, con el control en 0, en el pico (38) y en 70; el texto nuevo del capítulo 7
+      y el del capítulo 6; el tablero con sus rótulos. Con movimiento reducido y sin JavaScript, las
+      dos gráficas se siguen entendiendo.
+
+### Parte 2 · El cuaderno
+
+La escribe el siguiente agente, en esta misma rama.
+
+- [ ] **(Montse)** Aprobar el diseño de la gráfica con las capturas; revisar; push, PR, CI, fusión y
+      deploy después de la parte 2.
 
 ## F6 · Lanzamiento
 
