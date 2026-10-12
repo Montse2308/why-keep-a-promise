@@ -2,7 +2,7 @@
 // /how-its-built cites (ADR 0025: LCP ≤ 2.5 s on a mid-range phone emulated over 4G). Lighthouse is
 // not a dependency: it runs apart, pinned, against `npm run preview`, three times per page:
 //
-//   npx lighthouse@13.5.0 http://localhost:4322/why-keep-a-promise/ --only-categories=performance \
+//   npx lighthouse@13.5.0 http://localhost:4322/ --only-categories=performance \
 //     --output=json --output-path=<report.json> --chrome-flags="--headless=new"
 //
 // node scripts/lighthouse.mjs en=<run1.json>,<run2.json>,<run3.json> es=<...>

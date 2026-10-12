@@ -4,9 +4,10 @@ import { sitemapRoutes, sitemapXml } from '../src/lib/sitemap';
 import { ROUTES } from '../src/lib/routes';
 import { sitemapProblems } from '../scripts/verify-dist.mjs';
 
-const SITE = 'https://montse2308.github.io';
-const BASE = '/why-keep-a-promise';
-const ROOT = `${SITE}${BASE}/`;
+// The site at the root of its own domain (ADR 0044).
+const SITE = 'https://whykeepapromise.org';
+const BASE = '/';
+const ROOT = new URL(BASE, SITE).href;
 
 /** The pages of a built site, as verify:dist reads them: the English home names the root. */
 function builtPages(withFinding: boolean): Record<string, string> {
@@ -31,6 +32,14 @@ describe('the sitemap (point 13 of the external review)', () => {
     expect(xml).toContain(`<xhtml:link rel="alternate" hreflang="en" href="${ROOT}vanberg/"/>`);
     expect(xml).toContain(`<xhtml:link rel="alternate" hreflang="x-default" href="${ROOT}vanberg/"/>`);
     expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">')).toBe(true);
+  });
+
+  it('writes the root once, with no double slash, and keeps a base in a folder', () => {
+    expect(sitemapXml(SITE, BASE, false)).toContain(`<loc>${SITE}/</loc>`);
+    expect(sitemapXml(SITE, BASE, false).replace(/https?:\/\//g, '')).not.toContain('//');
+    const folder = sitemapXml('https://example.org', '/folder', false);
+    expect(folder).toContain('<loc>https://example.org/folder/es/vanberg/</loc>');
+    expect(folder.match(/<url>/g)).toHaveLength(12);
   });
 
   it('leaves /finding out while locked, as an entry and as an alternate', () => {

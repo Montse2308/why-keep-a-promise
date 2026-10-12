@@ -390,12 +390,12 @@ describe('verify:dist (ADR 0034)', () => {
   });
 
   describe('links to /finding while locked (ADR 0034)', () => {
-    const base = '/why-keep-a-promise/';
+    const base = '/';
     const link = (path: string, attributes = '') => `<a${attributes} href="${base}${path}">x</a>`;
 
     it('counts links to /finding in either language, with any attributes, and nothing else', () => {
       expect(findingLinks(link('finding/') + link('es/finding/', ' class="a" data-astro-cid-x') + link('finding/#top'))).toBe(3);
-      expect(findingLinks(link('vanberg/') + '<link rel="canonical" href="https://x.io/why-keep-a-promise/finding/">')).toBe(0);
+      expect(findingLinks(link('vanberg/') + `<link rel="canonical" href="https://x.io${base}finding/">`)).toBe(0);
     });
 
     it('lets only /finding link to itself (its language switch)', () => {

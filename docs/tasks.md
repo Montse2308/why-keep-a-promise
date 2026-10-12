@@ -1643,11 +1643,23 @@ configuración. Cada paso termina en verde (`check`, `test`, `build`, `verify:di
       `github.io` redirige sola. La línea de estado del 0008 y el índice de ADR.
       Hecho. El 0008 se queda en `docs/decisions/` (enmendado, no reemplazado, como el 0010 con el
       0043); el 0044 reescribe lo que sigue de él.
-- [ ] **M3.2** `site` y `base`: `site: 'https://whykeepapromise.org'` y la `base` en la raíz en
+- [x] **M3.2** `site` y `base`: `site: 'https://whykeepapromise.org'` y la `base` en la raíz en
       `astro.config.mjs` (`trailingSlash` se queda); los valores por defecto que repiten la dirección
       vieja (`BaseLayout.astro`, `sitemap.xml.ts`); `BASE` de `scripts/budgets.mjs`, el comentario de
       `scripts/lighthouse.mjs`, `src/data/weight.json` y las pruebas y *fixtures* que fijan la
       `base`; en `routes.test.ts` se conservan los casos con subcarpeta y se suman los de la raíz.
+      Hecho. La `base` se quita (Astro usa `/`). Fuera de esos archivos, nada del código escribía la
+      dirección ni la subcarpeta a mano: los enlaces, la canónica, los pósters, el JSON-LD, el 404 y
+      el worker pasan por `routes.ts` o por el build, y `dist/` ya no lleva ni `montse2308.github.io`
+      ni `/why-keep-a-promise/`. Sin la subcarpeta, el HTML y el script del home pesan unos bytes
+      menos: `weight.json` se reescribe, y `/how-its-built` cita la primera carga del home en
+      184.2 KiB (EN) y 184,9 KiB (ES), antes 184.3 y 185,0; el script sigue en 21.1 KiB.
+      `src/data/lighthouse.json` es una medición con fecha y no se toca. Las pruebas: `routes`
+      (los casos con subcarpeta se quedan; se suman los de la raíz y uno que no deja `//`),
+      `back` y `lighthouse` (el dominio y la raíz), `sitemap` (el dominio y la raíz, más un caso con
+      la base en una carpeta, para no perder esa cobertura), `budgets` y sus *fixtures* (la raíz; los
+      casos de `homeLocale` con `/b/` se quedan y se suman los de `/`) y `verify-dist` (la base del
+      caso de los enlaces a `/finding`, ahora la raíz).
 - [ ] **M3.3** Lo que la raíz permite: `public/robots.txt` con el sitemap, y el comentario de
       `src/lib/sitemap.ts` corregido (el `noindex` del 404 se queda); en `verify:dist`, una marca
       nueva: la canónica, `og:url` y `og:image` de cada página empiezan con

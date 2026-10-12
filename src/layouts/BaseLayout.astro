@@ -29,7 +29,7 @@ interface Props {
 }
 
 const { locale, route, title, codeFont = false, film = false } = Astro.props;
-const site = Astro.site ?? new URL('https://montse2308.github.io');
+const site = Astro.site ?? new URL('https://whykeepapromise.org');
 // The local provider keeps the variant order of astro.config.mjs, where latin comes first; it does
 // not tag subsets. Preload what the first screen draws: the title in Fraunces italic, the text in Nunito.
 const titleFont = fontData['--font-display']?.find((font) => font.style === 'italic')?.src[0];

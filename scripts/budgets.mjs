@@ -12,7 +12,7 @@ import { gzipSync } from 'node:zlib';
 import { BUDGETS, holdsOn, homeWeights, kilobytes, measured, overruns, recordDrift, weigh } from '../src/lib/budgets.ts';
 import { DEFAULT_LOCALE } from '../src/lib/locales.ts';
 
-const BASE = '/why-keep-a-promise/';
+const BASE = '/';
 const RECORD = fileURLToPath(new URL('../src/data/weight.json', import.meta.url));
 
 /** @param {string} dir */

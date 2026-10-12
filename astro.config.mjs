@@ -80,8 +80,8 @@ function lockFinding() {
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://montse2308.github.io',
-  base: '/why-keep-a-promise',
+  // The site sits at the root of its own domain (ADR 0044), so it has no `base`.
+  site: 'https://whykeepapromise.org',
   output: 'static',
   vite: {
     plugins: [lockFinding()],
