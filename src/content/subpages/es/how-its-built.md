@@ -6,8 +6,7 @@ title: Cómo está hecho
 
 ## En un minuto
 
-- **Stack:** Astro (sitio estático), TypeScript, Vitest, GitHub Actions y GitHub Pages.
-- **Parte del código,** con asistentes de IA bajo mi dirección.
+- **Stack:** Astro (sitio estático), TypeScript, Vitest, GitHub Actions y GitHub Pages. Parte del código, con asistentes de IA bajo mi dirección.
 - **Pruebas:** Más de 1 400 pruebas automáticas, y seis revisiones que detienen el build.
 - **Sin rastreo:** ni analítica, ni cookies. Lo que eliges en la historia se queda en esta pestaña: nada se envía a ningún lado.
 

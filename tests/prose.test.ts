@@ -184,6 +184,8 @@ describe('voice', () => {
   it('opens /how-its-built with the minute box and names the live engine before its code (M4.7)', () => {
     const es = bySubpage('es', 'how-its-built')?.body ?? '';
     const en = bySubpage('en', 'how-its-built')?.body ?? '';
+    expect(es).toContain('**Stack:** Astro (sitio estático), TypeScript, Vitest, GitHub Actions y GitHub Pages. Parte del código, con asistentes de IA bajo mi dirección.');
+    expect(en).toContain('**Stack:** Astro (static site), TypeScript, Vitest, GitHub Actions and GitHub Pages. Part of the code written with AI assistants, under my direction.');
     expect(es).toContain('Más de 1 400 pruebas automáticas, y seis revisiones que detienen el build.');
     expect(es).toContain('Lo que eliges en la historia se queda en esta pestaña: nada se envía a ningún lado.');
     expect(en).toContain('More than 1,400 automated tests, and six checks that stop the build.');

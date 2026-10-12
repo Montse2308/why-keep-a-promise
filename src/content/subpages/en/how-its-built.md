@@ -6,8 +6,7 @@ title: How it's built
 
 ## In one minute
 
-- **Stack:** Astro (static site), TypeScript, Vitest, GitHub Actions and GitHub Pages.
-- **Part of the code** written with AI assistants, under my direction.
+- **Stack:** Astro (static site), TypeScript, Vitest, GitHub Actions and GitHub Pages. Part of the code written with AI assistants, under my direction.
 - **Tests:** More than 1,400 automated tests, and six checks that stop the build.
 - **No tracking:** no analytics, no cookies. What you choose in the story stays in this tab: nothing is sent anywhere.
 
