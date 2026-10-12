@@ -1757,11 +1757,15 @@ se borra ni se debilita. La parte 2, el cuaderno, la escribe el siguiente agente
       §A1. Los resúmenes accesibles no cambian. No se tocó ningún ADR. El script del home pasa de
       21.1 a 21.2 KiB y la primera carga de 184.6 a 184.7 KiB (EN); en ES el script igual y la
       primera carga sigue en 185.3 KiB. `weight.json` se reescribe.
-- [ ] **M4.4** La comprobación: las seis puertas, axe sin violaciones y sin desbordes de 320 a
+- [x] **M4.4** La comprobación: las seis puertas, axe sin violaciones y sin desbordes de 320 a
       1440 px. Capturas en `scratch/m4/parte1/` (no se sube): las dos gráficas a 360 y a 1440, en
       claro y en oscuro, con el control en 0, en el pico (38) y en 70; el texto nuevo del capítulo 7
       y el del capítulo 6; el tablero con sus rótulos. Con movimiento reducido y sin JavaScript, las
       dos gráficas se siguen entendiendo.
+      Hecho. Sin desborde horizontal en `/`, `/es/`, `/finding/` y `/es/finding/` a 320, 360, 768,
+      1024 y 1440. axe-core 4.14.0, 16 corridas y cero violaciones (los dos home y `/finding`, EN y
+      ES, 360 y 1440, claro y oscuro). Lo que axe deja incompleto es el contraste sobre el papel con
+      grano, como en P7: no es una violación. Las capturas están en `scratch/m4/parte1/`.
 
 ### Parte 2 · El cuaderno
 
