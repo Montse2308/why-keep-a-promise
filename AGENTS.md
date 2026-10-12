@@ -18,8 +18,9 @@ A portfolio piece in two layers (ADR 0021):
 It is **not** a simulator and **not** the instrument of a paper. Details: `docs/plan.md`.
 
 **Where things stand.** The plan was rebuilt with Montse in P0 (ADR 0021–0026). P0 to P6 are closed
-(P6, the polish, with PR #9). F5 (QA) and F6 (launch) are closed: the site is live at
-`https://montse2308.github.io/why-keep-a-promise/`, with the lock open. The repository is public,
+(P6, the polish, with PR #9). F5 (QA) and F6 (launch) are closed: the site is live, with the lock
+open, at the root of its own domain, `https://whykeepapromise.org/` (ADR 0044; its first address on
+GitHub Pages redirects there). The repository is public,
 Pages publishes with GitHub Actions, and `deploy.yml` ran on 2026-10-08 (run 37860472991, on `main`
 after PR #19); every step of `docs/launch-checklist.md` is marked. P8 (polish after the launch: the
 Spanish home title on a computer, sharp card titles, external links in a new tab, ADR 0029, and the
@@ -90,12 +91,12 @@ not by reading test output.
 | Command           | What it does                                      |
 | ----------------- | ------------------------------------------------- |
 | `npm ci`          | Install exact dependencies                        |
-| `npm run dev`     | Dev server at `http://localhost:4321/why-keep-a-promise/` |
+| `npm run dev`     | Dev server at `http://localhost:4321/`            |
 | `npm run check`   | `astro check` + `tsc --noEmit`                    |
 | `npm test`        | Vitest, once                                      |
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
-| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034), or if a link leaving the site does not open in a new tab with its notice, or one inside it does (8.3) |
+| `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034), or if a link leaving the site does not open in a new tab with its notice, or one inside it does (8.3), or if a page names itself or its poster outside `https://whykeepapromise.org/`, a file carries the old address or `robots.txt` does not name the sitemap (ADR 0044) |
 | `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), /finding's JS (ADR 0038) or what /finding loads when «Run the engine» is pressed (ADR 0042), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
 | `npm run check:launch` | Builds, then fails while a link is still a `*_PENDING` placeholder in `dist/`, `src/` or the READMEs (ADR 0034). Not in CI; step 3 of the launch checklist and `deploy.yml` run it |
 
@@ -108,7 +109,7 @@ against `npm run preview`; `node scripts/lighthouse.mjs` turns the reports into
 `src/data/lighthouse.json`, whose LCP `/how-its-built` cites (the command is in the script's header);
 the weights beside it come from `src/data/weight.json`.
 
-## Stack (ADR 0025, ADR 0028, ADR 0029, ADR 0030)
+## Stack (ADR 0025, ADR 0028, ADR 0029, ADR 0030, ADR 0044)
 
 - Astro, 100 % static output. TypeScript strict. No UI framework, no Tailwind.
 - Progressive enhancement: Astro renders a storyboard in HTML (each chapter as a still frame with
@@ -132,7 +133,10 @@ the weights beside it come from `src/data/weight.json`.
 - No `@types/node`: code that needs Node's API at build time is plain `.mjs` (`scripts/`,
   `src/lib/posters/fonts.mjs`). Check current versions with the official tools; never pin
   versions from memory.
-- Hosting: GitHub Pages at `https://montse2308.github.io/why-keep-a-promise/`. Zero budget.
+- Hosting: GitHub Pages, at `https://whykeepapromise.org/`, the root of the site's own domain
+  (ADR 0044). Its DNS is on Cloudflare with every record «DNS only»: no proxy, and nothing of
+  Cloudflare's that injects scripts or cookies. The domain is set in *Settings → Pages*, never with a
+  `CNAME` file. Zero budget for hosting.
 
 ## Map
 
@@ -260,7 +264,8 @@ src/
                          renders each page's poster; 404.astro (one page, both
                          languages), sitemap.xml.ts and apple-touch-icon.png.ts
 scripts/verify-dist.mjs  checks dist/ against the lock, its links, the status sentence, the
-                         descriptions, noindex and the sitemap (ADR 0034)
+                         descriptions, noindex and the sitemap (ADR 0034), and the site's
+                         address and robots.txt (ADR 0044)
 scripts/check-launch.mjs fails while a `*_PENDING` placeholder is left (ADR 0034)
 scripts/budgets.mjs      weighs dist/ against the budgets (ADR 0025) and src/data/weight.json
 scripts/lighthouse.mjs   Lighthouse reports → src/data/lighthouse.json
@@ -284,8 +289,8 @@ scratch/                 local notes, git-ignored, never committed
   the build. Chapter and notebook prose goes in Markdown per locale. The EN/ES switch is a plain link
   to the same route in the other locale: no stored preference, no redirect, no JavaScript (ADR 0013).
 - **Links.** Every internal link uses `href()` / `buildHref()` / `assetHref()` from
-  `src/lib/routes.ts`, so `base` (`/why-keep-a-promise`) is always respected. Never hard-code `/…`
-  paths.
+  `src/lib/routes.ts`, so `base` is always respected (today the root, ADR 0044). Never hard-code
+  `/…` paths.
 - **Placeholders.** Unwritten content is marked `TODO(Px)` with the phase that writes it
   (`TODO(launch)` for step 3 of the launch checklist). (Historical, before the launch: the links not
   known until then, the working paper's SSRN page and the engine's DOI, were the literal

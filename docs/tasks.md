@@ -1672,9 +1672,14 @@ configuración. Cada paso termina en verde (`check`, `test`, `build`, `verify:di
       conserva el nombre; y `robots.txt` existe y nombra `https://whykeepapromise.org/sitemap.xml`.
       Sus pruebas, en `tests/verify-dist.test.ts`, también fijan que `SITE_URL` es el `site` de
       `astro.config.mjs`, sin `base`, y el texto de `robots.txt`.
-- [ ] **M3.4** Las direcciones en los documentos vivos: los README (EN y ES), `AGENTS.md` y los de
+- [x] **M3.4** Las direcciones en los documentos vivos: los README (EN y ES), `AGENTS.md` y los de
       `docs/` que describen el estado actual. La historia no cambia: los ADR (salvo la línea de
       estado del 0008), `docs/archivo/`, `docs/launch-checklist.md` ni lo cerrado aquí.
+      Hecho. Los README: el sitio, `/finding`, `/how-its-built` y el servidor de `npm run dev`, ahora
+      en `http://localhost:4321/`. `AGENTS.md`: dónde está el sitio, el servidor de desarrollo, lo que
+      comprueba `verify:dist`, el hosting (con el DNS y el dominio en *Settings*, sin `CNAME`) y la
+      regla de los enlaces. En `docs/`, solo `plan.md` daba la dirección como estado actual; la de
+      `phases.md` es el criterio de salida de F6, ya cerrada, y se queda.
 - [ ] **M3.5** La comprobación: las seis puertas; `npm run preview` en `/`, `/es/`, `/finding/`,
       `/es/finding/`, `/sources/`, `/how-its-built/`, `/about/` y el 404, sin errores en la consola
       ni recursos que falten (estilos, fuentes, pósters, el explorador y el worker de «Run the

@@ -114,7 +114,8 @@ Tiene que:
 
 ## Hosting
 
-- GitHub Pages en `https://montse2308.github.io/why-keep-a-promise/`.
+- GitHub Pages en `https://whykeepapromise.org/`, en la raíz de su propio dominio, con el DNS en
+  Cloudflare sin proxy (ADR 0044). La primera dirección, en `github.io`, redirige ahí.
 - El repo fue privado hasta el lanzamiento (F6), con un solo lanzamiento, sin deploy parcial
   (histórico: es público desde el 2026-09-25).
 - El lanzamiento lo dispara un hecho: el working paper ya es público en SSRN y el repo del motor ya
