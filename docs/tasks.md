@@ -1835,10 +1835,16 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
       Hecho. `nextPage` recorre `linkable`, así que con el candado cerrado Vanberg sigue en Cómo
       está hecho. Fuentes lleva «Siguiente» aunque no tenga «Volver», porque no profundiza un
       capítulo. Quién es no lleva siguiente.
-- [ ] **M4.11** Comprobación. Las seis puertas, axe sin violaciones y sin desbordes de 320 a 1440, en
+- [x] **M4.11** Comprobación. Las seis puertas, axe sin violaciones y sin desbordes de 320 a 1440, en
       ES y EN. Capturas en `scratch/m4/parte2/`: cada hoja a 360 y 1440, arriba y abajo, en claro y
       en oscuro; `/about` con las dos formas de la foto. Formatos y pesos de la foto, y la prueba de
       que el archivo del repo no lleva EXIF. `git grep` de las frases prohibidas sobre lo nuevo.
+      Hecho. Las seis puertas en verde en el commit de M4.10 (1457 pruebas). axe-core 4.14.0: 48
+      corridas, cero violaciones (las seis hojas, EN y ES, 360 y 1440, claro y oscuro). Sin desborde
+      horizontal en esas hojas a 320, 360, 768, 1024 y 1440, EN y ES. 104 capturas en
+      `scratch/m4/parte2/` (no se suben), incluidas las dos formas de la foto. La foto servida: AVIF
+      2.8 y 6.4 KiB, WebP 4.6 y 11.4 KiB; el JPEG del repo no lleva EXIF (la prueba de M4.6). `git
+      grep` de las frases prohibidas sobre lo nuevo: ninguna.
 - [ ] **(Montse)** Elegir la forma de la foto con las capturas; revisar; push, PR, CI, fusión y
       deploy.
 
