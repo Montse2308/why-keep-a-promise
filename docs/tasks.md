@@ -1805,7 +1805,7 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
       ofrece. La primera carga queda en 137.7 KiB (EN) y 137.8 KiB (ES). Los cuatro perfiles
       conservan `rel="me"`; el repo de la página y el del motor no. El del motor, solo con el
       candado abierto. El 2026-10-12 Montse eligió el recorte B: la misma ventana, 413 px más
-      abajo (el 8 % del alto de la foto).
+      abajo (el 8 % del alto de la foto). Las pastillas de los enlaces centran el texto en su alto.
 - [x] **M4.7** Cómo está hecho. El recuadro «En un minuto» arriba, con el mismo estilo que el de
       `/finding`. Anexo §B2. `{tests}` solo si el build puede contar las pruebas solo, como
       `weight.json`, con una prueba que falle si el número no coincide; si no, la variante sin

@@ -59,7 +59,9 @@ const code: { url: string; key: UiKey }[] = [
         {profiles.map((profile) => (
           <li>
             <a href={profile.url} {...externalAttrs(profile.url, 'me')}>
-              <Fragment set:html={externalText(tr(profile.key), profile.url, locale)} />
+              <span>
+                <Fragment set:html={externalText(tr(profile.key), profile.url, locale)} />
+              </span>
             </a>
           </li>
         ))}
@@ -68,7 +70,9 @@ const code: { url: string; key: UiKey }[] = [
         {code.map((link) => (
           <li>
             <a href={link.url} {...externalAttrs(link.url)}>
-              <Fragment set:html={externalText(tr(link.key), link.url, locale)} />
+              <span>
+                <Fragment set:html={externalText(tr(link.key), link.url, locale)} />
+              </span>
             </a>
           </li>
         ))}
@@ -121,9 +125,10 @@ const code: { url: string; key: UiKey }[] = [
     list-style: none;
   }
 
-  /* inline-block, so the space before the arrow's word stays: inline-flex would drop it. */
+  /* One flex item, so the space before the arrow's word stays and the line sits in the middle. */
   .author__links a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     min-height: var(--target-min);
     padding: 0 var(--space-6);
     border: var(--border-width) solid var(--color-control);

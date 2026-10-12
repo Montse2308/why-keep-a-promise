@@ -25,17 +25,19 @@ const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);
       <Fragment set:html={externalText(tr('built.code.page'), PAGE_REPOSITORY, locale)} />
     </a>
     {
-      unlocked && (
+      unlocked ? (
         <>
           {' '}
           {tr('built.code.join')}{' '}
           <a href={ENGINE.repository} {...externalAttrs(ENGINE.repository)}>
             <Fragment set:html={externalText(tr('built.code.engine'), ENGINE.repository, locale)} />
           </a>
+          {'.'}
         </>
+      ) : (
+        '.'
       )
     }
-    .
   </li>
 </ul>
 

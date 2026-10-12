@@ -24,5 +24,7 @@ describe('the portrait on /about (ADR 0045)', () => {
     expect(author).toContain('densities={[1, 2]}');
     expect(author).toContain('width={160}');
     expect(author).toContain('loading="eager"');
+    expect(author).toContain('display: inline-flex');
+    expect(author).toContain('align-items: center');
   });
 });
