@@ -5,7 +5,7 @@ import { ENGINE_TOKEN, engineLinks, withEngine } from './engine';
 describe("the engine's links (ADR 0034)", () => {
   it('links the repository and the DOI of its archived release, both from src/config.ts', () => {
     expect(engineLinks()).toBe(
-      `<a href="https://github.com/Montse2308/Dilema-del-Prisionero">github.com/Montse2308/Dilema-del-Prisionero</a> (DOI <a href="https://doi.org/${ENGINE.doi}">${ENGINE.doi}</a>)`,
+      `<a href="https://github.com/Montse2308/promises-to-whom-engine">github.com/Montse2308/promises-to-whom-engine</a> (DOI <a href="https://doi.org/${ENGINE.doi}">${ENGINE.doi}</a>)`,
     );
   });
 

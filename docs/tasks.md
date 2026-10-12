@@ -3,8 +3,9 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** P10, el motor en `/finding` (rama `p10/engine-live`, sección P10). M1, la puesta
-al día después del lanzamiento, llegó a `main` con el PR #23. P9, `/finding` por sí sola, llegó
+**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M2, el repo del motor cambia de
+nombre (rama `m2/engine-rename`, sección M2). P10, el motor en `/finding`, llegó a `main` con el
+PR #24. M1, la puesta al día después del lanzamiento, con el PR #23. P9, `/finding` por sí sola, llegó
 a `main` con el PR #21 (y su cierre con el #22); P8, los retoques después del lanzamiento, con el
 PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
@@ -13,7 +14,7 @@ línea en `https://montse2308.github.io/why-keep-a-promise/`. F5, la QA, cerrada
 (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
 como ella lo pidió: dio por hecho el de la película entera.
 
-**Fase siguiente:** ninguna planeada después de P10. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
+**Fase siguiente:** ninguna planeada. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
 que llega a `main` llega al sitio cuando Montse vuelve a correr `deploy.yml`
 (`docs/launch-checklist.md`, «Después del lanzamiento»).
 
@@ -1574,8 +1575,48 @@ corre igual.
 - El tiempo con la CPU frenada 4× no se pudo medir para el motor: DevTools no frena workers.
 - `README.es.md`: el punto nuevo decía «al pulsar «Correr»», y el botón dice «Correr el motor».
   → resuelto después de la QA: los dos README nombran el botón completo (decisión de Montse).
-- [ ] **10.8 (Montse)** Revisa las capturas y el video de 38 corriendo.
-- [ ] **10.9 (Montse)** El PR de P10 a `main`, y `deploy.yml` cuando ella lo decida.
+- [x] **10.8 (Montse)** Revisa las capturas y el video de 38 corriendo.
+- [x] **10.9 (Montse)** El PR de P10 a `main`, y `deploy.yml` cuando ella lo decida.
+      Hecho: PR #24 fusionado.
+
+## M2 · El repo del motor cambia de nombre
+
+Mantenimiento: el repo del motor se llama ahora `Montse2308/promises-to-whom-engine` (antes
+`Montse2308/Dilema-del-Prisionero`). GitHub redirige la dirección vieja, pero la página usa la
+nueva. En la rama `m2/engine-rename`, desde `main` en `ee2ba4b` (el merge del PR #24); sin push, sin
+PR y sin `deploy.yml`, que decide y corre Montse. No toca el despliegue (`deploy.yml`,
+`docs/launch-checklist.md`, `scripts/check-launch.mjs`), ni `src/data/curve.json` (su `engineRepo`
+es la procedencia de la curva, con el nombre de entonces), ni los ADR más allá de la línea de estado
+del 0043, ni lo ya cerrado aquí. Ningún texto visible cambia, salvo la dirección del repo. Cada paso
+termina en verde (`check`, `test`, `build`, `verify:dist`, `budgets` y `check:launch`) y lleva su
+número en el commit (`M2.2`).
+
+- [x] **M2.0** El registro: esta sección.
+- [x] **M2.1** La dependencia: `dilema-prisionero` (la clave, el nombre del paquete, no cambia)
+      apunta a `github:Montse2308/promises-to-whom-engine`, en el mismo commit del tag `v1.0.0`
+      (`4e59df7…`); `package-lock.json` al día, con la misma `integrity`, y
+      `src/lib/finding/population.test.ts`, que fija la cadena.
+      Hecho. En el lock cambian solo las dos líneas de la dependencia: `npm install` (npm 11.6.1)
+      agregaba además `"peer": true` a seis paquetes sin relación, que no se guardaron; `npm ci`
+      acepta el lock y baja el motor de la dirección nueva. `resolved` termina en
+      `promises-to-whom-engine.git#4e59df7…`; la `integrity` es la misma.
+- [x] **M2.2** Las direcciones: `ENGINE.repository` en `src/config.ts` y sus pruebas, las marcas de
+      `scripts/verify-dist.mjs`, los README (EN y ES), `AGENTS.md` y `docs/sources.md`; la línea de
+      estado del ADR 0043.
+      Hecho. Ninguna prueba ni marca compara `curve.json` con `ENGINE.repository`, y la procedencia
+      de `curve.json` no llega a ninguna página. En `docs/sources.md`, la línea que copia esa
+      procedencia conserva el nombre de entonces, como el archivo, y suma el de hoy. En
+      `verify:dist`, la dirección nueva sigue siendo marca de lo cerrado (no debe estar en un build
+      cerrado) y de lo abierto (debe estar en los ocho archivos con candado).
+- [x] **M2.3** La comprobación: las seis puertas; en el build, /sources, /how-its-built, /finding y
+      los dos home enlazan la dirección nueva, y el JSON-LD de /finding (`SoftwareSourceCode`)
+      también; la dirección nueva responde 200 y la vieja redirige.
+      Hecho. En `dist/`, la dirección nueva está enlazada dos veces en cada home, en
+      `/how-its-built` y en `/sources`, y tres en `/finding` (EN y ES); el `codeRepository` del
+      JSON-LD de `/finding`, EN y ES, es la dirección nueva. El nombre viejo no aparece en `dist/`
+      (el ancla `…el-dilema-del-prisionero` del capítulo 1 en español es el juego, no el repo). La
+      dirección nueva responde 200; la vieja, 301 a la nueva.
+- [ ] **M2.4 (Montse)** Revisa la rama, el PR a `main` y `deploy.yml`, cuando ella lo decida.
 
 ## F6 · Lanzamiento
 

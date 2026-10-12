@@ -22,7 +22,7 @@ describe('the lock (ADR 0034)', () => {
     expect(WORKING_PAPER.title).toBe('Promises to whom: Identifying personal guilt and partner-specific commitment across populations');
     // Links are literal placeholders until step 3 of docs/launch-checklist.md, or real addresses.
     for (const link of [WORKING_PAPER.ssrn, ENGINE.doi]) expect(isPending(link) || !/PENDING/.test(link)).toBe(true);
-    expect(ENGINE.repository).toBe('https://github.com/Montse2308/Dilema-del-Prisionero');
+    expect(ENGINE.repository).toBe('https://github.com/Montse2308/promises-to-whom-engine');
   });
 });
 

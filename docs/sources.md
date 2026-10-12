@@ -371,7 +371,8 @@ cifras, claves `vanberg-procedure` y `vanberg-guessing`) contra Suppl. A y Suppl
   Montse en F3 (ADR 0010). La página no recalcula el modelo ni interpola entre filas: solo lee el
   archivo (`src/lib/curve/`).
 - **Procedencia** (bloque `provenance` del archivo):
-  - Repo del motor: `Montse2308/Dilema-del-Prisionero`.
+  - Repo del motor: `Montse2308/Dilema-del-Prisionero`, el nombre de entonces, tal como lo dice el
+    archivo; desde M2 se llama `Montse2308/promises-to-whom-engine`.
   - Commit del motor: `68bc4bac4502257aeffb195a8890f6901a980f7d`.
   - Semilla: `grilla`.
   - Comando: `npm run export:curve`.

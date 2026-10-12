@@ -33,7 +33,7 @@ different background trust can.
   commitment across populations*, on [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7580218),
   DOI [10.2139/ssrn.7580218](https://doi.org/10.2139/ssrn.7580218).
 - **The simulation engine** behind every number:
-  [Montse2308/Dilema-del-Prisionero](https://github.com/Montse2308/Dilema-del-Prisionero), release
+  [Montse2308/promises-to-whom-engine](https://github.com/Montse2308/promises-to-whom-engine), release
   v1.0.0, DOI [10.5281/zenodo.23222610](https://doi.org/10.5281/zenodo.23222610).
 
 ## How it's built
@@ -86,7 +86,7 @@ partner-specific commitment across populations* [Working paper]. SSRN.
 https://doi.org/10.2139/ssrn.7580218
 
 The engine has its own citation in
-[its repository](https://github.com/Montse2308/Dilema-del-Prisionero#how-to-cite).
+[its repository](https://github.com/Montse2308/promises-to-whom-engine#how-to-cite).
 
 ## License
 

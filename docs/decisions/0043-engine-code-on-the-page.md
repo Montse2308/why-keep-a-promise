@@ -1,7 +1,9 @@
 # 0043 · El código del motor en la página
 
 **Estado:** aceptada (P10, paso 10.1). Enmienda el ADR 0010 («el motor nunca se importa») y suma una
-dependencia a las del ADR 0025. Decisión de Montse (2026-10-10 y 2026-10-11).
+dependencia a las del ADR 0025. Decisión de Montse (2026-10-10 y 2026-10-11). Precisado en M2
+(2026-10-11): el repo del motor se llama ahora `promises-to-whom-engine`; la dependencia apunta al
+mismo commit.
 
 ## Contexto
 
