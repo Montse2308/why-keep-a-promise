@@ -98,6 +98,9 @@ describe('figures in the prose', () => {
   it('reads a citation with a section as a citation, not as figures', () => {
     expect(citationsIn('as Kawagoe and Narita (2014, §3.2(ii)) derive')).toEqual(['Kawagoe+Narita 2014']);
     expect(numbersIn('as Kawagoe and Narita (2014, §3.2(ii)) derive')).toEqual([]);
+    expect(numbersIn('Más de 1 400 pruebas')).toEqual(['1400']);
+    expect(numbersIn('More than 1,400 tests')).toEqual(['1400']);
+    expect(numbersIn('2.5 and 5/6 and 14.44 and (1, 1)')).toEqual(['2.5', '5/6', '14.44', '1', '1']);
   });
 
   it('reads a citation all in parentheses, with a surname of two words, as a citation', () => {
@@ -176,6 +179,22 @@ describe('voice', () => {
 
   it("gives /how-its-built's measured weight and speed in its table, not in the prose", () => {
     for (const locale of LOCALES) expect(bySubpage(locale, 'how-its-built')?.body).toContain('<!-- slot:weight -->');
+  });
+
+  it('opens /how-its-built with the minute box and names the live engine before its code (M4.7)', () => {
+    const es = bySubpage('es', 'how-its-built')?.body ?? '';
+    const en = bySubpage('en', 'how-its-built')?.body ?? '';
+    expect(es).toContain('Más de 1 400 pruebas automáticas, y seis revisiones que detienen el build.');
+    expect(es).toContain('Lo que eliges en la historia se queda en esta pestaña: nada se envía a ningún lado.');
+    expect(en).toContain('More than 1,400 automated tests, and six checks that stop the build.');
+    expect(en).toContain('What you choose in the story stays in this tab: nothing is sent anywhere.');
+    for (const body of [es, en]) expect(body.indexOf('<!-- slot:built-code -->')).toBeLessThan(body.indexOf('<!-- lock -->'));
+    const esLocked = es.split('<!-- lock -->')[1] ?? '';
+    const enLocked = en.split('<!-- lock -->')[1] ?? '';
+    expect(esLocked.indexOf('«Correr el motor»')).toBeGreaterThan(-1);
+    expect(esLocked.indexOf('«Correr el motor»')).toBeLessThan(esLocked.indexOf('export function choose'));
+    expect(enLocked.indexOf('"Run the engine"')).toBeGreaterThan(-1);
+    expect(enLocked.indexOf('"Run the engine"')).toBeLessThan(enLocked.indexOf('export function choose'));
   });
 });
 

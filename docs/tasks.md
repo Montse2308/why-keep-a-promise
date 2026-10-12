@@ -1806,20 +1806,17 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
       conservan `rel="me"`; el repo de la página y el del motor no. El del motor, solo con el
       candado abierto. El 2026-10-12 Montse eligió el recorte B: la misma ventana, 413 px más
       abajo (el 8 % del alto de la foto).
-- [ ] **M4.7** Cómo está hecho. El recuadro «En un minuto» arriba, con el mismo estilo que el de
+- [x] **M4.7** Cómo está hecho. El recuadro «En un minuto» arriba, con el mismo estilo que el de
       `/finding`. Anexo §B2. `{tests}` solo si el build puede contar las pruebas solo, como
       `weight.json`, con una prueba que falle si el número no coincide; si no, la variante sin
       número. «Sin rastreo» se comprueba contra `tests/memory.test.ts` y el código antes de
       escribirlo. Una frase en «El motor», anexo §B2b, después de las cuatro decisiones y antes del
       bloque de código.
-      Detenido. El anexo dice «ni nada guardado en tu navegador» / «nothing stored in your browser».
-      El ADR 0029 guarda lo elegido en `history.state` de la pestaña (`history.replaceState`, una
-      vez; `tests/memory.test.ts`). No hay analítica, ni cookies, ni `localStorage`. La forma más
-      cercana, sin copiar la frase del capítulo 8: «**Sin rastreo:** ni analítica, ni cookies. Lo
-      que eliges en la historia se queda en esta pestaña: nada se envía a ningún lado.» / «**No
-      tracking:** no analytics, no cookies. What you choose in the story stays in this tab: nothing
-      is sent anywhere.» El resto del recuadro y §B2b no chocan; no se escriben hasta cerrar esta
-      frase.
+      Hecho. Montse eligió la frase propuesta (2026-10-12). El build no pide nada a otro origen al
+      cargar: los enlaces externos son `<a>`, no fuentes, scripts ni imágenes. El piso es 1400, en
+      el registro como `test-count` (Vitest, no una publicación); en la página, «1 400» y «1,400».
+      La corrida falla solo si baja de 1400. Palabras de `/how-its-built`: 776 en EN y 781 en ES
+      (tope 800); con la línea del código, que pinta el componente, 783 y 791.
 - [x] **M4.8** El dilema. Anexo §B4: la frase de `2R > T + S` y el título de *Cheap talk*. 3, 5, 0 y
       2.5 ya están en el registro con Axelrod y Hamilton (1981).
       Hecho. 3, 5, 0 y 2.5 siguen en `figures.ts` bajo `axelrod-hamilton-1981` (R, T, S y

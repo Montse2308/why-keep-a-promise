@@ -45,13 +45,20 @@ export function readable(body: string, { tables = true } = {}): string {
 export const CITATION =
   /(\p{Lu}[\p{L}'-]+(?:\s+(?:and|y)\s+\p{Lu}[\p{L}'-]+)*)\s+\((\d{4})(?:,\s*(?:§\d+(?:\.\d+)*(?:\([ivx]+\))?|(?:Table|Tabla)\s+[IVX]+))?\)|\(((?:\p{Lu}[\p{L}'-]+\s)?\p{Lu}[\p{L}'-]+(?:,\s+(?:\p{Lu}[\p{L}'-]+\s)?\p{Lu}[\p{L}'-]+)*(?:,?\s+(?:and|y)\s+(?:\p{Lu}[\p{L}'-]+\s)?\p{Lu}[\p{L}'-]+)?),\s+(\d{4})\)/gu;
 const NUMBER = /\d+(?:[/.,]\d+)*/g;
+/** "1,400" and "1 400" are one figure. A group after the separator is three digits, so "2.5" and "1, 1" stay. */
+const THOUSANDS = /\d{1,3}(?:[, ]\d{3})+/g;
 
 export function citationsIn(text: string): string[] {
   return [...text.matchAll(CITATION)].map((m) => `${(m[1] ?? m[3] ?? '').split(/,\s+|\s+(?:and|y)\s+/).join('+')} ${m[2] ?? m[4]}`);
 }
 
 export function numbersIn(text: string): string[] {
-  return [...text.replace(CITATION, ' ').matchAll(NUMBER)].map((m) => m[0]);
+  const grouped: string[] = [];
+  const rest = text.replace(CITATION, ' ').replace(THOUSANDS, (group) => {
+    grouped.push(group.replaceAll(/[, ]/g, ''));
+    return ' ';
+  });
+  return [...grouped, ...[...rest.matchAll(NUMBER)].map((m) => m[0])];
 }
 
 export function wordCount(text: string): number {

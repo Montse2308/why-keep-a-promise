@@ -31,6 +31,7 @@ export const SOURCE_KEYS = [
   'working-paper-results',
   'di-bartolomeo-2023',
   'engine-runs',
+  'test-count',
 ] as const;
 export type SourceKey = (typeof SOURCE_KEYS)[number];
 
@@ -130,6 +131,9 @@ export const FIGURES: readonly Figure[] = [
   { value: '400', source: 'engine-runs', what: 'generations of each run (r6, params.generations)' },
   { value: '20', source: 'engine-runs', what: 'runs at background trust 5 and at 70, seeds q9-0 to q9-19 (r6, seeds.q9)' },
   { value: '40', source: 'engine-runs', what: 'runs at background trust 38, seeds q9b-0 to q9b-39 (r6, seeds.q9b)' },
+  // /how-its-built's minute box: the floor it states. Written "1,400" in English and "1 400" in Spanish;
+  // numbersIn reads both as 1400. The run fails only if Vitest collects fewer (tests/test-floor-reporter.ts).
+  { value: '1400', source: 'test-count', what: 'automated tests, the floor the page states; Vitest counts them' },
 ];
 
 /** /finding's figures, each checked against src/data/curve.json in tests/finding.test.ts. */

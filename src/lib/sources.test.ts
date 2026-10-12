@@ -72,6 +72,7 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
   it('lists the figures the register gives each key, each once, in its order', () => {
     expect(figuresOf('vanberg-rates')).toEqual(['73', '54']);
     expect(figuresOf('vanberg-beliefs')).toEqual(['70', '68', '0', '100']);
+    expect(figuresOf('test-count')).toEqual(['1400']);
     for (const entry of ENTRIES) {
       const registered = FIGURES.filter((figure) => figure.source === entry.source).map((figure) => figure.value);
       expect(figuresOf(entry.source)).toEqual([...new Set(registered)]);
@@ -92,8 +93,14 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
     expect(keys.sort()).toEqual([...ENTRIES, ...FINDING_ENTRIES].map((entry) => whatKey(entry)).sort());
   });
 
-  it('cites each work as the prose does, "Author (year)", with a full reference of that year', () => {
+  it('cites each bibliographic work as the prose does, "Author (year)", with a full reference of that year', () => {
     for (const candidate of WORKS) {
+      // The test count is a measurement of this site, not a publication.
+      if (candidate.id === 'test-count') {
+        expect(CITATIONS.find((c) => c.source === 'test-count')).toBeUndefined();
+        expect(candidate.cite).toBe('Vitest');
+        continue;
+      }
       const citation = CITATIONS.find((c) => c.source === candidate.id);
       expect(citation, candidate.id).toBeDefined();
       expect(candidate.cite).toBe(`${citation?.authors.join(' and ')} (${citation?.year})`);
@@ -112,7 +119,14 @@ describe('/sources, from the register of figures (ADR 0024)', () => {
   });
 
   it('meets the works in the order the film does', () => {
-    expect(worksOf().map((group) => group.work.id)).toEqual(['axelrod-hamilton-1981', 'case-2017', 'vanberg-2008', 'charness-dufwenberg-2006', 'battigalli-dufwenberg-2007']);
+    expect(worksOf().map((group) => group.work.id)).toEqual([
+      'axelrod-hamilton-1981',
+      'case-2017',
+      'vanberg-2008',
+      'charness-dufwenberg-2006',
+      'battigalli-dufwenberg-2007',
+      'test-count',
+    ]);
     expect(worksOf().flatMap((group) => group.entries)).toHaveLength(ENTRIES.length);
   });
 

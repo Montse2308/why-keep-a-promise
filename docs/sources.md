@@ -527,6 +527,18 @@ más de los ajustes (ADR 0042); las semillas no se nombran en la página.
   Fuente: `r6`, `seeds.q9b`.
   Usada en: `/finding` (el conteo del motor en vivo, la tabla oculta de la figura fija).
 
+## La cuenta de pruebas
+
+No es una publicación. Es el piso que `/how-its-built` dice de sus pruebas automáticas: en la página,
+«1 400» en español y «1,400» en inglés, los dos leídos como 1400. La fuente es la corrida de
+Vitest. Una corrida con más pruebas pasa; solo falla si el total baja de ese piso
+(`tests/test-floor-reporter.ts`).
+
+- Cifra: "1400", el piso de pruebas automáticas que dice la página.
+  Clave: `test-count`.
+  Fuente: la corrida de Vitest de este repositorio.
+  Usada en: `/how-its-built` (el recuadro «En un minuto»).
+
 ## Formato de una cifra
 
 ```

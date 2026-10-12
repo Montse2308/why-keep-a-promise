@@ -8,6 +8,7 @@
  */
 import { getCollection } from 'astro:content';
 import Author from '../components/notebook/Author.astro';
+import BuiltCode from '../components/notebook/BuiltCode.astro';
 import Day from '../components/notebook/Day.astro';
 import Sources from '../components/notebook/Sources.astro';
 import Vignette from '../components/notebook/Vignette.astro';
@@ -96,6 +97,8 @@ const next = nextPage(subpage, unlocked);
           <Author locale={locale} part="head" />
         ) : segment.name === 'author-links' ? (
           <Author locale={locale} part="links" />
+        ) : segment.name === 'built-code' ? (
+          <BuiltCode locale={locale} />
         ) : segment.name === 'day' ? (
           <Day locale={locale} />
         ) : segment.name === 'weight' ? (

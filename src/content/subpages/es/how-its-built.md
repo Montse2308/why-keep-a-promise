@@ -2,6 +2,19 @@
 title: Cómo está hecho
 ---
 
+<section class="minute" aria-labelledby="en-un-minuto">
+
+## En un minuto
+
+- **Stack:** Astro (sitio estático), TypeScript, Vitest, GitHub Actions y GitHub Pages.
+- **Parte del código,** con asistentes de IA bajo mi dirección.
+- **Pruebas:** Más de 1 400 pruebas automáticas, y seis revisiones que detienen el build.
+- **Sin rastreo:** ni analítica, ni cookies. Lo que eliges en la historia se queda en esta pestaña: nada se envía a ningún lado.
+
+<!-- slot:built-code -->
+
+</section>
+
 ## Primero, un storyboard
 
 Astro construye cada página de antemano, en HTML y CSS simples. El
@@ -116,6 +129,8 @@ de ejecución. Cuatro decisiones le dan forma:
 - **Cada resultado lleva su origen.** Los scripts que regeneran las corridas del paper se niegan a
   correr mientras el código tenga cambios sin commitear, y escriben el commit, las semillas y cada
   ajuste junto a cada resultado.
+
+En /finding, ese mismo motor corre en tu navegador, dentro de un worker que se carga solo al pulsar «Correr el motor».
 
 ```ts
 /** Rolls only if it is strictly better. At a tie, Don't. */
