@@ -188,6 +188,7 @@
   "curve.announce.trust": "Background trust {n} of 100.",
   "curve.announce.payoff": "{name}: {payoff}.",
   "subpage.back": "← Back to “{title}”",
+  "subpage.next": "Next: {title} →",
   "pd.matrix.caption": "Payoffs: yours first, the other's second",
   "pd.col.cooperate": "The other cooperates",
   "pd.col.defect": "The other defects",

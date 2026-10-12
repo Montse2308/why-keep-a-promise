@@ -188,6 +188,7 @@
   "curve.announce.trust": "Confianza de fondo {n} de 100.",
   "curve.announce.payoff": "{name}: {payoff}.",
   "subpage.back": "← Volver a «{title}»",
+  "subpage.next": "Siguiente: {title} →",
   "pd.matrix.caption": "Pagos: primero el tuyo, luego el del otro",
   "pd.col.cooperate": "El otro coopera",
   "pd.col.defect": "El otro traiciona",

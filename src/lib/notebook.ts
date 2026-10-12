@@ -56,6 +56,17 @@ export function linkable(unlocked: boolean): readonly NotebookPage[] {
   return NOTEBOOK.filter((entry) => unlocked || entry.page !== 'finding');
 }
 
+/**
+ * The next page in the notebook's order (ADR 0045). A closed lock skips /finding, so Vanberg is
+ * followed by how it's built. About is last and has none.
+ */
+export function nextPage(page: Subpage, unlocked: boolean): NotebookPage | null {
+  const pages = linkable(unlocked);
+  const index = pages.findIndex((entry) => entry.page === page);
+  if (index < 0) return null;
+  return pages[index + 1] ?? null;
+}
+
 /** The id of the footer's list of the notebook's pages: where the button leads without JavaScript. */
 export const NOTEBOOK_PAGES_ID = 'notebook-pages';
 

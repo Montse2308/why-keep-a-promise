@@ -1828,10 +1828,13 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
 - [x] **M4.9** El experimento de Vanberg. Anexo §B5: una frase al principio de «El diseño completo»,
       antes de la que ya tiene.
       Hecho. La frase del anexo abre la sección, y la que ya estaba sigue justo después.
-- [ ] **M4.10** El pie «Siguiente». Al final de cada hoja, junto al «← Volver a …»: ES «Siguiente:
+- [x] **M4.10** El pie «Siguiente». Al final de cada hoja, junto al «← Volver a …»: ES «Siguiente:
       {hoja} →», EN «Next: {page} →». Orden: El dilema → El experimento de Vanberg → El hallazgo →
       Cómo está hecho → Fuentes → Quién es. Quién es no lleva «Siguiente». Los títulos salen de las
       claves del panel. Una prueba fija el orden.
+      Hecho. `nextPage` recorre `linkable`, así que con el candado cerrado Vanberg sigue en Cómo
+      está hecho. Fuentes lleva «Siguiente» aunque no tenga «Volver», porque no profundiza un
+      capítulo. Quién es no lleva siguiente.
 - [ ] **M4.11** Comprobación. Las seis puertas, axe sin violaciones y sin desbordes de 320 a 1440, en
       ES y EN. Capturas en `scratch/m4/parte2/`: cada hoja a 360 y 1440, arriba y abajo, en claro y
       en oscuro; `/about` con las dos formas de la foto. Formatos y pesos de la foto, y la prueba de

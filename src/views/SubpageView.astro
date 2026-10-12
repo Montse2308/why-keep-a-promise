@@ -28,7 +28,7 @@ import { t, type Locale } from '../lib/i18n';
 import { withEngine } from '../lib/engine';
 import { externalLinks } from '../lib/external';
 import { findingUnlocked } from '../lib/lock';
-import { notebookPage } from '../lib/notebook';
+import { nextPage, notebookPage } from '../lib/notebook';
 import { href, type Subpage } from '../lib/routes';
 import { focusableCode, splitSubpage, type Segment } from '../lib/subpages';
 import { findingGraph, jsonLd } from '../lib/jsonld';
@@ -59,6 +59,7 @@ if (page.film && !chapterEntry) throw new Error(`No chapter "${page.film}" for s
 // /finding's structured data, the working paper and its engine, only behind the lock (ADR 0037).
 const structured = subpage === 'finding' && unlocked ? jsonLd(findingGraph(t(locale, 'author.name'))) : null;
 const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntry.data.title }) : null;
+const next = nextPage(subpage, unlocked);
 ---
 
 <BaseLayout locale={locale} route={subpage} title={`${heading} · ${t(locale, 'site.title')}`} codeFont={subpage === 'how-its-built'}>
@@ -104,9 +105,10 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
     }
     {showStatus && <p class="subpage__status"><PaperStatus locale={locale} /></p>}
     {
-      back && !lockedWhole && (
+      !lockedWhole && (back || next) && (
         <p class="subpage__back">
-          <a href={href(locale, 'home', page.film ?? undefined)} data-film-back>{back}</a>
+          {back && <a href={href(locale, 'home', page.film ?? undefined)} data-film-back>{back}</a>}
+          {next && <a href={href(locale, next.page)}>{fill(t(locale, 'subpage.next'), { title: t(locale, next.titleKey) })}</a>}
         </p>
       )
     }
@@ -174,6 +176,10 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
   }
 
   .subpage__back {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-8);
     margin-top: var(--space-12);
     font-family: var(--font-ui);
     font-size: var(--step-n1);
