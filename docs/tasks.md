@@ -1714,7 +1714,7 @@ segundo orden de todos los que decidían sin cambio de pareja en Vanberg (2008, 
 creencia después de una promesa». Ninguna cifra nueva sin su entrada en `src/content/figures.ts` y
 su fuente en `docs/sources.md`. Cada paso de la parte 1 termina en verde (`check`, `test`, `build`,
 `verify:dist`, `budgets` y `check:launch`) y lleva su número en el commit (`M4.2`). Ninguna prueba
-se borra ni se debilita. La parte 2, el cuaderno, la escribe el siguiente agente en esta misma rama.
+se borra ni se debilita. La parte 2, el cuaderno, sigue en esta misma rama.
 
 ### Parte 1 · La historia y dos gráficas
 
@@ -1781,12 +1781,45 @@ se borra ni se debilita. La parte 2, el cuaderno, la escribe el siguiente agente
       ES, 360 y 1440, claro y oscuro). Lo que axe deja incompleto es el contraste sobre el papel con
       grano, como en P7: no es una violación. Las capturas están en `scratch/m4/parte1/`.
 
+- [ ] **(Montse)** Aprobar el diseño de la gráfica con las capturas de la parte 1.
+
 ### Parte 2 · El cuaderno
 
-La escribe el siguiente agente, en esta misma rama.
+Las hojas del cuaderno, a la altura de `/finding`. Misma rama, mismas reglas que la parte 1. El
+ADR 0045 enmienda el 0024, el 0041 y la regla (j).
 
-- [ ] **(Montse)** Aprobar el diseño de la gráfica con las capturas; revisar; push, PR, CI, fusión y
-      deploy después de la parte 2.
+- [x] **M4.5** El registro y el ADR 0045, «El cuaderno, después del lanzamiento» (decisión de Montse,
+      2026-10-12): `/about` con bio corta, foto y enlaces al código; «En un minuto» en
+      `/how-its-built` y su tope de 700 a 800; el repo de la página enlazado desde las dos; el pie
+      «Siguiente» en orden. La línea de estado del 0024 y la del 0041, la regla (j), el índice, el
+      plan y `AGENTS.md`. Los dos README no decían que `/about` no lleva bio, ni que JavaScript no
+      corre en `/finding`: el README ya dice que el motor corre en el navegador, en `/finding`.
+      Hecho. El tope de palabras de `/how-its-built` en `tests/prose.test.ts` pasa a 800.
+- [ ] **M4.6** Quién es y la foto. El original `scratch/m4/foto.jpg` no se sube. Versión de trabajo
+      cuadrada, centrada en la cara, ≤ 640 px, sin EXIF, en `src/assets/about/`. Astro la sirve en
+      AVIF y WebP, a unos 160 px (320 en pantallas densas). Círculo por defecto y rectángulo con
+      esquinas redondeadas para las capturas. `alt=""`. El texto, el anexo §B1. Si `/about` no tiene
+      techo de peso propio, proponer uno.
+- [ ] **M4.7** Cómo está hecho. El recuadro «En un minuto» arriba, con el mismo estilo que el de
+      `/finding`. Anexo §B2. `{tests}` solo si el build puede contar las pruebas solo, como
+      `weight.json`, con una prueba que falle si el número no coincide; si no, la variante sin
+      número. «Sin rastreo» se comprueba contra `tests/memory.test.ts` y el código antes de
+      escribirlo. Una frase en «El motor», anexo §B2b, después de las cuatro decisiones y antes del
+      bloque de código.
+- [ ] **M4.8** El dilema. Anexo §B4: la frase de `2R > T + S` y el título de *Cheap talk*. 3, 5, 0 y
+      2.5 ya están en el registro con Axelrod y Hamilton (1981).
+- [ ] **M4.9** El experimento de Vanberg. Anexo §B5: una frase al principio de «El diseño completo»,
+      antes de la que ya tiene.
+- [ ] **M4.10** El pie «Siguiente». Al final de cada hoja, junto al «← Volver a …»: ES «Siguiente:
+      {hoja} →», EN «Next: {page} →». Orden: El dilema → El experimento de Vanberg → El hallazgo →
+      Cómo está hecho → Fuentes → Quién es. Quién es no lleva «Siguiente». Los títulos salen de las
+      claves del panel. Una prueba fija el orden.
+- [ ] **M4.11** Comprobación. Las seis puertas, axe sin violaciones y sin desbordes de 320 a 1440, en
+      ES y EN. Capturas en `scratch/m4/parte2/`: cada hoja a 360 y 1440, arriba y abajo, en claro y
+      en oscuro; `/about` con las dos formas de la foto. Formatos y pesos de la foto, y la prueba de
+      que el archivo del repo no lleva EXIF. `git grep` de las frases prohibidas sobre lo nuevo.
+- [ ] **(Montse)** Elegir la forma de la foto con las capturas; revisar; push, PR, CI, fusión y
+      deploy.
 
 ## F6 · Lanzamiento
 
@@ -1887,7 +1920,8 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
 - ~~¿Se abre el candado en revisión o al aceptar?~~ En revisión, después de revisar la política de
   la revista (paso 1b del checklist, ADR 0026).
 - ~~Dirección de arte.~~ Papel (ADR 0022, hoy en el ADR 0027).
-- ~~«Quién es».~~ Solo nombre, GitHub y LinkedIn, en `/about` (ADR 0024).
+- ~~«Quién es».~~ Solo nombre, GitHub y LinkedIn, en `/about` (ADR 0024). Enmendado el 2026-10-12:
+  bio corta, foto y enlaces al código (ADR 0045).
 - ~~«Cómo está hecho».~~ Sale del home y se queda como caso de estudio en el cuaderno (ADR 0024).
 - ~~¿Dos frases de estado en P4?~~ Sí: la entrada «El hallazgo» del cuaderno se adelanta al pie de
   la versión anterior, con su título y la frase, y enlaza a `/finding` solo con el candado abierto;

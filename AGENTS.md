@@ -354,8 +354,10 @@ scratch/                 local notes, git-ignored, never committed
   ADR 0034), submission dates or correspondence with other authors, in any file. Third-party
   references carry their journal, as any bibliography (ADR 0016).
 - **Inventing personal data** (display name, profile URLs, email, photo, school, job, city,
-  biography). `/about` carries only the name, GitHub, LinkedIn, ORCID and the SSRN author page
-  (ADR 0041).
+  biography). `/about` carries the short bio Montse approved (role, city, degree and how the project
+  started), her photo, GitHub, LinkedIn, ORCID and the SSRN author page, and links to this site's
+  code and to the engine (ADR 0045). The four personal links keep `rel="me"`. Do not add any other
+  personal fact.
 - **Caricaturing a real person** as a character.
 - Writing chapter or notebook prose outside the phase that owns it.
 - Adding dependencies outside ADR 0025 without asking.

@@ -125,9 +125,10 @@ Una página del cuaderno no repite las leyendas de la película: solo agrega.
   `/how-its-built`.
 - Los enlaces al hallazgo, a `/finding` y al repositorio del motor existen solo con el candado
   abierto (ADR 0034).
-- **`/about`** lleva el nombre completo de la autora, GitHub, LinkedIn, ORCID y su página de autora
-  en SSRN (esta, con el candado abierto), todos con `rel="me"`, y nada más: sin escuela, trabajo,
-  ciudad ni biografía (decisiones de Montse, ADR 0024 y ADR 0041).
+- **`/about`** lleva el nombre completo de la autora, una bio corta (puesto, ciudad, carrera y cómo
+  empezó el proyecto), una foto y los enlaces al código de esta página y al del motor (ADR 0045).
+  GitHub, LinkedIn, ORCID y su página de autora en SSRN (esta, con el candado abierto) siguen con
+  `rel="me"` (ADR 0041, enmendado por el 0045). No se inventan otros datos personales.
 
 ## (k) La película
 
