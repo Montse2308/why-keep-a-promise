@@ -64,3 +64,16 @@ export interface Frame {
 export function yPixel(payoff: number, frame: Frame): number {
   return frame.zero - (payoff / frame.high) * (frame.zero - frame.top);
 }
+
+/**
+ * How far, in CSS px, a segment at the top payoff is lifted off that payoff's gridline. Partner-specific
+ * commitment and general guilt share that gridline for the whole axis, so personal guilt's high run
+ * (and, on /finding, the robustness cap) would sit on top of them. The lift is a drawing lane, not
+ * another payoff: the label says the lane is still the top payoff.
+ */
+export const LANE = 14;
+
+/** `yPixel`, except a segment at the top payoff, which moves up into the lane. */
+export function yLane(payoff: number, frame: Frame, lift = LANE): number {
+  return yPixel(payoff, frame) - (payoff === frame.high ? lift : 0);
+}

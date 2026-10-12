@@ -1739,12 +1739,24 @@ se borra ni se debilita. La parte 2, el cuaderno, la escribe el siguiente agente
       rótulos van en cada letrero, «Esperaban» y «(de 100)» en dos líneas porque en el ancho del
       letrero no caben en una. A 360 px se leen. El home pasa de 184.3 a 184.6 KiB (EN) y de 185,0 a
       185,3 KiB (ES); `weight.json` se reescribe.
-- [ ] **M4.3** Que la gráfica se lea (capítulo 7 y `/finding`): el mismo lenguaje visual en las dos,
+- [x] **M4.3** Que la gráfica se lea (capítulo 7 y `/finding`): el mismo lenguaje visual en las dos,
       para que cada serie se distinga a 360 y a 1440, en claro y en oscuro, y con los daltonismos
       que ya se prueban; el tramo alto de la culpa personal a la vista; el compromiso y la culpa
       general, que coinciden, en una sola línea o separados lo justo; el marcador del control
       distinto de la marca del pico; en `/finding`, la línea del tope a la vista. Sin cifras nuevas.
       Los resúmenes accesibles dicen lo mismo. Los pesos siguen dentro de sus techos.
+      Hecho. El compromiso y la culpa general son una sola línea dorada, en el pago de verdad. La
+      culpa personal, donde paga lo mismo, sube un carril fijo (`LANE`, 14 px): el rótulo dice que
+      ese carril sigue siendo ese pago, y fuera de la ventana se queda en el bajo. El pico es un
+      anillo por encima del carril; el control es una raya vertical con un punto relleno, y la raya
+      no atraviesa el anillo, así que en el pico se distinguen. En `/finding` el tope va discontinuo
+      en el mismo carril, de donde acaba la ventana hasta el extremo del eje.
+      La regla (h) y el ADR 0037 piden que la leyenda de `/finding` no repita una frase de la
+      película. El §A1, tal cual, rotula la línea del capítulo 7 (`curve.flat`). En `/finding` la
+      línea dice lo mismo con la frase que su resumen ya usaba (`finding.payoff.flat`), no con el
+      §A1. Los resúmenes accesibles no cambian. No se tocó ningún ADR. El script del home pasa de
+      21.1 a 21.2 KiB y la primera carga de 184.6 a 184.7 KiB (EN); en ES el script igual y la
+      primera carga sigue en 185.3 KiB. `weight.json` se reescribe.
 - [ ] **M4.4** La comprobación: las seis puertas, axe sin violaciones y sin desbordes de 320 a
       1440 px. Capturas en `scratch/m4/parte1/` (no se sube): las dos gráficas a 360 y a 1440, en
       claro y en oscuro, con el control en 0, en el pico (38) y en 70; el texto nuevo del capítulo 7

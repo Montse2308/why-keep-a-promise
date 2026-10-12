@@ -3,7 +3,7 @@
  * the rows the component rendered into the figure (never curve.json itself), shows the payoff of
  * each reason at the selected row and announces it in the figure's `aria-live` region.
  */
-import { xPercent, yPixel, type Frame } from '../../lib/curve/chart';
+import { xPercent, yLane, type Frame } from '../../lib/curve/chart';
 import { REASONS, type Curve, type CurveRow } from '../../lib/curve/curve';
 import { announcement, pullsText, rowAt, valueText } from '../../lib/curve/moment3';
 import type { CurveStrings } from '../../lib/curve/strings';
@@ -41,7 +41,7 @@ function mount(root: HTMLElement): void {
     line?.setAttribute('x1', x);
     line?.setAttribute('x2', x);
     dot?.setAttribute('cx', x);
-    dot?.setAttribute('cy', String(yPixel(row.payoff.personal, frame)));
+    dot?.setAttribute('cy', String(yLane(row.payoff.personal, frame)));
     slider?.setAttribute('aria-valuetext', valueText(strings, row));
     const trust = slot('trust');
     if (trust) trust.textContent = fill(strings['curve.trust.value'], { n: row.trust });
