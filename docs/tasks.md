@@ -1842,9 +1842,12 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
       horizontal en esas hojas a 320, 360, 768, 1024 y 1440, EN y ES. 104 capturas en
       `scratch/m4/parte2/` (no se suben), incluidas las dos formas de la foto. La foto servida: AVIF
       2.8 y 6.4 KiB, WebP 4.6 y 11.4 KiB; el JPEG del repo no lleva EXIF (la prueba de M4.6). `git
-      grep` de las frases prohibidas sobre lo nuevo: ninguna.
-- [ ] **(Montse)** Elegir la forma de la foto con las capturas; revisar; push, PR, CI, fusión y
-      deploy.
+      grep` de las frases prohibidas sobre lo nuevo: ninguna. Tras el recorte B y el recuadro, otras
+      16 capturas en el mismo directorio (`about-*` y `built-*`, arriba, 360 y 1440, claro y oscuro,
+      EN y ES): axe-core 4.14.0, cero violaciones y sin desborde. Las seis puertas de ese árbol:
+      1460 pruebas.
+- [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy. El recorte B y el rectángulo redondeado
+      ya están elegidos.
 
 ## F6 · Lanzamiento
 
