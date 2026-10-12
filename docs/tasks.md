@@ -1811,8 +1811,20 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
       número. «Sin rastreo» se comprueba contra `tests/memory.test.ts` y el código antes de
       escribirlo. Una frase en «El motor», anexo §B2b, después de las cuatro decisiones y antes del
       bloque de código.
-- [ ] **M4.8** El dilema. Anexo §B4: la frase de `2R > T + S` y el título de *Cheap talk*. 3, 5, 0 y
+      Detenido. El anexo dice «ni nada guardado en tu navegador» / «nothing stored in your browser».
+      El ADR 0029 guarda lo elegido en `history.state` de la pestaña (`history.replaceState`, una
+      vez; `tests/memory.test.ts`). No hay analítica, ni cookies, ni `localStorage`. La forma más
+      cercana, sin copiar la frase del capítulo 8: «**Sin rastreo:** ni analítica, ni cookies. Lo
+      que eliges en la historia se queda en esta pestaña: nada se envía a ningún lado.» / «**No
+      tracking:** no analytics, no cookies. What you choose in the story stays in this tab: nothing
+      is sent anywhere.» El resto del recuadro y §B2b no chocan; no se escriben hasta cerrar esta
+      frase.
+- [x] **M4.8** El dilema. Anexo §B4: la frase de `2R > T + S` y el título de *Cheap talk*. 3, 5, 0 y
       2.5 ya están en el registro con Axelrod y Hamilton (1981).
+      Hecho. 3, 5, 0 y 2.5 siguen en `figures.ts` bajo `axelrod-hamilton-1981` (R, T, S y
+      (T + S) / 2); no hay cifra nueva. El ADR 0033 citaba la oración final que el anexo retira:
+      su estado queda enmendado el 2026-10-12 y la tabla de la prosa lleva la oración nueva. El
+      título en ES es «*Cheap talk*: hablar no cuesta»; en EN se queda «Cheap talk».
 - [ ] **M4.9** El experimento de Vanberg. Anexo §B5: una frase al principio de «El diseño completo»,
       antes de la que ya tiene.
 - [ ] **M4.10** El pie «Siguiente». Al final de cada hoja, junto al «← Volver a …»: ES «Siguiente:
