@@ -51,5 +51,8 @@ página.
 - El texto del recuadro y el de la bio son los que ella aprobó. Si una frase choca con una regla,
   un ADR o el código (en «sin rastreo», con la memoria de la pestaña del ADR 0029), el paso se
   detiene y se propone la forma más cercana: no se reescribe por cuenta propia.
-- `tests/prose.test.ts` sube el tope de `/how-its-built` a 800.
+- `tests/prose.test.ts` sube el tope de `/how-its-built` a 800, y el de `/about` queda en 120, justo
+  por encima de la bio aprobada.
+- La foto de `/about`, el archivo más grande que la página ofrece, tiene un techo de **16 KiB**
+  (16 384 bytes), aparte del de la primera carga, que sigue valiendo (ADR 0028).
 - La línea de estado del ADR 0024 y la del ADR 0041 nombran este ADR.

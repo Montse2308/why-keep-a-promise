@@ -97,7 +97,7 @@ not by reading test output.
 | `npm run build`   | Static build into `dist/`                         |
 | `npm run preview` | Serve `dist/` locally                             |
 | `npm run verify:dist` | After `build`: fails if locked content or a link to `/finding` reached a locked `dist/`, or if the status sentence, the descriptions, `noindex` or the sitemap are off (ADR 0034), or if a link leaving the site does not open in a new tab with its notice, or one inside it does (8.3), or if a page names itself or its poster outside `https://whykeepapromise.org/`, a file carries the old address or `robots.txt` does not name the sitemap (ADR 0044) |
-| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), /finding's JS (ADR 0038) or what /finding loads when «Run the engine» is pressed (ADR 0042), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
+| `npm run budgets` | After `build`: weighs every page of `dist/` and fails if one goes over a budget of ADR 0025 (home JS, fonts, first load), /finding's JS (ADR 0038), what /finding loads when «Run the engine» is pressed (ADR 0042) or /about's portrait (ADR 0045), or if the homes' weights `/how-its-built` cites (`src/data/weight.json`) differ from the build's; `npm run budgets -- --write` writes them |
 | `npm run check:launch` | Builds, then fails while a link is still a `*_PENDING` placeholder in `dist/`, `src/` or the READMEs (ADR 0034). Not in CI; step 3 of the launch checklist and `deploy.yml` run it |
 
 `check`, `test`, `build`, `verify:dist` and `budgets` must be green before every commit. CI
@@ -232,6 +232,8 @@ src/
     vanberg/             every cell of the switch treatment and the baselines, exact counts
   assets/fonts/          self-hosted woff2, OFL licences, provenance; posters/ static TrueType
                          cuts for the posters only, never shipped
+  assets/about/          the portrait on /about (ADR 0045): a square of at most 640 px, no EXIF;
+                         the page serves it as AVIF and WebP
   styles/                tokens.css, base.css
   components/            film/ (Film, Chapter, ChapterTitle (a chapter's title, read as one name),
                          Beat, Ticket(s), World, Board, Coins, Character, Voices, Signs, Engine,

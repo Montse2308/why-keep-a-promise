@@ -1795,11 +1795,16 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
       plan y `AGENTS.md`. Los dos README no decían que `/about` no lleva bio, ni que JavaScript no
       corre en `/finding`: el README ya dice que el motor corre en el navegador, en `/finding`.
       Hecho. El tope de palabras de `/how-its-built` en `tests/prose.test.ts` pasa a 800.
-- [ ] **M4.6** Quién es y la foto. El original `scratch/m4/foto.jpg` no se sube. Versión de trabajo
-      cuadrada, centrada en la cara, ≤ 640 px, sin EXIF, en `src/assets/about/`. Astro la sirve en
-      AVIF y WebP, a unos 160 px (320 en pantallas densas). Círculo por defecto y rectángulo con
-      esquinas redondeadas para las capturas. `alt=""`. El texto, el anexo §B1. Si `/about` no tiene
-      techo de peso propio, proponer uno.
+- [x] **M4.6** Quién es y la foto.
+      Hecho. El original `scratch/m4/foto.jpg` no se sube. La versión de trabajo es
+      `src/assets/about/montse.jpg`, 640 × 640, recorte cuadrado centrado en la cara, sin EXIF, ICC,
+      IPTC ni XMP (una prueba lo fija). Astro la sirve en AVIF y WebP, a 160 px y a 320 px: 2.8 y
+      6.4 KiB en AVIF, 4.6 y 11.4 KiB en WebP. El círculo es la forma; el rectángulo con
+      `border-radius` del token grande es la otra, con `data-shape`. `alt=""`. El texto es el
+      anexo §B1: 102 palabras en ES y 99 en EN, tope 120. `/about` no tenía techo propio: el de la
+      foto es 16 KiB, el archivo más grande que ofrece. La primera carga queda en 137.3 KiB (EN) y
+      137.4 KiB (ES). Los cuatro perfiles conservan `rel="me"`; el repo de la página y
+      el del motor no. El del motor, solo con el candado abierto.
 - [ ] **M4.7** Cómo está hecho. El recuadro «En un minuto» arriba, con el mismo estilo que el de
       `/finding`. Anexo §B2. `{tests}` solo si el build puede contar las pruebas solo, como
       `weight.json`, con una prueba que falle si el número no coincide; si no, la variante sin

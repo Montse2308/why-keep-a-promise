@@ -33,6 +33,9 @@ export const WORKING_PAPER = {
  * title, version and licence are those of the release's CITATION.cff,
  * as /finding cites it (ADR 0037).
  */
+/** This page's repository (ADR 0045), linked from /about and /how-its-built. */
+export const PAGE_REPOSITORY = 'https://github.com/Montse2308/why-keep-a-promise';
+
 export const ENGINE = {
   repository: 'https://github.com/Montse2308/promises-to-whom-engine',
   doi: '10.5281/zenodo.23222610',

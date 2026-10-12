@@ -92,7 +92,9 @@ const back = chapterEntry ? fill(t(locale, 'subpage.back'), { title: chapterEntr
         ) : segment.name === 'sources' ? (
           <Sources locale={locale} />
         ) : segment.name === 'author' ? (
-          <Author locale={locale} />
+          <Author locale={locale} part="head" />
+        ) : segment.name === 'author-links' ? (
+          <Author locale={locale} part="links" />
         ) : segment.name === 'day' ? (
           <Day locale={locale} />
         ) : segment.name === 'weight' ? (
