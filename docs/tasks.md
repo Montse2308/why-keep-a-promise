@@ -1637,10 +1637,12 @@ configuración. Cada paso termina en verde (`check`, `test`, `build`, `verify:di
 `check:launch`) y lleva su número en el commit (`M3.2`).
 
 - [x] **M3.0** El registro: esta sección y la cabecera.
-- [ ] **M3.1** El ADR 0044, «La página en `whykeepapromise.org`», que enmienda el 0008: el hosting
+- [x] **M3.1** El ADR 0044, «La página en `whykeepapromise.org`», que enmienda el 0008: el hosting
       sigue en GitHub Pages; el DNS en Cloudflare, todos los registros en «DNS only», sin proxy, sin
       Web Analytics ni nada que inyecte scripts o cookies; `www` redirige al dominio; la dirección
       `github.io` redirige sola. La línea de estado del 0008 y el índice de ADR.
+      Hecho. El 0008 se queda en `docs/decisions/` (enmendado, no reemplazado, como el 0010 con el
+      0043); el 0044 reescribe lo que sigue de él.
 - [ ] **M3.2** `site` y `base`: `site: 'https://whykeepapromise.org'` y la `base` en la raíz en
       `astro.config.mjs` (`trailingSlash` se queda); los valores por defecto que repiten la dirección
       vieja (`BaseLayout.astro`, `sitemap.xml.ts`); `BASE` de `scripts/budgets.mjs`, el comentario de
