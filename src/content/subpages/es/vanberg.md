@@ -4,6 +4,8 @@ title: El experimento de Vanberg
 
 ## El diseño completo
 
+El juego tiene dos papeles: quien decide (el *dictador*, en el artículo), que puede prometer y
+después elige si tira el dado, y quien recibe (el *receptor*), cuyo pago depende de esa elección.
 Las instrucciones y las pantallas que publicó Vanberg (2008) completan lo que la historia deja
 fuera.
 

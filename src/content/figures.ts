@@ -31,6 +31,7 @@ export const SOURCE_KEYS = [
   'working-paper-results',
   'di-bartolomeo-2023',
   'engine-runs',
+  'test-count',
 ] as const;
 export type SourceKey = (typeof SOURCE_KEYS)[number];
 
@@ -53,7 +54,7 @@ export const FIGURES: readonly Figure[] = [
   { value: '10', source: 'vanberg-payoffs', what: 'dictator after Roll; recipient expected after Roll' },
   { value: '14', source: 'vanberg-payoffs', what: "dictator after Don't Roll" },
   { value: '12', source: 'vanberg-payoffs', what: 'recipient after Roll, faces 2–6' },
-  { value: '0', source: 'vanberg-payoffs', what: "recipient after face 1 or Don't Roll; bottom of the belief scale" },
+  { value: '0', source: 'vanberg-payoffs', what: "recipient after face 1 or Don't Roll" },
   { value: '4', source: 'vanberg-payoffs', what: 'cost of rolling to the dictator, 14 − 10' },
   { value: '6', source: 'vanberg-payoffs', what: 'faces of the die' },
   { value: '1', source: 'vanberg-payoffs', what: 'the die face that gives the recipient 0' },
@@ -69,6 +70,7 @@ export const FIGURES: readonly Figure[] = [
   { value: '54', source: 'vanberg-rates', what: '% of promisers who rolled, new partner promised by another' },
   { value: '70', source: 'vanberg-beliefs', what: 'mean bet of promised recipients, no switch, out of 100' },
   { value: '68', source: 'vanberg-beliefs', what: 'mean bet of promised recipients, switch, out of 100' },
+  { value: '0', source: 'vanberg-beliefs', what: 'bottom of the 0–100 reading of the five-point scale' },
   { value: '100', source: 'vanberg-beliefs', what: 'top of the 0–100 belief scale' },
   // Chapter 7's finding: the curve (src/data/curve.json). tests/curve.test.ts checks CURVE_FIGURES against the file.
   { value: '76', source: 'vanberg-second-order', what: 'belief that a promise will be kept, held fixed; top of the background-trust axis' },
@@ -129,6 +131,9 @@ export const FIGURES: readonly Figure[] = [
   { value: '400', source: 'engine-runs', what: 'generations of each run (r6, params.generations)' },
   { value: '20', source: 'engine-runs', what: 'runs at background trust 5 and at 70, seeds q9-0 to q9-19 (r6, seeds.q9)' },
   { value: '40', source: 'engine-runs', what: 'runs at background trust 38, seeds q9b-0 to q9b-39 (r6, seeds.q9b)' },
+  // /how-its-built's minute box: the floor it states. Written "1,400" in English and "1 400" in Spanish;
+  // numbersIn reads both as 1400. The run fails only if Vitest collects fewer (tests/test-floor-reporter.ts).
+  { value: '1400', source: 'test-count', what: 'automated tests, the floor the page states; Vitest counts them' },
 ];
 
 /** /finding's figures, each checked against src/data/curve.json in tests/finding.test.ts. */

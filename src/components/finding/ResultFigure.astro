@@ -3,14 +3,16 @@
  * /finding's figure (ADR 0037): two panels on one horizontal axis, background trust from 0 to 76. Above,
  * the mechanism, the guilt available against the threshold (../curve/GuiltChart.astro). Below, the
  * result: what each reason earns at the same rows. Personal guilt steps from 5 up to 10 inside its
- * window and back to 5; partner-specific commitment and general guilt earn 10 from end to end; in the
- * robustness variant, dashed, personal guilt's right tail stays at 10. Every value comes from
- * src/data/curve.json. The same data as chapter 7's curve, with a legend and a caption of its own
- * (rule (h)); the caption says it is a comparison across worlds (rule (e)).
+ * window and back to 5; partner-specific commitment and general guilt earn 10 from end to end, so they
+ * are one wide gold band; personal guilt is a thinner ink line centred on that band, so the gold shows
+ * on both sides where they tie. In the robustness variant, dashed and at the same payoff, personal
+ * guilt's right tail stays at 10.
+ * Every value comes from src/data/curve.json. The same data as chapter 7's curve, with a legend and a
+ * caption of its own (rule (h)); the caption says it is a comparison across worlds (rule (e)).
  *
  * On the notebook's paper, in either theme, and told apart by line, not by colour alone: personal guilt
- * thick in ink, partner-specific commitment in the accent's gold, general guilt dotted, the variant
- * dashed. Static, readable without JavaScript, with a visually hidden table of every row.
+ * a thin ink line on the accent's wide gold band, the variant dashed on that same payoff. Static, readable without
+ * JavaScript, with a visually hidden table of every row.
  *
  * Render this only inside the lock (ADR 0034): a locked build resolves it to ../curve/Locked.astro
  * (astro.config.mjs).
@@ -42,24 +44,26 @@ const Y_ZERO = frame.zero;
 const y = (payoff: number) => yPixel(payoff, frame);
 const x = (trust: number) => `${xPercent(trust, axis)}%`;
 const xTicks = [axis.min, CURVE.peak, axis.max];
-const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y(segment.y1), y2: y(segment.y2) });
+const placed = (segment: Segment) => ({
+  x1: x(segment.x1),
+  x2: x(segment.x2),
+  y1: y(segment.y1),
+  y2: y(segment.y2),
+});
 
 const name: Record<Reason, string> = {
   personal: tr('curve.series.personal'),
   partner: tr('curve.series.partner'),
   general: tr('curve.series.general'),
 };
-// Drawing order, as on chapter 7's curve: the emphasised line underneath, so the lines that share 10 with it
-// show through it; general guilt's dots on top.
-const order: readonly Reason[] = ['personal', 'partner', 'general'];
-const lines = order.map((reason) => ({ reason, segments: stepLine(rows, reason) }));
-// The variant differs from the curve only on its right tail: from where personal guilt's window ends, it stays up.
+// One gold band: the two reasons pay the same on every row. Personal guilt is drawn on top of it, at
+// the same y, thinner. The variant's cap is dashed on that same payoff. The words are this page's own (rule (h)).
+const flat = stepLine(rows, 'partner');
+const personal = stepLine(rows, 'personal');
 const variant: Segment = { x1: window.to, x2: axis.max, y1: tail.payoff, y2: tail.payoff };
 const summary = fill(tr('finding.payoff.summary'), { min: axis.min, max: axis.max, high, low, from: window.from, to: window.to, tail: tail.from });
-const legend: { reason: Reason | 'variant'; label: string }[] = [
-  ...REASONS.map((reason) => ({ reason, label: name[reason] })),
-  { reason: 'variant', label: tr('finding.payoff.variant') },
-];
+const flatLabel = fill(tr('finding.payoff.flat'), { high });
+const personalLabel = fill(tr('finding.payoff.personal'), { high, low });
 const robust = (trust: number) => FINDING.rows.find((row) => row.trust === trust)?.robust;
 ---
 
@@ -67,17 +71,25 @@ const robust = (trust: number) => FINDING.rows.find((row) => row.trust === trust
   <GuiltChart locale={locale} id="finding-guilt" />
 
   <div class="payoff">
-    <ul class="payoff__legend" role="list">
-      {
-        legend.map((item) => (
-          <li>
-            <svg class="payoff__swatch" viewBox="0 0 24 8" aria-hidden="true" focusable="false">
-              <line class={`payoff__line payoff__line--${item.reason}`} x1="2" x2="22" y1="4" y2="4" />
-            </svg>
-            {item.label}
-          </li>
-        ))
-      }
+    <ul class="payoff__direct">
+      <li>
+        <svg class="payoff__swatch" viewBox="0 0 24 8" aria-hidden="true" focusable="false">
+          <line class="payoff__line payoff__line--partner" x1="2" x2="22" y1="4" y2="4" />
+        </svg>
+        <span>{flatLabel}</span>
+      </li>
+      <li>
+        <svg class="payoff__swatch" viewBox="0 0 24 8" aria-hidden="true" focusable="false">
+          <line class="payoff__line payoff__line--personal" x1="2" x2="22" y1="4" y2="4" />
+        </svg>
+        <span>{personalLabel}</span>
+      </li>
+      <li>
+        <svg class="payoff__swatch" viewBox="0 0 24 8" aria-hidden="true" focusable="false">
+          <line class="payoff__line payoff__line--variant" x1="2" x2="22" y1="4" y2="4" />
+        </svg>
+        <span>{tr('finding.payoff.variant')}</span>
+      </li>
     </ul>
     <p class="payoff__axis" aria-hidden="true">{tr('curve.axis.y')}</p>
     <div class="payoff__plot">
@@ -93,8 +105,9 @@ const robust = (trust: number) => FINDING.rows.find((row) => row.trust === trust
             </>
           ))
         }
-        {lines.map(({ reason, segments }) => segments.map((segment) => <line class={`payoff__line payoff__line--${reason}`} {...key(segment)} />))}
-        <line class="payoff__line payoff__line--variant" {...key(variant)} />
+        {flat.map((segment) => <line class="payoff__line payoff__line--partner" {...placed(segment)} />)}
+        {personal.map((segment) => <line class="payoff__line payoff__line--personal" {...placed(segment)} />)}
+        <line class="payoff__line payoff__line--variant" {...placed(variant)} />
       </svg>
       <p class="payoff__axis payoff__axis--x" aria-hidden="true">{tr('curve.axis.x')}</p>
     </div>
@@ -155,25 +168,27 @@ const robust = (trust: number) => FINDING.rows.find((row) => row.trust === trust
     border-top: var(--border-width) solid var(--color-border);
   }
 
-  .payoff__legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-6);
+  .payoff__direct {
+    display: grid;
+    gap: var(--space-2);
     margin: 0 0 var(--space-4);
     padding: 0;
     list-style: none;
   }
 
-  .payoff__legend li {
-    display: inline-flex;
-    align-items: center;
+  .payoff__direct li {
+    display: flex;
+    align-items: flex-start;
     gap: var(--space-2);
+    min-width: 0;
   }
 
   .payoff__swatch {
     width: 1.5rem;
     height: 0.5rem;
     overflow: visible;
+    flex: none;
+    margin-top: 0.35em;
   }
 
   .payoff__axis {
@@ -223,27 +238,35 @@ const robust = (trust: number) => FINDING.rows.find((row) => row.trust === trust
 
   .payoff__line--personal {
     stroke: var(--color-fg);
-    stroke-width: 7;
   }
 
   .payoff__line--partner {
     stroke: var(--color-accent);
-    stroke-width: 3;
-  }
-
-  /* The control is told apart by its pattern, as on chapter 7's curve. */
-  .payoff__line--general {
-    stroke: var(--color-control);
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-dasharray: 0 7;
   }
 
   .payoff__line--variant {
     stroke: var(--color-fg);
-    stroke-width: 2.5;
     stroke-linecap: butt;
     stroke-dasharray: 7 5;
+  }
+
+  /* A wide gold band, then a thin ink line centred on the same payoff, so the gold shows both sides. */
+  .payoff__svg .payoff__line--partner {
+    stroke-width: 11;
+  }
+
+  .payoff__svg .payoff__line--personal,
+  .payoff__svg .payoff__line--variant {
+    stroke-width: 2.5;
+  }
+
+  .payoff__swatch .payoff__line--partner {
+    stroke-width: 5;
+  }
+
+  .payoff__swatch .payoff__line--personal,
+  .payoff__swatch .payoff__line--variant {
+    stroke-width: 1.5;
   }
 
   .result__caption {

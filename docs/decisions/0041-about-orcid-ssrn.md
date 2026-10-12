@@ -2,7 +2,7 @@
 
 **Estado:** aceptada (P9, paso 9.1). Enmienda el ADR 0024 (la fila de `/about`: «el nombre completo
 de la autora, GitHub y LinkedIn. Nada más») y precisa la regla (j) de `docs/content-rules.md`.
-Decisión de Montse (2026-10-10).
+Decisión de Montse (2026-10-10). Enmendada por el ADR 0045 (2026-10-12).
 
 ## Contexto
 

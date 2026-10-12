@@ -127,7 +127,7 @@ cifra, en el mismo commit, y también los lugares de `ENTRIES` en `src/lib/sourc
   medias verificadas (0.696 y 0.682), de la escala en cuartos, en la que ninguna otra suma da esas
   medias, y del total verificado de arriba (415.5 / 603), que suman exactamente
   (`src/lib/table/expectation.test.ts`). Los n coinciden con las celdas de los dictadores: 309, y
-  238 + 56 = 294.
+  238 + 56 = 294. El 0 de la lectura de 0 a 100 está en el registro con esta clave, igual que el 100.
   Cotejadas por Montse (7.2.9): `switch.dat` con el método de `promises.do` (las creencias de los
   receptores con promesa, por celda) da 0.696 (n = 309) sin cambio y 0.682 (n = 294) con cambio,
   que coincide con 215 / 309 y 200.5 / 294.
@@ -526,6 +526,18 @@ más de los ajustes (ADR 0042); las semillas no se nombran en la página.
   Clave: `engine-runs`.
   Fuente: `r6`, `seeds.q9b`.
   Usada en: `/finding` (el conteo del motor en vivo, la tabla oculta de la figura fija).
+
+## La cuenta de pruebas
+
+No es una publicación. Es el piso que `/how-its-built` dice de sus pruebas automáticas: en la página,
+«1 400» en español y «1,400» en inglés, los dos leídos como 1400. La fuente es la corrida de
+Vitest. Una corrida con más pruebas pasa; solo falla si el total baja de ese piso
+(`tests/test-floor-reporter.ts`).
+
+- Cifra: "1400", el piso de pruebas automáticas que dice la página.
+  Clave: `test-count`.
+  Fuente: la corrida de Vitest de este repositorio.
+  Usada en: `/how-its-built` (el recuadro «En un minuto»).
 
 ## Formato de una cifra
 

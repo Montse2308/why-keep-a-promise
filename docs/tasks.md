@@ -3,18 +3,17 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M3, la página en su dominio,
-`https://whykeepapromise.org` (rama `m3/custom-domain`, sección M3). M2, el repo del motor cambia de
-nombre, llegó a `main` con el PR #25. P10, el motor en `/finding`, con el
-PR #24. M1, la puesta al día después del lanzamiento, con el PR #23. P9, `/finding` por sí sola, llegó
-a `main` con el PR #21 (y su cierre con el #22); P8, los retoques después del lanzamiento, con el
-PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
+**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M4, pulir antes de difundir
+(rama `m4/polish`, sección M4). M3, la página en su dominio, `https://whykeepapromise.org`, llegó a
+`main` con el PR #26. M2, el repo del motor cambia de nombre, llegó a `main` con el PR #25. P10, el
+motor en `/finding`, con el PR #24. M1, la puesta al día después del lanzamiento, con el PR #23. P9,
+`/finding` por sí sola, llegó a `main` con el PR #21 (y su cierre con el #22); P8, los retoques
+después del lanzamiento, con el PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
-línea en `https://montse2308.github.io/why-keep-a-promise/` hasta que Montse ponga el dominio de M3
-en *Settings → Pages*; desde entonces, en `https://whykeepapromise.org/`. F5, la QA, cerrada en la rama
-`launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7 cerradas: Montse las revisó
-(PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
-como ella lo pidió: dio por hecho el de la película entera.
+línea en `https://whykeepapromise.org/` (ADR 0044; la dirección anterior en GitHub Pages redirige
+allí). F5, la QA, cerrada en la rama `launch/f5-qa` (PR #19), sobre el build con el candado abierto.
+P0 a P7 cerradas: Montse las revisó (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el
+PR #17). P4 se cerró sin videos, como ella lo pidió: dio por hecho el de la película entera.
 
 **Fase siguiente:** ninguna planeada. P8 y P9 ya están en el sitio (`deploy.yml`, 2026-10-10); lo
 que llega a `main` llega al sitio cuando Montse vuelve a correr `deploy.yml`
@@ -1704,6 +1703,152 @@ configuración. Cada paso termina en verde (`check`, `test`, `build`, `verify:di
       `whykeepapromise.org` como dominio y corre `deploy.yml`; cuando GitHub emite el certificado,
       marca *Enforce HTTPS*.
 
+## M4 · Pulir antes de difundir
+
+Mantenimiento, en dos partes, en la rama `m4/polish` desde `main`. Sin push, sin PR y sin
+`deploy.yml`, que decide y corre Montse después de la parte 2. No toca el despliegue
+(`deploy.yml`, `docs/launch-checklist.md`, `check:launch`). Los textos del anexo se escriben tal
+cual; si alguno choca con una regla, un ADR, el registro de cifras o un tope de palabras, el paso
+se detiene y se propone la forma más cercana. El 76 sigue siendo el promedio de la creencia de
+segundo orden de todos los que decidían sin cambio de pareja en Vanberg (2008, Tabla I), nunca «la
+creencia después de una promesa». Ninguna cifra nueva sin su entrada en `src/content/figures.ts` y
+su fuente en `docs/sources.md`. Cada paso de la parte 1 termina en verde (`check`, `test`, `build`,
+`verify:dist`, `budgets` y `check:launch`) y lleva su número en el commit (`M4.2`). Ninguna prueba
+se borra ni se debilita. La parte 2, el cuaderno, sigue en esta misma rama.
+
+### Parte 1 · La historia y dos gráficas
+
+- [x] **M4.0** El registro: esta sección y la cabecera.
+- [x] **M4.1** El porqué del 38 (capítulo 7): los textos del anexo, §A2, en ES y en EN. Antes, el eje
+      de la curva termina en `{belief}` (76) y la curva no pasa de ahí.
+      Hecho. `curve.json` trae el eje de 0 a 76 y `beta1` en 76; la grilla abarca el eje justo
+      (`readCurve` lo exige) y `beliefWithoutSwitch()` tiene que coincidir con el extremo
+      (`src/lib/curve/values.ts`). Arriba de 76 la culpa disponible, `a · (76 − a) / 100`, dejaría de
+      ser positiva: la promesa ya no agregaría nada. El texto nuevo lo dice así, en los dos idiomas.
+      El home pesa un poco más por ese texto: la primera carga pasa de 184.2 a 184.3 KiB (EN) y de
+      184,9 a 185,0 KiB (ES); `weight.json` se reescribe.
+- [x] **M4.1b** «ahí. Ahí». La oración que sigue a la frase nueva del capítulo 7 deja de empezar
+      «Ahí, la otra persona…» / «There, the other person…». Ahora: «En la simulación, la otra
+      persona…» / «In the simulation, the other person…». El resto de la oración no cambia.
+- [x] **M4.2** Las unidades de 70/68 (capítulo 6 y el tablero): el texto del anexo, §A3, en ES y en
+      EN, y rótulos de las dos columnas del tablero que muestra «73 % · 70 / 54 % · 68»: ES
+      «Tiraron» / «Esperaban (de 100)», EN «Rolled» / «Expected (of 100)». El 70 y el 68 son lo que
+      apostaron los receptores con una promesa, en una escala de cinco puntos leída de 0 a 100
+      (Suplemento B, pantalla 5B).
+      Hecho. `docs/sources.md` ya lo decía (`vanberg-beliefs`): 70 y 68, escala de cinco puntos
+      leída de 0 a 100, Suplemento B, pantalla 5B. El 0 de esa lectura entra en el registro con esa
+      clave (el 100 ya estaba). En las leyendas, el 0 y el 100 salen de `{scalebottom}` y
+      `{scaletop}` (regla (k): ninguna cifra escrita a mano); quien lee ve el texto del anexo. Los
+      rótulos van en cada letrero, «Esperaban» y «(de 100)» en dos líneas porque en el ancho del
+      letrero no caben en una. A 360 px se leen. El home pasa de 184.3 a 184.6 KiB (EN) y de 185,0 a
+      185,3 KiB (ES); `weight.json` se reescribe.
+- [x] **M4.3** Que la gráfica se lea (capítulo 7 y `/finding`): el mismo lenguaje visual en las dos,
+      para que cada serie se distinga a 360 y a 1440, en claro y en oscuro, y con los daltonismos
+      que ya se prueban; el tramo alto de la culpa personal a la vista; el compromiso y la culpa
+      general, que coinciden, en una sola línea o separados lo justo; el marcador del control
+      distinto de la marca del pico; en `/finding`, la línea del tope a la vista. Sin cifras nuevas.
+      Los resúmenes accesibles dicen lo mismo. Los pesos siguen dentro de sus techos.
+      Hecho. El compromiso y la culpa general son una sola línea dorada, en el pago de verdad. La
+      culpa personal, donde paga lo mismo, sube un carril fijo (`LANE`, 14 px): el rótulo dice que
+      ese carril sigue siendo ese pago, y fuera de la ventana se queda en el bajo. El pico es un
+      anillo por encima del carril; el control es una raya vertical con un punto relleno, y la raya
+      no atraviesa el anillo, así que en el pico se distinguen. En `/finding` el tope va discontinuo
+      en el mismo carril, de donde acaba la ventana hasta el extremo del eje.
+      La regla (h) y el ADR 0037 piden que la leyenda de `/finding` no repita una frase de la
+      película. El §A1, tal cual, rotula la línea del capítulo 7 (`curve.flat`). En `/finding` la
+      línea dice lo mismo con la frase que su resumen ya usaba (`finding.payoff.flat`), no con el
+      §A1. Los resúmenes accesibles no cambian. No se tocó ningún ADR. El script del home pasa de
+      21.1 a 21.2 KiB y la primera carga de 184.6 a 184.7 KiB (EN); en ES el script igual y la
+      primera carga sigue en 185.3 KiB. `weight.json` se reescribe.
+- [x] **M4.3b** La culpa personal a su altura real. El carril de 14 px la dibujaba por encima del
+      10, y en la ventana empatan. Se quita: cada serie, y el tope de robustez en `/finding`, va a
+      la altura exacta de su pago. Donde coinciden, la línea dorada es una banda y la culpa
+      personal, más delgada y oscura, va encima y centrada, de modo que el dorado asoma por los dos
+      lados. A 360 px se distingue, en claro y en oscuro. El aro del pico y la raya del control se
+      quedan. Los rótulos dejan de decir «carril»: en la película, «Culpa personal: {high} en su
+      ventana, y {low} fuera» / «Personal guilt: {high} in its window, and {low} outside» (el 10 y
+      el 5 salen del registro, no escritos a mano). En `/finding`, otra frase (regla (h)): «La
+      culpa personal gana {high} en su ventana y {low} fuera» / «Personal guilt earns {high} in its
+      window and {low} outside». El script del home baja de 21.2 a 21.1 KiB; la primera carga sigue
+      en 184.7 KiB (EN) y 185.3 KiB (ES). `weight.json` se reescribe.
+- [x] **M4.4** La comprobación: las seis puertas, axe sin violaciones y sin desbordes de 320 a
+      1440 px. Capturas en `scratch/m4/parte1/` (no se sube): las dos gráficas a 360 y a 1440, en
+      claro y en oscuro, con el control en 0, en el pico (38) y en 70; el texto nuevo del capítulo 7
+      y el del capítulo 6; el tablero con sus rótulos. Con movimiento reducido y sin JavaScript, las
+      dos gráficas se siguen entendiendo.
+      Hecho. Sin desborde horizontal en `/`, `/es/`, `/finding/` y `/es/finding/` a 320, 360, 768,
+      1024 y 1440. axe-core 4.14.0, 16 corridas y cero violaciones (los dos home y `/finding`, EN y
+      ES, 360 y 1440, claro y oscuro). Lo que axe deja incompleto es el contraste sobre el papel con
+      grano, como en P7: no es una violación. Las capturas están en `scratch/m4/parte1/`.
+
+- [ ] **(Montse)** Aprobar el diseño de la gráfica con las capturas de la parte 1.
+
+### Parte 2 · El cuaderno
+
+Las hojas del cuaderno, a la altura de `/finding`. Misma rama, mismas reglas que la parte 1. El
+ADR 0045 enmienda el 0024, el 0041 y la regla (j).
+
+- [x] **M4.5** El registro y el ADR 0045, «El cuaderno, después del lanzamiento» (decisión de Montse,
+      2026-10-12): `/about` con bio corta, foto y enlaces al código; «En un minuto» en
+      `/how-its-built` y su tope de 700 a 800; el repo de la página enlazado desde las dos; el pie
+      «Siguiente» en orden. La línea de estado del 0024 y la del 0041, la regla (j), el índice, el
+      plan y `AGENTS.md`. Los dos README no decían que `/about` no lleva bio, ni que JavaScript no
+      corre en `/finding`: el README ya dice que el motor corre en el navegador, en `/finding`.
+      Hecho. El tope de palabras de `/how-its-built` en `tests/prose.test.ts` pasa a 800.
+- [x] **M4.6** Quién es y la foto.
+      Hecho. El original `scratch/m4/foto.jpg` no se sube. La versión de trabajo es
+      `src/assets/about/montse.jpg`, 640 × 640, sin EXIF, ICC, IPTC ni XMP (una prueba lo fija).
+      Astro la sirve en AVIF y WebP, a 160 px y a 320 px: 2.8 y 6.8 KiB en AVIF, 4.8 y 12.6 KiB en
+      WebP. La forma es el rectángulo con `border-radius` del token grande: Montse lo eligió el
+      2026-10-12. `alt=""`. El texto es el anexo §B1: 102 palabras en ES y 99 en EN, tope
+      120. `/about` no tenía techo propio: el de la foto es 16 KiB, el archivo más grande que
+      ofrece. La primera carga queda en 137.7 KiB (EN) y 137.8 KiB (ES). Los cuatro perfiles
+      conservan `rel="me"`; el repo de la página y el del motor no. El del motor, solo con el
+      candado abierto. El 2026-10-12 Montse eligió el recorte B: la misma ventana, 413 px más
+      abajo (el 8 % del alto de la foto). Las pastillas de los enlaces centran el texto en su alto.
+- [x] **M4.7** Cómo está hecho. El recuadro «En un minuto» arriba, con el mismo estilo que el de
+      `/finding`. Anexo §B2. `{tests}` solo si el build puede contar las pruebas solo, como
+      `weight.json`, con una prueba que falle si el número no coincide; si no, la variante sin
+      número. «Sin rastreo» se comprueba contra `tests/memory.test.ts` y el código antes de
+      escribirlo. Una frase en «El motor», anexo §B2b, después de las cuatro decisiones y antes del
+      bloque de código.
+      Hecho. Montse eligió la frase propuesta (2026-10-12). El build no pide nada a otro origen al
+      cargar: los enlaces externos son `<a>`, no fuentes, scripts ni imágenes. El piso es 1400, en
+      el registro como `test-count` (Vitest, no una publicación); en la página, «1 400» y «1,400».
+      La corrida falla solo si baja de 1400. Palabras de `/how-its-built`: 776 en EN y 781 en ES
+      (tope 800); con la línea del código, que pinta el componente, 783 y 791.
+- [x] **M4.8** El dilema. Anexo §B4: la frase de `2R > T + S` y el título de *Cheap talk*. 3, 5, 0 y
+      2.5 ya están en el registro con Axelrod y Hamilton (1981).
+      Hecho. 3, 5, 0 y 2.5 siguen en `figures.ts` bajo `axelrod-hamilton-1981` (R, T, S y
+      (T + S) / 2); no hay cifra nueva. El ADR 0033 citaba la oración final que el anexo retira:
+      su estado queda enmendado el 2026-10-12 y la tabla de la prosa lleva la oración nueva. El
+      título en ES es «*Cheap talk*: hablar no cuesta»; en EN se queda «Cheap talk».
+- [x] **M4.9** El experimento de Vanberg. Anexo §B5: una frase al principio de «El diseño completo»,
+      antes de la que ya tiene.
+      Hecho. La frase del anexo abre la sección, y la que ya estaba sigue justo después.
+- [x] **M4.10** El pie «Siguiente». Al final de cada hoja, junto al «← Volver a …»: ES «Siguiente:
+      {hoja} →», EN «Next: {page} →». Orden: El dilema → El experimento de Vanberg → El hallazgo →
+      Cómo está hecho → Fuentes → Quién es. Quién es no lleva «Siguiente». Los títulos salen de las
+      claves del panel. Una prueba fija el orden.
+      Hecho. `nextPage` recorre `linkable`, así que con el candado cerrado Vanberg sigue en Cómo
+      está hecho. Fuentes lleva «Siguiente» aunque no tenga «Volver», porque no profundiza un
+      capítulo. Quién es no lleva siguiente.
+- [x] **M4.11** Comprobación. Las seis puertas, axe sin violaciones y sin desbordes de 320 a 1440, en
+      ES y EN. Capturas en `scratch/m4/parte2/`: cada hoja a 360 y 1440, arriba y abajo, en claro y
+      en oscuro; `/about` con las dos formas de la foto. Formatos y pesos de la foto, y la prueba de
+      que el archivo del repo no lleva EXIF. `git grep` de las frases prohibidas sobre lo nuevo.
+      Hecho. Las seis puertas en verde en el commit de M4.10 (1457 pruebas). axe-core 4.14.0: 48
+      corridas, cero violaciones (las seis hojas, EN y ES, 360 y 1440, claro y oscuro). Sin desborde
+      horizontal en esas hojas a 320, 360, 768, 1024 y 1440, EN y ES. 104 capturas en
+      `scratch/m4/parte2/` (no se suben), incluidas las dos formas de la foto. La foto servida: AVIF
+      2.8 y 6.4 KiB, WebP 4.6 y 11.4 KiB; el JPEG del repo no lleva EXIF (la prueba de M4.6). `git
+      grep` de las frases prohibidas sobre lo nuevo: ninguna. Tras el recorte B y el recuadro, otras
+      16 capturas en el mismo directorio (`about-*` y `built-*`, arriba, 360 y 1440, claro y oscuro,
+      EN y ES): axe-core 4.14.0, cero violaciones y sin desborde. Las seis puertas de ese árbol:
+      1460 pruebas.
+- [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy. El recorte B y el rectángulo redondeado
+      ya están elegidos.
+
 ## F6 · Lanzamiento
 
 El texto ya no se somete a ninguna revista: se publica como working paper en SSRN, sin revisión por
@@ -1803,7 +1948,8 @@ dispara eso (ADR 0034). Se sigue `docs/launch-checklist.md` en orden.
 - ~~¿Se abre el candado en revisión o al aceptar?~~ En revisión, después de revisar la política de
   la revista (paso 1b del checklist, ADR 0026).
 - ~~Dirección de arte.~~ Papel (ADR 0022, hoy en el ADR 0027).
-- ~~«Quién es».~~ Solo nombre, GitHub y LinkedIn, en `/about` (ADR 0024).
+- ~~«Quién es».~~ Solo nombre, GitHub y LinkedIn, en `/about` (ADR 0024). Enmendado el 2026-10-12:
+  bio corta, foto y enlaces al código (ADR 0045).
 - ~~«Cómo está hecho».~~ Sale del home y se queda como caso de estudio en el cuaderno (ADR 0024).
 - ~~¿Dos frases de estado en P4?~~ Sí: la entrada «El hallazgo» del cuaderno se adelanta al pie de
   la versión anterior, con su título y la frase, y enlaza a `/finding` solo con el candado abierto;

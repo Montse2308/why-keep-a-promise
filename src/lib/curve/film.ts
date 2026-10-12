@@ -1,10 +1,11 @@
 /**
  * Chapter 7's curve on the film's paper card (ADR 0027: the curve's series are redone on the Papel
  * palette, with the same tests). Personal guilt, the emphasised line, is drawn in ink; partner-specific
- * commitment, your word, in the gold of the thread that seals it; general guilt, the control, in the
- * lilac of the voice of what the other expects. A light line wears an ink casing, the cast's double
- * edge, so every line holds 3:1 on the card; the control is also dotted, so no line is told by colour
- * alone. ./film.test.ts checks the contrast and the colour-blind distances.
+ * commitment, your word, in the gold of the thread that seals it. General guilt pays the same on every
+ * row, so the chart draws it on that gold line and says so; its lilac token stays here because the
+ * palette tests still keep it apart from the other two. A light line wears an ink casing, the cast's
+ * double edge, so every line holds 3:1 on the card. ./film.test.ts checks the contrast and the
+ * colour-blind distances.
  *
  * Only Curve.astro reads this, inside the lock.
  */

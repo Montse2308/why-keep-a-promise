@@ -8,8 +8,8 @@ import notebookComponent from '../components/notebook/Notebook.astro?raw';
 import notebookScript from '../components/notebook/notebook.ts?raw';
 import notebookFooter from '../components/notebook/NotebookFooter.astro?raw';
 import { CHAPTER_IDS, LOCKED_BEATS, OPEN_CHAPTERS, type ChapterId } from './chapters';
-import { lineKeyOf, linkable, MAGNIFIERS, magnifierOn, NOTEBOOK, NOTEBOOK_PAGES_ID, notebookPage } from './notebook';
-import { SUBPAGES } from './routes';
+import { lineKeyOf, linkable, MAGNIFIERS, magnifierOn, nextPage, NOTEBOOK, NOTEBOOK_PAGES_ID, notebookPage } from './notebook';
+import { SUBPAGES, type Subpage } from './routes';
 
 const dictionaries = { en, es } as const;
 
@@ -59,6 +59,24 @@ describe('the notebook (ADR 0024)', () => {
   it('links to /finding only behind the lock (ADR 0034)', () => {
     expect(linkable(true).map((entry) => entry.page)).toEqual([...SUBPAGES]);
     expect(linkable(false).map((entry) => entry.page)).toEqual(SUBPAGES.filter((page) => page !== 'finding'));
+  });
+
+  it('follows with the next page in order, skipping /finding while the lock is closed; about has none (ADR 0045)', () => {
+    const chain = (unlocked: boolean): Subpage[] => {
+      const pages: Subpage[] = [];
+      let page: Subpage | null = 'dilemma';
+      while (page) {
+        pages.push(page);
+        page = nextPage(page, unlocked)?.page ?? null;
+      }
+      return pages;
+    };
+    expect(chain(true)).toEqual(['dilemma', 'vanberg', 'finding', 'how-its-built', 'sources', 'about']);
+    expect(chain(false)).toEqual(['dilemma', 'vanberg', 'how-its-built', 'sources', 'about']);
+    expect(nextPage('about', true)).toBeNull();
+    expect(nextPage('about', false)).toBeNull();
+    expect(nextPage('dilemma', true)?.titleKey).toBe(notebookPage('vanberg').titleKey);
+    expect(nextPage('vanberg', false)?.page).toBe('how-its-built');
   });
 });
 

@@ -2,6 +2,18 @@
 title: How it's built
 ---
 
+<section class="minute" aria-labelledby="in-one-minute">
+
+## In one minute
+
+- **Stack:** Astro (static site), TypeScript, Vitest, GitHub Actions and GitHub Pages. Part of the code written with AI assistants, under my direction.
+- **Tests:** More than 1,400 automated tests, and six checks that stop the build.
+- **No tracking:** no analytics, no cookies. What you choose in the story stays in this tab: nothing is sent anywhere.
+
+<!-- slot:built-code -->
+
+</section>
+
 ## A storyboard first
 
 Astro builds every page ahead of time, into plain HTML and CSS. The home is
@@ -113,6 +125,8 @@ dependencies. Four choices shape it:
 - **Every result carries its origin.** The scripts that regenerate the paper's runs refuse to run
   while the code has uncommitted changes, and write the commit, the seeds and every setting next to
   each result.
+
+On /finding, the same engine runs in your browser, in a worker that loads only when you press "Run the engine".
 
 ```ts
 /** Rolls only if it is strictly better. At a tie, Don't. */

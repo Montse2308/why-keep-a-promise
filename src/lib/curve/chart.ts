@@ -61,6 +61,7 @@ export interface Frame {
   readonly high: number;
 }
 
+/** Every payoff sits on its own gridline. Series that share a payoff share that y. */
 export function yPixel(payoff: number, frame: Frame): number {
   return frame.zero - (payoff / frame.high) * (frame.zero - frame.top);
 }

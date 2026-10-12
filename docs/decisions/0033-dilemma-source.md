@@ -2,7 +2,8 @@
 
 **Estado:** aceptada (P7.0). Precisa el ADR 0021, que nombra «los pagos del dilema de Axelrod
 (1984)» entre las cifras de la película: su fuente pasa a ser Axelrod y Hamilton (1981). Las cifras
-no cambian.
+no cambian. Enmendada el 2026-10-12: la cita de `2R > T + S` pasa a la primera oración del párrafo
+y se retira la oración final que la atribuía.
 
 ## Contexto
 
@@ -52,7 +53,7 @@ Cambian dos oraciones, en los dos idiomas, con el texto que Montse aprobó en 7.
 
 | EN | ES |
 | -- | -- |
-| The condition comes from Axelrod and Hamilton (1981). | La condición viene de Axelrod y Hamilton (1981). |
+| The payoffs also meet a second condition, which Axelrod and Hamilton (1981) write as 2R > T + S: R is what you get when both cooperate (3); T, what you get for defecting on someone who cooperates (5); and S, what you get for cooperating with someone who defects (0). | Los pagos cumplen además una segunda condición, que Axelrod y Hamilton (1981) escriben 2R > T + S: R es lo que ganas si los dos cooperan (3); T, lo que ganas si traicionas a quien coopera (5), y S, lo que ganas si cooperas con quien traiciona (0). |
 | Axelrod and Hamilton (1981) model it as the chance that the same two meet again. Axelrod invited programs… | Axelrod y Hamilton (1981) lo miden como la probabilidad de que los mismos dos vuelvan a encontrarse. Axelrod invitó a programas… |
 
 ## Consecuencias

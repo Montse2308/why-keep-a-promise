@@ -1,0 +1,77 @@
+---
+/**
+ * The last line of /how-its-built's «In one minute» (ADR 0045): this site's repository, and the
+ * engine's only behind the lock (ADR 0034). The addresses come from src/config.ts. The box's styles
+ * live here, the same ones /finding's box uses, because that page's styles stay behind the lock.
+ */
+import { ENGINE, PAGE_REPOSITORY, WORKING_PAPER } from '../../config';
+import { externalAttrs, externalText } from '../../lib/external';
+import { useTranslations, type Locale } from '../../lib/i18n';
+import { findingUnlocked } from '../../lib/lock';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tr = useTranslations(locale);
+const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);
+---
+
+<ul class="minute__code">
+  <li>
+    <strong>{tr('built.code.lead')}</strong>{' '}
+    <a href={PAGE_REPOSITORY} {...externalAttrs(PAGE_REPOSITORY)}>
+      <Fragment set:html={externalText(tr('built.code.page'), PAGE_REPOSITORY, locale)} />
+    </a>
+    {
+      unlocked ? (
+        <>
+          {' '}
+          {tr('built.code.join')}{' '}
+          <a href={ENGINE.repository} {...externalAttrs(ENGINE.repository)}>
+            <Fragment set:html={externalText(tr('built.code.engine'), ENGINE.repository, locale)} />
+          </a>
+          {'.'}
+        </>
+      ) : (
+        '.'
+      )
+    }
+  </li>
+</ul>
+
+<style is:global>
+  /* «In one minute» on /how-its-built: the same box /finding uses. */
+  .subpage .minute {
+    margin-block: var(--space-6) var(--space-4);
+    padding: var(--space-6) var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-control);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+  }
+
+  @media (min-width: 40rem) {
+    .subpage .minute {
+      padding: var(--space-8);
+    }
+  }
+
+  .subpage .minute > h2:first-child {
+    margin-top: 0;
+  }
+
+  .subpage .minute ul:not([role]) {
+    margin: 0;
+    padding-inline-start: 1.25em;
+  }
+
+  .subpage .minute ul:not([role]) li + li {
+    margin-top: var(--space-3);
+  }
+
+  .subpage .minute .minute__code {
+    margin-top: var(--space-3);
+  }
+</style>

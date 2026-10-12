@@ -17,7 +17,7 @@ números no se reutilizan.
 | [0016](0016-journal-rule-precision.md) | Ningún archivo nombra la revista del manuscrito; la bibliografía de terceros sí lleva la suya. |
 | [0021](0021-the-film.md) | La película «Te lo prometo»: dos capas, nueve capítulos, personajes, la autora y el archivo de documentos. |
 | [0023](0023-games.md) | Los juegos permitidos y sus límites. |
-| [0024](0024-the-notebook.md) | El cuaderno: las seis páginas de profundidad y cómo se llega a ellas. |
+| [0024](0024-the-notebook.md) | El cuaderno: las seis páginas de profundidad y cómo se llega a ellas (enmendado por el 0045). |
 | [0025](0025-technology.md) | La tecnología: mejora progresiva, el motor de escenas propio, sonido, presupuestos y dependencias. |
 | [0027](0027-character-sheet.md) | Dirección de arte Papel y la hoja de personajes aprobada: la luz del día, el elenco y sus colores, las dos voces, el hilo dorado, los boletos y la tipografía. |
 | [0028](0028-budget-units.md) | Los presupuestos de peso del 0025 en KiB, y sobre qué páginas valen. |
@@ -33,10 +33,11 @@ números no se reutilizan.
 | [0038](0038-formula-explorer.md) | Un explorador de la fórmula de la culpa disponible en `/finding`, y nada más: cómo se prueba, su script y su techo de peso. |
 | [0039](0039-two-more-results.md) | `/finding` nombra sus otros dos resultados: quién habla no decide (60 de 60) y la parte de las veces en que una promesa deja de atar, con palabras y su corte en la mitad. |
 | [0040](0040-cover-links-finding.md) | La tarjeta «La investigación» de la portada enlaza también a `/finding`, con el candado abierto; desde M1, primero y como botón principal. |
-| [0041](0041-about-orcid-ssrn.md) | `/about` suma ORCID y la página de autora en SSRN, con `rel="me"`, y nada más. |
+| [0041](0041-about-orcid-ssrn.md) | `/about` suma ORCID y la página de autora en SSRN, con `rel="me"` (la bio y la foto, en el 0045). |
 | [0042](0042-engine-runs-on-finding.md) | El motor corre en `/finding`: la sección «Cuando las razones compiten», en tres mundos fijos con las semillas del paper, sin nada que ajustar; su figura fija, su gráfica de una línea por corrida, la interacción 12 y su script, que se carga solo al pulsar. |
 | [0043](0043-engine-code-on-the-page.md) | El código del motor en la página: la dependencia fijada al commit de `v1.0.0`, lo que se importa, cómo se prueba contra las corridas del paper y qué pasa si cambia la versión. |
 | [0044](0044-custom-domain.md) | La página en `whykeepapromise.org`, en la raíz: GitHub Pages sigue, el DNS en Cloudflare sin proxy ni nada que inyecte scripts o cookies, `www` y `github.io` redirigen al dominio. |
+| [0045](0045-the-notebook-after-launch.md) | El cuaderno después del lanzamiento: `/about` con bio, foto y enlaces al código; «En un minuto» en `/how-its-built` (tope 800); el repo de la página enlazado; el pie «Siguiente». |
 
 Archivados (no rigen): 0002, 0003, 0004, 0007, 0009, 0011, 0014, 0015, 0017, 0018, 0019, 0020, 0022
 y 0026, en [`docs/archivo/decisiones/`](../archivo/decisiones/).

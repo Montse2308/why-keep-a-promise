@@ -54,4 +54,11 @@ describe('scales', () => {
     expect(yPixel(10, frame)).toBe(72);
     expect(yPixel(5, frame)).toBe(136);
   });
+
+  it('keeps a shared payoff on that payoff’s gridline, with no lift', () => {
+    const frame = { zero: 200, top: 52, high: 10 };
+    expect(yPixel(10, frame)).toBe(frame.top);
+    expect(yPixel(5, frame)).toBe(126);
+    expect(yPixel(0, frame)).toBe(frame.zero);
+  });
 });

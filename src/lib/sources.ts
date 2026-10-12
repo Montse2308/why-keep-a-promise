@@ -25,7 +25,8 @@ export type WorkId =
   | 'battigalli-dufwenberg-2007'
   | 'kawagoe-narita-2014'
   | 'di-bartolomeo-2023'
-  | 'working-paper';
+  | 'working-paper'
+  | 'test-count';
 
 export interface Link {
   /**
@@ -92,6 +93,12 @@ export const WORKS: readonly Work[] = [
       url: 'https://ideas.repec.org/a/aea/aecrev/v97y2007i2p170-176.html',
     },
   },
+  {
+    id: 'test-count',
+    cite: 'Vitest',
+    // A measurement of this site, not a publication: no "Author (year)".
+    reference: { text: 'The automated tests of this site, counted by Vitest.' },
+  },
 ];
 
 export interface Entry {
@@ -124,6 +131,7 @@ export const ENTRIES: readonly Entry[] = [
   { source: 'vanberg-abstract', work: 'vanberg-2008', places: [page('dilemma')] },
   { source: 'charness-dufwenberg-2006', work: 'charness-dufwenberg-2006', places: [chapter('two-voices')] },
   { source: 'battigalli-dufwenberg-2007', work: 'battigalli-dufwenberg-2007', places: [chapter('two-voices')] },
+  { source: 'test-count', work: 'test-count', places: [page('how-its-built')] },
 ];
 
 /**

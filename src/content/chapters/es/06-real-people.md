@@ -23,7 +23,8 @@ que otra persona le había prometido?
 ### {rolledsame} % contra {rolledswitched} %.
 
 En los datos de Vanberg (2008), después de un cambio el dado se tiró muchas menos veces. Y lo que
-esperaban quienes recibían casi no se movió: {expectsame} contra {expectswitched}.
+esperaban quienes recibían una promesa, en una escala de {scalebottom} a {scaletop}, casi no se
+movió: {expectsame} contra {expectswitched}.
 
 <!-- beat:conclusion -->
 

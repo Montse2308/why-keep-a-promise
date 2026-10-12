@@ -17,10 +17,11 @@ off at (3, 3), and neither can get there alone.
 
 ## Why taking turns does not help
 
-The payoffs also meet a second condition, 2R > T + S. Per round, it reads 3 > 2.5: cooperating
-every time pays more than taking turns at defecting, where one player gets 5 and the other 0, round
-after round. Without it, two players could beat cooperation by alternating. The condition comes from
-Axelrod and Hamilton (1981).
+The payoffs also meet a second condition, which Axelrod and Hamilton (1981) write as 2R > T + S:
+R is what you get when both cooperate (3); T, what you get for defecting on someone who cooperates
+(5); and S, what you get for cooperating with someone who defects (0). Per round, it reads 3 > 2.5:
+cooperating every time pays more than taking turns at defecting, where one player gets 5 and the
+other 0, round after round. Without it, two players could beat cooperation by alternating.
 
 ## The repeated dilemma
 

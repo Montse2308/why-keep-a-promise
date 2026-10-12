@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
+    reporters: ['default', './tests/test-floor-reporter.ts'],
     environment: 'node',
     // palette.test.ts and film.test.ts read tokens.css and film.css as text (`?raw`); Vitest empties CSS
     // files unless included.

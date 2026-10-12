@@ -55,10 +55,16 @@ describe('the budgets', () => {
     expect(BUDGETS.filter((b) => b.page).map((b) => [b.id, b.page, b.measure])).toEqual([
       ['finding-script', 'finding', 'home-script'],
       ['finding-press', 'finding', 'press'],
+      ['about-portrait', 'about', 'portrait'],
     ]);
     const finding = BUDGETS.find((b) => b.id === 'finding-script');
     expect(finding && holdsOn(finding, { page: '/b/es/finding/', home: false })).toBe(true);
     expect(finding && holdsOn(finding, { page: '/b/how-its-built/', home: false })).toBe(false);
+    const portrait = BUDGETS.find((b) => b.id === 'about-portrait');
+    expect(portrait?.bytes).toBe(16 * 1024);
+    expect(portrait && holdsOn(portrait, { page: '/about/', home: false })).toBe(true);
+    expect(portrait && holdsOn(portrait, { page: '/es/about/', home: false })).toBe(true);
+    expect(portrait && holdsOn(portrait, { page: '/finding/', home: false })).toBe(false);
     expect(findingAdr).toContain('**JavaScript de `/finding`: ≤ 8 KiB comprimido** (8 192 bytes)');
     expect(engineAdr).toContain('**Lo que se carga al pulsar «Correr el motor»: ≤ 7 KiB comprimido** (7 168 bytes)');
   });
@@ -104,7 +110,21 @@ describe('what a page asks for', () => {
     expect(refs.styles).toEqual(['/b/_astro/site.css']);
     expect(refs.preloads).toEqual(['/b/_astro/fonts/a.woff2']);
     expect(refs.images).toEqual(['/b/favicon.svg', '/b/a.png']);
+    expect(refs.srcset).toEqual([]);
     expect(refs.inlineStyles).toHaveLength(1);
+  });
+
+  it("weighs /about's largest picture candidate, and does not add every candidate to the first load", () => {
+    const html =
+      '<picture><source srcset="/b/a.avif 1x, /b/a2.avif 2x" type="image/avif"><img src="/b/a.webp" srcset="/b/a.webp 1x, /b/a2.webp 2x" alt="" width="160"></picture>';
+    const refs = refsOf(html);
+    expect(refs.images).toEqual(['/b/a.webp']);
+    expect(refs.srcset).toEqual(['/b/a.avif', '/b/a2.avif', '/b/a.webp', '/b/a2.webp']);
+    const sizes: Record<string, number> = { '/b/a.avif': 2000, '/b/a2.avif': 6000, '/b/a.webp': 4000, '/b/a2.webp': 11000 };
+    const reader: Reader = { text: () => '', bytes: (url) => sizes[url] ?? null, compressed: (text) => text.length };
+    const weight = weigh('/about/', html, 100, false, reader);
+    expect(measured(weight, 'portrait')).toBe(11000);
+    expect(weight.totals['first-load']).toBe(100 + 4000);
   });
 
   it('follows static imports, not dynamic ones', () => {
@@ -277,7 +297,7 @@ describe('the homes’ weights /how-its-built cites', () => {
     for (const page of weight.pages) {
       expect(page.route).toBe('home');
       for (const budget of BUDGETS) {
-        if (budget.page || budget.measure === 'press') continue;
+        if (budget.page || budget.measure === 'press' || budget.measure === 'portrait') continue;
         expect(page.bytes[budget.measure], `${page.locale} ${budget.id}`).toBeLessThanOrEqual(budget.bytes);
       }
     }

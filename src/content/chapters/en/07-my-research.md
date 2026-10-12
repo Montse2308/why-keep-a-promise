@@ -48,7 +48,7 @@ there, and what your promise added to it.
 ### It weighs most in the middle.
 
 If no one expected anything beforehand, the product is zero. If everyone already expected it, your
-promise added nothing, and the product is zero too. So it weighs most in the middle, at {peak}.
+promise added nothing, and the product is zero too. So it weighs most in the middle.
 Your word to that person weighs the same in any world.
 
 <!-- beat:worlds -->
@@ -56,10 +56,13 @@ Your word to that person weighs the same in any world.
 ### One world for each value.
 
 In a simulation, background trust was fixed at each value from {min} to {max} out of {outof}. The
-belief that a promise will be kept was held at {belief}: the mean second-order belief of dictators
-without a partner switch in Vanberg (2008, Table I). There, the other person sees which reason
-moves you before playing, and only joins if you will roll; if they don't join, each keeps {low}.
-That is why rolling pays {high} and not rolling pays {low}.
+belief that a promise will be kept was held at {belief}, a value taken from Vanberg (2008, Table I):
+on average, that is what deciders without a partner switch believed their partner expected of them.
+Personal guilt weighs most at exactly half of it, {peak}. And background trust goes no higher than
+{belief}: above it, your promise would add nothing, which is why the axis ends there. In the
+simulation, the other person sees which reason moves you before playing, and only joins if you will
+roll; if they
+don't join, each keeps {low}. That is why rolling pays {high} and not rolling pays {low}.
 
 <!-- beat:curve -->
 

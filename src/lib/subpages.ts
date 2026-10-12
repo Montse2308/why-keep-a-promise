@@ -16,6 +16,8 @@ export const SLOTS = [
   'weight',
   'sources',
   'author',
+  'author-links',
+  'built-code',
   // /finding's own (ADR 0037, ADR 0038, ADR 0042).
   'minute-links',
   'explorer',

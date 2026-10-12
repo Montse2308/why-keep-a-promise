@@ -1,19 +1,26 @@
 ---
 /**
- * /about (ADR 0024, ADR 0041, rule (j)): the author's full name, GitHub, LinkedIn, ORCID and her author
- * page on SSRN (`AUTHOR` in src/config.ts), each with rel="me", and nothing else: no school, job, city
- * or biography. The SSRN page lists the working paper, so it is linked only behind the lock (ADR 0034).
+ * /about (ADR 0024, ADR 0041, ADR 0045, rule (j)): the author's photo and full name, then — in the
+ * page's prose — the short bio she approved, then GitHub, LinkedIn, ORCID and her author page on
+ * SSRN (`AUTHOR` in src/config.ts), each with rel="me". The SSRN page lists the working paper, so
+ * it is linked only behind the lock (ADR 0034), and so is the engine's repository. This site's
+ * repository is linked either way. The photo's alt is empty because the name is written beside it.
+ * The portrait is a rounded rectangle (`--radius-lg`).
  */
-import { AUTHOR, WORKING_PAPER } from '../../config';
+import { Picture } from 'astro:assets';
+import portrait from '../../assets/about/montse.jpg';
+import { AUTHOR, ENGINE, PAGE_REPOSITORY, WORKING_PAPER } from '../../config';
 import { externalAttrs, externalText } from '../../lib/external';
 import { useTranslations, type Locale, type UiKey } from '../../lib/i18n';
 import { findingUnlocked } from '../../lib/lock';
 
 interface Props {
   locale: Locale;
+  /** The photo and the name, or the links under the bio. */
+  part: 'head' | 'links';
 }
 
-const { locale } = Astro.props;
+const { locale, part } = Astro.props;
 const tr = useTranslations(locale);
 const unlocked = findingUnlocked(WORKING_PAPER.ssrn, import.meta.env.DEV);
 const profiles: { url: string; key: UiKey }[] = [
@@ -22,23 +29,79 @@ const profiles: { url: string; key: UiKey }[] = [
   { url: AUTHOR.orcid, key: 'author.orcid' },
   ...(unlocked ? [{ url: AUTHOR.ssrn, key: 'author.ssrn' as const }] : []),
 ];
+const code: { url: string; key: UiKey }[] = [
+  { url: PAGE_REPOSITORY, key: 'author.code' },
+  ...(unlocked ? [{ url: ENGINE.repository, key: 'author.engine' as const }] : []),
+];
 ---
 
-<div class="author">
-  <p class="author__name">{tr('author.name')}</p>
-  <ul class="author__links" role="list">
-    {profiles.map((profile) => <li><a href={profile.url} {...externalAttrs(profile.url, 'me')}><Fragment set:html={externalText(tr(profile.key), profile.url, locale)} /></a></li>)}
-  </ul>
-</div>
+{
+  part === 'head' ? (
+    <div class="author__head">
+      <div class="author__portrait">
+        <Picture
+          src={portrait}
+          alt=""
+          width={160}
+          height={160}
+          densities={[1, 2]}
+          formats={['avif', 'webp']}
+          fallbackFormat="webp"
+          loading="eager"
+          class="author__photo"
+        />
+      </div>
+      <p class="author__name">{tr('author.name')}</p>
+    </div>
+  ) : (
+    <div class="author__links">
+      <ul role="list">
+        {profiles.map((profile) => (
+          <li>
+            <a href={profile.url} {...externalAttrs(profile.url, 'me')}>
+              <span>
+                <Fragment set:html={externalText(tr(profile.key), profile.url, locale)} />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <ul role="list">
+        {code.map((link) => (
+          <li>
+            <a href={link.url} {...externalAttrs(link.url)}>
+              <span>
+                <Fragment set:html={externalText(tr(link.key), link.url, locale)} />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 <style>
-  .author {
-    display: grid;
+  .author__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: var(--space-4);
-    margin-block: var(--space-6) var(--space-8);
+    margin-block: var(--space-6) var(--space-4);
+  }
+
+  /* 160 px on the page; the file also has a 320 px candidate for a dense screen. */
+  .author__portrait :global(img) {
+    display: block;
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
   }
 
   .author__name {
+    flex: 1 1 12rem;
+    min-width: 0;
     margin: 0;
     font-family: var(--font-heading);
     font-size: var(--step-3);
@@ -48,6 +111,12 @@ const profiles: { url: string; key: UiKey }[] = [
   }
 
   .author__links {
+    display: grid;
+    gap: var(--space-3);
+    margin-block: var(--space-6) var(--space-8);
+  }
+
+  .author__links ul {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
@@ -56,6 +125,7 @@ const profiles: { url: string; key: UiKey }[] = [
     list-style: none;
   }
 
+  /* One flex item, so the space before the arrow's word stays and the line sits in the middle. */
   .author__links a {
     display: inline-flex;
     align-items: center;

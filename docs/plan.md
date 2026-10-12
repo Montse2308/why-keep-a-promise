@@ -54,7 +54,8 @@ Tiene que:
 - **Dos hilos:** la promesa del visitante (el hilo dorado) y la promesa de la página.
 - **Cifras:** solo las de `docs/sources.md` (regla (a)).
 - **La autora:** su nombre va en el capítulo 7, en los créditos y como firma en los pósteres
-  (ADR 0032). GitHub, LinkedIn, ORCID y SSRN, en `/about` (ADR 0041).
+  (ADR 0032). En `/about`, la bio corta, la foto, GitHub, LinkedIn, ORCID, SSRN y los enlaces al
+  código (ADR 0045).
 - **La prosa:** leyendas y diálogos en `src/content/chapters/{en,es}/`, con paridad EN/ES.
 
 ## El cuaderno
@@ -64,7 +65,8 @@ Tiene que:
 - Cada página solo agrega a la película (regla (h)).
 - `/how-its-built` es un caso de estudio de ingeniería.
 - `/sources` lista cada cifra con su referencia.
-- `/about` lleva solo el nombre, GitHub, LinkedIn, ORCID y la página de autora en SSRN (ADR 0041).
+- `/about` lleva el nombre, una bio corta, una foto, GitHub, LinkedIn, ORCID, la página de autora
+  en SSRN y los enlaces al código de la página y del motor (ADR 0045).
 - `/finding` se entiende sola, sin haber visto la historia (ADR 0037).
 
 ## Dirección de arte (ADR 0027)

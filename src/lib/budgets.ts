@@ -27,14 +27,14 @@ export const KB = 1024;
 export const BUDGET_IDS = ['home-script', 'fonts', 'first-load'] as const;
 export type BudgetId = (typeof BUDGET_IDS)[number];
 
-/** The pages a budget holds on, besides the home pages and every page: /finding, in each language. */
-export type BudgetPage = 'finding';
+/** The pages a budget holds on, besides the home pages and every page: /finding and /about, in each language. */
+export type BudgetPage = 'finding' | 'about';
 
-/** What a budget weighs: a total of the first load, or what a press loads later (`press`). */
-export type Measure = BudgetId | 'press';
+/** What a budget weighs: a total of the first load, what a press loads later (`press`), or the largest image a page offers (`portrait`). */
+export type Measure = BudgetId | 'press' | 'portrait';
 
 export interface Budget {
-  readonly id: BudgetId | 'finding-script' | 'finding-press';
+  readonly id: BudgetId | 'finding-script' | 'finding-press' | 'about-portrait';
   /** What it weighs, of a page's totals. */
   readonly measure: Measure;
   /** The ceiling, in bytes as they travel. */
@@ -58,6 +58,8 @@ export const BUDGETS: readonly Budget[] = [
   { id: 'first-load', measure: 'first-load', bytes: 450 * KB, home: false },
   { id: 'finding-script', measure: 'home-script', bytes: 8 * KB, home: false, page: 'finding' },
   { id: 'finding-press', measure: 'press', bytes: PRESS_CEILING, home: false, page: 'finding' },
+  // The portrait on /about, the largest file the page offers (ADR 0045). The first-load ceiling still holds.
+  { id: 'about-portrait', measure: 'portrait', bytes: 16 * KB, home: false, page: 'about' },
 ];
 
 /** Whether a page, by its URL from the site's root, is a given notebook page in some language: `…/finding/`. */
@@ -91,11 +93,18 @@ export interface PageWeight {
   readonly totals: Record<BudgetId, number>;
   /** What a press loads later, by URL, each with what it imports; not part of the first load. */
   readonly later?: readonly Resource[];
+  /** The picture candidates a page offers, not added again to the first load. */
+  readonly candidates?: readonly Resource[];
 }
 
-/** What a page weighs by a measure: a total of its first load, or what a press loads later. */
+/** What a page weighs by a measure: a total of its first load, what a press loads later, or its largest image. */
 export function measured(weight: PageWeight, measure: Measure): number {
-  return measure === 'press' ? (weight.later ?? []).reduce((total, r) => total + r.bytes, 0) : weight.totals[measure];
+  if (measure === 'press') return (weight.later ?? []).reduce((total, r) => total + r.bytes, 0);
+  if (measure === 'portrait') {
+    const images = [...weight.resources.filter((r) => r.kind === 'image'), ...(weight.candidates ?? [])];
+    return images.reduce((largest, r) => Math.max(largest, r.bytes), 0);
+  }
+  return weight.totals[measure];
 }
 
 export interface Overrun {
@@ -131,8 +140,13 @@ export interface PageRefs {
   readonly styles: readonly string[];
   /** Fonts the page preloads. */
   readonly preloads: readonly string[];
-  /** Images the page fetches on load: <img src>, the tab's icon. */
+  /** Images the page fetches on load: <img src>, the tab's icon. A lazy image is not one of them. */
   readonly images: readonly string[];
+  /**
+   * Every candidate of a picture's srcset, including the ones a dense screen fetches. Weighed apart
+   * from the first load: the browser fetches one, not all of them.
+   */
+  readonly srcset: readonly string[];
   /** The text of every inline <style>. */
   readonly inlineStyles: readonly string[];
   /** Scripts the page loads later, on a press, named by an element's `data-later-*` attribute. */
@@ -146,6 +160,7 @@ export function refsOf(html: string): PageRefs {
   const styles: string[] = [];
   const preloads: string[] = [];
   const images: string[] = [];
+  const srcset: string[] = [];
   const inlineStyles: string[] = [];
   for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
     const tag = `<script${match[1] ?? ''}>`;
@@ -166,13 +181,20 @@ export function refsOf(html: string): PageRefs {
     else if (rel.includes('modulepreload')) scripts.push(url);
     else if (rel.includes('icon')) images.push(url);
   }
-  for (const match of html.matchAll(/<img\b[^>]*>/gi)) {
+  for (const match of html.matchAll(/<(?:img|source)\b[^>]*>/gi)) {
     const src = attribute(match[0], 'src');
     if (src && attribute(match[0], 'loading') !== 'lazy') images.push(src);
+    const set = attribute(match[0], 'srcset');
+    if (set) {
+      for (const part of set.split(',')) {
+        const url = part.trim().split(/\s+/)[0];
+        if (url) srcset.push(url);
+      }
+    }
   }
   for (const match of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) inlineStyles.push(match[1] ?? '');
   const later = [...html.matchAll(/\sdata-later(?:-[a-z]+)*\s*=\s*"([^"]+)"/gi)].map((match) => match[1] ?? '');
-  return { scripts, inlineScripts, styles, preloads, images, inlineStyles, later };
+  return { scripts, inlineScripts, styles, preloads, images, inlineStyles, later, srcset };
 }
 
 /** The modules a script imports statically; dynamic `import()` loads later, so it is not counted. */
@@ -297,6 +319,18 @@ export function weigh(page: string, html: string, htmlBytes: number, home: boole
   }
   for (const url of refs.images) add('image', resolveUrl(url, page));
 
+  // Picture candidates stay out of the first load: a screen fetches one. The portrait budget uses the largest.
+  const candidates: Resource[] = [];
+  const offered = new Set<string>();
+  for (const raw of refs.srcset) {
+    const url = resolveUrl(raw, page);
+    if (offered.has(url)) continue;
+    offered.add(url);
+    const bytes = read.bytes(url, 'image');
+    if (bytes === null) throw new Error(`${page} offers ${url}, which dist/ does not have`);
+    candidates.push({ kind: 'image', url, bytes });
+  }
+
   // What the page's scripts load later, on a press, and what that imports, once each and apart.
   const later: Resource[] = [];
   const pending = [
@@ -322,6 +356,7 @@ export function weigh(page: string, html: string, htmlBytes: number, home: boole
     home,
     resources,
     later,
+    candidates,
     totals: {
       'home-script': sum(['script']) + inline,
       fonts: sum(['font']),

@@ -17,10 +17,11 @@ mejor en (3, 3), y ninguno puede llegar ahí solo.
 
 ## Por qué turnarse no ayuda
 
-Los pagos cumplen además una segunda condición, 2R > T + S. Por ronda, se lee 3 > 2.5: cooperar
-siempre deja más que turnarse para traicionar, con uno que se lleva 5 y el otro 0, ronda tras
-ronda. Sin ella, dos jugadores podrían superar a la cooperación alternándose. La condición viene de
-Axelrod y Hamilton (1981).
+Los pagos cumplen además una segunda condición, que Axelrod y Hamilton (1981) escriben 2R > T + S:
+R es lo que ganas si los dos cooperan (3); T, lo que ganas si traicionas a quien coopera (5), y S,
+lo que ganas si cooperas con quien traiciona (0). Por ronda, se lee 3 > 2.5: cooperar siempre deja
+más que turnarse para traicionar, con uno que se lleva 5 y el otro 0, ronda tras ronda. Sin ella,
+dos jugadores podrían superar a la cooperación alternándose.
 
 ## El dilema repetido
 
@@ -31,7 +32,7 @@ contra otros en un torneo, y ganó Tit-for-Tat («toma y daca»): coopera primer
 el otro hizo la última vez. Para jugar el dilema repetido, el lugar es
 [*The Evolution of Trust*](https://ncase.me/trust/), de Case (2017).
 
-## *Cheap talk*
+## *Cheap talk*: hablar no cuesta
 
 En teoría, un mensaje gratis que no compromete a nadie no debería cambiar lo que nadie hace. Si
 traicionar deja más, sigue dejando más después de que dices que vas a cooperar, y el otro lo sabe,

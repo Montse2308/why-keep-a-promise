@@ -26,6 +26,7 @@ const { locale, signs, shadow, lean = false } = Astro.props;
 const shows = (opacity: number) => !lean || opacity > 0;
 const tr = useTranslations(locale);
 const percent = (n: number) => fill(tr('film.real-people.percent'), { n });
+const expectedLines = fill(tr('film.real-people.col.expected'), FILM_VALUES).split('\n');
 const board = [
   { id: 'same', label: tr('film.real-people.sign.same'), figure: percent(FILM_VALUES.rolledsame), expected: FILM_VALUES.expectsame, shown: signs.same },
   { id: 'switched', label: tr('film.real-people.sign.switched'), figure: percent(FILM_VALUES.rolledswitched), expected: FILM_VALUES.expectswitched, shown: signs.switched },
@@ -52,11 +53,23 @@ const { width, height, top } = SIGN;
               <path d={`M${-width / 2 + 26} ${top + 14} L${-width / 2 + 38} ${top + 36} L${-width / 2 + 14} ${top + 36} Z`} fill={FILM.new} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
             )}
             <text x={-width / 2 + 46} y={top + 33} class="sign__label" fill={FILM.ink}>{sign.label}</text>
-            {shows(sign.shown) && <text x="-42" y={top + 86} text-anchor="middle" class="sign__figure" fill={FILM.ink} opacity={sign.shown} data-part={`sign-${sign.id}-figure`}>{sign.figure}</text>}
-            {shows(1 - sign.shown) && <text x="-42" y={top + 86} text-anchor="middle" class="sign__figure" fill={FILM['card-muted']} opacity={1 - sign.shown} data-part={`sign-${sign.id}-question`}>?</text>}
+            <text x="-42" y={top + 54} text-anchor="middle" class="sign__col" fill={FILM.ink}>{tr('film.real-people.col.rolled')}</text>
             {
               shows(signs.expected) && (
-                <g transform={`translate(62 ${top + 70}) scale(0.82)`} opacity={signs.expected} data-part={`sign-${sign.id}-expected`}>
+                <g opacity={signs.expected} data-part={`sign-${sign.id}-col`}>
+                  {expectedLines.map((line, i) => (
+                    <text x="62" y={top + 54 + i * 15} text-anchor="middle" class="sign__col" fill={FILM.ink}>
+                      {line}
+                    </text>
+                  ))}
+                </g>
+              )
+            }
+            {shows(sign.shown) && <text x="-42" y={top + 108} text-anchor="middle" class="sign__figure" fill={FILM.ink} opacity={sign.shown} data-part={`sign-${sign.id}-figure`}>{sign.figure}</text>}
+            {shows(1 - sign.shown) && <text x="-42" y={top + 108} text-anchor="middle" class="sign__figure" fill={FILM['card-muted']} opacity={1 - sign.shown} data-part={`sign-${sign.id}-question`}>?</text>}
+            {
+              shows(signs.expected) && (
+                <g transform={`translate(62 ${top + 100}) scale(0.82)`} opacity={signs.expected} data-part={`sign-${sign.id}-expected`}>
                   <path d="M-40 14 C-56 14 -56 -8 -38 -8 C-36 -24 -10 -28 0 -16 C10 -30 38 -24 36 -8 C54 -8 54 14 38 14 Z" fill={FILM['voice-expects']} stroke={FILM.ink} stroke-width="3" stroke-linejoin="round" />
                   <text x="0" y="11" text-anchor="middle" class="sign__expected" fill={FILM.ink}>{sign.expected}</text>
                 </g>
@@ -75,6 +88,12 @@ const { width, height, top } = SIGN;
     font-weight: 800;
     font-size: 17px;
     letter-spacing: 0.02em;
+  }
+
+  .sign__col {
+    font-family: var(--font-body, system-ui, sans-serif);
+    font-weight: 800;
+    font-size: 13px;
   }
 
   .sign__figure {

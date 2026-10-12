@@ -5,8 +5,10 @@
  * row. With JavaScript, a slider moves a cursor over the grid rows (./controller.ts).
  *
  * It sits on a paper card of the film, in the film's colours (src/lib/curve/film.ts, ADR 0027): the
- * lines in a light colour wear an ink casing. /finding's chart of the guilt available is
- * ./GuiltChart.astro.
+ * lines in a light colour wear an ink casing. Partner-specific commitment and general guilt are one
+ * wide gold band (they pay the same on every row). Personal guilt is a thinner ink line on that
+ * band, centred on the same payoff, so the gold shows on both sides where they tie. The peak is a
+ * ring above the line. /finding's chart of the guilt available is ./GuiltChart.astro.
  *
  * Render this only inside the lock (src/lib/lock.ts, ADR 0034). While the lock is closed, a build
  * resolves this file to ./Locked.astro (astro.config.mjs), so its markup, style, script and data
@@ -41,9 +43,8 @@ const low = levels[0] ?? 0;
 const high = levels.at(-1) ?? 0;
 
 // Vertical layout in CSS px; x is a percentage of the plot width, so text never scales.
-const frame: Frame = { zero: 200, top: 72, high };
+const frame: Frame = { zero: 200, top: 52, high };
 const Y_ZERO = frame.zero;
-const Y_TOP = frame.top;
 const y = (payoff: number) => yPixel(payoff, frame);
 const x = (trust: number) => `${xPercent(trust, axis)}%`;
 
@@ -52,21 +53,55 @@ const name: Record<Reason, string> = {
   partner: tr('curve.series.partner'),
   general: tr('curve.series.general'),
 };
-// Drawing order: the emphasised line underneath, the control's dots on top of the solid line.
-const lines = REASONS.map((reason) => ({ reason, segments: stepLine(rows, reason) }));
+// Partner-specific commitment and general guilt are the same payoff on every row, so they are one line.
+// Personal guilt is drawn on top of that line, at the same y, thinner, so both stay visible.
+const flat = stepLine(rows, 'partner');
+const personal = stepLine(rows, 'personal');
 const yTicks = [0, ...levels];
 const xTicks = [axis.min, peak, axis.max];
 const start = indexOf(rows, peak);
 const startRow = rows[start];
 const summary = fill(tr('curve.summary'), { min: axis.min, max: axis.max, high, low, from: window.from, to: window.to, peak });
+const flatLabel = fill(tr('curve.flat'), { high });
+const personalLabel = fill(tr('curve.label.personal'), { high, low });
 const clientRows = JSON.stringify(rows);
-const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y(segment.y1), y2: y(segment.y2) });
+const placed = (segment: Segment) => ({
+  x1: x(segment.x1),
+  x2: x(segment.x2),
+  y1: y(segment.y1),
+  y2: y(segment.y2),
+});
+/** The cursor's line starts just above the shared payoff, so it never runs through the peak's ring. */
+const cursorTop = y(high) - 4;
+/** The peak is a ring above the line, clear of the cursor's filled dot even when both sit at the peak. */
+const peakRing = y(high) - 18;
 ---
 
 <figure class="curve curve--film" style={filmStyle} id={id} data-locked-content data-curve data-rows={clientRows} data-axis={JSON.stringify(axis)} data-frame={JSON.stringify(frame)} data-start={start} data-strings={JSON.stringify(strings)} aria-labelledby={`${id}-caption`}>
   <p class="cv-axis-title" aria-hidden="true">{tr('curve.axis.y')}</p>
+  <ul class="cv-direct">
+    <li>
+      <svg class="cv-swatch" viewBox="0 0 20 8" aria-hidden="true" focusable="false">
+        {cased('partner') && <line class="cv-case cv-case--partner" x1="0" x2="20" y1="4" y2="4" />}
+        <line class="cv-key cv-line--partner" x1="0" x2="20" y1="4" y2="4" />
+      </svg>
+      <span>{flatLabel}</span>
+    </li>
+    <li>
+      <svg class="cv-swatch" viewBox="0 0 20 8" aria-hidden="true" focusable="false">
+        <line class="cv-key cv-line--personal" x1="0" x2="20" y1="4" y2="4" />
+      </svg>
+      <span>{personalLabel}</span>
+    </li>
+    <li>
+      <svg class="cv-swatch cv-swatch--ring" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+        <circle class="cv-peak" cx="8" cy="8" r="4.5" />
+      </svg>
+      <span>{tr('curve.peak')}</span>
+    </li>
+  </ul>
   <div class="cv-plot">
-    <svg class="cv-svg" width="100%" height="248" role="img" aria-label={summary}>
+    <svg class="cv-svg" width="100%" height="232" role="img" aria-label={summary}>
       {yTicks.map((tick) => <line class="cv-grid" x1="0" x2="100%" y1={y(tick)} y2={y(tick)} />)}
       {yTicks.map((tick) => <text class="cv-tick" x="-8" y={y(tick) + 4} text-anchor="end">{tick}</text>)}
       {rows.map((row) => <line class="cv-minor" x1={x(row.trust)} x2={x(row.trust)} y1={Y_ZERO} y2={Y_ZERO + 4} />)}
@@ -79,31 +114,20 @@ const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y
         ))
       }
 
-      <line class="cv-peak" x1={x(peak)} x2={x(peak)} y1={y(high) + 6} y2={Y_ZERO} />
-      <text class="cv-tick" x={x(peak)} y={Y_ZERO + 40} text-anchor="middle">{tr('curve.peak')}</text>
+      <circle class="cv-peak" cx={x(peak)} cy={peakRing} r="5" />
 
       {
-        lines.map(({ reason, segments }) =>
-          segments.map((segment) => (
-            <>
-              {cased(reason) && <line class={`cv-case cv-case--${reason}`} {...key(segment)} />}
-              <line class={`cv-line cv-line--${reason}`} {...key(segment)} />
-            </>
-          )),
-        )
+        flat.map((segment) => (
+          <>
+            {cased('partner') && <line class="cv-case cv-case--partner" {...placed(segment)} />}
+            <line class="cv-line cv-line--partner" {...placed(segment)} />
+          </>
+        ))
       }
-
-      {cased('partner') && <line class="cv-case cv-case--partner" x1="0" x2="20" y1="24" y2="24" />}
-      <line class="cv-key cv-line--partner" x1="0" x2="20" y1="24" y2="24" />
-      <text class="cv-label" x="28" y="28">{name.partner}</text>
-      {cased('general') && <line class="cv-case cv-case--general" x1="2" x2="20" y1="46" y2="46" />}
-      <line class="cv-key cv-line--general" x1="2" x2="20" y1="46" y2="46" />
-      <text class="cv-label" x="28" y="50">{tr('curve.label.general')}</text>
-      <line class="cv-key cv-line--personal" x1="0" x2="20" y1={y(low) + 20} y2={y(low) + 20} />
-      <text class="cv-label" x="28" y={y(low) + 24}>{name.personal}</text>
+      {personal.map((segment) => <line class="cv-line cv-line--personal" {...placed(segment)} />)}
 
       <g class="cv-cursor" data-slot="cursor">
-        <line data-slot="cursor-line" x1={x(peak)} x2={x(peak)} y1={Y_TOP - 12} y2={Y_ZERO} />
+        <line data-slot="cursor-line" x1={x(peak)} x2={x(peak)} y1={cursorTop} y2={Y_ZERO} />
         <circle data-slot="cursor-dot" cx={x(peak)} cy={y(startRow?.payoff.personal ?? high)} r="5" />
       </g>
     </svg>
@@ -122,8 +146,8 @@ const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y
           <div class="cv-readout__item">
             <dt>
               <svg class="cv-swatch" viewBox="0 0 20 8" aria-hidden="true" focusable="false">
-                {cased(reason) && <line class={`cv-case cv-case--${reason}`} x1={reason === 'general' ? 2 : 0} x2="20" y1="4" y2="4" />}
-                <line class={`cv-key cv-line--${reason}`} x1={reason === 'general' ? 2 : 0} x2="20" y1="4" y2="4" />
+                {reason !== 'personal' && cased('partner') && <line class="cv-case cv-case--partner" x1="0" x2="20" y1="4" y2="4" />}
+                <line class={`cv-key cv-line--${reason === 'personal' ? 'personal' : 'partner'}`} x1="0" x2="20" y1="4" y2="4" />
               </svg>
               {name[reason]}
             </dt>
@@ -227,15 +251,27 @@ const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y
     fill: var(--color-muted);
   }
 
-  /* Text wears text colours; the mark beside a label carries the series colour. */
-  .cv-label {
-    fill: var(--color-fg);
+  /* Labels sit above the plot and wrap, so the long merged-line sentence fits at 320 px. */
+  .cv-direct {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-3);
+    padding: 0;
+    list-style: none;
   }
 
+  .cv-direct li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  /* The peak is a ring, not a bar, so it stays distinct from the cursor's line and filled dot. */
   .cv-peak {
-    stroke: var(--color-control);
-    stroke-width: 1;
-    stroke-dasharray: 3 3;
+    fill: none;
+    stroke: var(--color-fg);
+    stroke-width: 1.5;
   }
 
   .cv-line,
@@ -246,20 +282,27 @@ const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y
 
   .cv-line--personal {
     stroke: var(--color-series-1);
-    stroke-width: 6;
   }
 
   .cv-line--partner {
     stroke: var(--color-series-2);
-    stroke-width: 2;
   }
 
-  /* The control is told apart by its pattern, not by colour alone. */
-  .cv-line--general {
-    stroke: var(--color-series-3);
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-dasharray: 0 6;
+  /* A wide gold band, then a thin ink line centred on the same payoff, so the gold shows both sides. */
+  .cv-svg .cv-line--partner {
+    stroke-width: 11;
+  }
+
+  .cv-svg .cv-line--personal {
+    stroke-width: 2.5;
+  }
+
+  .cv-swatch .cv-line--partner {
+    stroke-width: 5;
+  }
+
+  .cv-swatch .cv-line--personal {
+    stroke-width: 1.5;
   }
 
   /* The cursor appears only once the script runs (data-on). */
@@ -342,6 +385,17 @@ const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y
     width: 1.25rem;
     height: 0.5rem;
     overflow: visible;
+    flex: none;
+  }
+
+  .cv-direct .cv-swatch {
+    margin-top: 0.35em;
+  }
+
+  .cv-direct .cv-swatch--ring {
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-top: 0.1em;
   }
 
   .cv-pulls {
@@ -391,26 +445,16 @@ const key = (segment: Segment) => ({ x1: x(segment.x1), x2: x(segment.x2), y1: y
     stroke: var(--film-ink);
   }
 
-  .curve--film .cv-line--partner {
-    stroke-width: 3.5;
-  }
-
   .cv-case--partner {
-    stroke-width: 6.5;
     stroke-linecap: square;
   }
 
-  /* The control's lilac beads, spaced so the gold line they share shows between them. */
-  .curve--film .cv-line--general {
-    stroke-width: 3.5;
-    stroke-dasharray: 0 10;
+  .cv-svg .cv-case--partner {
+    stroke-width: 15;
   }
 
-  /* Ink rings under the beads: the same dash, only wider. */
-  .cv-case--general {
-    stroke-width: 6.5;
-    stroke-linecap: round;
-    stroke-dasharray: 0 10;
+  .cv-swatch .cv-case--partner {
+    stroke-width: 7;
   }
 
 </style>
