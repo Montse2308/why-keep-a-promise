@@ -4,7 +4,10 @@ title: Vanberg's experiment
 
 ## The whole design
 
-The instructions and screens that Vanberg (2008) published fill in what the story leaves out.
+The game has two roles: the one who decides (the *dictator*, in the paper), who can promise and
+then chooses whether to roll the die, and the one who receives (the *recipient*), whose payoff
+depends on that choice. The instructions and screens that Vanberg (2008) published fill in what
+the story leaves out.
 
 - The experiment has 8 rounds. In each one you are matched with another participant, chosen at
   random, and never with the same one twice.

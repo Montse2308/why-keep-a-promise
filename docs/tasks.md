@@ -1825,8 +1825,9 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
       (T + S) / 2); no hay cifra nueva. El ADR 0033 citaba la oración final que el anexo retira:
       su estado queda enmendado el 2026-10-12 y la tabla de la prosa lleva la oración nueva. El
       título en ES es «*Cheap talk*: hablar no cuesta»; en EN se queda «Cheap talk».
-- [ ] **M4.9** El experimento de Vanberg. Anexo §B5: una frase al principio de «El diseño completo»,
+- [x] **M4.9** El experimento de Vanberg. Anexo §B5: una frase al principio de «El diseño completo»,
       antes de la que ya tiene.
+      Hecho. La frase del anexo abre la sección, y la que ya estaba sigue justo después.
 - [ ] **M4.10** El pie «Siguiente». Al final de cada hoja, junto al «← Volver a …»: ES «Siguiente:
       {hoja} →», EN «Next: {page} →». Orden: El dilema → El experimento de Vanberg → El hallazgo →
       Cómo está hecho → Fuentes → Quién es. Quién es no lleva «Siguiente». Los títulos salen de las
