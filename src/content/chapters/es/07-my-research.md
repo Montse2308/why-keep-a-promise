@@ -48,7 +48,7 @@ que tu promesa le agregó.
 ### Pesa más en el medio.
 
 Si nadie esperaba nada de antemano, el producto es cero. Si ya todos lo esperaban, tu promesa no
-agregó nada y el producto también es cero. Por eso pesa más en el medio, en {peak}. Tu palabra a
+agregó nada y el producto también es cero. Por eso pesa más en el medio. Tu palabra a
 esa persona pesa lo mismo en cualquier mundo.
 
 <!-- beat:worlds -->
@@ -56,10 +56,12 @@ esa persona pesa lo mismo en cualquier mundo.
 ### Un mundo para cada valor.
 
 En una simulación, se fijó la confianza de fondo en cada valor de {min} a {max} de {outof}. La
-creencia de que la promesa se cumplirá quedó fija en {belief}: el promedio de la creencia de segundo
-orden de los dictadores sin cambio de pareja en Vanberg (2008, Tabla I). Ahí, la otra persona ve cuál
-de las razones te mueve antes de jugar, y solo entra si vas a tirar; si no entra, cada quien se
-queda con {low}. Por eso tirar paga {high} y no tirar, {low}.
+creencia de que la promesa se cumplirá quedó fija en {belief}, un valor tomado de Vanberg (2008,
+Tabla I): en promedio, eso creían quienes decidían, sin cambio de pareja, que su pareja esperaba de
+ellos. La culpa personal pesa más justo a la mitad, en {peak}. Y la confianza de fondo no pasa de
+{belief}: arriba de ahí, tu promesa ya no agregaría nada, y por eso el eje termina ahí. Ahí, la otra
+persona ve cuál de las razones te mueve antes de jugar, y solo entra si vas a tirar; si no entra,
+cada quien se queda con {low}. Por eso tirar paga {high} y no tirar, {low}.
 
 <!-- beat:curve -->
 

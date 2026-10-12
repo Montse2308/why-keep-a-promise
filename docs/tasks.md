@@ -1719,8 +1719,14 @@ se borra ni se debilita. La parte 2, el cuaderno, la escribe el siguiente agente
 ### Parte 1 · La historia y dos gráficas
 
 - [x] **M4.0** El registro: esta sección y la cabecera.
-- [ ] **M4.1** El porqué del 38 (capítulo 7): los textos del anexo, §A2, en ES y en EN. Antes, el eje
+- [x] **M4.1** El porqué del 38 (capítulo 7): los textos del anexo, §A2, en ES y en EN. Antes, el eje
       de la curva termina en `{belief}` (76) y la curva no pasa de ahí.
+      Hecho. `curve.json` trae el eje de 0 a 76 y `beta1` en 76; la grilla abarca el eje justo
+      (`readCurve` lo exige) y `beliefWithoutSwitch()` tiene que coincidir con el extremo
+      (`src/lib/curve/values.ts`). Arriba de 76 la culpa disponible, `a · (76 − a) / 100`, dejaría de
+      ser positiva: la promesa ya no agregaría nada. El texto nuevo lo dice así, en los dos idiomas.
+      El home pesa un poco más por ese texto: la primera carga pasa de 184.2 a 184.3 KiB (EN) y de
+      184,9 a 185,0 KiB (ES); `weight.json` se reescribe.
 - [ ] **M4.2** Las unidades de 70/68 (capítulo 6 y el tablero): el texto del anexo, §A3, en ES y en
       EN, y rótulos de las dos columnas del tablero que muestra «73 % · 70 / 54 % · 68»: ES
       «Tiraron» / «Esperaban (de 100)», EN «Rolled» / «Expected (of 100)». El 70 y el 68 son lo que
