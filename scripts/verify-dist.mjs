@@ -18,6 +18,8 @@
 // every page has its description, the same in Open Graph, without the status sentence and, while
 // locked, without a mark of the locked content. Every link that leaves the site opens in a new tab,
 // with rel="noopener noreferrer" and its notice, and every link inside it stays in the tab (P8, 8.3).
+// Every page names itself and its poster at the root of the site's own domain, robots.txt names the
+// sitemap there, and no file carries the old address on GitHub Pages (ADR 0044).
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
@@ -421,6 +423,63 @@ export function sitemapProblems(locked, xml, pages) {
   return problems;
 }
 
+/** The site's address, the root of its own domain (ADR 0044): astro.config.mjs's `site`. */
+export const SITE_URL = 'https://whykeepapromise.org/';
+
+/** robots.txt's path in dist/ (public/robots.txt). */
+export const ROBOTS = 'robots.txt';
+
+/**
+ * The site's old address on GitHub Pages, before ADR 0044: its host, and its folder anywhere but in a
+ * link to this repository on GitHub, which keeps the name.
+ */
+const OLD_ADDRESS = /montse2308\.github\.io|(?<!github\.com\/Montse2308)\/why-keep-a-promise\//gi;
+
+/**
+ * A page's own addresses in its head: its canonical link, `og:url` and `og:image`; `null` for one
+ * that is missing.
+ * @param {string} html
+ * @returns {{ canonical: string | null, url: string | null, image: string | null }}
+ */
+export function addressesOf(html) {
+  /** @param {RegExp} pattern */
+  const read = (pattern) => {
+    const value = pattern.exec(html)?.[1];
+    return value === undefined ? null : decodeAttribute(value);
+  };
+  return {
+    canonical: read(/<link\s+rel="canonical"\s+href="([^"]*)"/i),
+    url: read(/<meta\s+property="og:url"\s+content="([^"]*)"/i),
+    image: read(/<meta\s+property="og:image"\s+content="([^"]*)"/i),
+  };
+}
+
+/**
+ * Problems with the site's address (ADR 0044): every page but the 404 names itself and its poster
+ * under `SITE_URL` (its canonical link, `og:url` and `og:image`); no text file of dist/ carries the
+ * old address; and robots.txt names the sitemap under `SITE_URL`.
+ * @param {Record<string, string>} texts the text of each text file of dist/, by its path in dist/
+ * @returns {string[]}
+ */
+export function addressProblems(texts) {
+  const problems = Object.entries(texts).flatMap(([path, text]) => {
+    if (!path.endsWith('.html') || path === NOT_FOUND_PAGE) return [];
+    return Object.entries(addressesOf(text)).flatMap(([name, value]) => {
+      const label = name === 'canonical' ? 'canonical link' : `og:${name}`;
+      if (value === null) return [`${path}: no ${label}`];
+      return value.startsWith(SITE_URL) ? [] : [`${path}: ${label} ${value} is not under ${SITE_URL}`];
+    });
+  });
+  for (const [path, text] of Object.entries(texts)) {
+    const old = [...new Set([...text.matchAll(OLD_ADDRESS)].map((match) => match[0]))];
+    if (old.length > 0) problems.push(`${path}: carries the old address (${old.join(', ')})`);
+  }
+  const robots = texts[ROBOTS];
+  if (robots === undefined) problems.push(`${ROBOTS}: missing`);
+  else if (!robots.split(/\r?\n/).includes(`Sitemap: ${SITE_URL}${SITEMAP}`)) problems.push(`${ROBOTS}: does not name ${SITE_URL}${SITEMAP}`);
+  return problems;
+}
+
 /**
  * Every text file under a directory.
  * @param {string} dir
@@ -476,6 +535,12 @@ function main() {
     console.error(`verify:dist: the sitemap is off:\n  ${mapping.join('\n  ')}`);
     process.exit(1);
   }
+  const texts = Object.fromEntries(files.map((file) => [relative(dist, file).split('\\').join('/'), readFileSync(file, 'utf8')]));
+  const addresses = addressProblems(texts);
+  if (addresses.length > 0) {
+    console.error(`verify:dist: the site's address is off (ADR 0044):\n  ${addresses.join('\n  ')}`);
+    process.exit(1);
+  }
   const targets = linkTargetProblems(dictionaries, pages);
   if (targets.length > 0) {
     console.error(`verify:dist: links open in the wrong place:\n  ${targets.join('\n  ')}`);
@@ -495,7 +560,7 @@ function main() {
       process.exit(1);
     }
     console.log(
-      `verify:dist: locked (the working paper's link is still ${paper.ssrn}); ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page or the sitemap links to /finding and it is noindex, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, all ${described} pages have a clean description, and the ${external} links that leave the site open in a new tab with their notice.`,
+      `verify:dist: locked (the working paper's link is still ${paper.ssrn}); ${files.length} files in dist/ carry none of its ${MARKERS.length} marks, no page or the sitemap links to /finding and it is noindex, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, all ${described} pages have a clean description and name themselves under ${SITE_URL}, robots.txt names the sitemap and no file carries the old address, and the ${external} links that leave the site open in a new tab with their notice.`,
     );
     return;
   }
@@ -510,7 +575,7 @@ function main() {
     process.exit(1);
   }
   console.log(
-    `verify:dist: unlocked (the working paper is public) on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content and /finding is indexed and in the sitemap, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, all ${described} pages have a clean description, and the ${external} links that leave the site open in a new tab with their notice.`,
+    `verify:dist: unlocked (the working paper is public) on all ${Object.keys(UNLOCKED_PAGES).length} pages that carry locked content and /finding is indexed and in the sitemap, the status sentence appears ${STATUS_ON_HOME} times on each home page with its link, all ${described} pages have a clean description and name themselves under ${SITE_URL}, robots.txt names the sitemap and no file carries the old address, and the ${external} links that leave the site open in a new tab with their notice.`,
   );
 }
 

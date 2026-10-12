@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-**[Abrir el sitio](https://montse2308.github.io/why-keep-a-promise/es/)**
+**[Abrir el sitio](https://whykeepapromise.org/es/)**
 
 ![Cuatro cuadros de la página a lo largo del día: la portada al amanecer, con el título y sus tres puertas, el dilema del prisionero a mediodía, una pareja nueva en la mesa por la tarde mientras el hilo de la promesa sigue yendo a quien se fue, y otra vez la primera mesa de noche.](.github/readme/film-es.webp)
 
@@ -17,7 +17,7 @@ El home abre con una portada con tres puertas.
   al experimento de cambio de pareja de Vanberg (2008). Juegas por el camino: prometes o no, juegas
   una ronda del dilema, decides si tirar el dado y adivinas el resultado del laboratorio antes de
   verlo.
-- **La investigación.** [El hallazgo](https://montse2308.github.io/why-keep-a-promise/es/finding/),
+- **La investigación.** [El hallazgo](https://whykeepapromise.org/es/finding/),
   en una página que se entiende sola: la pregunta, qué se sabía y qué es nuevo, tres mundos, una
   fórmula que se puede mover, otros dos resultados, los límites y cómo citar. El capítulo 7 lo
   cuenta dentro de la historia.
@@ -65,7 +65,7 @@ Comparar mundos con distinta confianza de fondo, sí.
   inglés y el español al día.
 
 La página lo cuenta completo en
-[Cómo está hecho](https://montse2308.github.io/why-keep-a-promise/es/how-its-built/).
+[Cómo está hecho](https://whykeepapromise.org/es/how-its-built/).
 
 ## Correrlo en local
 
@@ -73,7 +73,7 @@ Requiere la versión de Node.js de [`.nvmrc`](.nvmrc).
 
 ```sh
 npm ci
-npm run dev      # http://localhost:4321/why-keep-a-promise/
+npm run dev      # http://localhost:4321/
 npm run check    # astro check + tsc
 npm test         # vitest
 npm run build    # sitio estático en dist/

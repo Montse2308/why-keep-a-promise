@@ -227,12 +227,12 @@ describe('weighing a built site', () => {
   it('weighs every page, compressed, and knows the two homes', () => {
     const weights = weighSite('tests/fixtures/budgets-dist');
     expect(weights.map((w) => [w.page, w.home]).sort()).toEqual([
-      ['/why-keep-a-promise/', true],
-      ['/why-keep-a-promise/about/', false],
-      ['/why-keep-a-promise/es/', true],
+      ['/', true],
+      ['/about/', false],
+      ['/es/', true],
     ]);
-    const home = weights.find((w) => w.page === '/why-keep-a-promise/');
-    expect(home?.resources.map((r) => r.url)).toEqual(['/why-keep-a-promise/', '/why-keep-a-promise/_astro/film.js', '/why-keep-a-promise/_astro/a.css']);
+    const home = weights.find((w) => w.page === '/');
+    expect(home?.resources.map((r) => r.url)).toEqual(['/', '/_astro/film.js', '/_astro/a.css']);
     // Gzip folds the script's fifty repeats: far fewer bytes than its 750.
     expect(home?.totals['home-script']).toBeGreaterThan(0);
     expect(home?.totals['home-script']).toBeLessThan(100);
@@ -248,12 +248,16 @@ describe('the homes’ weights /how-its-built cites', () => {
     expect(homeLocale('/b/es/', '/b/', 'en')).toBe('es');
     expect(homeLocale('/b/about/', '/b/', 'en')).toBeNull();
     expect(homeLocale('/b/es/about/', '/b/', 'en')).toBeNull();
+    expect(homeLocale('/', '/', 'en')).toBe('en');
+    expect(homeLocale('/es/', '/', 'en')).toBe('es');
+    expect(homeLocale('/about/', '/', 'en')).toBeNull();
+    expect(homeLocale('/es/about/', '/', 'en')).toBeNull();
   });
 
   it('are taken from the build, the default language first', () => {
-    const homes = homeWeights(weighSite('tests/fixtures/budgets-dist'), '/why-keep-a-promise/', 'en');
+    const homes = homeWeights(weighSite('tests/fixtures/budgets-dist'), '/', 'en');
     expect(homes.map((h) => h.locale)).toEqual(['en', 'es']);
-    const built = weighSite('tests/fixtures/budgets-dist').find((w) => w.page === '/why-keep-a-promise/');
+    const built = weighSite('tests/fixtures/budgets-dist').find((w) => w.page === '/');
     expect(homes[0]?.bytes).toEqual(built?.totals);
   });
 

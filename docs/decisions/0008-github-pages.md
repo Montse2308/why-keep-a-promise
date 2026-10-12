@@ -1,6 +1,6 @@
 # 0008 · GitHub Pages
 
-**Estado:** aceptada (F0)
+**Estado:** aceptada (F0). Enmendado por el ADR 0044 (2026-10-12): dominio propio.
 
 ## Contexto
 

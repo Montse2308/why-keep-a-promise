@@ -3,13 +3,15 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M2, el repo del motor cambia de
-nombre (rama `m2/engine-rename`, sección M2). P10, el motor en `/finding`, llegó a `main` con el
+**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M3, la página en su dominio,
+`https://whykeepapromise.org` (rama `m3/custom-domain`, sección M3). M2, el repo del motor cambia de
+nombre, llegó a `main` con el PR #25. P10, el motor en `/finding`, con el
 PR #24. M1, la puesta al día después del lanzamiento, con el PR #23. P9, `/finding` por sí sola, llegó
 a `main` con el PR #21 (y su cierre con el #22); P8, los retoques después del lanzamiento, con el
 PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
 publica con GitHub Actions y `deploy.yml` corrió el 2026-10-08 (run 37860472991); el sitio está en
-línea en `https://montse2308.github.io/why-keep-a-promise/`. F5, la QA, cerrada en la rama
+línea en `https://montse2308.github.io/why-keep-a-promise/` hasta que Montse ponga el dominio de M3
+en *Settings → Pages*; desde entonces, en `https://whykeepapromise.org/`. F5, la QA, cerrada en la rama
 `launch/f5-qa` (PR #19), sobre el build con el candado abierto. P0 a P7 cerradas: Montse las revisó
 (PR #1 a PR #17; P7, los ajustes de la revisión externa, con el PR #17). P4 se cerró sin videos,
 como ella lo pidió: dio por hecho el de la película entera.
@@ -1617,6 +1619,90 @@ número en el commit (`M2.2`).
       (el ancla `…el-dilema-del-prisionero` del capítulo 1 en español es el juego, no el repo). La
       dirección nueva responde 200; la vieja, 301 a la nueva.
 - [ ] **M2.4 (Montse)** Revisa la rama, el PR a `main` y `deploy.yml`, cuando ella lo decida.
+
+## M3 · La página en su dominio
+
+Mantenimiento: la página deja `https://montse2308.github.io/why-keep-a-promise/` y vive en la raíz de
+su propio dominio, `https://whykeepapromise.org` (`/`, `/es/`, `/finding/`…). El hosting sigue en
+GitHub Pages, con el mismo `deploy.yml`; el dominio se compró en Cloudflare, con el DNS ahí y sin
+proxy, y GitHub redirige la dirección vieja al dominio (ADR 0044, que enmienda el 0008; decisión de
+Montse, 2026-10-12). En la rama `m3/custom-domain`, desde `main` en `146e426` (el merge del PR #25);
+sin push, sin PR y sin `deploy.yml`, que decide y corre Montse. Esta rama solo prepara el código: el
+dominio lo pone Montse en *Settings → Pages* después de fusionarla. No toca el despliegue
+(`deploy.yml`, `docs/launch-checklist.md`, `scripts/check-launch.mjs`), no agrega un archivo `CNAME`
+(con el deploy por Actions, GitHub lo ignora), ni los ADR más allá del nuevo y de la línea de estado
+del 0008, ni lo ya cerrado aquí. Ningún texto visible cambia, salvo las direcciones del sitio, y
+ninguna prueba se debilita: la que fija la `base` vieja pasa al valor nuevo o depende de la
+configuración. Cada paso termina en verde (`check`, `test`, `build`, `verify:dist`, `budgets` y
+`check:launch`) y lleva su número en el commit (`M3.2`).
+
+- [x] **M3.0** El registro: esta sección y la cabecera.
+- [x] **M3.1** El ADR 0044, «La página en `whykeepapromise.org`», que enmienda el 0008: el hosting
+      sigue en GitHub Pages; el DNS en Cloudflare, todos los registros en «DNS only», sin proxy, sin
+      Web Analytics ni nada que inyecte scripts o cookies; `www` redirige al dominio; la dirección
+      `github.io` redirige sola. La línea de estado del 0008 y el índice de ADR.
+      Hecho. El 0008 se queda en `docs/decisions/` (enmendado, no reemplazado, como el 0010 con el
+      0043); el 0044 reescribe lo que sigue de él.
+- [x] **M3.2** `site` y `base`: `site: 'https://whykeepapromise.org'` y la `base` en la raíz en
+      `astro.config.mjs` (`trailingSlash` se queda); los valores por defecto que repiten la dirección
+      vieja (`BaseLayout.astro`, `sitemap.xml.ts`); `BASE` de `scripts/budgets.mjs`, el comentario de
+      `scripts/lighthouse.mjs`, `src/data/weight.json` y las pruebas y *fixtures* que fijan la
+      `base`; en `routes.test.ts` se conservan los casos con subcarpeta y se suman los de la raíz.
+      Hecho. La `base` se quita (Astro usa `/`). Fuera de esos archivos, nada del código escribía la
+      dirección ni la subcarpeta a mano: los enlaces, la canónica, los pósters, el JSON-LD, el 404 y
+      el worker pasan por `routes.ts` o por el build, y `dist/` ya no lleva ni `montse2308.github.io`
+      ni `/why-keep-a-promise/`. Sin la subcarpeta, el HTML y el script del home pesan unos bytes
+      menos: `weight.json` se reescribe, y `/how-its-built` cita la primera carga del home en
+      184.2 KiB (EN) y 184,9 KiB (ES), antes 184.3 y 185,0; el script sigue en 21.1 KiB.
+      `src/data/lighthouse.json` es una medición con fecha y no se toca. Las pruebas: `routes`
+      (los casos con subcarpeta se quedan; se suman los de la raíz y uno que no deja `//`),
+      `back` y `lighthouse` (el dominio y la raíz), `sitemap` (el dominio y la raíz, más un caso con
+      la base en una carpeta, para no perder esa cobertura), `budgets` y sus *fixtures* (la raíz; los
+      casos de `homeLocale` con `/b/` se quedan y se suman los de `/`) y `verify-dist` (la base del
+      caso de los enlaces a `/finding`, ahora la raíz).
+- [x] **M3.3** Lo que la raíz permite: `public/robots.txt` con el sitemap, y el comentario de
+      `src/lib/sitemap.ts` corregido (el `noindex` del 404 se queda); en `verify:dist`, una marca
+      nueva: la canónica, `og:url` y `og:image` de cada página empiezan con
+      `https://whykeepapromise.org/`, y ninguna página de `dist/` lleva `montse2308.github.io` ni
+      `/why-keep-a-promise/`. Con su prueba.
+      Hecho. `addressProblems` en `scripts/verify-dist.mjs`: cada página menos el 404 (que no lleva
+      canónica ni Open Graph) se nombra a sí misma y a su póster bajo el dominio; la dirección vieja
+      no está en ningún archivo de texto de `dist/` (no solo en las páginas: también JS, CSS, XML y
+      `robots.txt`), salvo `/why-keep-a-promise/` dentro de un enlace a este repo en GitHub, que
+      conserva el nombre; y `robots.txt` existe y nombra `https://whykeepapromise.org/sitemap.xml`.
+      Sus pruebas, en `tests/verify-dist.test.ts`, también fijan que `SITE_URL` es el `site` de
+      `astro.config.mjs`, sin `base`, y el texto de `robots.txt`.
+- [x] **M3.4** Las direcciones en los documentos vivos: los README (EN y ES), `AGENTS.md` y los de
+      `docs/` que describen el estado actual. La historia no cambia: los ADR (salvo la línea de
+      estado del 0008), `docs/archivo/`, `docs/launch-checklist.md` ni lo cerrado aquí.
+      Hecho. Los README: el sitio, `/finding`, `/how-its-built` y el servidor de `npm run dev`, ahora
+      en `http://localhost:4321/`. `AGENTS.md`: dónde está el sitio, el servidor de desarrollo, lo que
+      comprueba `verify:dist`, el hosting (con el DNS y el dominio en *Settings*, sin `CNAME`) y la
+      regla de los enlaces. En `docs/`, solo `plan.md` daba la dirección como estado actual; la de
+      `phases.md` es el criterio de salida de F6, ya cerrada, y se queda.
+- [x] **M3.5** La comprobación: las seis puertas; `npm run preview` en `/`, `/es/`, `/finding/`,
+      `/es/finding/`, `/sources/`, `/how-its-built/`, `/about/` y el 404, sin errores en la consola
+      ni recursos que falten (estilos, fuentes, pósters, el explorador y el worker de «Run the
+      engine»); en `dist/`, la canónica, `og:image`, el JSON-LD de `/finding`, `sitemap.xml` y
+      `robots.txt` con el dominio; y lo que queda de la dirección vieja en el repo, solo historia.
+      Hecho. Las seis puertas en verde. Con `astro preview` en la raíz, a 1440 y 360 px (con ratón y
+      con toque reales), las ocho rutas cargan sin errores en la consola ni recursos que fallen: los
+      estilos, las cinco caras de las fuentes, el póster de cada página (200, `image/png`), el
+      favicon y el ícono táctil, y todos los enlaces internos (200). En `/finding` y `/es/finding`, θ
+      se mueve con las flechas (0.60 → 0.55) y «Run the engine» carga su módulo y su worker: a los
+      cinco segundos va en la generación 148–149 de 400, con sus 40 líneas. Una ruta que no existe
+      responde 404 con la página propia, en los dos idiomas. En `dist/`, la canónica, `og:url` y
+      `og:image` de cada página están en el dominio; `sitemap.xml` nombra las 14 páginas ahí, y
+      `robots.txt` está. El JSON-LD de `/finding` no lleva ninguna dirección del sitio (solo SSRN, los
+      DOI, ORCID, el repo del motor y la licencia), así que no cambia. En el repo, la dirección vieja
+      queda en la historia (los ADR 0008 y 0044, `docs/archivo/`, `docs/launch-checklist.md`, el
+      criterio de salida de F6 en `docs/phases.md` y esta sección), en la cabecera de este archivo
+      (que dice dónde está el sitio hasta que Montse ponga el dominio) y en las pruebas que la usan a
+      propósito: los casos con subcarpeta de `routes.test.ts` y los de la marca nueva de
+      `verify-dist.test.ts`.
+- [ ] **M3.6 (Montse)** Revisa la rama y la fusiona; después, en *Settings → Pages*, pone
+      `whykeepapromise.org` como dominio y corre `deploy.yml`; cuando GitHub emite el certificado,
+      marca *Enforce HTTPS*.
 
 ## F6 · Lanzamiento
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { goesBack } from './back';
 
-const site = 'https://montse2308.github.io/why-keep-a-promise';
+const site = 'https://whykeepapromise.org';
 
 describe('the way back to the film', () => {
   it('goes back when the page came from the film the link leads to', () => {

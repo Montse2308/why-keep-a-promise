@@ -11,7 +11,7 @@ const ceiling = (id: BudgetId) => BUDGETS.find((b) => b.id === id)?.bytes ?? 0;
 const report = (lcp: number, extra: Partial<{ version: string; formFactor: string }> = {}) => ({
   lighthouseVersion: extra.version ?? '13.5.0',
   fetchTime: '2026-10-01T21:26:06.047Z',
-  requestedUrl: 'http://localhost:4322/why-keep-a-promise/',
+  requestedUrl: 'http://localhost:4322/',
   configSettings: { formFactor: extra.formFactor ?? 'mobile', throttlingMethod: 'simulate', throttling: { rttMs: 150, throughputKbps: 1638.4, cpuSlowdownMultiplier: 4 } },
   environment: { networkUserAgent: 'Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36' },
   categories: { performance: { score: 0.97 } },

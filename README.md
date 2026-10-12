@@ -2,7 +2,7 @@
 
 [Español](README.es.md)
 
-**[Open the site](https://montse2308.github.io/why-keep-a-promise/)**
+**[Open the site](https://whykeepapromise.org/)**
 
 ![Four frames of the page as the day goes by: the cover at dawn, with the title and its three doors, the prisoner's dilemma at midday, a new partner at the table in the afternoon while the thread of the promise still runs to the one who left, and the first table again at night.](.github/readme/film-en.webp)
 
@@ -17,7 +17,7 @@ The home opens on a cover with three doors.
   the partner-switching experiment of Vanberg (2008). You play along the way: you promise or not,
   play one round of the dilemma, decide whether to roll the die, and guess the lab's result before
   you see it.
-- **The research.** [The finding](https://montse2308.github.io/why-keep-a-promise/finding/), on a
+- **The research.** [The finding](https://whykeepapromise.org/finding/), on a
   page that stands on its own: the question, what was known and what is new, three worlds, a
   formula you can move, two more results, the limits and how to cite. Chapter 7 tells it inside the
   story.
@@ -61,7 +61,7 @@ different background trust can.
   the payoffs as exact fractions, every figure tied to its source and English and Spanish in step.
 
 The page tells the whole of it in
-[How it's built](https://montse2308.github.io/why-keep-a-promise/how-its-built/).
+[How it's built](https://whykeepapromise.org/how-its-built/).
 
 ## Run it locally
 
@@ -69,7 +69,7 @@ Requires the Node.js version in [`.nvmrc`](.nvmrc).
 
 ```sh
 npm ci
-npm run dev      # http://localhost:4321/why-keep-a-promise/
+npm run dev      # http://localhost:4321/
 npm run check    # astro check + tsc
 npm test         # vitest
 npm run build    # static site in dist/
