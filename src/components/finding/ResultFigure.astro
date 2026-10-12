@@ -4,20 +4,21 @@
  * the mechanism, the guilt available against the threshold (../curve/GuiltChart.astro). Below, the
  * result: what each reason earns at the same rows. Personal guilt steps from 5 up to 10 inside its
  * window and back to 5; partner-specific commitment and general guilt earn 10 from end to end, so they
- * are one gold line; personal guilt's high run is lifted into a lane so that line does not cover it.
- * In the robustness variant, dashed and in that same lane, personal guilt's right tail stays at 10.
+ * are one wide gold band; personal guilt is a thinner ink line centred on that band, so the gold shows
+ * on both sides where they tie. In the robustness variant, dashed and at the same payoff, personal
+ * guilt's right tail stays at 10.
  * Every value comes from src/data/curve.json. The same data as chapter 7's curve, with a legend and a
  * caption of its own (rule (h)); the caption says it is a comparison across worlds (rule (e)).
  *
  * On the notebook's paper, in either theme, and told apart by line, not by colour alone: personal guilt
- * thick in ink, the shared line in the accent's gold, the variant dashed. Static, readable without
+ * a thin ink line on the accent's wide gold band, the variant dashed on that same payoff. Static, readable without
  * JavaScript, with a visually hidden table of every row.
  *
  * Render this only inside the lock (ADR 0034): a locked build resolves it to ../curve/Locked.astro
  * (astro.config.mjs).
  */
 import GuiltChart from '../curve/GuiltChart.astro';
-import { stepLine, xPercent, yLane, yPixel, type Frame, type Segment } from '../../lib/curve/chart';
+import { stepLine, xPercent, yPixel, type Frame, type Segment } from '../../lib/curve/chart';
 import { payoffLevels, pullWindow, REASONS, type Reason } from '../../lib/curve/curve';
 import { CURVE, FINDING } from '../../lib/curve/data';
 import { variantTail } from '../../lib/finding/worlds';
@@ -43,11 +44,11 @@ const Y_ZERO = frame.zero;
 const y = (payoff: number) => yPixel(payoff, frame);
 const x = (trust: number) => `${xPercent(trust, axis)}%`;
 const xTicks = [axis.min, CURVE.peak, axis.max];
-const placed = (segment: Segment, lane: boolean) => ({
+const placed = (segment: Segment) => ({
   x1: x(segment.x1),
   x2: x(segment.x2),
-  y1: lane ? yLane(segment.y1, frame) : y(segment.y1),
-  y2: lane ? yLane(segment.y2, frame) : y(segment.y2),
+  y1: y(segment.y1),
+  y2: y(segment.y2),
 });
 
 const name: Record<Reason, string> = {
@@ -55,8 +56,8 @@ const name: Record<Reason, string> = {
   partner: tr('curve.series.partner'),
   general: tr('curve.series.general'),
 };
-// One gold line: the two reasons pay the same on every row. Personal guilt's high run, and the
-// variant's cap, sit in the lane above it. The words are this page's own (rule (h)).
+// One gold band: the two reasons pay the same on every row. Personal guilt is drawn on top of it, at
+// the same y, thinner. The variant's cap is dashed on that same payoff. The words are this page's own (rule (h)).
 const flat = stepLine(rows, 'partner');
 const personal = stepLine(rows, 'personal');
 const variant: Segment = { x1: window.to, x2: axis.max, y1: tail.payoff, y2: tail.payoff };
@@ -104,9 +105,9 @@ const robust = (trust: number) => FINDING.rows.find((row) => row.trust === trust
             </>
           ))
         }
-        {flat.map((segment) => <line class="payoff__line payoff__line--partner" {...placed(segment, false)} />)}
-        {personal.map((segment) => <line class="payoff__line payoff__line--personal" {...placed(segment, true)} />)}
-        <line class="payoff__line payoff__line--variant" {...placed(variant, true)} />
+        {flat.map((segment) => <line class="payoff__line payoff__line--partner" {...placed(segment)} />)}
+        {personal.map((segment) => <line class="payoff__line payoff__line--personal" {...placed(segment)} />)}
+        <line class="payoff__line payoff__line--variant" {...placed(variant)} />
       </svg>
       <p class="payoff__axis payoff__axis--x" aria-hidden="true">{tr('curve.axis.x')}</p>
     </div>
@@ -237,19 +238,35 @@ const robust = (trust: number) => FINDING.rows.find((row) => row.trust === trust
 
   .payoff__line--personal {
     stroke: var(--color-fg);
-    stroke-width: 7;
   }
 
   .payoff__line--partner {
     stroke: var(--color-accent);
-    stroke-width: 3;
   }
 
   .payoff__line--variant {
     stroke: var(--color-fg);
-    stroke-width: 2.5;
     stroke-linecap: butt;
     stroke-dasharray: 7 5;
+  }
+
+  /* A wide gold band, then a thin ink line centred on the same payoff, so the gold shows both sides. */
+  .payoff__svg .payoff__line--partner {
+    stroke-width: 11;
+  }
+
+  .payoff__svg .payoff__line--personal,
+  .payoff__svg .payoff__line--variant {
+    stroke-width: 2.5;
+  }
+
+  .payoff__swatch .payoff__line--partner {
+    stroke-width: 5;
+  }
+
+  .payoff__swatch .payoff__line--personal,
+  .payoff__swatch .payoff__line--variant {
+    stroke-width: 1.5;
   }
 
   .result__caption {

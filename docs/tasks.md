@@ -1757,6 +1757,17 @@ se borra ni se debilita. La parte 2, el cuaderno, la escribe el siguiente agente
       §A1. Los resúmenes accesibles no cambian. No se tocó ningún ADR. El script del home pasa de
       21.1 a 21.2 KiB y la primera carga de 184.6 a 184.7 KiB (EN); en ES el script igual y la
       primera carga sigue en 185.3 KiB. `weight.json` se reescribe.
+- [x] **M4.3b** La culpa personal a su altura real. El carril de 14 px la dibujaba por encima del
+      10, y en la ventana empatan. Se quita: cada serie, y el tope de robustez en `/finding`, va a
+      la altura exacta de su pago. Donde coinciden, la línea dorada es una banda y la culpa
+      personal, más delgada y oscura, va encima y centrada, de modo que el dorado asoma por los dos
+      lados. A 360 px se distingue, en claro y en oscuro. El aro del pico y la raya del control se
+      quedan. Los rótulos dejan de decir «carril»: en la película, «Culpa personal: {high} en su
+      ventana, y {low} fuera» / «Personal guilt: {high} in its window, and {low} outside» (el 10 y
+      el 5 salen del registro, no escritos a mano). En `/finding`, otra frase (regla (h)): «La
+      culpa personal gana {high} en su ventana y {low} fuera» / «Personal guilt earns {high} in its
+      window and {low} outside». El script del home baja de 21.2 a 21.1 KiB; la primera carga sigue
+      en 184.7 KiB (EN) y 185.3 KiB (ES). `weight.json` se reescribe.
 - [x] **M4.4** La comprobación: las seis puertas, axe sin violaciones y sin desbordes de 320 a
       1440 px. Capturas en `scratch/m4/parte1/` (no se sube): las dos gráficas a 360 y a 1440, en
       claro y en oscuro, con el control en 0, en el pico (38) y en 70; el texto nuevo del capítulo 7

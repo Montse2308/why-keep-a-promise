@@ -6,9 +6,9 @@
  *
  * It sits on a paper card of the film, in the film's colours (src/lib/curve/film.ts, ADR 0027): the
  * lines in a light colour wear an ink casing. Partner-specific commitment and general guilt are one
- * gold line (they pay the same on every row); personal guilt's high run is lifted into a lane so
- * that line does not cover it, and the peak is a ring above the lane. /finding's chart of the guilt
- * available is ./GuiltChart.astro.
+ * wide gold band (they pay the same on every row). Personal guilt is a thinner ink line on that
+ * band, centred on the same payoff, so the gold shows on both sides where they tie. The peak is a
+ * ring above the line. /finding's chart of the guilt available is ./GuiltChart.astro.
  *
  * Render this only inside the lock (src/lib/lock.ts, ADR 0034). While the lock is closed, a build
  * resolves this file to ./Locked.astro (astro.config.mjs), so its markup, style, script and data
@@ -16,7 +16,7 @@
  */
 import { FILM } from '../../lib/design/film';
 import { useTranslations, type Locale } from '../../lib/i18n';
-import { stepLine, xPercent, yLane, yPixel, type Frame, type Segment } from '../../lib/curve/chart';
+import { stepLine, xPercent, yPixel, type Frame, type Segment } from '../../lib/curve/chart';
 import { payoffLevels, pullWindow, REASONS, type Reason } from '../../lib/curve/curve';
 import { CURVE } from '../../lib/curve/data';
 import { CASED, FILM_SERIES } from '../../lib/curve/film';
@@ -54,7 +54,7 @@ const name: Record<Reason, string> = {
   general: tr('curve.series.general'),
 };
 // Partner-specific commitment and general guilt are the same payoff on every row, so they are one line.
-// Personal guilt's high run is lifted into a lane (yLane); the label says that lane is still {high}.
+// Personal guilt is drawn on top of that line, at the same y, thinner, so both stay visible.
 const flat = stepLine(rows, 'partner');
 const personal = stepLine(rows, 'personal');
 const yTicks = [0, ...levels];
@@ -65,16 +65,16 @@ const summary = fill(tr('curve.summary'), { min: axis.min, max: axis.max, high, 
 const flatLabel = fill(tr('curve.flat'), { high });
 const personalLabel = fill(tr('curve.label.personal'), { high, low });
 const clientRows = JSON.stringify(rows);
-const placed = (segment: Segment, lane: boolean) => ({
+const placed = (segment: Segment) => ({
   x1: x(segment.x1),
   x2: x(segment.x2),
-  y1: lane ? yLane(segment.y1, frame) : y(segment.y1),
-  y2: lane ? yLane(segment.y2, frame) : y(segment.y2),
+  y1: y(segment.y1),
+  y2: y(segment.y2),
 });
-/** The cursor's line starts just above the lane, so it never runs through the peak's ring. */
-const cursorTop = yLane(high, frame) - 4;
-/** The peak is a ring above the lane, clear of the cursor's filled dot even when both sit at the peak. */
-const peakRing = yLane(high, frame) - 18;
+/** The cursor's line starts just above the shared payoff, so it never runs through the peak's ring. */
+const cursorTop = y(high) - 4;
+/** The peak is a ring above the line, clear of the cursor's filled dot even when both sit at the peak. */
+const peakRing = y(high) - 18;
 ---
 
 <figure class="curve curve--film" style={filmStyle} id={id} data-locked-content data-curve data-rows={clientRows} data-axis={JSON.stringify(axis)} data-frame={JSON.stringify(frame)} data-start={start} data-strings={JSON.stringify(strings)} aria-labelledby={`${id}-caption`}>
@@ -119,16 +119,16 @@ const peakRing = yLane(high, frame) - 18;
       {
         flat.map((segment) => (
           <>
-            {cased('partner') && <line class="cv-case cv-case--partner" {...placed(segment, false)} />}
-            <line class="cv-line cv-line--partner" {...placed(segment, false)} />
+            {cased('partner') && <line class="cv-case cv-case--partner" {...placed(segment)} />}
+            <line class="cv-line cv-line--partner" {...placed(segment)} />
           </>
         ))
       }
-      {personal.map((segment) => <line class="cv-line cv-line--personal" {...placed(segment, true)} />)}
+      {personal.map((segment) => <line class="cv-line cv-line--personal" {...placed(segment)} />)}
 
       <g class="cv-cursor" data-slot="cursor">
         <line data-slot="cursor-line" x1={x(peak)} x2={x(peak)} y1={cursorTop} y2={Y_ZERO} />
-        <circle data-slot="cursor-dot" cx={x(peak)} cy={yLane(startRow?.payoff.personal ?? high, frame)} r="5" />
+        <circle data-slot="cursor-dot" cx={x(peak)} cy={y(startRow?.payoff.personal ?? high)} r="5" />
       </g>
     </svg>
     <p class="cv-axis-title cv-axis-title--x" aria-hidden="true">{tr('curve.axis.x')}</p>
@@ -282,12 +282,27 @@ const peakRing = yLane(high, frame) - 18;
 
   .cv-line--personal {
     stroke: var(--color-series-1);
-    stroke-width: 6;
   }
 
   .cv-line--partner {
     stroke: var(--color-series-2);
-    stroke-width: 2;
+  }
+
+  /* A wide gold band, then a thin ink line centred on the same payoff, so the gold shows both sides. */
+  .cv-svg .cv-line--partner {
+    stroke-width: 11;
+  }
+
+  .cv-svg .cv-line--personal {
+    stroke-width: 2.5;
+  }
+
+  .cv-swatch .cv-line--partner {
+    stroke-width: 5;
+  }
+
+  .cv-swatch .cv-line--personal {
+    stroke-width: 1.5;
   }
 
   /* The cursor appears only once the script runs (data-on). */
@@ -430,13 +445,16 @@ const peakRing = yLane(high, frame) - 18;
     stroke: var(--film-ink);
   }
 
-  .curve--film .cv-line--partner {
-    stroke-width: 3.5;
+  .cv-case--partner {
+    stroke-linecap: square;
   }
 
-  .cv-case--partner {
-    stroke-width: 6.5;
-    stroke-linecap: square;
+  .cv-svg .cv-case--partner {
+    stroke-width: 15;
+  }
+
+  .cv-swatch .cv-case--partner {
+    stroke-width: 7;
   }
 
 </style>

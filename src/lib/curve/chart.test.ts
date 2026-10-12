@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LANE, stepLine, xPercent, yLane, yPixel } from './chart';
+import { stepLine, xPercent, yPixel } from './chart';
 import type { CurveRow } from './curve';
 import { CURVE } from './data';
 
@@ -55,11 +55,10 @@ describe('scales', () => {
     expect(yPixel(5, frame)).toBe(136);
   });
 
-  it('lifts only the top payoff into a lane, so the line that shares it stays visible', () => {
-    const frame = { zero: 200, top: 72, high: 10 };
-    expect(LANE).toBeGreaterThanOrEqual(12);
-    expect(yLane(5, frame)).toBe(yPixel(5, frame));
-    expect(yLane(10, frame)).toBe(yPixel(10, frame) - LANE);
-    expect(yLane(0, frame)).toBe(yPixel(0, frame));
+  it('keeps a shared payoff on that payoff’s gridline, with no lift', () => {
+    const frame = { zero: 200, top: 52, high: 10 };
+    expect(yPixel(10, frame)).toBe(frame.top);
+    expect(yPixel(5, frame)).toBe(126);
+    expect(yPixel(0, frame)).toBe(frame.zero);
   });
 });
