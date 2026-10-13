@@ -1897,9 +1897,13 @@ commit (`M5.2`). Ninguna prueba se borra ni se debilita.
       `--side-top` y la caja útil del tramo (`--screens * 100svh - 35svh`), con scroll interno y el
       papel en `.card`. La primera carga del home sube de 184.7 a 184.8 KiB (EN) y de 185.4 a
       185.5 KiB (ES); `weight.json` se reescribe.
-- [ ] **M5.3** El cierre de la última carta del mazo (`src/components/film/chapters/blackout.ts`,
+- [x] **M5.3** El cierre de la última carta del mazo (`src/components/film/chapters/blackout.ts`,
       `src/components/film/chapters/Blackout.astro`): ocultar los boletos de la sexta carta y el
       aviso de deslizar, y llevar el foco al resumen (`[data-deck-out]`).
+      Hecho. Al decidir la última carta (`!next`), se ocultan `.deck-card__tickets` y `.deck__swipe`,
+      y el foco pasa a `[data-deck-out]` con `film.focus(deckOut, { preventScroll: true })`, igual
+      que en el chat del capítulo 2. El script del home pasa de 21.1 a 21.2 KiB y la primera carga
+      de 184.8 a 184.9 KiB (EN; en ES sigue en 185.5 KiB); `weight.json` se reescribe.
 - [ ] **M5.4** Las pruebas del tope de las tarjetas, las barras y el cierre del mazo, y las seis
       puertas en verde.
 - [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy.
