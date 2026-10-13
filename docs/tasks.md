@@ -1904,8 +1904,10 @@ commit (`M5.2`). Ninguna prueba se borra ni se debilita.
       y el foco pasa a `[data-deck-out]` con `film.focus(deckOut, { preventScroll: true })`, igual
       que en el chat del capítulo 2. El script del home pasa de 21.1 a 21.2 KiB y la primera carga
       de 184.8 a 184.9 KiB (EN; en ES sigue en 185.5 KiB); `weight.json` se reescribe.
-- [ ] **M5.4** Las pruebas del tope de las tarjetas, las barras y el cierre del mazo, y las seis
+- [x] **M5.4** Las pruebas del tope de las tarjetas, las barras y el cierre del mazo, y las seis
       puertas en verde.
+      Hecho. Pruebas en `src/lib/film/deck.test.ts`; las seis puertas (`check`, `test`, `build`,
+      `verify:dist`, `budgets` y `check:launch`) en verde.
 - [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy.
 
 ## F6 · Lanzamiento
