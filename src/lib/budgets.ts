@@ -140,7 +140,10 @@ export interface PageRefs {
   readonly styles: readonly string[];
   /** Fonts the page preloads. */
   readonly preloads: readonly string[];
-  /** Images the page fetches on load: <img src>, the tab's icon. A lazy image is not one of them. */
+  /**
+   * Images the page fetches on load: <img src>, the tab's icon. A lazy image is not one of them.
+   * A PNG `rel="icon"` beside an SVG one is a fallback: a current browser fetches the SVG.
+   */
   readonly images: readonly string[];
   /**
    * Every candidate of a picture's srcset, including the ones a dense screen fetches. Weighed apart
@@ -160,6 +163,7 @@ export function refsOf(html: string): PageRefs {
   const styles: string[] = [];
   const preloads: string[] = [];
   const images: string[] = [];
+  const icons: { url: string; type: string }[] = [];
   const srcset: string[] = [];
   const inlineStyles: string[] = [];
   for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
@@ -179,7 +183,14 @@ export function refsOf(html: string): PageRefs {
     if (rel.includes('stylesheet')) styles.push(url);
     else if (rel.includes('preload') && attribute(tag, 'as') === 'font') preloads.push(url);
     else if (rel.includes('modulepreload')) scripts.push(url);
-    else if (rel.includes('icon')) images.push(url);
+    else if (rel.includes('icon')) icons.push({ url, type: (attribute(tag, 'type') ?? '').toLowerCase() });
+  }
+  // The SVG is the tab's icon. The PNG sizes sit beside it for a reader that does not use SVG,
+  // so they are not part of what a current browser fetches with the page.
+  const svgIcon = icons.some((icon) => icon.type === 'image/svg+xml');
+  for (const icon of icons) {
+    if (svgIcon && icon.type === 'image/png') continue;
+    images.push(icon.url);
   }
   for (const match of html.matchAll(/<(?:img|source)\b[^>]*>/gi)) {
     const src = attribute(match[0], 'src');

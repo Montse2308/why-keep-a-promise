@@ -264,8 +264,8 @@ src/
   views/                 HomeView, SubpageView (shared by both locales)
   pages/                 thin wrappers for each route and locale; posters/[locale]/[route].png.ts
                          renders each page's poster; 404.astro (one page, both
-                         languages), sitemap.xml.ts, apple-touch-icon.png.ts and the favicon
-                         PNGs (favicon-48.png.ts, favicon-96.png.ts)
+                         languages), sitemap.xml.ts, apple-touch-icon.png.ts, the favicon
+                         PNGs (favicon-48.png.ts, favicon-96.png.ts) and favicon.ico.ts
 scripts/verify-dist.mjs  checks dist/ against the lock, its links, the status sentence, the
                          descriptions, noindex and the sitemap (ADR 0034), and the site's
                          address and robots.txt (ADR 0044)

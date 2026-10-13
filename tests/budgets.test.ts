@@ -114,6 +114,14 @@ describe('what a page asks for', () => {
     expect(refs.inlineStyles).toHaveLength(1);
   });
 
+  it('counts the SVG tab icon and not the PNG fallbacks beside it', () => {
+    const icons = `<link rel="icon" type="image/svg+xml" href="/b/favicon.svg">
+      <link rel="icon" type="image/png" sizes="48x48" href="/b/favicon-48.png">
+      <link rel="icon" type="image/png" sizes="96x96" href="/b/favicon-96.png">`;
+    expect(refsOf(icons).images).toEqual(['/b/favicon.svg']);
+    expect(refsOf('<link rel="icon" type="image/png" href="/b/favicon-48.png">').images).toEqual(['/b/favicon-48.png']);
+  });
+
   it("weighs /about's largest picture candidate, and does not add every candidate to the first load", () => {
     const html =
       '<picture><source srcset="/b/a.avif 1x, /b/a2.avif 2x" type="image/avif"><img src="/b/a.webp" srcset="/b/a.webp 1x, /b/a2.webp 2x" alt="" width="160"></picture>';

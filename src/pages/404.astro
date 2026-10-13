@@ -27,6 +27,9 @@ const shadow = 'not-found';
     <title>{locales.map((locale) => t(locale, 'notfound.title')).join(' · ')}</title>
     <meta name="robots" content="noindex" />
     <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
+    {/* PNG sizes for a reader that does not use the SVG. /favicon.ico is not named; it only sits at the root. */}
+    <link rel="icon" type="image/png" sizes="48x48" href={assetHref('favicon-48.png')} />
+    <link rel="icon" type="image/png" sizes="96x96" href={assetHref('favicon-96.png')} />
     <link rel="apple-touch-icon" href={assetHref('apple-touch-icon.png')} />
     {themeColors(false).map(({ color, media }) => <meta name="theme-color" content={color} media={media} />)}
     <Font cssVariable="--font-display" />

@@ -1865,8 +1865,11 @@ prueba se borra ni se debilita.
       Hecho. Un solo SVG, `touchIconSvg(size)`. A 48 px el contorno queda en unos 2 px y el hilo
       se distingue del círculo y del cuadrado, así que no se engrosó. El dibujo cabe en el círculo
       inscrito.
-- [ ] **I3** `/favicon.ico` en la raíz, sin nombrarlo en el `<head>`, y los dos `<link rel="icon">`
+- [x] **I3** `/favicon.ico` en la raíz, sin nombrarlo en el `<head>`, y los dos `<link rel="icon">`
       en PNG junto al SVG, en el layout y en la 404. Los pesos, si cambian.
+      Hecho. El `.ico` lleva solo el PNG de 48. Los PNG no entran en la primera carga: con el SVG
+      presente, el peso cuenta el SVG. El HTML de los dos enlaces sube el home en español de 185.3
+      a 185.4 KiB; el inglés sigue en 184.7. `weight.json` se reescribe. `verify:dist` no cambió.
 - [ ] **I4** Las pruebas, las seis puertas y las capturas.
 - [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy; pedir la indexación de la portada en
       Search Console.
