@@ -3,8 +3,9 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** ninguna. El trabajo en curso es mantenimiento: I, el ícono en PNG y en `/favicon.ico`
-(rama `fix/favicon-png`, sección I). M4, pulir antes de difundir, llegó a `main` con el PR #27. M3,
+**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M5, las tarjetas en el celular y el
+final del mazo (rama `m5/mobile-cards`, sección M5). I, el ícono en PNG y en `/favicon.ico`, llegó
+a `main` con el PR #28. M4, pulir antes de difundir, llegó a `main` con el PR #27. M3,
 la página en su dominio, `https://whykeepapromise.org`, llegó a `main` con el PR #26. M2, el repo del motor cambia de nombre, llegó a `main` con el PR #25. P10, el
 motor en `/finding`, con el PR #24. M1, la puesta al día después del lanzamiento, con el PR #23. P9,
 `/finding` por sí sola, llegó a `main` con el PR #21 (y su cierre con el #22); P8, los retoques
@@ -1874,8 +1875,29 @@ prueba se borra ni se debilita.
       Hecho. Las pruebas están junto a las del ícono táctil. Las capturas, en `scratch/favicon/`
       (no se suben): 48 y 96 a tamaño real y a ×4, y cada uno recortado en círculo sobre blanco y
       sobre `#202124`.
-- [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy; pedir la indexación de la portada en
-      Search Console.
+- [x] **(Montse)** Revisar; push, PR, CI, fusión y deploy; pedir la indexación de la portada en
+      Search Console. Mergeado (PR #28).
+
+## M5 · Las tarjetas en el celular y el final del mazo
+
+Mantenimiento, en la rama `m5/mobile-cards` desde `main` (`c3669f4`). Sin push, sin PR y sin
+`deploy.yml`. No toca el despliegue (`deploy.yml`, `docs/launch-checklist.md`, `check:launch`), ni
+`TOTAL_SCREENS` (`36.75`), ni el `padding-top: 35svh` de `.beat`. Cada paso termina en verde
+(`check`, `test`, `build`, `verify:dist`, `budgets` y `check:launch`) y lleva su número en el
+commit (`M5.2`). Ninguna prueba se borra ni se debilita.
+
+- [x] **M5.1** El registro y el ADR 0046 (`docs/decisions/0046-card-scrolls-inside-on-a-phone.md`),
+      con las líneas de estado de los ADR 0023, 0027 y 0031, `docs/decisions/README.md` y esta
+      sección.
+- [ ] **M5.2** El tope de altura y el scroll interno de las tarjetas en pantallas angostas o bajas
+      (`src/components/film/Beat.astro`), y `touch-action: pan-y` en las tres barras deslizantes de
+      la película (`Blackout.astro`, `RealPeople.astro`, `Curve.astro`).
+- [ ] **M5.3** El cierre de la última carta del mazo (`src/components/film/chapters/blackout.ts`,
+      `src/components/film/chapters/Blackout.astro`): ocultar los boletos de la sexta carta y el
+      aviso de deslizar, y llevar el foco al resumen (`[data-deck-out]`).
+- [ ] **M5.4** Las pruebas del tope de las tarjetas, las barras y el cierre del mazo, y las seis
+      puertas en verde.
+- [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy.
 
 ## F6 · Lanzamiento
 

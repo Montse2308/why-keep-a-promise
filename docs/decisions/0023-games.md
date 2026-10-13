@@ -8,7 +8,9 @@ Precisado por el ADR 0038: la lista suma una interacción, la 11, el explorador 
 `/finding`, con el candado abierto. Precisado por el ADR 0042: la lista suma la interacción 12, el
 motor en vivo de `/finding` (elegir uno de tres mundos, correr, pausar y seguir, volver a empezar, el
 deslizador de generación y resaltar otra corrida), con el candado abierto; ahí, y solo ahí, se ve la
-parte de una población con culpa personal, una línea por corrida.
+parte de una población con culpa personal, una línea por corrida. Precisado por el ADR 0046: al
+decidir la sexta carta del mazo del capítulo 5, sus boletos y el aviso de deslizar se ocultan y el
+foco pasa al resumen.
 
 ## Contexto
 

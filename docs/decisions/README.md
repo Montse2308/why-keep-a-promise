@@ -38,6 +38,7 @@ números no se reutilizan.
 | [0043](0043-engine-code-on-the-page.md) | El código del motor en la página: la dependencia fijada al commit de `v1.0.0`, lo que se importa, cómo se prueba contra las corridas del paper y qué pasa si cambia la versión. |
 | [0044](0044-custom-domain.md) | La página en `whykeepapromise.org`, en la raíz: GitHub Pages sigue, el DNS en Cloudflare sin proxy ni nada que inyecte scripts o cookies, `www` y `github.io` redirigen al dominio. |
 | [0045](0045-the-notebook-after-launch.md) | El cuaderno después del lanzamiento: `/about` con bio, foto y enlaces al código; «En un minuto» en `/how-its-built` (tope 800); el repo de la página enlazado; el pie «Siguiente». |
+| [0046](0046-card-scrolls-inside-on-a-phone.md) | En el celular vertical o en una pantalla baja, la tarjeta nunca rebasa su tramo ni la esquina superior y tiene scroll interno si no cabe; al decidir la última carta del mazo se ocultan sus boletos y el aviso de deslizar; las barras dejan pasar el scroll vertical. |
 
 Archivados (no rigen): 0002, 0003, 0004, 0007, 0009, 0011, 0014, 0015, 0017, 0018, 0019, 0020, 0022
 y 0026, en [`docs/archivo/decisiones/`](../archivo/decisiones/).
