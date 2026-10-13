@@ -2,8 +2,9 @@
 
 **Estado:** aceptada (P7.0). Precisa el ADR 0027 en un caso que no nombraba: el celular en
 horizontal. En la computadora las tarjetas siguen centradas, como dice el 0027. Precisado por el
-ADR 0046: también abajo en el celular vertical, si una tarjeta no cabe en el alto de su tramo o
-bajo la esquina superior, tiene scroll interno.
+ADR 0046: también abajo en el celular vertical (y en el alto máximo en horizontal, mientras el
+ancho sigue siendo `--side-card`), si una tarjeta no cabe en el alto de su tramo o bajo la esquina
+superior, tiene scroll interno.
 
 ## Contexto
 
