@@ -114,7 +114,7 @@ const still = stageAt(
       }
     </ol>
     <p class="card__free deck__swipe">{tr('film.deck.swipe')}</p>
-    <p class="card__out" aria-live="polite" data-deck-out data-tally={tallies}></p>
+    <p class="card__out" tabindex="-1" aria-live="polite" data-deck-out data-tally={tallies}></p>
     <p class="card__noscript">{fill(tr('film.deck.noscript'), counts)}</p>
   </Beat>
 
@@ -325,6 +325,7 @@ const still = stageAt(
     height: 2.75rem;
     margin: 0;
     accent-color: var(--film-you);
+    touch-action: pan-y;
     cursor: pointer;
   }
 

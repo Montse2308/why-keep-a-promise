@@ -3,8 +3,9 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** ninguna. El trabajo en curso es mantenimiento: I, el ícono en PNG y en `/favicon.ico`
-(rama `fix/favicon-png`, sección I). M4, pulir antes de difundir, llegó a `main` con el PR #27. M3,
+**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M5, las tarjetas en el celular y el
+final del mazo (rama `m5/mobile-cards`, sección M5). I, el ícono en PNG y en `/favicon.ico`, llegó
+a `main` con el PR #28. M4, pulir antes de difundir, llegó a `main` con el PR #27. M3,
 la página en su dominio, `https://whykeepapromise.org`, llegó a `main` con el PR #26. M2, el repo del motor cambia de nombre, llegó a `main` con el PR #25. P10, el
 motor en `/finding`, con el PR #24. M1, la puesta al día después del lanzamiento, con el PR #23. P9,
 `/finding` por sí sola, llegó a `main` con el PR #21 (y su cierre con el #22); P8, los retoques
@@ -1874,8 +1875,48 @@ prueba se borra ni se debilita.
       Hecho. Las pruebas están junto a las del ícono táctil. Las capturas, en `scratch/favicon/`
       (no se suben): 48 y 96 a tamaño real y a ×4, y cada uno recortado en círculo sobre blanco y
       sobre `#202124`.
-- [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy; pedir la indexación de la portada en
-      Search Console.
+- [x] **(Montse)** Revisar; push, PR, CI, fusión y deploy; pedir la indexación de la portada en
+      Search Console. Mergeado (PR #28).
+
+## M5 · Las tarjetas en el celular y el final del mazo
+
+Mantenimiento, en la rama `m5/mobile-cards` desde `main` (`c3669f4`). Sin push, sin PR y sin
+`deploy.yml`. No toca el despliegue (`deploy.yml`, `docs/launch-checklist.md`, `check:launch`), ni
+`TOTAL_SCREENS` (`36.75`), ni el `padding-top: 35svh` de `.beat`. Cada paso termina en verde
+(`check`, `test`, `build`, `verify:dist`, `budgets` y `check:launch`) y lleva su número en el
+commit (`M5.2`). Ninguna prueba se borra ni se debilita.
+
+- [x] **M5.1** El registro y el ADR 0046 (`docs/decisions/0046-card-scrolls-inside-on-a-phone.md`),
+      con las líneas de estado de los ADR 0023, 0027 y 0031, `docs/decisions/README.md` y esta
+      sección.
+- [x] **M5.2** El tope de altura y el scroll interno de las tarjetas en pantallas angostas o bajas
+      (`src/components/film/Beat.astro`), y `touch-action: pan-y` en las tres barras deslizantes de
+      la película (`Blackout.astro`, `RealPeople.astro`, `Curve.astro`).
+      Hecho. En `@media (max-width: 48rem), (max-height: 40rem)` las tarjetas fijas abajo (salvo
+      `.beat--roll` y `.card--envelope`) limitan su alto al menor entre el espacio libre bajo
+      `--side-top` y la caja útil del tramo (`--screens * 100svh - 35svh`), con scroll interno y el
+      papel en `.card`. La primera carga del home sube de 184.7 a 184.8 KiB (EN) y de 185.4 a
+      185.5 KiB (ES); `weight.json` se reescribe.
+- [x] **M5.3** El cierre de la última carta del mazo (`src/components/film/chapters/blackout.ts`,
+      `src/components/film/chapters/Blackout.astro`): ocultar los boletos de la sexta carta y el
+      aviso de deslizar, y llevar el foco al resumen (`[data-deck-out]`).
+      Hecho. Al decidir la última carta (`!next`), se ocultan `.deck-card__tickets` y `.deck__swipe`,
+      y el foco pasa a `[data-deck-out]` con `film.focus(deckOut, { preventScroll: true })`, igual
+      que en el chat del capítulo 2. El script del home pasa de 21.1 a 21.2 KiB y la primera carga
+      de 184.8 a 184.9 KiB (EN; en ES sigue en 185.5 KiB); `weight.json` se reescribe.
+- [x] **M5.4** Las pruebas del tope de las tarjetas, las barras y el cierre del mazo, y las seis
+      puertas en verde.
+      Hecho. Pruebas en `src/lib/film/deck.test.ts`; las seis puertas (`check`, `test`, `build`,
+      `verify:dist`, `budgets` y `check:launch`) en verde.
+- [x] **M5.5** Ajustes tras la auditoría en navegador a 360 px y con letra al 137.5 %:
+      `overflow-x: hidden` en las tarjetas con scroll interno (`Beat.astro`) para que las cartas que
+      vuelan no ensanchen su scroll; guardia `(max-height: 40rem) and (pointer: coarse)` para que
+      una portátil baja con DPR 1 conserve `::before` y sus títulos nítidos (8.2); y scroll interno
+      al pie de la tarjeta (`card.scrollTo({ top: card.scrollHeight, behavior: 'smooth' })` en
+      `context.ts`, `blackout.ts`, `arrival.ts` y `fold.ts`) al mostrar el resultado en `.card__out`.
+      Hecho. El script del home pasa de 21.2 a 21.3 KiB y la primera carga a 185.0 KiB (EN) y
+      185.6 KiB (ES); `weight.json` se reescribe. Las seis puertas en verde (1476 pruebas).
+- [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy.
 
 ## F6 · Lanzamiento
 

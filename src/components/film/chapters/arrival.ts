@@ -2,7 +2,7 @@
  * Chapter 0's controller (Arrival.astro): promise or not. The answer can change until the decision
  * of chapter 3, which settles it (./fold.ts).
  */
-import { settled, type FilmContext } from '../context';
+import { revealCard, settled, type FilmContext } from '../context';
 
 export function arrival(film: FilmContext): void {
   const promiseOut = film.root.querySelector<HTMLElement>('#arrival [data-out]');
@@ -14,6 +14,7 @@ export function arrival(film: FilmContext): void {
       film.begin('draw');
       all.forEach((other) => other.setAttribute('aria-pressed', String(other === button)));
       if (promiseOut) promiseOut.textContent = (promised ? promiseOut.dataset.outYes : promiseOut.dataset.outNo) ?? '';
+      revealCard(promiseOut);
       film.spoolAs(promised ? 'tied' : 'none');
       film.remind();
       film.note({ type: 'promise', promised });

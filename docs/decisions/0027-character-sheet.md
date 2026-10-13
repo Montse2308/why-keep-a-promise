@@ -3,7 +3,9 @@
 **Estado:** aceptada (P1). Reemplaza el ADR 0022 (archivado) y reescribe lo que sigue vigente de él.
 Precisa los ADR 0021 y 0023 en cómo se ven dos cosas: la promesa del visitante es un hilo dorado,
 no un diamante, y las decisiones se toman con boletos, no con gestos de manos. Precisado por el
-ADR 0031: con el celular en horizontal, la tarjeta va al costado.
+ADR 0031: con el celular en horizontal, la tarjeta va al costado. Precisado por el ADR 0046: en el
+celular vertical o en una pantalla baja, una tarjeta que no cabe en su tramo o bajo la esquina
+superior tiene scroll interno.
 
 ## Contexto
 

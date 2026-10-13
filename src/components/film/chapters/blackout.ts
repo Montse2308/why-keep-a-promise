@@ -8,7 +8,7 @@
 import { BET_START, isBet, type Bet } from '../../../lib/film/bet';
 import { current as waiting, DEALT, decide as decideCard, tally, type DeckState } from '../../../lib/film/deck';
 import type { Choice } from '../../../lib/table/game';
-import { settle, settled, slide, type FilmContext } from '../context';
+import { revealCard, settle, settled, slide, type FilmContext } from '../context';
 
 /** How long a decided card stays before the next one comes. */
 const CARD_MS = 1100;
@@ -21,6 +21,7 @@ export function blackout(film: FilmContext): void {
 function deck(film: FilmContext): void {
   const cards = [...film.root.querySelectorAll<HTMLElement>('[data-card]')];
   const deckOut = film.root.querySelector<HTMLElement>('[data-deck-out]');
+  const swipe = film.root.querySelector<HTMLElement>('.deck__swipe');
   const tallies = JSON.parse(deckOut?.dataset.tally ?? '{}') as Record<string, string>;
   let deck: DeckState = DEALT;
   const onCard = (i: number, choice: Choice): void => {
@@ -34,6 +35,12 @@ function deck(film: FilmContext): void {
     const said = button?.dataset.said ?? '';
     const next = cards[i + 1];
     if (deckOut) deckOut.textContent = next ? said : `${said} ${tallies[String(tally(deck).kept)] ?? ''}`;
+    if (!next) {
+      card.querySelector<HTMLElement>('.deck-card__tickets')?.setAttribute('hidden', '');
+      if (swipe) swipe.hidden = true;
+      film.focus(deckOut, { preventScroll: true });
+    }
+    revealCard(deckOut);
     film.request();
     // The last card stays, decided, with the tally under it.
     if (!next) return;
