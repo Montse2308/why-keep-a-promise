@@ -3,9 +3,9 @@
 Solo se trabaja en la fase activa. Una tarea se marca al cerrarse, con `check`, `test`, `build` y
 `verify:dist` en verde. Las listas de F0–F4 y R0–R4 están en `docs/archivo/tareas-anteriores.md`.
 
-**Fase activa:** ninguna. El trabajo en curso es mantenimiento: M4, pulir antes de difundir
-(rama `m4/polish`, sección M4). M3, la página en su dominio, `https://whykeepapromise.org`, llegó a
-`main` con el PR #26. M2, el repo del motor cambia de nombre, llegó a `main` con el PR #25. P10, el
+**Fase activa:** ninguna. El trabajo en curso es mantenimiento: I, el ícono en PNG y en `/favicon.ico`
+(rama `fix/favicon-png`, sección I). M4, pulir antes de difundir, llegó a `main` con el PR #27. M3,
+la página en su dominio, `https://whykeepapromise.org`, llegó a `main` con el PR #26. M2, el repo del motor cambia de nombre, llegó a `main` con el PR #25. P10, el
 motor en `/finding`, con el PR #24. M1, la puesta al día después del lanzamiento, con el PR #23. P9,
 `/finding` por sí sola, llegó a `main` con el PR #21 (y su cierre con el #22); P8, los retoques
 después del lanzamiento, con el PR #20. F6, el lanzamiento, cerrada: el repo es público, Pages
@@ -1848,6 +1848,25 @@ ADR 0045 enmienda el 0024, el 0041 y la regla (j).
       1460 pruebas.
 - [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy. El recorte B y el rectángulo redondeado
       ya están elegidos.
+
+## I · El ícono en PNG y en la raíz
+
+Mantenimiento, en la rama `fix/favicon-png` desde `main` (`fe0f6d9`). Sin push, sin PR y sin
+`deploy.yml`. No toca el despliegue (`deploy.yml`, `docs/launch-checklist.md`, `check:launch`).
+`public/favicon.svg` no cambia y sigue siendo el primer `<link rel="icon">`. El dibujo es el del
+ADR 0027: el círculo y el cuadrado unidos por el hilo. Cada paso termina en verde (`check`, `test`,
+`build`, `verify:dist`, `budgets` y `check:launch`) y lleva su número en el commit (`I2`). Ninguna
+prueba se borra ni se debilita.
+
+- [x] **I1** El registro: esta sección y la cabecera. Una línea en el ADR 0027, que ya decide el
+      ícono de la pestaña. No hace falta un ADR nuevo: el símbolo no cambia, y el PNG de 180 px del
+      ícono táctil ya se hizo así en 7.2.7, sin ADR propio.
+- [ ] **I2** Los PNG de 48 y 96 px, en el build, con el mismo dibujo y el cielo del amanecer.
+- [ ] **I3** `/favicon.ico` en la raíz, sin nombrarlo en el `<head>`, y los dos `<link rel="icon">`
+      en PNG junto al SVG, en el layout y en la 404. Los pesos, si cambian.
+- [ ] **I4** Las pruebas, las seis puertas y las capturas.
+- [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy; pedir la indexación de la portada en
+      Search Console.
 
 ## F6 · Lanzamiento
 

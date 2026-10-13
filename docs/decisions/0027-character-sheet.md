@@ -90,7 +90,9 @@ mesa en los capítulos de noche. Las hojas están en `docs/archivo/prototipo/`.
 - **En la esquina**, un carrete pequeño recuerda el estado del hilo durante toda la película, con
   su texto.
 - **El ícono de la pestaña** es el mismo símbolo, dibujado para 16 px: el círculo y el cuadrado
-  unidos por el hilo.
+  unidos por el hilo. Ese SVG es el que la página nombra primero. El mismo dibujo se sirve también
+  en PNG de 48 y de 96 px, con el cielo del amanecer de fondo, y en `/favicon.ico` en la raíz, que
+  la página no nombra.
 
 ### Las decisiones: boletos con la consecuencia
 
