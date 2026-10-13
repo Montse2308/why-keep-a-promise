@@ -150,6 +150,10 @@ const { id, screens, caption, opening = false, cardClass, roll = false } = Astro
     line-height: 1.4;
   }
 
+  .card :global(.card__out:focus) {
+    outline: none;
+  }
+
   .card :global(.card__out:empty) {
     display: none;
   }
@@ -250,6 +254,30 @@ const { id, screens, caption, opening = false, cardClass, roll = false } = Astro
     margin-top: 0;
     position: relative;
     bottom: auto;
+  }
+
+  /*
+   * On a phone or a short screen (ADR 0046): a card held at the bottom never rises into the film's
+   * top corner (`--side-top`) and never grows taller than its own beat (`--screens * 100svh - 35svh`),
+   * so two cards never overlap even with enlarged text; if a card does not fit, it scrolls inside
+   * itself. A scrolling card tilts as one piece so its paper moves with its text.
+   */
+  @media (max-width: 48rem), (max-height: 40rem) {
+    :global(html.js) .beat:where(:not(.beat--roll)) .card:where(:not(.card--envelope)) {
+      max-height: min(
+        calc(100svh - var(--side-top) - var(--space-4) - env(safe-area-inset-bottom, 0px)),
+        calc((var(--screens) * 100svh) - 35svh)
+      );
+      overflow-y: auto;
+      overscroll-behavior: auto;
+      background: var(--film-card);
+      box-shadow: var(--paper-shadow);
+      transform: var(--paper-tilt);
+    }
+
+    :global(html.js) .beat:where(:not(.beat--roll)) .card:where(:not(.card--envelope))::before {
+      content: none;
+    }
   }
 
   /*

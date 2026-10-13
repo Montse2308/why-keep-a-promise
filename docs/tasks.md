@@ -1889,9 +1889,14 @@ commit (`M5.2`). Ninguna prueba se borra ni se debilita.
 - [x] **M5.1** El registro y el ADR 0046 (`docs/decisions/0046-card-scrolls-inside-on-a-phone.md`),
       con las líneas de estado de los ADR 0023, 0027 y 0031, `docs/decisions/README.md` y esta
       sección.
-- [ ] **M5.2** El tope de altura y el scroll interno de las tarjetas en pantallas angostas o bajas
+- [x] **M5.2** El tope de altura y el scroll interno de las tarjetas en pantallas angostas o bajas
       (`src/components/film/Beat.astro`), y `touch-action: pan-y` en las tres barras deslizantes de
       la película (`Blackout.astro`, `RealPeople.astro`, `Curve.astro`).
+      Hecho. En `@media (max-width: 48rem), (max-height: 40rem)` las tarjetas fijas abajo (salvo
+      `.beat--roll` y `.card--envelope`) limitan su alto al menor entre el espacio libre bajo
+      `--side-top` y la caja útil del tramo (`--screens * 100svh - 35svh`), con scroll interno y el
+      papel en `.card`. La primera carga del home sube de 184.7 a 184.8 KiB (EN) y de 185.4 a
+      185.5 KiB (ES); `weight.json` se reescribe.
 - [ ] **M5.3** El cierre de la última carta del mazo (`src/components/film/chapters/blackout.ts`,
       `src/components/film/chapters/Blackout.astro`): ocultar los boletos de la sexta carta y el
       aviso de deslizar, y llevar el foco al resumen (`[data-deck-out]`).
