@@ -1861,7 +1861,10 @@ prueba se borra ni se debilita.
 - [x] **I1** El registro: esta sección y la cabecera. Una línea en el ADR 0027, que ya decide el
       ícono de la pestaña. No hace falta un ADR nuevo: el símbolo no cambia, y el PNG de 180 px del
       ícono táctil ya se hizo así en 7.2.7, sin ADR propio.
-- [ ] **I2** Los PNG de 48 y 96 px, en el build, con el mismo dibujo y el cielo del amanecer.
+- [x] **I2** Los PNG de 48 y 96 px, en el build, con el mismo dibujo y el cielo del amanecer.
+      Hecho. Un solo SVG, `touchIconSvg(size)`. A 48 px el contorno queda en unos 2 px y el hilo
+      se distingue del círculo y del cuadrado, así que no se engrosó. El dibujo cabe en el círculo
+      inscrito.
 - [ ] **I3** `/favicon.ico` en la raíz, sin nombrarlo en el `<head>`, y los dos `<link rel="icon">`
       en PNG junto al SVG, en el layout y en la 404. Los pesos, si cambian.
 - [ ] **I4** Las pruebas, las seis puertas y las capturas.

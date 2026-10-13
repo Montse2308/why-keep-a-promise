@@ -1,7 +1,7 @@
 /**
  * Turns a page's poster into PNG at build time, with @resvg/resvg-js (ADR 0025: a dev dependency;
- * the visitor never downloads it). Only the endpoints in src/pages/ (the posters and the touch icon)
- * and the tests use it.
+ * the visitor never downloads it). Only the endpoints in src/pages/ (the posters, the touch icon and
+ * the favicon PNGs) and the tests use it.
  * The renderer reads TrueType, not woff2, so the posters have their own static cuts of the site's
  * faces (src/assets/fonts/posters/); nothing on the system is read.
  */
@@ -63,8 +63,13 @@ export function posterPng(locale: Locale, route: Route): Uint8Array {
   return resvg.render().asPng();
 }
 
-/** The icon for a phone's home screen (./icon.ts), as PNG; it has no text, so it reads no font. */
-export function touchIconPng(): Uint8Array {
-  const resvg = new Resvg(touchIconSvg(), { fitTo: { mode: 'width', value: TOUCH_ICON }, font: { loadSystemFonts: false } });
+/** The icon (./icon.ts) at `size` px, as PNG. It has no text, so it reads no font. */
+export function iconPng(size: number): Uint8Array {
+  const resvg = new Resvg(touchIconSvg(size), { fitTo: { mode: 'width', value: size }, font: { loadSystemFonts: false } });
   return resvg.render().asPng();
+}
+
+/** The icon for a phone's home screen (./icon.ts), as PNG. */
+export function touchIconPng(): Uint8Array {
+  return iconPng(TOUCH_ICON);
 }
