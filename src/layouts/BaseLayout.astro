@@ -59,6 +59,9 @@ const noindex = route === 'finding' && !findingUnlocked(WORKING_PAPER.ssrn, impo
     {LOCALES.map((alt) => <link rel="alternate" hreflang={alt} href={absoluteHref(site, alt, route)} />)}
     <link rel="alternate" hreflang="x-default" href={absoluteHref(site, DEFAULT_LOCALE, route)} />
     <link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />
+    {/* PNG sizes for a reader that does not use the SVG. /favicon.ico is not named; it only sits at the root. */}
+    <link rel="icon" type="image/png" sizes="48x48" href={assetHref('favicon-48.png')} />
+    <link rel="icon" type="image/png" sizes="96x96" href={assetHref('favicon-96.png')} />
     <link rel="apple-touch-icon" href={assetHref('apple-touch-icon.png')} />
     {themeColors(film).map(({ color, media }) => <meta name="theme-color" content={color} media={media} />)}
     <meta property="og:type" content="website" />

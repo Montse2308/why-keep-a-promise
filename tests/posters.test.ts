@@ -4,6 +4,9 @@ import posterReadme from '../src/assets/fonts/posters/README.md?raw';
 import character from '../src/components/film/Character.astro?raw';
 import endpoint from '../src/pages/posters/[locale]/[route].png.ts?raw';
 import touchIconEndpoint from '../src/pages/apple-touch-icon.png.ts?raw';
+import faviconPng48 from '../src/pages/favicon-48.png.ts?raw';
+import faviconPng96 from '../src/pages/favicon-96.png.ts?raw';
+import faviconIcoEndpoint from '../src/pages/favicon.ico.ts?raw';
 import favicon from '../public/favicon.svg?raw';
 import { WORKING_PAPER } from '../src/config';
 import en from '../src/i18n/en.json';
@@ -14,8 +17,9 @@ import { posterAlt } from '../src/lib/meta';
 import { hasGlyph, lineWidth, readMetrics, type FontMetrics } from '../src/lib/posters/metrics';
 import { balance, CARD, chartSvg, cutout, escapeXml, fit, POSTER, POSTER_FONTS, POSTER_SCENES, posterPath, posterSvg, SIGNATURE_WIDTH, wrap, type PosterFont } from '../src/lib/posters/poster';
 import { readPosterFont } from '../src/lib/posters/fonts.mjs';
-import { ICON_SHAPES, TOUCH_ICON, touchIconSvg } from '../src/lib/posters/icon';
-import { findingChart, posterLayout, posterMetrics, posterPng, posterText, touchIconPng } from '../src/lib/posters/render';
+import { FAVICON_PNG, ICON_SHAPES, TOUCH_ICON, touchIconSvg } from '../src/lib/posters/icon';
+import { pngIco } from '../src/lib/posters/ico';
+import { findingChart, iconPng, posterLayout, posterMetrics, posterPng, posterText, touchIconPng } from '../src/lib/posters/render';
 import { ROUTES } from '../src/lib/routes';
 
 const PAGES = LOCALES.flatMap((locale) => ROUTES.map((route) => [locale, route] as const));
@@ -178,6 +182,59 @@ describe("the icon for a phone's home screen (point 13 of the external review)",
     expect([view.getUint32(16), view.getUint32(20)]).toEqual([TOUCH_ICON, TOUCH_ICON]);
     expect(TOUCH_ICON).toBe(180);
     expect(touchIconEndpoint).toContain('touchIconPng()');
+  });
+
+  it('draws the same shapes, on the dawn sky, at the favicon sizes', () => {
+    for (const size of [TOUCH_ICON, ...FAVICON_PNG]) {
+      const svg = touchIconSvg(size);
+      expect(svg).toContain(`width="${size}"`);
+      expect(svg).toContain(ICON_SHAPES.join(''));
+      expect(svg).toContain('<rect x="-56" y="-56" width="112" height="112" fill="url(#sky)"/>');
+    }
+  });
+
+  it('keeps that drawing inside the inscribed circle', () => {
+    const at = (t: number, p0: number, p1: number, p2: number, p3: number) => {
+      const u = 1 - t;
+      return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3;
+    };
+    // Distance from the centre after the drawing's nudge, plus the stroke. The circle's radius is 56.
+    const reach = (x: number, y: number, stroke: number) => Math.hypot(x, y + 2) + stroke;
+    let farthest = 0;
+    for (let step = 0; step <= 200; step++) {
+      const t = step / 200;
+      farthest = Math.max(farthest, reach(at(t, -13, -6, 8, 15), at(t, 1, -24, -24, -3), 5));
+    }
+    farthest = Math.max(farthest, reach(-20, 12, 17.5));
+    for (const [x, y] of [
+      [3.5, -5.5],
+      [38.5, -5.5],
+      [3.5, 29.5],
+      [38.5, 29.5],
+    ] as const) farthest = Math.max(farthest, reach(x, y, 0));
+    expect(farthest).toBeLessThanOrEqual(56);
+  });
+
+  it.each(FAVICON_PNG)('renders a PNG of %i px, with the PNG signature', (size) => {
+    const png = iconPng(size);
+    expect([...png.subarray(0, 8)]).toEqual([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    const view = new DataView(png.buffer, png.byteOffset, png.byteLength);
+    expect([view.getUint32(16), view.getUint32(20)]).toEqual([size, size]);
+    expect(size === 48 ? faviconPng48 : faviconPng96).toContain('iconPng(size)');
+  });
+
+  it('packs that 48 px PNG as the first image of the ico', () => {
+    const png = iconPng(FAVICON_PNG[0]);
+    const ico = pngIco([png]);
+    const view = new DataView(ico.buffer, ico.byteOffset, ico.byteLength);
+    expect(view.getUint16(0, true)).toBe(0);
+    expect(view.getUint16(2, true)).toBe(1);
+    expect(view.getUint16(4, true)).toBe(1);
+    expect([view.getUint8(6), view.getUint8(7)]).toEqual([48, 48]);
+    const length = view.getUint32(14, true);
+    const offset = view.getUint32(18, true);
+    expect([...ico.subarray(offset, offset + length)]).toEqual([...png]);
+    expect(faviconIcoEndpoint).toContain('pngIco([iconPng(FAVICON_PNG[0])])');
   });
 });
 

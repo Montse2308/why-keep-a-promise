@@ -107,4 +107,16 @@ describe('the colour of the browser bar (point 13 of the external review)', () =
     expect(baseLayout).toContain('themeColors(film)');
     expect(notFound).toContain('themeColors(false)');
   });
+
+  it('names the PNG icons after the SVG, and does not name the ico', () => {
+    for (const source of [baseLayout, notFound]) {
+      const svg = source.indexOf(`<link rel="icon" type="image/svg+xml" href={assetHref('favicon.svg')} />`);
+      const png48 = source.indexOf(`<link rel="icon" type="image/png" sizes="48x48" href={assetHref('favicon-48.png')} />`);
+      const png96 = source.indexOf(`<link rel="icon" type="image/png" sizes="96x96" href={assetHref('favicon-96.png')} />`);
+      expect(svg).toBeGreaterThanOrEqual(0);
+      expect(png48).toBeGreaterThan(svg);
+      expect(png96).toBeGreaterThan(png48);
+      expect(source).not.toContain("assetHref('favicon.ico')");
+    }
+  });
 });
