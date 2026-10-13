@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import decisions from '../../../docs/decisions/README.md?raw';
 import beatComponent from '../../components/film/Beat.astro?raw';
+import contextScript from '../../components/film/context.ts?raw';
 import blackoutComponent from '../../components/film/chapters/Blackout.astro?raw';
 import blackoutScript from '../../components/film/chapters/blackout.ts?raw';
 import realPeopleComponent from '../../components/film/chapters/RealPeople.astro?raw';
@@ -77,12 +78,19 @@ describe('mobile cards, sliders and the last card of the deck (ADR 0046)', () =>
     expect(blackoutScript).toContain('film.focus(deckOut, { preventScroll: true });');
   });
 
-  it('bounds a mobile card by the free space below the corner and by its own beat, leaving roll and envelope cards out', () => {
-    expect(beatComponent).toContain('@media (max-width: 48rem), (max-height: 40rem)');
+  it('bounds a mobile card by the free space below the corner and by its own beat, leaving roll, envelope and compact laptops out', () => {
+    expect(beatComponent).toContain('@media (max-width: 48rem), (max-height: 40rem) and (pointer: coarse)');
     expect(beatComponent).toContain(':global(html.js) .beat:where(:not(.beat--roll)) .card:where(:not(.card--envelope))');
     expect(beatComponent).toContain('calc(100svh - var(--side-top) - var(--space-4) - env(safe-area-inset-bottom, 0px))');
     expect(beatComponent).toContain('calc((var(--screens) * 100svh) - 35svh)');
+    expect(beatComponent).toContain('overflow-x: hidden;');
     expect(beatComponent).toContain('overscroll-behavior: auto;');
+  });
+
+  it('scrolls an overflowing card internally to its bottom on a choice, without moving the page', () => {
+    expect(contextScript).toContain("card.scrollTo({ top: card.scrollHeight, behavior: 'smooth' });");
+    expect(contextScript).not.toContain('scrollIntoView');
+    expect(blackoutScript).toContain('revealCard(deckOut);');
   });
 
   it('lets a vertical drag on any slider of the film scroll the page', () => {

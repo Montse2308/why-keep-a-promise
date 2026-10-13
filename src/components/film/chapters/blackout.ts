@@ -8,7 +8,7 @@
 import { BET_START, isBet, type Bet } from '../../../lib/film/bet';
 import { current as waiting, DEALT, decide as decideCard, tally, type DeckState } from '../../../lib/film/deck';
 import type { Choice } from '../../../lib/table/game';
-import { settle, settled, slide, type FilmContext } from '../context';
+import { revealCard, settle, settled, slide, type FilmContext } from '../context';
 
 /** How long a decided card stays before the next one comes. */
 const CARD_MS = 1100;
@@ -40,6 +40,7 @@ function deck(film: FilmContext): void {
       if (swipe) swipe.hidden = true;
       film.focus(deckOut, { preventScroll: true });
     }
+    revealCard(deckOut);
     film.request();
     // The last card stays, decided, with the tally under it.
     if (!next) return;

@@ -257,18 +257,21 @@ const { id, screens, caption, opening = false, cardClass, roll = false } = Astro
   }
 
   /*
-   * On a phone or a short screen (ADR 0046): a card held at the bottom never rises into the film's
-   * top corner (`--side-top`) and never grows taller than its own beat (`--screens * 100svh - 35svh`),
-   * so two cards never overlap even with enlarged text; if a card does not fit, it scrolls inside
-   * itself. A scrolling card tilts as one piece so its paper moves with its text.
+   * On a phone or a short touch screen (ADR 0046): a card held at the bottom never rises into the
+   * film's top corner (`--side-top`) and never grows taller than its own beat
+   * (`--screens * 100svh - 35svh`), so two cards never overlap even with enlarged text; if a card
+   * does not fit, it scrolls inside itself. A scrolling card tilts as one piece so its paper moves
+   * with its text; a compact laptop (`pointer: fine` over `48rem` wide) keeps `::before` so its
+   * titles stay sharp on a screen of DPR 1 (8.2).
    */
-  @media (max-width: 48rem), (max-height: 40rem) {
+  @media (max-width: 48rem), (max-height: 40rem) and (pointer: coarse) {
     :global(html.js) .beat:where(:not(.beat--roll)) .card:where(:not(.card--envelope)) {
       max-height: min(
         calc(100svh - var(--side-top) - var(--space-4) - env(safe-area-inset-bottom, 0px)),
         calc((var(--screens) * 100svh) - 35svh)
       );
       overflow-y: auto;
+      overflow-x: hidden;
       overscroll-behavior: auto;
       background: var(--film-card);
       box-shadow: var(--paper-shadow);
@@ -296,6 +299,7 @@ const { id, screens, caption, opening = false, cardClass, roll = false } = Astro
       width: var(--side-card);
       max-height: calc(100svh - var(--side-top) - var(--space-3) - env(safe-area-inset-bottom, 0px));
       overflow-y: auto;
+      overflow-x: hidden;
       bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
       background: var(--film-card);
       box-shadow: var(--paper-shadow);

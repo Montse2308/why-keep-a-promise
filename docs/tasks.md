@@ -1908,6 +1908,14 @@ commit (`M5.2`). Ninguna prueba se borra ni se debilita.
       puertas en verde.
       Hecho. Pruebas en `src/lib/film/deck.test.ts`; las seis puertas (`check`, `test`, `build`,
       `verify:dist`, `budgets` y `check:launch`) en verde.
+- [x] **M5.5** Ajustes tras la auditoría en navegador a 360 px y con letra al 137.5 %:
+      `overflow-x: hidden` en las tarjetas con scroll interno (`Beat.astro`) para que las cartas que
+      vuelan no ensanchen su scroll; guardia `(max-height: 40rem) and (pointer: coarse)` para que
+      una portátil baja con DPR 1 conserve `::before` y sus títulos nítidos (8.2); y scroll interno
+      al pie de la tarjeta (`card.scrollTo({ top: card.scrollHeight, behavior: 'smooth' })` en
+      `context.ts`, `blackout.ts`, `arrival.ts` y `fold.ts`) al mostrar el resultado en `.card__out`.
+      Hecho. El script del home pasa de 21.2 a 21.3 KiB y la primera carga a 185.0 KiB (EN) y
+      185.6 KiB (ES); `weight.json` se reescribe. Las seis puertas en verde (1476 pruebas).
 - [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy.
 
 ## F6 · Lanzamiento

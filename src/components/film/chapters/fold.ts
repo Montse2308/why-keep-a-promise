@@ -5,7 +5,7 @@
 import { foldCues } from '../../../lib/film/sound';
 import { decide, UNDECIDED, type DecisionState } from '../../../lib/table/decision';
 import { DIE_FACES, type Choice, type Face } from '../../../lib/table/game';
-import { ROLL_MS, settle, settled, type FilmContext } from '../context';
+import { revealCard, ROLL_MS, settle, settled, type FilmContext } from '../context';
 
 export function fold(film: FilmContext): void {
   // Played back from the memory, the die lands on the face it showed: a draw that falls on that face.
@@ -36,6 +36,7 @@ export function fold(film: FilmContext): void {
           const said = decision.face === null ? button.dataset.said : (JSON.parse(button.dataset.said ?? '{}') as Record<string, string>)[decision.face];
           const thread = promised ? (decision.choice === 'dont' ? decisionOut?.dataset.broken : decisionOut?.dataset.kept) : undefined;
           if (decisionOut) decisionOut.textContent = [said, thread].filter(Boolean).join(' ');
+          revealCard(decisionOut);
           if (promised) film.spoolAs(decision.choice === 'dont' ? 'broken' : 'kept');
         }
         film.request();

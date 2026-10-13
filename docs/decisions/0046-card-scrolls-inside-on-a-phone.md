@@ -19,15 +19,23 @@ capturar un gesto vertical del pulgar y frenar el scroll nativo.
 
 ## Decisión
 
-1. **Tope de altura y scroll interno en pantallas angostas o bajas (`@media (max-width: 48rem), (max-height: 40rem)`).**
+1. **Tope de altura y scroll interno en pantallas angostas o táctiles bajas (`@media (max-width: 48rem), (max-height: 40rem) and (pointer: coarse)`).**
    Las tarjetas fijas abajo (salvo la de los créditos, que rueda con el scroll, y el sobre del
    capítulo 7, cuya solapa abre hacia arriba fuera de la tarjeta) limitan su alto al menor entre el
    espacio libre bajo la fila superior (`100svh - var(--side-top) - var(--space-4) - env(safe-area-inset-bottom, 0px)`)
-   y el espacio útil de su propio tramo (`(var(--screens) * 100svh) - 35svh`), con `overflow-y: auto`
-   y `overscroll-behavior: auto`. Como en horizontal (ADR 0031), cuando la tarjeta puede hacer
-   scroll interno el papel y la sombra van en la tarjeta entera para que acompañen al texto; en
-   computadora siguen en `::before` (8.2). El total de pantallas de la película (`36.75`) y el
-   `padding-top: 35svh` de los tramos no cambian.
+   y el espacio útil de su propio tramo (`(var(--screens) * 100svh) - 35svh`), con `overflow-y: auto`,
+   `overflow-x: hidden` (para que una carta que vuela hacia los costados no ensanche el área de
+   scroll de la tarjeta) y `overscroll-behavior: auto`. El selector usa `:where(:not(.beat--roll))` y
+   `:where(:not(.card--envelope))` (especificidad cero) para no pisar la regla de celular en
+   horizontal del ADR 0031 (`@media (orientation: landscape) and (max-height: 500px)`), que sigue
+   fijando el ancho (`--side-card`) y el alto máximo a la izquierda. Como en el ADR 0031, cuando la
+   tarjeta puede hacer scroll interno el papel y la sombra van en la tarjeta entera para que
+   acompañen al texto; en una computadora o portátil baja (`pointer: fine` y más de `48rem` de
+   ancho) siguen en `::before` para que los títulos no pierdan nitidez con DPR 1 (8.2). Cuando el
+   visitante toma una decisión en una tarjeta que rebasa su alto visible, la tarjeta hace scroll
+   interno hasta su pie (`card.scrollTo({ top: card.scrollHeight, behavior: 'smooth' })`, nunca
+   `scrollIntoView`) para mostrar el resultado en `.card__out` sin mover el scroll de la página. El
+   total de pantallas de la película (`36.75`) y el `padding-top: 35svh` de los tramos no cambian.
 2. **Cierre de la última carta del mazo (capítulo 5).**
    Al decidir la sexta carta, igual que en el chat del capítulo 2, se ocultan los boletos de esa
    carta (`.deck-card__tickets`) y el aviso de deslizar (`.deck__swipe`), y el foco pasa al conteo

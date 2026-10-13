@@ -62,12 +62,23 @@ export function slide(range: HTMLInputElement | null | undefined, value: number)
   range.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
+/** Scrolls an overflowing card to its bottom, so the outcome at its foot shows without moving the page. */
+export function revealCard(button: Element | null | undefined): void {
+  if (button?.closest('[data-film-replaying]')) return;
+  const card = button?.closest('.card') as HTMLElement | null;
+  if (card && card.scrollHeight > card.clientHeight) {
+    card.scrollTo({ top: card.scrollHeight, behavior: 'smooth' });
+  }
+}
+
 /** A choice made once: the chosen ticket stays pressed, and every ticket of the group stays focusable but inert. */
 export function settle(group: Element | null, chosen: HTMLButtonElement): void {
   group?.querySelectorAll<HTMLButtonElement>('button').forEach((button) => {
     button.setAttribute('aria-pressed', String(button === chosen));
     button.setAttribute('aria-disabled', 'true');
   });
+  revealCard(chosen);
+  queueMicrotask(() => revealCard(chosen));
 }
 
 export const settled = (button: HTMLButtonElement): boolean => button.getAttribute('aria-disabled') === 'true';
