@@ -1870,7 +1870,10 @@ prueba se borra ni se debilita.
       Hecho. El `.ico` lleva solo el PNG de 48. Los PNG no entran en la primera carga: con el SVG
       presente, el peso cuenta el SVG. El HTML de los dos enlaces sube el home en español de 185.3
       a 185.4 KiB; el inglés sigue en 184.7. `weight.json` se reescribe. `verify:dist` no cambió.
-- [ ] **I4** Las pruebas, las seis puertas y las capturas.
+- [x] **I4** Las pruebas, las seis puertas y las capturas.
+      Hecho. Las pruebas están junto a las del ícono táctil. Las capturas, en `scratch/favicon/`
+      (no se suben): 48 y 96 a tamaño real y a ×4, y cada uno recortado en círculo sobre blanco y
+      sobre `#202124`.
 - [ ] **(Montse)** Revisar; push, PR, CI, fusión y deploy; pedir la indexación de la portada en
       Search Console.
 
